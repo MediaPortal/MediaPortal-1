@@ -35,7 +35,7 @@
         <posY>148</posY>
         <height>70</height>
         <width>415</width>
-		<textcolorNoFocus>ff00bfff</textcolorNoFocus> ff00bfff  ff7ad4ed
+		<textcolorNoFocus>ff00bfff</textcolorNoFocus> 
         <label>BasicHome Editor</label>
         <selected>#(skin.hassetting('#skin.basichome.editor'))</selected>
         <onclick>#(skin.togglesetting('#skin.basichome.editor'))</onclick>
@@ -45,7 +45,6 @@
         <onright>19001</onright>
         <ondown>#(iif(eq(#skin.basichome.editor,'True'),'770101','10'))</ondown>
       </control>
-	  
 	
       <control>
         <description>group element</description>
@@ -688,13 +687,13 @@
       <label>Layout</label>
       <textcolor>white</textcolor>
       <font>Label</font>
-      <visible>skin.hassetting(#skin.basichome.editor)+!control.hasfocus(19001)</visible>
+      <visible>skin.hassetting(#skin.basichome.editor)</visible>
     </control>
     
         <control Style="SettingsButton">
           <type>menubutton</type>
           <id>555</id>
-          <posX>1285</posX> 1250
+          <posX>1285</posX> 
           <posY>310</posY>
           <width>500</width> 
 		  <height>60</height>
@@ -717,7 +716,7 @@
         <onright>555</onright>
         <onup>555</onup>
         <ondown>555</ondown>
-        <visible>skin.hassetting(#skin.basichome.editor)+!control.hasfocus(19001)</visible>
+        <visible>skin.hassetting(#skin.basichome.editor)</visible>
       </control>
 	  <!-- ******************* PREVIEW IMAGES ************************** -->
 	  <control>
@@ -725,109 +724,102 @@
 		<type>image</type>
 		<id>0</id>
 		<posX>1287</posX>
-        <posY>440</posY>
+        <posY>410</posY> 440
         <width>497</width>
         <height>279</height>
 		<keepaspectratio>no</keepaspectratio>
 		<texture>Settings\Textonly_main_framed.png</texture>
-		<visible>skin.hassetting(#skin.basichome.editor)+string.contains(#hedit.mode, Horizontal Text only)+!control.hasfocus(19001)</visible>
+		<visible>skin.hassetting(#skin.basichome.editor)+string.contains(#hedit.mode, Horizontal Text only)</visible>
 	  </control>
 	  <control>
 		<description>Horizontal (scroll)</description>
 		<type>image</type>
 		<id>0</id>
 		<posX>1287</posX>
-        <posY>440</posY>
+        <posY>410</posY>
         <width>497</width>
         <height>279</height>
 		<keepaspectratio>no</keepaspectratio>
 		<texture>Settings\Horizontal_main_framed.png</texture>
-		<visible>skin.hassetting(#skin.basichome.editor)+string.contains(#hedit.mode, Horizontal (scroll))+!control.hasfocus(19001)</visible>
+		<visible>skin.hassetting(#skin.basichome.editor)+string.contains(#hedit.mode, Horizontal (scroll))</visible>
 	  </control>
 	   <control>
 		<description>Carousel</description>
 		<type>image</type>
 		<id>0</id>
 		<posX>1287</posX>
-        <posY>440</posY>
+        <posY>410</posY>
         <width>497</width>
         <height>279</height>
 		<keepaspectratio>no</keepaspectratio>
 		<texture>Settings\Carousel_main_framed.png</texture>
-		<visible>skin.hassetting(#skin.basichome.editor)+string.contains(#hedit.mode, Carousel)+!control.hasfocus(19001)</visible>
+		<visible>skin.hassetting(#skin.basichome.editor)+string.contains(#hedit.mode, Carousel)</visible>
 	  </control>
 	  <!--     *******************************************************************************************  -->
-      <!--     *********************************  Basic Home Editor Manual  ******************************  -->
+      <!--     *********************************  Basic Home Editor Info  ********************************  -->
       <!--     *******************************************************************************************  -->
-	  <!--control Style="SettingsButton">
-        <description>BasicHome Editor Info</description>
-        <type>button</type>
-        <id>19001</id>
-        <posX>1790</posX>
-        <posY>160</posY> 
-        <height>45</height>
-        <width>45</width>
-		<textureFocus>info_BHE.png</textureFocus> 
-        <textureNoFocus>info_BHE_NF.png</textureNoFocus> 
-		<colordiffuse>e6ffffff</colordiffuse>
-        <label></label>
-        <onup>10000</onup>
-        <onleft>10000</onleft>
-        <onright>10000</onright>
-        <ondown>10000</ondown>
-		<visible>skin.hassetting(#skin.basichome.editor)</visible>
-      </control-->
-	  
-	  <!--control>
-      <type>label</type>
-      <posX>1202</posX> 
-      <posY>285</posY>
-	  <width>670</width>
-	  <align>center</align>
-	  <label>User Manual</label>
-      <textcolor>white</textcolor> 
-      <font>Label</font>
-      <visible>skin.hassetting(#skin.basichome.editor)+control.hasfocus(19001)</visible>
-    </control>
 	  <control>
         <type>label</type>
-        <description>Info Text</description> 
-        <id>0</id>
-        <posX>1240</posX> 
-        <posY>320</posY> 
-        <label>With the Basic Home Editor (BHE), you can configure your&#xA;home screen with any plugins you like!&#xA;To open the BHE, select Settings -> GUI -> Skin on the&#xA;Homescreen and check the box at the BHE button field!&#xA;The left column with the “BasicHome Root Menu” corres-&#xA;ponds to the lower horizontal or curved line on the&#xA;Homescreen, while the middle column with the “Menu”&#xA;corresponds to the horizontal or curved line above it.&#xA;            First, click on a line in the “BasicHome Root Menu”&#xA;and then select a suitable plugin/theme from the context&#xA;menu (Options) that appears, whereupon it will be saved&#xA;in the “BasicHome Root Menu”. You can then select up to&#xA;7 entries from the context menu for each plugin/theme&#xA;by clicking on them under “Menu”. If you select “None” from&#xA;the context menu, the entry will be deleted again. In the&#xA;right-hand column, you can choose between 3 different&#xA;layouts.</label>
-        <width>596</width> 
+        <posX>1202</posX> 
+        <posY>770</posY> 
+        <width>670</width>
+	      <align>center</align>
+        <label>#SkinTranslation.Translations.Important.Label</label>
+        <textcolor>red</textcolor>
+        <font>LabelBold</font>
+        <visible>skin.hassetting(#skin.basichome.editor)</visible> 
+     </control>
+	 
+    <control>
+      <description>BHE Text 1</description>
+      <type>group</type>
+      <layout>StackLayout(12, Horizontal, true)</layout>
+      <posX>1280</posX> 
+      <posY>799</posY>
+      <align>left</align>
+      <width>1500</width>
+      <height>42</height>
+      <visible>skin.hassetting(#skin.basichome.editor)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>BHE Line 1</description>
+        <id>1</id>
+        <label>#SkinTranslation.Translations.CloseBHE.Label</label>
+        <width>50</width>
+        <maxWidth>560</maxWidth>
         <align>left</align>
-        <font>font9</font>
-        <textcolor>skyblue</textcolor>
-		<visible>skin.hassetting(#skin.basichome.editor)+control.hasfocus(19001)</visible>
+        <font>font12</font>
+        <textcolor>lightgray</textcolor>
       </control>
-	   <control>
-        <type>label</type>
-        <description>Info Text</description> 
-        <id>0</id>
-        <posX>1240</posX> 
-        <posY>834</posY> 
-        <label>Important:   When you are finished, always uncheck the box</label>
-        <width>596</width> 
+      <control>
+        <description>Image</description>
+        <type>image</type>
+        <id>1</id>
+        <width>95</width>
+        <maxWidth>95</maxWidth>
+        <height>38</height>
+        <texture>uncheckbox_BHE.png</texture>
+      </control>
+    </control>
+    
+    
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>1280</posX> 
+        <posY>840</posY>
         <align>left</align>
-        <font>font9</font>
-        <textcolor>ff8c69</textcolor>
-		<visible>skin.hassetting(#skin.basichome.editor)+control.hasfocus(19001)</visible>
-      </control>
-	   <control>
-        <type>label</type>
-        <description>Info Text</description> 
-        <id>0</id>
-        <posX>1240</posX> 
-        <posY>864</posY> 
-        <label>                 of the BHE button at the end!  Done!</label>
-		<width>596</width> 
+        <description>BHE Line 2</description>
+        <label>#SkinTranslation.Translations.SaveBHE.Label</label>
         <align>left</align>
-        <font>font9</font>
-        <textcolor>ff8c69</textcolor>
-		<visible>skin.hassetting(#skin.basichome.editor)+control.hasfocus(19001)</visible>
-      </control-->
+        <width>1500</width>
+        <font>font12</font>
+        <textcolor>lightgray</textcolor>
+        <visible>skin.hassetting(#skin.basichome.editor)</visible>
       </control>
+      
+	   
+    
+	</control>
   </controls>
 </window>
