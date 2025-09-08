@@ -110,7 +110,7 @@
       <colordiffuse>dodgerblue</colordiffuse>
       <visible>!facadeview.largeicons+!facadeview.list</visible>
     </control>
-    <control>
+    <!--<control>
       <description>background image Cover View</description>
       <type>image</type>
       <id>1</id>
@@ -119,13 +119,13 @@
       <width>1920</width>
       <height>140</height>
       <texture>roof.png</texture>
-      <visible>!facadeview.largeicons+!facadeview.list</visible>
-    </control>
+      <visible>!facadeview.largeicons+!facadeview.list</visible> 
+    </control>-->
     <control>
       <type>image</type>
       <id>0</id>
       <posX>733</posX>
-      <posY>818</posY>
+      <posY>830</posY> 
       <width>460</width>
       <height>55</height>
       <texture>tvseries_mask.png</texture>
@@ -136,7 +136,7 @@
       <type>image</type>
       <id>0</id>
       <posX>733</posX>
-      <posY>818</posY>
+      <posY>830</posY> 
       <width>460</width>
       <height>55</height>
       <texture>tvseriescase.png</texture>
@@ -305,7 +305,7 @@
           <textcolor>ffffffff</textcolor>
           <textXOff>0</textXOff>
           <textYOff>-148</textYOff>
-          <textalign>center</textalign>>
+          <textalign>center</textalign>
           <itemWidth>310</itemWidth>
           <itemHeight>207</itemHeight>
           <textureWidth>300</textureWidth>
@@ -410,7 +410,7 @@
           <dimColor>90ffffff</dimColor>
           <id>50</id>
           <posX>0</posX>
-          <posY>120</posY>
+          <posY>430</posY> 
           <width>1920</width>
           <height>1080</height>
           <onleft>9997</onleft>
@@ -431,7 +431,7 @@
           <backgroundHeight>140</backgroundHeight>
           <backgroundWidth>1920</backgroundWidth>
           <backgroundX>0</backgroundX>
-          <backgroundY>620</backgroundY>
+          <backgroundY>650</backgroundY> 
           <backgroundDiffuse>FF000000</backgroundDiffuse>
           <background>roof.png</background>
           <showBackground>yes</showBackground>

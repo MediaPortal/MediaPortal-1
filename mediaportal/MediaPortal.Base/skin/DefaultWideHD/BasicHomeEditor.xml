@@ -25,7 +25,7 @@
         <height>70</height>
         <width>415</width>
         <texture>osdbg3.png</texture>
-        <colordiffuse>ff00061c</colordiffuse>
+        <colordiffuse>ff00061c</colordiffuse> 
       </control>
       <control Style="SettingsButton">
         <description>BasicHome Editor</description>
@@ -35,15 +35,17 @@
         <posY>148</posY>
         <height>70</height>
         <width>415</width>
+		<textcolorNoFocus>ff00bfff</textcolorNoFocus> 
         <label>BasicHome Editor</label>
         <selected>#(skin.hassetting('#skin.basichome.editor'))</selected>
         <onclick>#(skin.togglesetting('#skin.basichome.editor'))</onclick>
         <onfocus>#(skin.setstring('#hedit.main.pos','0'))</onfocus>
         <onup>17</onup>
         <onleft>10000</onleft>
-        <onright>10000</onright>
+        <onright>19001</onright>
         <ondown>#(iif(eq(#skin.basichome.editor,'True'),'770101','10'))</ondown>
       </control>
+	
       <control>
         <description>group element</description>
         <type>group</type>
@@ -63,8 +65,8 @@
           <type>image</type>
           <id>0</id>
           <posX>702</posX>
-          <posY>310</posY> 260
-          <height>600</height> 650
+          <posY>310</posY> 
+          <height>600</height> 
           <width>1</width>
           <texture>slider_vertical.png</texture>
           <colordiffuse>darkgray</colordiffuse>
@@ -80,6 +82,7 @@
           <texture>slider_vertical.png</texture>
           <colordiffuse>darkgray</colordiffuse>
         </control>
+		
     
     <!--     *******************************************************************************************  -->
     <!--     **************************  Main Menu Editor Hidden Buttons  ******************************  -->
@@ -150,7 +153,7 @@
       <control Style="BasicHomeEditorButton">
         <type>button</type>
         <id>770101</id>
-        <textureNoFocus>#(iif(eq(#hedit.main.pos,'1'),'buttonfocus.png','button_nofocus.png'))</textureNoFocus>
+        <textureNoFocus>#(iif(eq(#hedit.main.pos,'1'),'button_focus_transparent.png','button_nofocus.png'))</textureNoFocus> 
         <textureFocus>#(iif(eq(string.ltrim(#hedit.button.1,'#0123456789.'),string.ltrim(#hedit.button.1,'#')),'button_focus.png','button_focus.png'))</textureFocus>
         <label>#(string.format('{0}',#hedit.button.1))</label>
         <onfocus>
@@ -179,7 +182,7 @@
       <control Style="BasicHomeEditorButton">
         <type>button</type>
         <id>770102</id>
-        <textureNoFocus>#(iif(eq(#hedit.main.pos,'2'),'buttonfocus.png','button_nofocus.png'))</textureNoFocus>
+        <textureNoFocus>#(iif(eq(#hedit.main.pos,'2'),'button_focus_transparent.png','button_nofocus.png'))</textureNoFocus> 
         <textureFocus>#(iif(eq(string.ltrim(#hedit.button.2,'#0123456789.'),string.ltrim(#hedit.button.2,'#')),'button_focus.png','button_focus.png'))</textureFocus>
         <label>#(string.format('{0}',#hedit.button.2))</label>
         <onfocus>
@@ -208,7 +211,7 @@
       <control Style="BasicHomeEditorButton">
         <type>button</type>
         <id>770103</id>
-        <textureNoFocus>#(iif(eq(#hedit.main.pos,'3'),'buttonfocus.png','button_nofocus.png'))</textureNoFocus>
+        <textureNoFocus>#(iif(eq(#hedit.main.pos,'3'),'button_focus_transparent.png','button_nofocus.png'))</textureNoFocus>
         <textureFocus>#(iif(eq(string.ltrim(#hedit.button.3,'#0123456789.'),string.ltrim(#hedit.button.3,'#')),'button_focus.png','button_focus.png'))</textureFocus>
         <label>#(string.format('{0}',#hedit.button.3))</label>
         <onfocus>
@@ -237,7 +240,7 @@
       <control Style="BasicHomeEditorButton">
         <type>button</type>
         <id>770104</id>
-        <textureNoFocus>#(iif(eq(#hedit.main.pos,'4'),'buttonfocus.png','button_nofocus.png'))</textureNoFocus>
+        <textureNoFocus>#(iif(eq(#hedit.main.pos,'4'),'button_focus_transparent.png','button_nofocus.png'))</textureNoFocus> 
         <textureFocus>#(iif(eq(string.ltrim(#hedit.button.4,'#0123456789.'),string.ltrim(#hedit.button.4,'#')),'button_focus.png','button_focus.png'))</textureFocus>
         <label>#(string.format('{0}',#hedit.button.4))</label>
         <onfocus>
@@ -266,7 +269,7 @@
       <control Style="BasicHomeEditorButton">
         <type>button</type>
         <id>770105</id>
-        <textureNoFocus>#(iif(eq(#hedit.main.pos,'5'),'buttonfocus.png','button_nofocus.png'))</textureNoFocus>
+        <textureNoFocus>#(iif(eq(#hedit.main.pos,'5'),'button_focus_transparent.png','button_nofocus.png'))</textureNoFocus> 
         <textureFocus>#(iif(eq(string.ltrim(#hedit.button.5,'#0123456789.'),string.ltrim(#hedit.button.5,'#')),'button_focus.png','button_focus.png'))</textureFocus>
         <label>#(string.format('{0}',#hedit.button.5))</label>
         <onfocus>
@@ -295,7 +298,7 @@
       <control Style="BasicHomeEditorButton">
         <type>button</type>
         <id>770106</id>
-        <textureNoFocus>#(iif(eq(#hedit.main.pos,'6'),'buttonfocus.png','button_nofocus.png'))</textureNoFocus>
+        <textureNoFocus>#(iif(eq(#hedit.main.pos,'6'),'button_focus_transparent.png','button_nofocus.png'))</textureNoFocus> 
         <textureFocus>#(iif(eq(string.ltrim(#hedit.button.6,'#0123456789.'),string.ltrim(#hedit.button.6,'#')),'button_focus.png','button_focus.png'))</textureFocus>
         <label>#(string.format('{0}',#hedit.button.6))</label>
         <onfocus>
@@ -324,7 +327,7 @@
       <control Style="BasicHomeEditorButton">
         <type>button</type>
         <id>770107</id>
-        <textureNoFocus>#(iif(eq(#hedit.main.pos,'7'),'buttonfocus.png','button_nofocus.png'))</textureNoFocus>
+        <textureNoFocus>#(iif(eq(#hedit.main.pos,'7'),'button_focus_transparent.png','button_nofocus.png'))</textureNoFocus> 
         <textureFocus>#(iif(eq(string.ltrim(#hedit.button.7,'#0123456789.'),string.ltrim(#hedit.button.7,'#')),'button_focus.png','button_focus.png'))</textureFocus>
         <label>#(string.format('{0}',#hedit.button.7))</label>
         <onfocus>
@@ -353,7 +356,7 @@
       <control Style="BasicHomeEditorButton">
         <type>button</type>
         <id>770108</id>
-        <textureNoFocus>#(iif(eq(#hedit.main.pos,'8'),'buttonfocus.png','button_nofocus.png'))</textureNoFocus>
+        <textureNoFocus>#(iif(eq(#hedit.main.pos,'8'),'button_focus_transparent.png','button_nofocus.png'))</textureNoFocus> 
         <textureFocus>#(iif(eq(string.ltrim(#hedit.button.8,'#0123456789.'),string.ltrim(#hedit.button.8,'#')),'button_focus.png','button_focus.png'))</textureFocus>
         <label>#(string.format('{0}',#hedit.button.8))</label>
         <onfocus>
@@ -382,7 +385,7 @@
       <control Style="BasicHomeEditorButton">
         <type>button</type>
         <id>770109</id>
-        <textureNoFocus>#(iif(eq(#hedit.main.pos,'9'),'buttonfocus.png','button_nofocus.png'))</textureNoFocus>
+        <textureNoFocus>#(iif(eq(#hedit.main.pos,'9'),'button_focus_transparent.png','button_nofocus.png'))</textureNoFocus> 
         <textureFocus>#(iif(eq(string.ltrim(#hedit.button.9,'#0123456789.'),string.ltrim(#hedit.button.9,'#')),'button_focus.png','button_focus.png'))</textureFocus>
         <label>#(string.format('{0}',#hedit.button.9))</label>
         <onfocus>
@@ -411,7 +414,7 @@
       <control Style="BasicHomeEditorButton">
         <type>button</type>
         <id>770110</id>
-        <textureNoFocus>#(iif(eq(#hedit.main.pos,'10'),'buttonfocus.png','button_nofocus.png'))</textureNoFocus>
+        <textureNoFocus>#(iif(eq(#hedit.main.pos,'10'),'button_focus_transparent.png','button_nofocus.png'))</textureNoFocus> 
         <textureFocus>#(iif(eq(string.ltrim(#hedit.button.10,'#0123456789.'),string.ltrim(#hedit.button.10,'#')),'button_focus.png','button_focus.png'))</textureFocus>
         <label>#(string.format('{0}',#hedit.button.10))</label>
         <onfocus>
@@ -679,7 +682,7 @@
     
     <control>
       <type>label</type>
-      <posX>1450</posX>
+      <posX>1485</posX> 
       <posY>260</posY>
       <label>Layout</label>
       <textcolor>white</textcolor>
@@ -690,12 +693,13 @@
         <control Style="SettingsButton">
           <type>menubutton</type>
           <id>555</id>
-          <posX>1250</posX>
+          <posX>1285</posX> 
           <posY>310</posY>
-          <width>500</width>
-          <textalign>center</textalign>
+          <width>500</width> 
+		  <height>60</height>
+		  <textalign>center</textalign>
           <textvalign>middle</textvalign>
-          <mode>dialoglist</mode>
+		  <mode>dialoglist</mode>
           <dialogTitle>BasicHome Layout</dialogTitle>
           <dialogShowNumbers>no</dialogShowNumbers>
           <valueTextInButton>yes</valueTextInButton>
@@ -714,6 +718,108 @@
         <ondown>555</ondown>
         <visible>skin.hassetting(#skin.basichome.editor)</visible>
       </control>
+	  <!-- ******************* PREVIEW IMAGES ************************** -->
+	  <control>
+		<description>Horizontal Text only</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1287</posX>
+        <posY>410</posY> 440
+        <width>497</width>
+        <height>279</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\Textonly_main_framed.png</texture>
+		<visible>skin.hassetting(#skin.basichome.editor)+string.contains(#hedit.mode, Horizontal Text only)</visible>
+	  </control>
+	  <control>
+		<description>Horizontal (scroll)</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1287</posX>
+        <posY>410</posY>
+        <width>497</width>
+        <height>279</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\Horizontal_main_framed.png</texture>
+		<visible>skin.hassetting(#skin.basichome.editor)+string.contains(#hedit.mode, Horizontal (scroll))</visible>
+	  </control>
+	   <control>
+		<description>Carousel</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1287</posX>
+        <posY>410</posY>
+        <width>497</width>
+        <height>279</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\Carousel_main_framed.png</texture>
+		<visible>skin.hassetting(#skin.basichome.editor)+string.contains(#hedit.mode, Carousel)</visible>
+	  </control>
+	  <!--     *******************************************************************************************  -->
+      <!--     *********************************  Basic Home Editor Info  ********************************  -->
+      <!--     *******************************************************************************************  -->
+	  <control>
+        <type>label</type>
+        <posX>1202</posX> 
+        <posY>770</posY> 
+        <width>670</width>
+	      <align>center</align>
+        <label>#SkinTranslation.Translations.Important.Label</label>
+        <textcolor>red</textcolor>
+        <font>LabelBold</font>
+        <visible>skin.hassetting(#skin.basichome.editor)</visible> 
+     </control>
+	 
+    <control>
+      <description>BHE Text 1</description>
+      <type>group</type>
+      <layout>StackLayout(12, Horizontal, true)</layout>
+      <posX>1280</posX> 
+      <posY>799</posY>
+      <align>left</align>
+      <width>1500</width>
+      <height>42</height>
+      <visible>skin.hassetting(#skin.basichome.editor)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>BHE Line 1</description>
+        <id>1</id>
+        <label>#SkinTranslation.Translations.CloseBHE.Label</label>
+        <width>50</width>
+        <maxWidth>560</maxWidth>
+        <align>left</align>
+        <font>font12</font>
+        <textcolor>lightgray</textcolor>
+      </control>
+      <control>
+        <description>Image</description>
+        <type>image</type>
+        <id>1</id>
+        <width>95</width>
+        <maxWidth>95</maxWidth>
+        <height>38</height>
+        <texture>uncheckbox_BHE.png</texture>
+      </control>
     </control>
+    
+    
+      <control>
+        <type>fadelabel</type>
+        <id>1</id>
+        <posX>1280</posX> 
+        <posY>840</posY>
+        <align>left</align>
+        <description>BHE Line 2</description>
+        <label>#SkinTranslation.Translations.SaveBHE.Label</label>
+        <align>left</align>
+        <width>1500</width>
+        <font>font12</font>
+        <textcolor>lightgray</textcolor>
+        <visible>skin.hassetting(#skin.basichome.editor)</visible>
+      </control>
+      
+	   
+    
+	</control>
   </controls>
 </window>

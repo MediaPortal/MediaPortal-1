@@ -92,4 +92,10 @@ Wie man spielt
   <!-- ****************************   Skin translation for Connect4 ****************************-->
   <!-- ***************************************************************************************-->
   <string Field="WinAnimation">Gewinnanimation</string>
+  <!-- ***************************************************************************************-->
+  <!-- ****************************   Skin translation for BHE ****************************-->
+  <!-- ***************************************************************************************-->
+  <string Field="Important">Wichtig !</string>
+  <string Field="CloseBHE">BasicHome Editor schliessen</string>
+  <string Field="SaveBHE">um die Einstellungen korrekt zu speichern !</string>
 </strings>

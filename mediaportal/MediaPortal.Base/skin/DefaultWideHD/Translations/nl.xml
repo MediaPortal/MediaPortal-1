@@ -81,4 +81,10 @@ Spelen
 <string Field="About">Wat is Tetris?</string>
   <string Field="HighFive">Delen van de afbeeldingen en animaties zijn geleverd door High_Five :)</string>
   <string Field="Highscore">*** Gefeliciteerd!  *** Je hebt een nieuwe highscore behaald!</string>
+<!-- ***************************************************************************************-->
+  <!-- ****************************   Skin translation for BHE ****************************-->
+  <!-- ***************************************************************************************-->
+  <string Field="Important">Belangrijk !</string>
+  <string Field="CloseBHE">Sluit BasicHome Editor</string>
+  <string Field="SaveBHE">om de instellingen correct op te slaan !</string>
 </strings>
