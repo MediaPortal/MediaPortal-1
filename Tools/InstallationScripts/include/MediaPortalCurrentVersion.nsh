@@ -32,7 +32,7 @@
 
 !define VER_MAJOR       1
 !define VER_MINOR       38
-!define VER_REVISION    001
+!define VER_REVISION    002
 
 #**********************************************************************************************************#
 
@@ -105,3 +105,4 @@
 
 !define VERSION			"${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}${VER_GIT}"
 !define VERSION_DISP	"${VER_MAJOR}.${VER_MINOR_DISP}.${VER_REVISION_DISP}${SPC}${VER_TYPE}${VER_GIT}"
+
