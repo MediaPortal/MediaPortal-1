@@ -887,7 +887,7 @@
           <type>label</type>
           <id>0</id>
           <posX>742</posX>
-          <posY>166</posY>
+          <posY>330</posY> 
           <width>1050</width>
           <font>font10</font>
           <label>#ClickfinderPG.Movie1.Title #scroll.wrap #ClickfinderPG.Movie1.Genre (#ClickfinderPG.Movie1.Channel - #ClickfinderPG.Movie1.Time)</label>
@@ -900,7 +900,7 @@
           <type>label</type>
           <id>0</id>
           <posX>742</posX>
-          <posY>201</posY>
+          <posY>365</posY> 
           <width>1050</width>
           <font>font10</font>
           <label>#ClickfinderPG.Movie2.Title #scroll.wrap #ClickfinderPG.Movie2.Genre (#ClickfinderPG.Movie2.Channel - #ClickfinderPG.Movie2.Time)</label>
@@ -913,7 +913,7 @@
           <type>label</type>
           <id>0</id>
           <posX>742</posX>
-          <posY>236</posY>
+          <posY>400</posY> 
           <width>1050</width>
           <font>font10</font>
           <label>#ClickfinderPG.Movie3.Title #scroll.wrap #ClickfinderPG.Movie3.Genre (#ClickfinderPG.Movie3.Channel - #ClickfinderPG.Movie3.Time)</label>
@@ -958,7 +958,7 @@
           <description>group element</description>
           <layout>StackLayout(154, Horizontal, true)</layout>
           <posX>117</posX>
-          <posY>250</posY>
+          <posY>420</posY> 
           
           <control>
             <description>MovieTvMovieStar1</description>

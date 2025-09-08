@@ -69,4 +69,10 @@ How to play
 - Pause or continue the game - Back remote control button, or Esc&#xA;&#xA;The next block is displayed as a hint in the arrow graphic at the top right of the playing field.&#xA;The level number is also displayed there in the corresponding level colour.&#xA;&#xA;&#xA;Smirnuff (author), catavolt and High_Five wish you lots of fun with Tetris ;)</string>
 <string Field="About">What is Tetris?</string>
   <string Field="HighFive">Parts of the graphics and animations provided by High_Five :)</string><string Field="Highscore">***  Congratulations!  ***  You have achieved a new highscore!</string>
+<!-- ***************************************************************************************-->
+  <!-- ****************************   Skin translation for BHE ****************************-->
+  <!-- ***************************************************************************************-->
+  <string Field="Important">Important !</string>
+  <string Field="CloseBHE">Close BasicHome Editor</string>
+  <string Field="SaveBHE">to save the settings correctly !</string>
 </strings>

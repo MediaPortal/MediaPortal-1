@@ -86,4 +86,10 @@ Comment jouer
 <string Field="About">Qu'est-ce que Tetris ?</string>
   <string Field="HighFive">Une partie des graphiques et des animations est fournie par High_Five :)</string>
   <string Field="Highscore">*** Félicitations !  *** Vous avez atteint un nouveau record!</string>
+<!-- ***************************************************************************************-->
+  <!-- ****************************   Skin translation for BHE ****************************-->
+  <!-- ***************************************************************************************-->
+  <string Field="Important">Important !</string>
+  <string Field="CloseBHE">Fermez BasicHome Editor</string>
+  <string Field="SaveBHE">pour enregistrer correctement les paramètres !</string>
 </strings>

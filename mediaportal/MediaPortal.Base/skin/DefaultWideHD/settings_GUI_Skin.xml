@@ -322,9 +322,9 @@
         <posY>615</posY>
         <width>500</width>
         <label>Fanart BasicHome</label>
-         <textcolor>lightgray</textcolor>
+        <textcolor>lightgray</textcolor>
         <font>Label</font>
-        <visible>string.equals(#hedit.mode,Horizontal Text only)|string.equals(#hedit.mode,Horizontal (scroll))</visible>
+        <visible>!skin.hassetting(#skin.basichome.editor)+[string.equals(#hedit.mode,Horizontal Text only)|string.equals(#hedit.mode,Horizontal (scroll))]</visible>
       </control>
       <control>
         <description>buttons</description>
@@ -345,7 +345,7 @@
           <ondown>31</ondown>
           <onright>30</onright>
           <onleft>10</onleft>
-          <visible>string.equals(#hedit.mode,Horizontal Text only)|string.equals(#hedit.mode,Horizontal (scroll))</visible>
+          <visible>!skin.hassetting(#skin.basichome.editor)+[string.equals(#hedit.mode,Horizontal Text only)|string.equals(#hedit.mode,Horizontal (scroll))]</visible>
         </control>
         <control>
           <description>Music Fanart BasicHome</description>
@@ -359,7 +359,7 @@
           <ondown>37</ondown>
           <onright>31</onright>
           <onleft>10</onleft>
-          <visible>string.equals(#hedit.mode,Horizontal Text only)|string.equals(#hedit.mode,Horizontal (scroll))</visible>
+          <visible>!skin.hassetting(#skin.basichome.editor)+[string.equals(#hedit.mode,Horizontal Text only)|string.equals(#hedit.mode,Horizontal (scroll))]</visible>
         </control>
         <control>
           <description>Music Fanart NowPlaying BasicHome</description>
@@ -373,10 +373,12 @@
           <ondown>10</ondown>
           <onright>37</onright>
           <onleft>10</onleft>
-          <visible>string.equals(#hedit.mode,Horizontal Text only)|string.equals(#hedit.mode,Horizontal (scroll))</visible>
+          <visible>!skin.hassetting(#skin.basichome.editor)+[string.equals(#hedit.mode,Horizontal Text only)|string.equals(#hedit.mode,Horizontal (scroll))]</visible> 
         </control>
       </control>
-      <control>
+	  <!-- ******************* PREVIEW IMAGES ************************** -->
+	  <!-- Skin -->
+       <control>
         <description>Skin Preview</description>
         <type>image</type>
         <id>20</id>
@@ -385,7 +387,312 @@
         <width>552</width>
         <height>310</height>
         <keepaspectratio>no</keepaspectratio>
-      </control>
-    </control>
+	    <visible>!control.hasfocus(32)+!control.hasfocus(33)+!control.hasfocus(3750)+!control.hasfocus(37)+!control.hasfocus(31)+!control.hasfocus(30)</visible>
+       </control>
+	   <!-- Plugin Poster BasicHome -->
+	   <control>
+		<description>Plugin Poster BasicHome</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\basichome_nopluginbg.png</texture>
+		<visible>control.hasfocus(32)+string.contains(#skin.category BG, false)</visible>
+	  </control>
+	  <control>
+		<description>Plugin Poster BasicHome</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\basichome_pluginbg.png</texture>
+		<visible>control.hasfocus(32)+string.contains(#skin.category BG, true)</visible>
+	  </control>
+	  <!-- TVGuide/RadioGuide -->
+	  <control>
+		<description>tv guide 10 lines</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\tvguide_10lines.png</texture>
+		<visible>control.hasfocus(33)+string.contains(#skin.tvguide.rows, 10)</visible>
+	  </control>
+	   <control>
+		<description>radio guide 10 lines</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\radioguide_10lines.png</texture>
+		<animation effect="fade" start="0" end="100" time="2000" delay="3000" condition="control.hasfocus(33)+string.contains(#skin.tvguide.rows, 10)">conditional</animation>
+        <animation effect="fade" start="100" end="0" time="2000" delay="8000" condition="control.hasfocus(33)+string.contains(#skin.tvguide.rows, 10)">conditional</animation>
+		<visible>control.hasfocus(33)+string.contains(#skin.tvguide.rows, 10)</visible>
+	  </control>
+	   <control>
+		<description>tv guide 12 lines</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\tvguide_12lines.png</texture>
+		<visible>control.hasfocus(33)+string.contains(#skin.tvguide.rows, 12)</visible>
+	  </control>
+	   <control>
+		<description>radio guide 12 lines</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\radioguide_12lines.png</texture>
+		<animation effect="fade" start="0" end="100" time="2000" delay="3000" condition="control.hasfocus(33)+string.contains(#skin.tvguide.rows, 12)">conditional</animation>
+        <animation effect="fade" start="100" end="0" time="2000" delay="8000" condition="control.hasfocus(33)+string.contains(#skin.tvguide.rows, 12)">conditional</animation>
+		<visible>control.hasfocus(33)+string.contains(#skin.tvguide.rows, 12)</visible>
+	   </control>
+	   <control>
+		<description>tv guide 15 lines</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\tvguide_15lines.png</texture>
+		<visible>control.hasfocus(33)+string.contains(#skin.tvguide.rows, 15)</visible>
+	  </control>
+	  <control>
+		<description>radio guide 15 lines</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\radioguide_15lines.png</texture>
+		<animation effect="fade" start="0" end="100" time="2000" delay="3000" condition="control.hasfocus(33)+string.contains(#skin.tvguide.rows, 15)">conditional</animation>
+        <animation effect="fade" start="100" end="0" time="2000" delay="8000" condition="control.hasfocus(33)+string.contains(#skin.tvguide.rows, 15)">conditional</animation>
+		<visible>control.hasfocus(33)+string.contains(#skin.tvguide.rows, 15)</visible>
+	   </control>
+	   <control>
+		<description>tv guide 18 lines</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\tvguide_18lines.png</texture>
+		<visible>control.hasfocus(33)+string.contains(#skin.tvguide.rows, 18)</visible>
+	  </control>
+	  <control>
+		<description>radio guide 18 lines</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\radioguide_18lines.png</texture>
+		<animation effect="fade" start="0" end="100" time="2000" delay="3000" condition="control.hasfocus(33)+string.contains(#skin.tvguide.rows, 18)">conditional</animation>
+        <animation effect="fade" start="100" end="0" time="2000" delay="8000" condition="control.hasfocus(33)+string.contains(#skin.tvguide.rows, 18)">conditional</animation>
+		<visible>control.hasfocus(33)+string.contains(#skin.tvguide.rows, 18)</visible>
+	   </control>
+	   <control>
+		<description>tv guide 24 lines</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\tvguide_24lines.png</texture>
+		<visible>control.hasfocus(33)+string.contains(#skin.tvguide.rows, 24)</visible>
+	  </control>
+	  <control>
+		<description>radio guide 24 lines</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\radioguide_24lines.png</texture>
+		<animation effect="fade" start="0" end="100" time="2000" delay="3000" condition="control.hasfocus(33)+string.contains(#skin.tvguide.rows, 24)">conditional</animation>
+        <animation effect="fade" start="100" end="0" time="2000" delay="8000" condition="control.hasfocus(33)+string.contains(#skin.tvguide.rows, 24)">conditional</animation>
+		<visible>control.hasfocus(33)+string.contains(#skin.tvguide.rows, 24)</visible>
+	   </control>
+	   <!-- Thumbnailview/Fanartwallview in myVideos/MovingPictures -->
+	   <control>
+		<description>thumbnail view</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\thumnailview.png</texture>
+		<visible>control.hasfocus(3570)+string.contains(#skin.thumbsview, #SkinTranslation.Translations.Thumbsview.Select.Label)</visible>
+	  </control>
+	  <control>
+		<description>Fanart Wall view</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\fanartwall.png</texture>
+		<visible>control.hasfocus(3570)+string.contains(#skin.thumbsview, Fanart Wall)</visible>
+	  </control>
+	  <!-- Fanart in Basichome -->
+	  <control>
+		<description>Video Fanart BasicHome disabled</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\basichome_novideofanart.png</texture>
+	    <visible>control.hasfocus(30)+string.contains(#skin.video.fanart.basichome, false)</visible>
+	  </control>
+	  <control>
+		<description>Video Fanart BasicHome enabled</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\basichome_videofanart.png</texture>
+		<visible>control.hasfocus(30)+string.contains(#skin.video.fanart.basichome, true)</visible>
+	  </control>
+	    <control>
+		<description>Music Fanart BasicHome disabled</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\basichome_music_norandomfanart.png</texture>
+		<visible>control.hasfocus(31)+string.contains(#skin.music.fanart.basichome, false)</visible>
+	  </control>
+	  <control>
+		<description>Music Fanart BasicHome enabled</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\basichome_music_randomfanart.png</texture>
+		<visible>control.hasfocus(31)+string.contains(#skin.music.fanart.basichome, true)</visible>
+	  </control>
+	   <control>
+		<description>Music Fanart NowPlaying BasicHome disabled</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\basichome_nomusicplayfanart.png</texture>
+		<visible>control.hasfocus(37)+string.contains(#skin.music.fanart.nowplaying.basichome, false)</visible>
+	  </control>
+	  <control>
+		<description>Music Fanart NowPlaying BasicHome enabled</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\basichome_musicplayfanart.png</texture>
+		<visible>control.hasfocus(37)+string.contains(#skin.music.fanart.nowplaying.basichome, true)</visible>
+	  </control>
+	  <!-- Facade in Classic Home -->
+	   <control>
+		<description>Listview in Classic Home</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\myhomeListview.png</texture>
+		<visible>control.hasfocus(50)+string.contains(#home.myhome.layout, List)</visible>
+	  </control>
+	  <control>
+		<description>LargeIconsview in Classic Home</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\myhomeLargeIconsview.png</texture>
+		<visible>control.hasfocus(50)+string.contains(#home.myhome.layout, LargeIcons)</visible>
+	  </control>
+	   <control>
+		<description>Filmstripview in Classic Home</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\myhomeFilmstripview.png</texture>
+		<visible>control.hasfocus(50)+string.contains(#home.myhome.layout, Filmstrip)</visible>
+	  </control>
+	   <control>
+		<description>Coverflowview in Classic Home</description>
+		<type>image</type>
+		<id>0</id>
+		<posX>1290</posX>
+        <posY>280</posY>
+        <width>552</width>
+        <height>310</height>
+		<keepaspectratio>no</keepaspectratio>
+		<texture>Settings\myhomeCoverflowview.png</texture>
+		<visible>control.hasfocus(50)+string.contains(#home.myhome.layout, CoverFlow)</visible>
+	  </control>
+	  
+	</control>
   </controls>
 </window>
