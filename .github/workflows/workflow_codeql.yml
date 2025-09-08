@@ -25,7 +25,7 @@ jobs:
         shell: cmd
 
       - name: Setup Java JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: 8
           architecture: x86
@@ -36,7 +36,7 @@ jobs:
           choco install --yes nsis --version=3.11 --force
 
       - name: Git Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Git Submodule Update
         run: |
