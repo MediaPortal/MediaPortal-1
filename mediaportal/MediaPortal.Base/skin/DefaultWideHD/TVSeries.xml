@@ -306,6 +306,7 @@
       <posX>1095</posX>
       <posY>375</posY>
       <label>#(iif(eq(#TVSeries.Series.AirsDay,''),'N/A','#TVSeries.Series.AirsDay')) #(iif(eq(#TVSeries.Series.AirsTime,''), '', '@ #TVSeries.Series.AirsTime'))</label>
+      <!--label>#TVSeries.Series.InfoPanelLine3Value</label-->
       <font>font12</font>
       <width>420</width>
       <textcolor>lightgray</textcolor>
@@ -330,7 +331,7 @@
       <posX>1095</posX>
       <posY>441</posY>
       <width>420</width>
-      <label>#TVSeries.Series.DataPanelLine2Value</label>
+      <label>#TVSeries.Series.InfoPanelLine2Value</label>
       <font>font12</font>
       <textcolor>lightgray</textcolor>
       <visible>[facadeview.list|facadeview.largeicons]+[control.isvisible(1237)|control.isvisible(1238)]</visible>
@@ -354,7 +355,7 @@
       <posX>1095</posX>
       <posY>507</posY>
       <width>420</width>
-      <label>#TVSeries.Series.DataPanelLine3Value</label>
+      <label>#TVSeries.Series.InfoPanelLine3Value</label>
       <font>font12</font>
       <textcolor>lightgray</textcolor>
       <visible>[facadeview.list|facadeview.largeicons]+[control.isvisible(1237)|control.isvisible(1238)]</visible>
