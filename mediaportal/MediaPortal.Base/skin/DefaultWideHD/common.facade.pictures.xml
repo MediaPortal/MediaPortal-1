@@ -22,6 +22,7 @@
           <scrollOffset>2</scrollOffset>
           <scrollbarXOff>5</scrollbarXOff>
           <unfocusedAlpha>160</unfocusedAlpha>
+		  <selectedColor>ffffffff</selectedColor>
         </control>
         <control>
           <description>Thumbnail Panel</description>

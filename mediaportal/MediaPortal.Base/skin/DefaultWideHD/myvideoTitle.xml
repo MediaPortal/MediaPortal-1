@@ -33,7 +33,7 @@
       <label>#selectedindex/#itemcount #currentmodule</label>
       <align>right</align>
       <font>RSS</font>
-      <textcolor>fff5deb3</textcolor>
+      <textcolor>lightgray</textcolor>
       <shadowAngle>10</shadowAngle>
       <shadowDistance>2</shadowDistance>
       <shadowColor>ff000000</shadowColor>
