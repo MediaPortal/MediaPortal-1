@@ -73,10 +73,16 @@ How to play
   <!-- ****************************   Skin translation for Connect4 ****************************-->
   <!-- ***************************************************************************************-->
   <string Field="WinAnimation">Show Win Animation</string>
-<!-- ***************************************************************************************-->
+  <!-- ***************************************************************************************-->
   <!-- ****************************   Skin translation for BHE ****************************-->
   <!-- ***************************************************************************************-->
   <string Field="Important">Important !</string>
   <string Field="CloseBHE">Close BasicHome Editor</string>
-  <string Field="SaveBHE">to save the settings correctly !</string>
+  <string Field="SaveBHE">to store your new settings !</string>
+   <!-- ***************************************************************************************-->
+  <!-- ****************************   Skin translation for Picture Info  *********************-->
+  <!-- ***************************************************************************************-->
+  <string Field="EXIFDATA">EXIF DATA</string>
+  <string Field="ImageInfos">Image information</string>
+  <string Field="CameraSettings">Camera settings</string>
 </strings>
