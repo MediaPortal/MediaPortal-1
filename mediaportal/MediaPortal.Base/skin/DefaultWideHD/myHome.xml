@@ -42,7 +42,7 @@
         <type>fadelabel</type>
         <description>Date Time Weather Label</description>
         <id>0</id>
-        <label>#time #scroll.wrap #date #scroll.wrap #WorldWeather.Location: #WorldWeather.TodayCondition</label>
+        <label>#time #scroll.wrap #date #scroll.wrap #WorldWeather.Location: #WorldWeather.TodayCondition</label> 
         <width>50</width>
         <maxWidth>1600</maxWidth>
         <textcolor>ff00bfff</textcolor>
@@ -112,21 +112,21 @@
       <animation effect="fade" time="150">windowopen</animation>
       <animation effect="fade" time="50">windowclose</animation>
     </control>
-    <control>
+	<control>
       <type>group</type>
       <description>group element</description>
-      <layout>StackLayout(2, Vertical, true)</layout>
+      <layout>StackLayout(4, Vertical, true)</layout>
       <animation effect="fade" time="150">windowopen</animation>
       <animation effect="fade" time="50">windowclose</animation>
-      <posX>14</posX>
-      <posY>400</posY>
+      <posX>25</posX> 
+      <posY>405</posY>
       <visible>!control.hasfocus(50)+!control.hasfocus(1111)</visible>
       <control>
-        <description>hidden button for EXIT to BasicHome</description>
+        <description>Hidden button for EXIT to BasicHome</description>
         <type>button</type>
         <id>9997</id>
-        <width>56</width>
-        <height>56</height>
+        <width>52</width>
+        <height>52</height>
         <textureFocus>tb_back3.png</textureFocus>
         <textureNoFocus>tb_backNF.png</textureNoFocus>
         <label>-</label>
@@ -135,16 +135,17 @@
         <onleft>9997</onleft>
         <onup>9998</onup>
         <ondown>9999</ondown>
-        <animation effect="fade" time="150">windowopen</animation>
+		<animation effect="zoom" time="150" start="20,20" end="100,100">visible</animation>
+        <animation effect="fade" time="150">visible</animation>
         <animation effect="fade" time="50">windowclose</animation>
-        <animation effect="zoom" time="50" start="100,100" end="130,120">focus</animation>
+        <animation effect="zoom" time="50" start="100,100" end="130,130">focus</animation>
       </control>
       <control>
-        <description>hidden button for EXIT</description>
+        <description>Hidden button for EXIT</description>
         <type>button</type>
         <id>9999</id>
-        <width>56</width>
-        <height>56</height>
+        <width>52</width>
+        <height>52</height>
         <textureFocus>tb_exit3.png</textureFocus>
         <textureNoFocus>tb_exitNF.png</textureNoFocus>
         <label>-</label>
@@ -153,16 +154,17 @@
         <onleft>9999</onleft>
         <onup>9997</onup>
         <ondown>9998</ondown>
-        <animation effect="fade" time="150">windowopen</animation>
+		<animation effect="zoom" time="150" start="20,20" end="100,100" delay="50">visible</animation>
+        <animation effect="fade" time="150" delay="50">visible</animation>
         <animation effect="fade" time="50">windowclose</animation>
-        <animation effect="zoom" time="50" start="100,100" end="130,120">focus</animation>
+        <animation effect="zoom" time="50" start="100,100" end="130,130">focus</animation>
       </control>
       <control>
-        <description>hidden button for SHUTDOWN</description>
+        <description>Hidden button for SHUTDOWN</description>
         <type>button</type>
         <id>9998</id>
-        <width>56</width>
-        <height>56</height>
+        <width>52</width>
+        <height>52</height>
         <textureFocus>tb_shutdown3.png</textureFocus>
         <textureNoFocus>tb_shutdownNF.png</textureNoFocus>
         <label>-</label>
@@ -171,13 +173,14 @@
         <onleft>9998</onleft>
         <onup>9999</onup>
         <ondown>9997</ondown>
-        <animation effect="fade" time="150">windowopen</animation>
+		<animation effect="zoom" time="150" start="20,20" end="100,100" delay="100">visible</animation>
+        <animation effect="fade" time="150" delay="100">visible</animation>
         <animation effect="fade" time="50">windowclose</animation>
-        <animation effect="zoom" time="50" start="100,100" end="130,120">focus</animation>
+        <animation effect="zoom" time="50" start="100,100" end="130,130">focus</animation>
       </control>
     </control>
     <!-- ******************************************************************************************* -->
-    <!-- ****************** INFOS ON BASIC HOME (NOW PLAYING AUDIO) W FANART ******************** -->
+    <!-- ****************** INFOS ON BASIC HOME (NOW PLAYING AUDIO) W FANART *********************** -->
     <!-- ******************************************************************************************* -->
     <control>
       <type>group</type>

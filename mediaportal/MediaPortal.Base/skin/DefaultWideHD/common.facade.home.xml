@@ -30,7 +30,7 @@
       <type>image</type>
       <id>0</id>
       <posX>-20</posX>
-      <posY>989</posY>
+      <posY>994</posY> 
       <width>1995</width>
       <height>1</height>
       <texture>horizontalbar.png</texture>
@@ -54,7 +54,7 @@
       <type>image</type>
       <id>0</id>
       <posX>-20</posX>
-      <posY>253</posY>
+      <posY>252</posY> 
       <width>1995</width>
       <height>1</height>
       <texture>horizontalbar.png</texture>
@@ -66,7 +66,7 @@
       <type>image</type>
       <id>0</id>
       <posX>-20</posX>
-      <posY>954</posY>
+      <posY>959</posY> 
       <width>1995</width>
       <height>1</height>
       <texture>horizontalbar.png</texture>
@@ -78,9 +78,9 @@
       <type>image</type>
       <id>1</id>
       <posX>-40</posX>
-      <posY>385</posY>
+      <posY>360</posY> 
       <width>2100</width>
-      <height>560</height>
+      <height>585</height> 
       <texture>filmstripbg.png</texture>
       <colordiffuse>80ffffff</colordiffuse>
       <visible>!facadeview.largeicons+!facadeview.list</visible>
@@ -91,7 +91,7 @@
       <type>image</type>
       <id>0</id>
       <posX>-20</posX>
-      <posY>406</posY>
+      <posY>381</posY> 
       <width>1995</width>
       <height>1</height>
       <texture>horizontalbar.png</texture>
@@ -103,7 +103,7 @@
       <type>image</type>
       <id>0</id>
       <posX>-20</posX>
-      <posY>924</posY>
+      <posY>925</posY> 
       <width>1995</width>
       <height>1</height>
       <texture>horizontalbar.png</texture>
@@ -204,11 +204,11 @@
       <description>Plugin Description Background</description>
       <type>image</type>
       <id>0</id>
-      <posX>1080</posX>
+      <posX>1085</posX> 1075
       <posY>750</posY>
-      <width>652</width>
-      <height>240</height>
-      <texture>latestmediabg.png</texture>
+      <width>645</width> 665
+      <height>233</height>
+      <texture>plugin_descriptionbg.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
       <keepaspectratio>no</keepaspectratio>
       <visible>facadeview.list</visible>
@@ -261,7 +261,7 @@
           <font>Menutitle</font>
           <font2>font10</font2>
           <textXOff>0</textXOff>
-          <textYOff>33</textYOff>
+          <textYOff>30</textYOff> 33
           <textalign>center</textalign>
           <textureFocus>button_focus.png</textureFocus>
           <textureNoFocus></textureNoFocus>
@@ -416,7 +416,7 @@
           <onleft>9997</onleft>
           <onright>50</onright>
           <onup>2</onup>
-          <ondown>2</ondown>
+          <ondown>2</ondown> 
           <selectedCard>0</selectedCard>
           <cardWidth>450</cardWidth>
           <cardHeight>300</cardHeight>
@@ -477,14 +477,14 @@
               </control>
               <control>
                 <description>General Info</description>
-                <type>textbox</type>
+                <type>textbox</type> 
                 <posX>25</posX>
                 <posY>10</posY>
                 <width>400</width>
                 <height>250</height>
                 <label>#plugindescription</label>
                 <font>font9</font>
-                <!--align>center</align-->
+                <!--<align>center</align>-->
                 <textcolor>ff00bfff</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
