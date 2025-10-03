@@ -447,7 +447,7 @@
           <font1>Menutitle</font1>
           <font2>font14</font2>
           <label1>#pluginname</label1>
-          <!--label2>#pluginname</label2-->
+          <label2></label2>
           <textColor>FFFFFFFF</textColor>
           <remoteColor>FFFF0000</remoteColor>
           <playedColor>FFA0D0FF</playedColor>
