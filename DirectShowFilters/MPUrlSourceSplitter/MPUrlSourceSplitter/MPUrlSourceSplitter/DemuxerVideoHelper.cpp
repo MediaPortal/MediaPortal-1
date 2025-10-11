@@ -169,7 +169,8 @@ VIDEOINFOHEADER *CDemuxerVideoHelper::CreateVIH(const AVStream *stream, ULONG *s
     if ((pvi->bmiHeader.biBitCount == 0) || (stream->codec->codec_id == AV_CODEC_ID_RAWVIDEO))
     {
       const AVPixFmtDescriptor *desc = av_pix_fmt_desc_get(stream->codec->pix_fmt);
-      pvi->bmiHeader.biBitCount = av_get_bits_per_pixel(desc);
+      if (desc != NULL)
+        pvi->bmiHeader.biBitCount = av_get_bits_per_pixel(desc);
     }
     pvi->bmiHeader.biSizeImage = DIBSIZE(pvi->bmiHeader);   // calculating this value doesn't really make a lot of sense, but apparently some decoders freak out if its 0
 
