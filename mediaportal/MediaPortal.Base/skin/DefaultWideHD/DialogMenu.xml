@@ -93,15 +93,16 @@
       <id>3</id>
       <posX>460</posX>
       <posY>225</posY>
-      <width>1020</width>
+      <width>1020</width> 1
       <height>630</height>
       <onright>2</onright>
       <textureFocus>listfocus_menu.png</textureFocus>
-      <textXOff>20</textXOff>
+      <textXOff>20</textXOff> 
+	  <IconXOff>2000</IconXOff> 
       <scrollbarXOff>10</scrollbarXOff>
       <spinPosX>4390</spinPosX>
       <spinPosY>765</spinPosY>
-    </control>
+	</control>
     
   </controls>
 </window>

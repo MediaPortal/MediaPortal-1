@@ -212,8 +212,8 @@
       <textureWidth>25</textureWidth>
       <textureHeight>25</textureHeight>
       <subitems>
-        <subitem>starbad.png</subitem>
-        <subitem>star.png</subitem>
+        <subitem>starbad_small.png</subitem>   <!--- neu -->
+        <subitem>star_small.png</subitem>
       </subitems>
       <orientation>horizontal</orientation>
       <align>left</align>
@@ -267,30 +267,53 @@
       <width>270</width>
       <height>375</height>
       <texture mask="videothumbmask.png">missing_Coverart_video.png</texture>
-      <visible>facadeview.list+[Control.HasFocus(50)+!control.hasthumb(500)]</visible>
+      <visible>facadeview.list+!string.contains(#selecteditem,..)+!string.contains(#selectedthumb,defaultDVDRomBig.png)+!string.contains(#selectedthumb,defaultFolderBig.png)</visible> +!control.hasthumb(500)  facadeview.list+[Control.HasFocus(50)+!control.hasthumb(500)]   [string.contains(#selectedthumb,defaultVideoBig.png)]|string.contains(#selectedthumb,defaultVideoSeenBig.png)]
     </control>
     <control>
-      <description>Actual cover/image</description>
+      <description>Actual cover/image</description> 
       <id>500</id>
       <type>image</type>
       <posX>1570</posX>
       <posY>300</posY>
       <width>270</width>
       <height>375</height>
-      <texture mask="videothumbmask.png">#selectedthumb</texture>
-      <visible>facadeview.list</visible>
+      <texture mask="videothumbmask.png">#selectedthumb</texture>  
+	  <visible>facadeview.list+!string.contains(#selecteditem,..)+!string.contains(#selectedthumb,defaultDVDRomBig.png)+!string.contains(#selectedthumb,defaultFolderBig.png)+!string.contains(#selectedthumb,defaultVideoBig.png)+!string.contains(#selectedthumb,defaultVideoSeenBig.png)</visible>
     </control>
-    <control>
-      <description>Collection banner</description>
-      <id>0</id>
+	<control>
+	  <description>DefaultFolderBack</description>
+      <id>1</id>
       <type>image</type>
-      <posX>1571</posX>
-      <posY>302</posY>
-      <width>100</width>
-      <height>100</height>
-      <texture>collection.png</texture>
-      <visible>facadeview.list+string.equals(#moviecollection)+string.equals(#hideinfo, False)</visible>
+      <posX>1525</posX>   
+      <posY>307</posY>
+      <width>360</width>
+      <height>360</height>
+      <texture mask="cdthumbmask.png">#selectedthumb</texture>
+      <visible>facadeview.list+string.contains(#selecteditem,..)</visible>
     </control>
+	<control>
+	  <description>DefaultDVDRom</description>
+      <id>1</id>
+      <type>image</type>
+      <posX>1525</posX>   
+      <posY>307</posY>
+      <width>360</width>
+      <height>360</height>
+      <texture mask="cdthumbmask.png">#selectedthumb</texture>
+      <visible>facadeview.list+string.contains(#selectedthumb,defaultDVDRomBig.png)</visible>
+    </control>
+	<control>
+	  <description>DefaultFolder</description>
+      <id>1</id>
+      <type>image</type>
+      <posX>1419</posX>  
+      <posY>307</posY> 
+      <width>575</width> 
+      <height>324</height> 
+      <texture mask="cdthumbmask.png">#selectedthumb</texture>
+      <visible>facadeview.list+string.contains(#selectedthumb,defaultFolderBig.png)</visible>
+    </control>
+	
     <control>
       <description>Usergroup banner</description>
       <id>0</id>
