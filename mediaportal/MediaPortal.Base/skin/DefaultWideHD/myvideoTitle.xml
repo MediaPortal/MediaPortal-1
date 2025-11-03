@@ -21,9 +21,10 @@
     <!--import>common.window.xml</import>
     <import>common.time.xml</import-->
     <include condition="#(eq(#skin.thumbsview,'Normal'))">common.window.xml</include>
-   <include condition="#(eq(#skin.thumbsview,'Fanart Wall'))">common.window.fanartwall.xml</include>
-   <include condition="#(eq(#skin.thumbsview,'Normal'))">common.time.xml</include>
-   <include condition="#(eq(#skin.thumbsview,'Fanart Wall'))">common.time.fanartwall.xml</include>
+    <include condition="#(eq(#skin.thumbsview,'Fanart Wall'))">common.window.fanartwall.xml</include>
+    <include condition="#(eq(#skin.thumbsview,'Normal'))">common.time.xml</include>
+    <include condition="#(eq(#skin.thumbsview,'Fanart Wall'))">common.time.fanartwall.xml</include>
+   
     <control>
       <description>Itemcount CurrentModule</description>
       <type>label</type>
@@ -229,52 +230,8 @@
       <textcolor>lightgray</textcolor>
       <visible>facadeview.list+string.equals(#hideinfo, False)</visible>
     </control>
-    <control>
-      <description>Default image</description> 
-      <id>0</id>
-      <type>image</type>
-      <posX>1570</posX>
-      <posY>300</posY>
-      <width>270</width>
-      <height>375</height>
-      <texture mask="videothumbmask.png">missing_Coverart_video.png</texture>
-      <visible>facadeview.list+!string.contains(#selecteditem,..)+!string.contains(#selectedthumb,defaultFolderBig.png)+!string.contains(#selectedthumb,defaultActorBIG.png)+!string.contains(#selectedthumb,defaultGenreBig.png)+!string.contains(#selectedthumb,DefaultYearBIG.png)</visible>   
-    </control>
-    <control>
-      <description>Actual cover/image</description> 
-      <id>500</id>
-      <type>image</type>
-      <posX>1570</posX>
-      <posY>300</posY>
-      <width>270</width>
-      <height>375</height>
-      <texture mask="videothumbmask.png">#selectedthumb</texture>  
-	  <visible>facadeview.list+!string.contains(#selecteditem,..)+!string.contains(#selectedthumb,defaultFolderBig.png)+!string.contains(#selectedthumb,defaultVideoBig.png)+!string.contains(#selectedthumb,defaultVideoSeenBig.png)</visible>
-    </control>
+    <import>MyVideoTitleImages.xml</import>
 	<control>
-	  <description>DefaultFolderBack</description>
-      <id>1</id>
-      <type>image</type>
-      <posX>1525</posX>   
-      <posY>307</posY>
-      <width>360</width>
-      <height>360</height>
-      <texture mask="cdthumbmask.png">#selectedthumb</texture>
-      <visible>facadeview.list+string.contains(#selecteditem,..)</visible>
-    </control>
-	
-	<control>
-	  <description>DefaultFolder</description>
-      <id>1</id>
-      <type>image</type>
-      <posX>1419</posX>  
-      <posY>307</posY> 
-      <width>575</width> 
-      <height>324</height> 
-      <texture mask="cdthumbmask.png">#selectedthumb</texture>
-      <visible>facadeview.list+string.contains(#selectedthumb,defaultFolderBig.png)</visible>
-    </control>
-    <control>
       <description>Collection banner</description>
       <id>0</id>
       <type>image</type>
@@ -316,7 +273,7 @@
       <height>375</height>
       <keepaspectratio>yes</keepaspectratio>
       <texture>#fanarthandler.movie.genres.selected.verticalall</texture>
-      <visible>facadeview.list</visible>
+      <visible>facadeview.list+![string.contains(#currentmodule, Genre)|string.contains(#currentmodule, Generi)|string.contains(#currentmodule, G&#233;neros)]</visible>
     </control>
     <control>
       <description>Award images</description>
@@ -556,24 +513,39 @@
       <type>label</type>
       <id>1</id>
       <posX>1095</posX>
-      <posY>280</posY>
+      <posY>250</posY>
       <label>#(L(342)):</label>
-      <font>font10</font>
+      <font>LabelBold</font>
       <textcolor>ff00bfff</textcolor>
-      <visible>facadeview.list+ string.equals(#hideinfo, true)+string.equals(#hideActorinfo, true)</visible>
+      <visible>facadeview.list+[!string.contains(#currentmodule, Genre)+!string.contains(#currentmodule, Generi)+!string.contains(#currentmodule, G&#233;neros)]+string.equals(#hideinfo, true)+string.equals(#hideActorinfo, true)</visible>
     </control>
+    
+    <control>
+      <description>Genres Label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>1300</posX> 1426
+      <posY>310</posY> 450
+	  <width>300</width>
+      <label>#scroll.wrap #selecteditem #scroll.wrap</label>
+      <font>Label</font>
+      <align>center</align>
+      <textcolor>ff00bfff</textcolor>
+      <visible>facadeview.list+[string.contains(#currentmodule, Genre)|string.contains(#currentmodule, Generi)|string.contains(#currentmodule, G&#233;neros)]+string.equals(#hideinfo, true)+string.equals(#hideActorinfo, true)+!string.equals(#selecteditem,..)</visible>
+    </control>
+    
     <control>
       <description>usergroup list value</description>
       <type>textboxscrollup</type>
       <id>1</id>
       <posX>1095</posX>
-      <posY>315</posY>
-      <width>450</width>
-      <height>585</height>
+      <posY>300</posY>
+      <width>500</width>
+      <height>750</height>
       <label>#groupmovielist</label>
       <font>font11</font>
       <textcolor>lightgray</textcolor>
-      <visible>facadeview.list+ string.equals(#hideinfo, true)+string.equals(#hideActorinfo, true)</visible>
+      <visible>facadeview.list+ string.equals(#hideinfo, true)+string.equals(#hideActorinfo, true)+[!string.contains(#currentmodule, Genre)+!string.contains(#currentmodule, Generi)+!string.contains(#currentmodule, G&#233;neros)]</visible>
     </control>
     <!-- ********** Media Info Logos (List View) ********** -->
     <control>
@@ -759,29 +731,31 @@
       <textcolor>lightgray</textcolor>
       <visible>facadeview.list+string.equals(#hideActorinfo, False)</visible>
     </control>
-    <!--control>
+    <control>
       <description>Content locked</description>
       <type>image</type>
       <id>1</id>
-      <posX>1860</posX>
-      <posY>120</posY>
-      <width>45</width>
-      <height>45</height>
-      <visible>string.equals(#MyVideos.PinLocked, True)</visible>
-      <texture>lock.png</texture>
+      <posX>1810</posX> 
+      <posY>54</posY>
+      <width>57</width>
+      <height>44</height>
+	  <texture>locked.png</texture>
+	  <colordiffuse>lightgray</colordiffuse>
       <keepaspectratio>yes</keepaspectratio>
-    </control-->
-    <!--control>
-      <description>Content unlock</description>
+	  <visible>string.equals(#MyVideos.PinLocked, True)</visible>
+    </control>
+    <control>
+      <description>Content unlocked</description>
       <type>image</type>
       <id>1</id>
-      <posX>1860</posX>
-      <posY>120</posY>
-      <width>45</width>
-      <height>45</height>
-      <visible>string.equals(#MyVideos.PinLocked, False)</visible>
-      <texture>unlock.png</texture>
+      <posX>1812</posX> 
+      <posY>56</posY>
+      <width>54</width> 
+      <height>42</height> 
+      <texture>unlocked.png</texture>
+	  <colordiffuse>lightgray</colordiffuse>
       <keepaspectratio>yes</keepaspectratio>
-    </control-->
+	  <visible>string.equals(#MyVideos.PinLocked, False)</visible>
+    </control>
   </controls>
 </window>

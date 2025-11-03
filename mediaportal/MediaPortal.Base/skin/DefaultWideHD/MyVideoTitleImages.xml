@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <controls>
+   <control>
+      <description>Default image</description> 
+      <id>0</id>
+      <type>image</type>
+      <posX>1570</posX>
+      <posY>300</posY>
+      <width>270</width>
+      <height>375</height>
+      <texture mask="videothumbmask.png">missing_Coverart_video.png</texture>
+      <visible>facadeview.list+!string.contains(#selecteditem,..)+!string.contains(#selectedthumb,defaultFolderBig.png)+!string.contains(#selectedthumb,defaultActorBIG.png)+!string.contains(#selectedthumb,defaultGenreBig.png)+!string.contains(#selectedthumb,DefaultYearBIG.png)</visible>   
+    </control>
+    <control>
+      <description>Actual cover/image</description> 
+      <id>500</id>
+      <type>image</type>
+      <posX>1570</posX>
+      <posY>300</posY>
+      <width>270</width>
+      <height>375</height>
+      <texture mask="videothumbmask.png">#selectedthumb</texture>  
+	  <visible>facadeview.list+!string.contains(#selecteditem,..)+!string.contains(#selectedthumb,defaultFolderBig.png)+!string.contains(#selectedthumb,defaultVideoBig.png)+!string.contains(#selectedthumb,defaultVideoSeenBig.png)+!string.contains(#selectedthumb,defaultGenreBig.png)</visible>
+    </control>
+	<control>
+	  <description>DefaultFolderBack</description>
+      <id>1</id>
+      <type>image</type>
+      <posX>1525</posX>   
+      <posY>307</posY>
+      <width>360</width>
+      <height>360</height>
+      <texture mask="cdthumbmask.png">#selectedthumb</texture>
+      <visible>facadeview.list+string.contains(#selecteditem,..)</visible>
+    </control>
+	
+	<control>
+	  <description>DefaultFolder</description>
+      <id>1</id>
+      <type>image</type>
+      <posX>1419</posX>  
+      <posY>307</posY> 
+      <width>575</width> 
+      <height>324</height> 
+      <texture mask="cdthumbmask.png">#selectedthumb</texture>
+      <visible>facadeview.list+string.contains(#selectedthumb,defaultFolderBig.png)</visible>
+    </control>
+	
+    <!--  The following control assigns the various genre names on the left to the corresponding genre images on the right in the "View by: Genres" screen view of myVideo.
+          You can add your own genre names in the available languages, replace the existing ones, or add genre names in another language.
+
+        Important: Before you make any changes, please save the original MyVideoTitleImages.xml!  
+
+        To make a new assignment, always edit an expression such as :::::  eq(#selecteditem,‘Action’),‘Logos\video\Videogenres\action_genre.png’,  ::::: 
+        where ‘Action’ is the genre name and ‘Logos\video\Videogenres\action_genre.png’ is the path of the corresponding genre image = action_genre.png!
+
+        Note: The genre name and the path of the genre image are enclosed in single quotation marks! 
+		      The genre name, e.g. Action, may only appear once within <texture mask="cdthumbmask.png">....</texture>!!!
+			  
+        In the "Videogenres" folder, path C:\ProgramData\Team MediaPortal\MediaPortal\skin\DefaultWideHD\Media\Logos\video\Videogenres, you will find  
+        existing genre images as well as a template for generating your own genre images!  -->
+
+  <control>
+	  <description>Genre images multilingual</description> 
+      <id>1</id>
+      <type>image</type>
+      <posX>1300</posX> 
+      <posY>340</posY> 
+      <width>300</width> 
+      <height>387</height> 
+      <keepaspectratio>yes</keepaspectratio> 
+      <texture mask="cdthumbmask.png">#(switch(
+	  
+	    <!-- ================================  English  ==================================== -->
+	  
+	    eq(#selecteditem,'Action'),'Logos\video\Videogenres\action_genre.png', 
+		eq(#selecteditem,'Adult'),'Logos\video\Videogenres\adult_genre.png', 
+		eq(#selecteditem,'Eroticism'),'Logos\video\Videogenres\adult_genre.png', 
+        eq(#selecteditem,'Adventure'),'Logos\video\Videogenres\adventure_genre.png',
+        eq(#selecteditem,'Animal'),'Logos\video\Videogenres\animal_genre.png',
+		eq(#selecteditem,'Animal film'),'Logos\video\Videogenres\animal_genre.png',
+        eq(#selecteditem,'Animation'),'Logos\video\Videogenres\animation_genre.png',
+		eq(#selecteditem,'Cartoon'),'Logos\video\Videogenres\animation_genre.png',
+        eq(#selecteditem,'Anime'),'Logos\video\Videogenres\anime_genre.png',
+        eq(#selecteditem,'Biography'),'Logos\video\Videogenres\biography_genre.png',
+        eq(#selecteditem,'Catastrophy'),'Logos\video\Videogenres\catastrophy_genre.png',
+		eq(#selecteditem,'Disaster'),'Logos\video\Videogenres\catastrophy_genre.png',
+		eq(#selecteditem,'Children'),'Logos\video\Videogenres\children_genre.png',
+        eq(#selecteditem,'Comedy'),'Logos\video\Videogenres\comedy_genre.png',
+        eq(#selecteditem,'Crime'),'Logos\video\Videogenres\crime_genre.png',
+        eq(#selecteditem,'Documentary'),'Logos\video\Videogenres\documentary_genre.png',
+		eq(#selecteditem,'Documentary film'),'Logos\video\Videogenres\documentary_genre.png',
+        eq(#selecteditem,'Drama'),'Logos\video\Videogenres\drama_genre.png',
+		eq(#selecteditem,'Eastern'),'Logos\video\Videogenres\eastern_genre.png',
+		eq(#selecteditem,'Kung Fu'),'Logos\video\Videogenres\eastern_genre.png',
+        eq(#selecteditem,'Family'),'Logos\video\Videogenres\family_genre.png',
+        eq(#selecteditem,'Fantasy'),'Logos\video\Videogenres\fantasy_genre.png',
+        eq(#selecteditem,'Film noir'),'Logos\video\Videogenres\film noir_genre.png',
+		eq(#selecteditem,'Game'),'Logos\video\Videogenres\game_genre.png',
+        eq(#selecteditem,'History'),'Logos\video\Videogenres\history_genre.png',
+		eq(#selecteditem,'Historical film'),'Logos\video\Videogenres\history_genre.png',
+        eq(#selecteditem,'Horror'),'Logos\video\Videogenres\horror_genre.png',
+        eq(#selecteditem,'Indie'),'Logos\video\Videogenres\indie_genre.png',
+        eq(#selecteditem,'Melodrama'),'Logos\video\Videogenres\melodrama_genre.png',
+        eq(#selecteditem,'Military'),'Logos\video\Videogenres\military_genre.png',
+		eq(#selecteditem,'Mini series'),'Logos\video\Videogenres\mini series_genre.png',
+		eq(#selecteditem,'Mini-series'),'Logos\video\Videogenres\mini series_genre.png',
+        eq(#selecteditem,'Music'),'Logos\video\Videogenres\music_genre.png',
+        eq(#selecteditem,'Musical'),'Logos\video\Videogenres\musical_genre.png',
+        eq(#selecteditem,'Mystery'),'Logos\video\Videogenres\mystery_genre.png',
+        eq(#selecteditem,'News'),'Logos\video\Videogenres\news_genre.png',
+        eq(#selecteditem,'Reality TV'),'Logos\video\Videogenres\reality_genre.png',
+        eq(#selecteditem,'Red carpet'),'Logos\video\Videogenres\red carpet_genre.png',
+		eq(#selecteditem,'Film festival'),'Logos\video\Videogenres\red carpet_genre.png',
+		eq(#selecteditem,'Romance'),'Logos\video\Videogenres\romance_genre.png',
+        eq(#selecteditem,'Sci-fi'),'Logos\video\Videogenres\sci-fi_genre.png',
+		eq(#selecteditem,'Science-fiction'),'Logos\video\Videogenres\sci-fi_genre.png',
+        eq(#selecteditem,'Short'),'Logos\video\Videogenres\short_genre.png',
+        eq(#selecteditem,'Special interests'),'Logos\video\Videogenres\special interests_genre.png',
+		eq(#selecteditem,'Special interest'),'Logos\video\Videogenres\special interests_genre.png',
+        eq(#selecteditem,'Sport'),'Logos\video\Videogenres\sport_genre.png',
+        eq(#selecteditem,'Sports film'),'Logos\video\Videogenres\sports film_genre.png',
+        eq(#selecteditem,'Suspense'),'Logos\video\Videogenres\suspense_genre.png',
+        eq(#selecteditem,'Talk show'),'Logos\video\Videogenres\talk show_genre.png',
+		eq(#selecteditem,'Thriller'),'Logos\video\Videogenres\thriller_genre.png',
+        eq(#selecteditem,'Tv'),'Logos\video\Videogenres\tv_genre.png',
+		eq(#selecteditem,'Game show'),'Logos\video\Videogenres\tv_genre.png',
+        eq(#selecteditem,'Tv-series'),'Logos\video\Videogenres\tv-series_genre.png',
+        eq(#selecteditem,'War'),'Logos\video\Videogenres\war_genre.png',
+		eq(#selecteditem,'War movie'),'Logos\video\Videogenres\war_genre.png',
+        eq(#selecteditem,'Western'),'Logos\video\Videogenres\western_genre.png',
+        eq(#selecteditem,'World'),'Logos\video\Videogenres\world_genre.png',
+		eq(#selecteditem,'Foreign'),'Logos\video\Videogenres\world_genre.png',
+
+        <!-- ================================  German  ==================================== -->
+		 
+		eq(#selecteditem,'Erwachsene'),'Logos\video\Videogenres\adult_genre.png',  
+		eq(#selecteditem,'Erotik'),'Logos\video\Videogenres\adult_genre.png',
+        eq(#selecteditem,'Abenteuer'),'Logos\video\Videogenres\adventure_genre.png',
+        eq(#selecteditem,'Tier'),'Logos\video\Videogenres\animal_genre.png',
+		eq(#selecteditem,'Tierfilm'),'Logos\video\Videogenres\animal_genre.png',
+		eq(#selecteditem,'Animationsfilm'),'Logos\video\Videogenres\animation_genre.png',
+		eq(#selecteditem,'Zeichentrick'),'Logos\video\Videogenres\animation_genre.png',
+        eq(#selecteditem,'Biographie'),'Logos\video\Videogenres\biography_genre.png',
+        eq(#selecteditem,'Katastrophe'),'Logos\video\Videogenres\catastrophy_genre.png',
+		eq(#selecteditem,'Katastrophen'),'Logos\video\Videogenres\catastrophy_genre.png',
+		eq(#selecteditem,'Katastrophenfilm'),'Logos\video\Videogenres\catastrophy_genre.png',
+		eq(#selecteditem,'Kinder'),'Logos\video\Videogenres\children_genre.png',
+		eq(#selecteditem,'Kinder-'),'Logos\video\Videogenres\children_genre.png',
+        eq(#selecteditem,'Komödie'),'Logos\video\Videogenres\comedy_genre.png',
+        eq(#selecteditem,'Krimi'),'Logos\video\Videogenres\crime_genre.png',
+		eq(#selecteditem,'Kriminalität'),'Logos\video\Videogenres\crime_genre.png',
+        eq(#selecteditem,'Dokumentation'),'Logos\video\Videogenres\documentary_genre.png',
+		eq(#selecteditem,'Dokumentarfilm'),'Logos\video\Videogenres\documentary_genre.png',
+        eq(#selecteditem,'Familie'),'Logos\video\Videogenres\family_genre.png',
+		eq(#selecteditem,'Familienfilm'),'Logos\video\Videogenres\family_genre.png',
+        eq(#selecteditem,'Fantasie'),'Logos\video\Videogenres\fantasy_genre.png',
+        eq(#selecteditem,'Spiel'),'Logos\video\Videogenres\game_genre.png',
+        eq(#selecteditem,'Geschichte'),'Logos\video\Videogenres\history_genre.png',
+		eq(#selecteditem,'Historie'),'Logos\video\Videogenres\history_genre.png',
+		eq(#selecteditem,'Historienfilm'),'Logos\video\Videogenres\history_genre.png',
+        eq(#selecteditem,'Militär'),'Logos\video\Videogenres\military_genre.png',
+		eq(#selecteditem,'Miniserie'),'Logos\video\Videogenres\mini series_genre.png',
+		eq(#selecteditem,'Musik'),'Logos\video\Videogenres\music_genre.png',
+		eq(#selecteditem,'Musikfilm'),'Logos\video\Videogenres\music_genre.png',
+        eq(#selecteditem,'Mysterium'),'Logos\video\Videogenres\mystery_genre.png',
+        eq(#selecteditem,'Nachrichten'),'Logos\video\Videogenres\news_genre.png',
+        eq(#selecteditem,'Reality-TV'),'Logos\video\Videogenres\reality_genre.png',
+        eq(#selecteditem,'Filmfestival'),'Logos\video\Videogenres\red carpet_genre.png',
+		eq(#selecteditem,'Romantik'),'Logos\video\Videogenres\romance_genre.png',
+		eq(#selecteditem,'Romanze'),'Logos\video\Videogenres\romance_genre.png',
+		eq(#selecteditem,'Liebe'),'Logos\video\Videogenres\romance_genre.png',
+		eq(#selecteditem,'Liebesfilm'),'Logos\video\Videogenres\romance_genre.png',
+		eq(#selecteditem,'Lovestory'),'Logos\video\Videogenres\romance_genre.png',
+		eq(#selecteditem,'Science Fiction'),'Logos\video\Videogenres\sci-fi_genre.png',
+        eq(#selecteditem,'Kurz'),'Logos\video\Videogenres\short_genre.png',
+        eq(#selecteditem,'Kurzfilm'),'Logos\video\Videogenres\short_genre.png',
+        eq(#selecteditem,'Lebensstil'),'Logos\video\Videogenres\special interests_genre.png',
+        eq(#selecteditem,'Sportfilm'),'Logos\video\Videogenres\sports film_genre.png',
+        eq(#selecteditem,'Spannung'),'Logos\video\Videogenres\suspense_genre.png',
+        eq(#selecteditem,'Talkshow'),'Logos\video\Videogenres\talk show_genre.png',
+		eq(#selecteditem,'Spielshow'),'Logos\video\Videogenres\tv_genre.png',
+		eq(#selecteditem,'TV-Film'),'Logos\video\Videogenres\tv_genre.png',
+        eq(#selecteditem,'Tv-Serie'),'Logos\video\Videogenres\tv-series_genre.png',
+		eq(#selecteditem,'Fernsehserie'),'Logos\video\Videogenres\tv-series_genre.png',
+		eq(#selecteditem,'Krieg'),'Logos\video\Videogenres\war_genre.png',
+        eq(#selecteditem,'Kriegsfilm'),'Logos\video\Videogenres\war_genre.png',
+        eq(#selecteditem,'Welt'),'Logos\video\Videogenres\world_genre.png',
+        eq(#selecteditem,'Ausland'),'Logos\video\Videogenres\world_genre.png',
+		
+		<!-- ================================  French  ==================================== -->
+		
+		eq(#selecteditem,'Adulte'),'Logos\video\Videogenres\adult_genre.png',  
+		eq(#selecteditem,'Érotisme'),'Logos\video\Videogenres\adult_genre.png',
+		eq(#selecteditem,'Aventure'),'Logos\video\Videogenres\adventure_genre.png',
+		eq(#selecteditem,'Film animalier'),'Logos\video\Videogenres\animal_genre.png',
+		eq(#selecteditem,'Catastrophe'),'Logos\video\Videogenres\catastrophy_genre.png',
+		eq(#selecteditem,'Film catastrophe'),'Logos\video\Videogenres\catastrophy_genre.png',
+		eq(#selecteditem,'Enfants'),'Logos\video\Videogenres\children_genre.png',
+        eq(#selecteditem,'Comédie'),'Logos\video\Videogenres\comedy_genre.png',
+		eq(#selecteditem,'Humour'),'Logos\video\Videogenres\comedy_genre.png',
+        eq(#selecteditem,'Policier'),'Logos\video\Videogenres\crime_genre.png',
+		eq(#selecteditem,'Criminalité'),'Logos\video\Videogenres\crime_genre.png',
+        eq(#selecteditem,'Documentaire'),'Logos\video\Videogenres\documentary_genre.png',
+		eq(#selecteditem,'Film documentaire'),'Logos\video\Videogenres\documentary_genre.png',
+        eq(#selecteditem,'Drame'),'Logos\video\Videogenres\drama_genre.png',
+		eq(#selecteditem,'Arts-martiaux'),'Logos\video\Videogenres\eastern_genre.png',
+		eq(#selecteditem,'Kung-Fu'),'Logos\video\Videogenres\eastern_genre.png',
+        eq(#selecteditem,'Famille'),'Logos\video\Videogenres\family_genre.png',
+        eq(#selecteditem,'Fantastique'),'Logos\video\Videogenres\fantasy_genre.png',
+		eq(#selecteditem,'Fantaisie'),'Logos\video\Videogenres\fantasy_genre.png',
+        eq(#selecteditem,'Jeu'),'Logos\video\Videogenres\game_genre.png',
+        eq(#selecteditem,'Histoire'),'Logos\video\Videogenres\history_genre.png',
+		eq(#selecteditem,'Film historique'),'Logos\video\Videogenres\history_genre.png',
+        eq(#selecteditem,'Horreur'),'Logos\video\Videogenres\horror_genre.png',
+        eq(#selecteditem,'Melodrame'),'Logos\video\Videogenres\melodrama_genre.png',
+        eq(#selecteditem,'Militaire'),'Logos\video\Videogenres\military_genre.png',
+		eq(#selecteditem,'Mini-série'),'Logos\video\Videogenres\mini series_genre.png',
+		eq(#selecteditem,'Musique'),'Logos\video\Videogenres\music_genre.png',
+        eq(#selecteditem,'Mystere'),'Logos\video\Videogenres\mystery_genre.png',
+        eq(#selecteditem,'Nouvelle'),'Logos\video\Videogenres\news_genre.png',
+        eq(#selecteditem,'Réalité TV'),'Logos\video\Videogenres\reality_genre.png',
+        eq(#selecteditem,'Télé-réalité'),'Logos\video\Videogenres\reality_genre.png',
+        eq(#selecteditem,'Tapis rouge'),'Logos\video\Videogenres\red carpet_genre.png',
+		eq(#selecteditem,'Festival du film'),'Logos\video\Videogenres\red carpet_genre.png',
+		eq(#selecteditem,'Film court'),'Logos\video\Videogenres\short_genre.png',
+        eq(#selecteditem,'Style de vie'),'Logos\video\Videogenres\special interests_genre.png',
+        eq(#selecteditem,'Film sportif'),'Logos\video\Videogenres\sports film_genre.png',
+        eq(#selecteditem,'Debat'),'Logos\video\Videogenres\talk show_genre.png',
+		eq(#selecteditem,'Série télévisée'),'Logos\video\Videogenres\tv-series_genre.png',
+        eq(#selecteditem,'Guerre'),'Logos\video\Videogenres\war_genre.png',
+		eq(#selecteditem,'Film de guerre'),'Logos\video\Videogenres\war_genre.png',
+        eq(#selecteditem,'Monde'),'Logos\video\Videogenres\world_genre.png',
+		eq(#selecteditem,'Étranger'),'Logos\video\Videogenres\world_genre.png',
+		
+		<!-- =============================================================================== -->
+		
+		eq(1,1),''))</texture>
+      <visible>facadeview.list+string.contains(#selectedthumb,defaultGenreBig.png)</visible>
+    </control>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  </controls>
+</window>
