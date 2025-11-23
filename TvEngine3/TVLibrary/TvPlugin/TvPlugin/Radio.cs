@@ -382,11 +382,6 @@ namespace TvPlugin
     {
       Log.Info("OnClick");
       GUIListItem item = facadeLayout[iItem];
-      if (item.MusicTag == null)
-      {
-        selectedItemIndex = -1;
-        LoadDirectory(null);
-      }
       if (item.IsFolder)
       {
         selectedItemIndex = -1;
@@ -394,6 +389,11 @@ namespace TvPlugin
       }
       else
       {
+        if (item.MusicTag == null)
+        {
+          selectedItemIndex = -1;
+          LoadDirectory(null);
+        }
         Play(item);
       }
     }
@@ -452,6 +452,7 @@ namespace TvPlugin
           directoryHistory.Set(SelectedItem.Label, currentFolder);
         }
       }
+      string oldCurrentFolder = currentFolder;
       currentFolder = strNewDirectory;
       GUIControl.ClearControl(GetID, facadeLayout.GetID);
 
@@ -595,30 +596,26 @@ namespace TvPlugin
       SelectCurrentItem();
       SetLabels();
       
-      for (int i = 0; i < facadeLayout.Count; ++i)
+      for (int i = 0; i < facadeLayout.Count; i++)
       {       
         GUIListItem item = facadeLayout[i];
         if (item != null)
         {
-          Channel channel = item.MusicTag as Channel;   
+          Channel channel = item.MusicTag as Channel;
 
-          if ((channel != null) && (_currentChannel != null))
+          if ( (channel != null && _currentChannel != null && channel.IdChannel == _currentChannel.IdChannel) ||
+               (item.IsFolder && item.Label == oldCurrentFolder))
           {
-            if (channel.IdChannel == _currentChannel.IdChannel)
-            {
-              selectedItemIndex = i++;
-              break;
-            }
+            selectedItemIndex = i;
+            break;
           }
         }
-
-        //set selected item
-        if (selectedItemIndex >= 0)
-        {
-          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
-        }
-        
-      }      
+      }
+      //set selected item
+      if (selectedItemIndex >= 0)
+      {
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
+      }
 
     }
 
