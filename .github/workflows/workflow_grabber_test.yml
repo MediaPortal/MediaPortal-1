@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: Grabber Test Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: andrewjswan/mediaportal-grabber-test
 
@@ -45,7 +45,7 @@ jobs:
         shell: cmd
 
       - name: Mediaportal Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           path: mediaportal
 
