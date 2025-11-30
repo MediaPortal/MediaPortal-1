@@ -58,7 +58,6 @@ namespace TvPlugin
 
     #region Base variables
 
-    private static Channel _currentChannel = null;
     private static bool _autoTurnOnRadio = false;
     private SortMethod currentSortMethod = SortMethod.Number;    
     private readonly DirectoryHistory directoryHistory = new DirectoryHistory();
@@ -67,7 +66,6 @@ namespace TvPlugin
     private int selectedItemIndex = -1;
     private static bool hideAllChannelsGroup = false;
     private string rootGroup = "(none)";
-    private static RadioChannelGroup selectedGroup;
     public static List<RadioChannelGroup> AllRadioGroups= new List<RadioChannelGroup>();
     private static bool settingsRadioLoaded = false;
 
@@ -76,13 +74,13 @@ namespace TvPlugin
     #region properties
     
     public static Channel CurrentChannel {
-      get { return _currentChannel; }
-      set { _currentChannel = value; }
+      get { return RadioHelper.CurrentChannel; }
+      set { RadioHelper.CurrentChannel = value; }
     }
     
     public static RadioChannelGroup SelectedGroup {
       get { 
-        if(selectedGroup == null)
+        if(RadioHelper.SelectedGroup == null)
         { // if user is at the root level then no group is selected
           // this then causes issues in guide as it does not know what
           // group to show so return the first available one
@@ -90,10 +88,10 @@ namespace TvPlugin
         }
         else
         {
-          return selectedGroup;
+          return RadioHelper.SelectedGroup;
         }
       }
-      set { selectedGroup = value; }
+      set { RadioHelper.SelectedGroup = value; }
     }
     
     #endregion
@@ -197,9 +195,9 @@ namespace TvPlugin
         }
 
         xmlwriter.SetValue("myradio", "lastgroup", lastFolder);
-        if (_currentChannel != null)
+        if (CurrentChannel != null)
         {
-            xmlwriter.SetValue("myradio", "channel", _currentChannel.DisplayName);
+            xmlwriter.SetValue("myradio", "channel", CurrentChannel.DisplayName);
         }
         
       }
@@ -341,7 +339,7 @@ namespace TvPlugin
       IList<Channel> channels = layer.GetChannelsByName(currentchannelName);
       if (channels != null && channels.Count > 0)
       {
-        _currentChannel = channels[0];
+        CurrentChannel = channels[0];
       }
 
       if (AllRadioGroups.Count == 0)
@@ -364,7 +362,7 @@ namespace TvPlugin
 
     private void SetLastChannel()
     {
-      if (_currentChannel != null)
+      if (CurrentChannel != null)
       {
         GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);      
         UpdateButtonStates();        
@@ -500,9 +498,9 @@ namespace TvPlugin
               Channel channel = map.ReferencedChannel();
               GUIListItem item = new GUIListItem();
 
-              if (_currentChannel != null)
+              if (CurrentChannel != null)
               {
-                if (channel.IdChannel == _currentChannel.IdChannel)
+                if (channel.IdChannel == CurrentChannel.IdChannel)
                 {
                   selectedItemIndex = totalItems-1;
                 }
@@ -533,7 +531,7 @@ namespace TvPlugin
             }
           }
         }
-        selectedGroup = null;
+        RadioHelper.SelectedGroup = null;
       }
       else
       {
@@ -543,7 +541,7 @@ namespace TvPlugin
         {
           return;
         }
-        selectedGroup = group;
+        RadioHelper.SelectedGroup = group;
         lastFolder = currentFolder;
         GUIListItem item = new GUIListItem();
         item.Label = "..";
@@ -603,7 +601,7 @@ namespace TvPlugin
         {
           Channel channel = item.MusicTag as Channel;
 
-          if ( (channel != null && _currentChannel != null && channel.IdChannel == _currentChannel.IdChannel) ||
+          if ( (channel != null && CurrentChannel != null && channel.IdChannel == CurrentChannel.IdChannel) ||
                (item.IsFolder && item.Label == oldCurrentFolder))
           {
             selectedItemIndex = i;
@@ -867,6 +865,11 @@ namespace TvPlugin
       }
     }
 
+    public override void Process()
+    {
+      RadioHelper.Process();
+    }
+
     private static void Play(GUIListItem item)
     {
       // We have the Station Name in there to retrieve the correct Coverart for the station in the Vis Window
@@ -878,7 +881,7 @@ namespace TvPlugin
       {
         return;
       }
-      _currentChannel = (Channel)item.MusicTag;
+      CurrentChannel = (Channel)item.MusicTag;
       
       Play();
     }
@@ -887,53 +890,45 @@ namespace TvPlugin
     {
       // We have the Station Name in there to retrieve the correct Coverart for the station in the Vis Window
       GUIPropertyManager.RemovePlayerProperties();
-      GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", _currentChannel.DisplayName);
-      GUIPropertyManager.SetProperty("#Play.Current.Album", _currentChannel.DisplayName);
+      GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", CurrentChannel.DisplayName);
+      GUIPropertyManager.SetProperty("#Play.Current.Album", CurrentChannel.DisplayName);
 
-      if ((_currentChannel.IsWebstream()) || (_currentChannel.CurrentProgram == null || _currentChannel.NextProgram == null ||
-        string.IsNullOrEmpty(_currentChannel.CurrentProgram.Title) ||  string.IsNullOrEmpty(_currentChannel.NextProgram.Title)))
-      {
-        GUIPropertyManager.SetProperty("#Play.Current.Title", _currentChannel.DisplayName); // No EPG
-        GUIPropertyManager.SetProperty("#Play.Next.Title", string.Empty);
-      }
-      else
-      {
-        GUIPropertyManager.SetProperty("#Play.Current.Title", _currentChannel.CurrentProgram.Title);
-        GUIPropertyManager.SetProperty("#Play.Next.Title", _currentChannel.NextProgram.Title);
-      }
+      RadioHelper.SetRadioProperties();
 
-      string strLogo = Utils.GetCoverArt(Thumbs.Radio, _currentChannel.DisplayName);
+      string strLogo = Utils.GetCoverArt(Thumbs.Radio, CurrentChannel.DisplayName);
       if (string.IsNullOrEmpty(strLogo))
       {
         strLogo = "defaultMyRadioBig.png";
       }
 
       GUIPropertyManager.SetProperty("#Play.Current.Thumb", strLogo);
+      GUIPropertyManager.SetProperty("#Radio.Listen.Thumb", strLogo);
 
-      if (g_Player.Playing && !_currentChannel.IsWebstream())
+      if (g_Player.Playing && !CurrentChannel.IsWebstream())
       {
-        if (!g_Player.IsTimeShifting || (g_Player.IsTimeShifting && _currentChannel.IsWebstream()))
+        if (!g_Player.IsTimeShifting || (g_Player.IsTimeShifting && CurrentChannel.IsWebstream()))
         {
           g_Player.Stop();
         }
       }
 
-      if (_currentChannel.IsWebstream())
+      if (CurrentChannel.IsWebstream())
       {
-        g_Player.PlayAudioStream(GetPlayPath(_currentChannel));
-        GUIPropertyManager.SetProperty("#Play.Current.Title", _currentChannel.DisplayName);
+        g_Player.PlayAudioStream(GetPlayPath(CurrentChannel));
+        GUIPropertyManager.SetProperty("#Play.Current.Title", CurrentChannel.DisplayName);
+        GUIPropertyManager.SetProperty("#Radio.Listen.Title", CurrentChannel.DisplayName);
       }
       else
       {
         if (g_Player.IsRadio && g_Player.Playing)
         {
           Channel currentlyPlaying = TVHome.Navigator.Channel;
-          if (currentlyPlaying != null && currentlyPlaying.IdChannel == _currentChannel.IdChannel)
+          if (currentlyPlaying != null && currentlyPlaying.IdChannel == CurrentChannel.IdChannel)
           {
             return;
           }
         }
-        TVHome.ViewChannelAndCheck(_currentChannel);
+        TVHome.ViewChannelAndCheck(CurrentChannel);
       }
     }
 

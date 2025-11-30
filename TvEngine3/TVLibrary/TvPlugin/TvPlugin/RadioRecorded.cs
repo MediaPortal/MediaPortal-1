@@ -1865,11 +1865,17 @@ namespace TvPlugin
 
       try
       {
-        _iSelectedItem = GetSelectedItemNo();
-        LoadDirectory();
-        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _iSelectedItem);
+        if (facadeLayout != null)
+        {
+          _iSelectedItem = GetSelectedItemNo();
+          LoadDirectory();
+          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _iSelectedItem);
+        }
       }
-      catch (Exception) { }
+      catch (Exception ex)
+      {
+        Log.Error("RadioRecorded: Error in doOnPlayBackStoppedOrChanged - {0}", ex.ToString());
+      }
 
       /*
             if (GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))

@@ -101,6 +101,16 @@
           <type>sortbutton</type>
           <id>3</id>
           <onup>2</onup>
+          <ondown>4</ondown>
+          <onright>50</onright>
+        </control>
+        <control>
+          <description>NowPlaying</description>
+          <type>button</type>
+          <id>4</id>
+          <label>4540</label>
+          <hyperlink>764</hyperlink>
+          <onup>3</onup>
           <ondown>6</ondown>
           <onright>50</onright>
         </control>
@@ -110,7 +120,7 @@
           <id>6</id>
           <label>210</label>
           <onright>50</onright>
-          <onup>3</onup>
+          <onup>4</onup>
           <ondown>7</ondown>
           <action>15</action>
         </control>
