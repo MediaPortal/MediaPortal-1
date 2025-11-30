@@ -104,7 +104,7 @@ namespace MPRepository.Items
 
     public virtual MPItemType Type { get; set; }
 
-    public virtual ISet<MPCategory> Categories { get; set; }
+    public virtual Iesi.Collections.Generic.ISet<MPCategory> Categories { get; set; }
 
     public virtual string Description { get; set; }
 
@@ -122,7 +122,7 @@ namespace MPRepository.Items
 
     public virtual IList<MPItemComment> Comments { get; set; }
 
-    public virtual ISet<MPTag> Tags { get; set; }
+    public virtual Iesi.Collections.Generic.ISet<MPTag> Tags { get; set; }
 
     public virtual MPItemRating Rating { get; set; }
 
