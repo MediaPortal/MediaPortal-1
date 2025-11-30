@@ -59,28 +59,31 @@ namespace TvPlugin
     #region Base variables
 
     private static bool _autoTurnOnRadio = false;
-    private SortMethod currentSortMethod = SortMethod.Number;    
+    private SortMethod currentSortMethod = SortMethod.Number;
     private readonly DirectoryHistory directoryHistory = new DirectoryHistory();
     private string currentFolder = null;
     private string lastFolder = "..";
     private int selectedItemIndex = -1;
     private static bool hideAllChannelsGroup = false;
     private string rootGroup = "(none)";
-    public static List<RadioChannelGroup> AllRadioGroups= new List<RadioChannelGroup>();
+    public static List<RadioChannelGroup> AllRadioGroups = new List<RadioChannelGroup>();
     private static bool settingsRadioLoaded = false;
 
     #endregion
-    
+
     #region properties
-    
-    public static Channel CurrentChannel {
+
+    public static Channel CurrentChannel
+    {
       get { return RadioHelper.CurrentChannel; }
       set { RadioHelper.CurrentChannel = value; }
     }
-    
-    public static RadioChannelGroup SelectedGroup {
-      get { 
-        if(RadioHelper.SelectedGroup == null)
+
+    public static RadioChannelGroup SelectedGroup
+    {
+      get
+      {
+        if (RadioHelper.SelectedGroup == null)
         { // if user is at the root level then no group is selected
           // this then causes issues in guide as it does not know what
           // group to show so return the first available one
@@ -93,7 +96,7 @@ namespace TvPlugin
       }
       set { RadioHelper.SelectedGroup = value; }
     }
-    
+
     #endregion
 
     #region SkinControls
@@ -110,7 +113,7 @@ namespace TvPlugin
     }
 
     public override bool Init()
-    {      
+    {
       return Load(GUIGraphicsContext.GetThemedSkinFile(@"\MyRadio.xml"));
     }
 
@@ -128,7 +131,7 @@ namespace TvPlugin
       {
         currentLayout = (Layout)xmlreader.GetValueAsInt(SerializeName, "layout", (int)Layout.List);
         m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
-        
+
         string tmpLine;
         tmpLine = xmlreader.GetValue("myradio", "sort");
         if (tmpLine != null)
@@ -174,7 +177,7 @@ namespace TvPlugin
       {
         xmlwriter.SetValue(SerializeName, "layout", (int)currentLayout);
         xmlwriter.SetValueAsBool(SerializeName, "sortasc", m_bSortAscending);
-        
+
         switch (currentSortMethod)
         {
           case SortMethod.Name:
@@ -197,9 +200,9 @@ namespace TvPlugin
         xmlwriter.SetValue("myradio", "lastgroup", lastFolder);
         if (CurrentChannel != null)
         {
-            xmlwriter.SetValue("myradio", "channel", CurrentChannel.DisplayName);
+          xmlwriter.SetValue("myradio", "channel", CurrentChannel.DisplayName);
         }
-        
+
       }
     }
 
@@ -254,7 +257,7 @@ namespace TvPlugin
 
       LoadSettings();
       LoadChannelGroups();
-    }    
+    }
 
     protected override void OnPageLoad()
     {
@@ -289,7 +292,7 @@ namespace TvPlugin
 
       base.OnPageLoad();
       GUIMessage msgStopRecorder = new GUIMessage(GUIMessage.MessageType.GUI_MSG_RECORDER_STOP, 0, 0, 0, 0, 0, null);
-      GUIWindowManager.SendMessage(msgStopRecorder);      
+      GUIWindowManager.SendMessage(msgStopRecorder);
       switch (currentSortMethod)
       {
         case SortMethod.Name:
@@ -307,7 +310,7 @@ namespace TvPlugin
         case SortMethod.Number:
           btnSortBy.SelectedItem = 4;
           break;
-      }      
+      }
 
       SelectCurrentItem();
       LoadDirectory(currentFolder);
@@ -323,8 +326,8 @@ namespace TvPlugin
         }
       }
 
-      btnSortBy.SortChanged += SortChanged;       
-    }    
+      btnSortBy.SortChanged += SortChanged;
+    }
 
     private static void LoadChannelGroups()
     {
@@ -364,8 +367,8 @@ namespace TvPlugin
     {
       if (CurrentChannel != null)
       {
-        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);      
-        UpdateButtonStates();        
+        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, selectedItemIndex);
+        UpdateButtonStates();
       }
     }
 
@@ -399,7 +402,7 @@ namespace TvPlugin
     protected override void UpdateButtonStates()
     {
       base.UpdateButtonStates();
-      
+
       string strLine = string.Empty;
       switch (currentSortMethod)
       {
@@ -438,7 +441,7 @@ namespace TvPlugin
           return true;
       }
       return false;
-    }  
+    }
 
     protected override void LoadDirectory(string strNewDirectory)
     {
@@ -477,7 +480,7 @@ namespace TvPlugin
           item.ThumbnailImage = String.Empty;
           Utils.SetDefaultIcons(item);
           string thumbnail = Utils.GetCoverArt(Thumbs.Radio, "folder_" + group.GroupName);
-          if (!string.IsNullOrEmpty(thumbnail))                            
+          if (!string.IsNullOrEmpty(thumbnail))
           {
             item.IconImageBig = thumbnail;
             item.IconImage = thumbnail;
@@ -492,7 +495,7 @@ namespace TvPlugin
           RadioChannelGroup root = layer.GetRadioChannelGroupByName(rootGroup);
           if (root != null)
           {
-            IList<RadioGroupMap> maps = root.ReferringRadioGroupMap();            
+            IList<RadioGroupMap> maps = root.ReferringRadioGroupMap();
             foreach (RadioGroupMap map in maps)
             {
               Channel channel = map.ReferencedChannel();
@@ -502,7 +505,7 @@ namespace TvPlugin
               {
                 if (channel.IdChannel == CurrentChannel.IdChannel)
                 {
-                  selectedItemIndex = totalItems-1;
+                  selectedItemIndex = totalItems - 1;
                 }
               }
 
@@ -520,7 +523,7 @@ namespace TvPlugin
                 item.IconImage = "DefaultMyradio.png";
               }
               string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
-              if (!string.IsNullOrEmpty(thumbnail))              
+              if (!string.IsNullOrEmpty(thumbnail))
               {
                 item.IconImageBig = thumbnail;
                 item.IconImage = thumbnail;
@@ -556,7 +559,7 @@ namespace TvPlugin
           Channel channel = map.ReferencedChannel();
 
           if (channel != null)
-          {          
+          {
             item = new GUIListItem();
             item.Label = channel.DisplayName;
             item.IsFolder = false;
@@ -573,7 +576,7 @@ namespace TvPlugin
               item.IconImage = "DefaultMyradio.png";
             }
             string thumbnail = Utils.GetCoverArt(Thumbs.Radio, channel.DisplayName);
-            if (!string.IsNullOrEmpty(thumbnail))            
+            if (!string.IsNullOrEmpty(thumbnail))
             {
               item.IconImageBig = thumbnail;
               item.IconImage = thumbnail;
@@ -593,15 +596,15 @@ namespace TvPlugin
 
       SelectCurrentItem();
       SetLabels();
-      
+
       for (int i = 0; i < facadeLayout.Count; i++)
-      {       
+      {
         GUIListItem item = facadeLayout[i];
         if (item != null)
         {
           Channel channel = item.MusicTag as Channel;
 
-          if ( (channel != null && CurrentChannel != null && channel.IdChannel == CurrentChannel.IdChannel) ||
+          if ((channel != null && CurrentChannel != null && channel.IdChannel == CurrentChannel.IdChannel) ||
                (item.IsFolder && item.Label == oldCurrentFolder))
           {
             selectedItemIndex = i;
@@ -737,7 +740,7 @@ namespace TvPlugin
             return -1;
           }
           return 1;
-          //break;
+        //break;
 
         case SortMethod.Number:
           if (channel1 != null && channel2 != null)
@@ -766,7 +769,7 @@ namespace TvPlugin
             return -1;
           }
           return channel2 != null ? 1 : 0;
-          //break;
+        //break;
         case SortMethod.Bitrate:
           IList<TuningDetail> details1 = channel1.ReferringTuningDetail();
           TuningDetail detail1 = details1[0];
@@ -795,7 +798,7 @@ namespace TvPlugin
 
     #endregion
 
-    
+
 
     protected override void OnShowSort()
     {
@@ -882,11 +885,11 @@ namespace TvPlugin
         return;
       }
       CurrentChannel = (Channel)item.MusicTag;
-      
+
       Play();
     }
-      
-    public static void Play ()
+
+    public static void Play()
     {
       // We have the Station Name in there to retrieve the correct Coverart for the station in the Vis Window
       GUIPropertyManager.RemovePlayerProperties();
@@ -940,8 +943,8 @@ namespace TvPlugin
       UpdateButtonStates();
 
       GUIControl.FocusControl(GetID, ((GUIControl)sender).GetID);
-    }    
-    
+    }
+
     #region ISetupForm Members
 
     public bool CanEnable()
