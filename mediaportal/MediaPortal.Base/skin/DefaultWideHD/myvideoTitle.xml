@@ -742,7 +742,7 @@
 	  <texture>locked.png</texture>
 	  <colordiffuse>lightgray</colordiffuse>
       <keepaspectratio>yes</keepaspectratio>
-	  <visible>string.equals(#MyVideos.PinLocked, True)</visible>
+	  <visible>string.equals(#MyVideos.PinLocked, True)+![[string.equals(#skin.thumbsview, Fanart Wall)]+[facadeview.smallicons|facadeview.largeicons]]</visible>
     </control>
     <control>
       <description>Content unlocked</description>
@@ -755,7 +755,7 @@
       <texture>unlocked.png</texture>
 	  <colordiffuse>lightgray</colordiffuse>
       <keepaspectratio>yes</keepaspectratio>
-	  <visible>string.equals(#MyVideos.PinLocked, False)</visible>
+	  <visible>string.equals(#MyVideos.PinLocked, False)+![[string.equals(#skin.thumbsview, Fanart Wall)]+[facadeview.smallicons|facadeview.largeicons]]</visible> 
     </control>
   </controls>
 </window>

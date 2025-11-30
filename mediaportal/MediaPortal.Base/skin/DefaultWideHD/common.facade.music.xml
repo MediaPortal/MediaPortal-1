@@ -83,8 +83,8 @@
           <imageFolder>-</imageFolder>
           <imageFolderFocus>-</imageFolderFocus>
           <textureMask>musicfanart_mask.png</textureMask>
-          <frameNoFocus>Picturethumbframe.png</frameNoFocus>
-          <frameFocus>Picturethumbframe.png</frameFocus>
+          <frameNoFocus>-</frameNoFocus>
+          <frameFocus>-</frameFocus>
           <keepaspectratio>no</keepaspectratio>
           <font>font10</font>
           <spinCanFocus>no</spinCanFocus>
@@ -112,10 +112,10 @@
           <itemHeight>315</itemHeight>
           <textureWidth>300</textureWidth>
           <textureHeight>300</textureHeight>
-          <imageFolder>Picturethumbframe.png</imageFolder>
-          <imageFolderFocus>Picturethumbframe.png</imageFolderFocus>
-          <frame>Picturethumbframe.png</frame>
-          <frameFocus>Picturethumbframe.png</frameFocus>
+          <imageFolder>-</imageFolder> 
+          <imageFolderFocus>-</imageFolderFocus> 
+          <frame>-</frame> 
+          <frameFocus>-</frameFocus>
           <textureMask>musicfanart_mask.png</textureMask>
           <thumbs mask="musicfanart_mask.png">
           </thumbs>
@@ -174,8 +174,8 @@
           <foreground>coverflow_foreground.png</foreground>
           <showForeground>no</showForeground>
           <showFrame>yes</showFrame>
-          <frame>Picturethumbframe.png</frame>
-          <frameFocus>Picturethumbframe.png</frameFocus>
+          <frame>-</frame> 
+          <frameFocus>-</frameFocus> 
           <frameWidth>540</frameWidth>
           <frameHeight>540</frameHeight>
           <spinSpeed>8</spinSpeed>

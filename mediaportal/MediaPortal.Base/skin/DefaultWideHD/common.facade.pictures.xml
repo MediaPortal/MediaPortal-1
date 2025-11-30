@@ -112,6 +112,7 @@
           <scrollbarRight>mouse_right_vertical.png</scrollbarRight>
           <scrollbarYOff>330</scrollbarYOff>
           <showScrollbar>yes</showScrollbar>
+          <keepaspectratio>yes</keepaspectratio>
           <thumbAnimation effect="zoom" start="100,100" end="180,180" time="200" tween="circle" ease="inout">focus</thumbAnimation>
           <thumbAnimation effect="zoom" start="180,180" end="100,100" time="200" tween="back" ease="inout">unfocus</thumbAnimation>
         </control>
@@ -159,7 +160,7 @@
           <font2>font10</font2>
           <label1 />
           <label2 />
-          <keepaspectratio>no</keepaspectratio>
+          <keepaspectratio>yes</keepaspectratio>
           <textColor>FFFFFFFF</textColor>
           <remoteColor>FFFF0000</remoteColor>
           <playedColor>FFA0D0FF</playedColor>

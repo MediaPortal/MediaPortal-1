@@ -402,8 +402,8 @@
     <textYOff2>2</textYOff2>
     <itemWidth>44</itemWidth>
     <itemHeight>44</itemHeight>
-    <IconXOff>6</IconXOff>
-    <IconYOff>1</IconYOff>
+    <IconXOff>10</IconXOff> 6
+    <IconYOff>2</IconYOff> 1
     <PinIconXOff>1177</PinIconXOff>
     <PinIconYOff>9</PinIconYOff>
     <PinIconWidth>35</PinIconWidth>
