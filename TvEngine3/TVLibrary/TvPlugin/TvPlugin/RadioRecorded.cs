@@ -1865,7 +1865,7 @@ namespace TvPlugin
 
       try
       {
-        if (facadeLayout != null && GUIWindowManager.ActiveWindow == GetID)
+        if (facadeLayout != null)
         {
           _iSelectedItem = GetSelectedItemNo();
           LoadDirectory();
