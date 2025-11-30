@@ -238,8 +238,8 @@
       <id>0</id>
       <posX>748</posX>
       <posY>559</posY>
-      <width>100</width>
-      <label>#TV.View.start</label>
+      <width>200</width>
+      <label>#TV.View.start - #TV.View.stop</label>
       <font>font10</font>
       <align>right</align>
       <textcolor>ffffffff</textcolor>
@@ -283,7 +283,7 @@
       <posX>1160</posX>
       <posY>559</posY>
       <width>100</width>
-      <label>#TV.View.stop</label>
+      <label>#TV.View.remaining</label>
       <font>font10</font>
       <align>left</align>
       <textcolor>ffffffff</textcolor>
@@ -332,7 +332,7 @@
       <posX>240</posX>
       <posY>660</posY>
       <width>1620</width>
-      <label>#(iif(neq(#TV.View.start,'' ),'#TV.View.start - #TV.Next.start #scroll.wrap #TV.View.title #scroll.wrap #TV.View.genre','#scroll.wrap #TV.View.title #scroll.wrap'))</label>
+      <label>#(iif(neq(#TV.View.genre,''),'#TV.View.start - #TV.Next.start #scroll.wrap #TV.View.title #scroll.wrap #TV.View.channel #scroll.wrap #TV.View.genre','#TV.View.start - #TV.Next.start #scroll.wrap #TV.View.title #scroll.wrap #TV.View.channel'))</label>
       <font>LabelBold</font>
       <align>left</align>
       <textcolor>ff00bfff</textcolor>
