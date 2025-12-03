@@ -93,7 +93,7 @@
       <id>3</id>
       <posX>460</posX>
       <posY>225</posY>
-      <width>1020</width> 1
+      <width>1020</width>
       <height>630</height>
       <onright>2</onright>
       <textureFocus>listfocus_menu.png</textureFocus>
