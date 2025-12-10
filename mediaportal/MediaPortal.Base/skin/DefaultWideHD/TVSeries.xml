@@ -65,29 +65,56 @@
       <colordiffuse>eeffffff</colordiffuse>
     </control>
     <control>
+	 <description>Selected item Label Series view</description> 
       <type>label</type>
       <id>1</id>
       <posX>45</posX>
       <posY>54</posY>
-      <label>#currentmodule #scroll.wrap #TVSeries.Series.Pretty_Name</label>
+      <label>#currentmodule #scroll.wrap #TVSeries.SimpleCurrentView #scroll.wrap #selecteditem</label>  
       <font>Label</font>
       <align>left</align>
       <textcolor>lightgray</textcolor>
-      <visible>!Control.IsVisible(1239)</visible>
+      <visible>Control.IsVisible(1237)</visible>
     </control>
     <control>
-      <description>Selected item Label</description>
+      <description>Selected item Label Season view</description>
       <type>fadelabel</type>
       <id>1</id>
       <posX>45</posX>
       <posY>54</posY>
       <width>1920</width>
-      <label>#currentmodule #scroll.wrap #TVSeries.Series.Pretty_Name #scroll.wrap #TVSeries.Title</label>
+      <label>#currentmodule #scroll.wrap #TVSeries.SimpleCurrentView #scroll.wrap #TVSeries.Series.Pretty_Name #scroll.wrap #selecteditem</label>  
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>lightgray</textcolor>
+      <visible>Control.IsVisible(1238)</visible>
+    </control>
+	 <control>
+      <description>Selected item Label Episode view</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <width>1920</width>
+      <label>#currentmodule #scroll.wrap #TVSeries.SimpleCurrentView #scroll.wrap #TVSeries.Series.Pretty_Name #scroll.wrap #selecteditem</label>  
       <font>Label</font>
       <align>left</align>
       <textcolor>lightgray</textcolor>
       <visible>Control.IsVisible(1239)</visible>
     </control>
+	 <control>
+      <description>Selected item Label Grouped View</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <width>1920</width>
+      <label>#currentmodule #scroll.wrap #TVSeries.SimpleCurrentView #scroll.wrap #selecteditem</label>  
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>lightgray</textcolor>
+      <visible>Control.IsVisible(1240)</visible>    
+	  </control>
     <control>
       <description>Number of Files Label Series Screen</description>
       <type>label</type>
@@ -171,9 +198,89 @@
       <colordiffuse>60ffffff</colordiffuse>
       <visible>[facadeview.list|facadeview.largeicons]</visible>
     </control-->
-    <!--
+	<!--
 		**//// Series and Season View ////**
 		-->
+    
+	<!--   Group views  -->	
+	
+	<!--Note: To add your own images or edit existing ones, note that the path for channel images is C:\ProgramData\Team MediaPortal\MediaPortal\skin\DefaultWideHD\Media\Logos\Studios, 
+	for genre images C:\ProgramData\Team MediaPortal\MediaPortal\ Thumbs\Skin FanArt\Media\Logos\Genres, 
+	and for rating images use C:\ProgramData\Team MediaPortal\MediaPortal\skin\DefaultWideHD\Media\Logos\certification! -->
+	
+	<control>
+      <description>Group logo background</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1100</posX> 
+      <posY>250</posY> 
+      <width>525</width> 
+      <height>420</height> 
+      <keepaspectratio>yes</keepaspectratio> 
+      <texture>TV set.png</texture>  
+      <visible>facadeview.list+control.isvisible(1240)+[string.contains(#TVSeries.SimpleCurrentView,#TVSeries.Translation.Channels.Label)|string.contains(#TVSeries.SimpleCurrentView,#TVSeries.Translation.Genres.Label)|string.contains(#TVSeries.SimpleCurrentView,#TVSeries.Translation.ContentRating.Label)|string.contains(#TVSeries.SimpleCurrentView,#TVSeries.Translation.ViewTags.Label)]</visible> 
+    </control>
+	<control>
+      <description>Genre images</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1269</posX>
+      <posY>475</posY>
+      <width>80</width>
+      <height>80</height>
+	  <colordiffuse>ff704214</colordiffuse>  
+	  <texture>C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Skin FanArt\Media\Logos\Genres\#selecteditem.png</texture> 
+      <visible>facadeview.list+control.isvisible(1240)+string.contains(#TVSeries.SimpleCurrentView,#TVSeries.Translation.Genres.Label)</visible>
+    </control>
+    <control>
+      <description>Studio images</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1229</posX>
+      <posY>457</posY>
+      <width>161</width>
+      <height>109</height> 
+	  <colordiffuse>ffaf002a</colordiffuse> 
+      <!--texture>Logos\Studios\#selecteditem.png</texture-->
+      <texture>C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Skin FanArt\Media\Logos\Studios\#selecteditem.png</texture> 
+      <visible>facadeview.list+control.isvisible(1240)+string.contains(#TVSeries.SimpleCurrentView,#TVSeries.Translation.Channels.Label)</visible>
+    </control>
+	<control>
+      <description>Program rating images</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1218</posX>
+      <posY>470</posY>
+      <width>180</width>
+      <height>90</height>
+	  <colordiffuse>ff0048ba</colordiffuse> 
+      <texture>Logos\certification\#selecteditem.png</texture> 
+      <visible>facadeview.list+control.isvisible(1240)+string.contains(#TVSeries.SimpleCurrentView,#TVSeries.Translation.ContentRating.Label)</visible>
+    </control>
+	<control>
+      <description>Program rating image "unknown"</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1218</posX>
+      <posY>470</posY>
+      <width>180</width>
+      <height>90</height>
+	  <colordiffuse>ff0048ba</colordiffuse> 
+      <texture>Logos\certification\TV-NA.png</texture> 
+      <visible>facadeview.list+control.isvisible(1240)+string.contains(#TVSeries.SimpleCurrentView,#TVSeries.Translation.ContentRating.Label)+string.equals(#selecteditem,#TVSeries.Translation.Unknown.Label)</visible>
+    </control>
+	<control>
+      <description>View tags image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1218</posX>
+      <posY>470</posY>
+      <width>180</width>
+      <height>90</height>
+	  <texture>view_tag.png</texture> 
+      <visible>facadeview.list+control.isvisible(1240)+string.contains(#TVSeries.SimpleCurrentView,#TVSeries.Translation.ViewTags.Label)</visible>
+    </control>	
+	
     <control>
       <description>Series Rating</description>
       <type>imagelist</type>

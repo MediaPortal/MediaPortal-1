@@ -4,19 +4,31 @@
   <id>30</id>
   <defaultcontrol>50</defaultcontrol>
   <allowoverlay>[facadeview.list|facadeview.filmstrip|facadeview.coverflow]</allowoverlay>
-  <define>#header.label:666</define>
+  <!--define>#header.label:#currentmodule #scroll.wrap #Radio.Listen.Group</define-->
   <define>#header.hover:hover_my radio.png</define>
   <controls>
     <control>
       <description>BG</description>
       <type>image</type>
       <id>1</id>
-      <texture>BH Radio.jpg</texture>
+      <texture>Radio2.jpg</texture>
       <width>1920</width>
       <height>1080</height>
     </control>
-    <import>common.window.xml</import>
+    <control>
+      <description>Title background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>379</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+    </control>
+    <!--import>common.window.xml</import-->
     <import>common.time.xml</import>
+    
     <control>
       <description>General Overlay</description>
       <id>0</id>
@@ -40,6 +52,57 @@
       <animation effect="fade" time="300">visible</animation>
       <animation effect="fade" time="300">hidden</animation>
     </control>
+    
+    <control>
+      <description>Itemcount CurrentModule</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1869</posX>
+      <posY>16</posY>
+      <label>#selectedindex/#itemcount #currentmodule</label>
+      <align>right</align>
+      <font>RSS</font>
+      <textcolor>lightgray</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      
+    </control>
+    
+    
+    
+    <!-- *************************************************************************************************** -->
+    <!-- ****************************  Corrrect Display of current group  ********************************** -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <type>fadelabel</type>
+      <description>group usw.</description>
+      <id>0</id>
+      <posX>40</posX>
+      <posY>54</posY>
+      <width>1620</width>
+      <align>left</align>
+      <label>#currentmodule #scroll.wrap #(L(971)): #Radio.Guide.Group</label>
+      <align>left</align>
+      <font>Label</font>
+    </control>
+      
+    <control>
+      <type>fadelabel</type>
+      <description>group usw.</description>
+      <id>0</id>
+      <posX>40</posX>
+      <posY>98</posY>
+      <width>1620</width>
+      <align>left</align>
+      <label>#(L(620)): #selecteditem</label>
+      <align>left</align>
+      <font>Label</font>
+      <visible>!string.equals(#selectedthumb,defaultFolderBig.png)+!string.equals(#selecteditem,..)</visible>
+    </control>
+    <!-- *************************************************************************************************** -->
+    <!-- *************************************  The Hidden Menu  ******************************************* -->
+    <!-- *************************************************************************************************** -->
     <control>
       <type>actiongroup</type>
       <description>action menu</description>
@@ -167,6 +230,9 @@
       </control>
     </control>
     <import>common.facade.music.xml</import>
+    <!-- *************************************************************************************************** -->
+    <!-- *************************  The Radio Logo at the right  ******************************************* -->
+    <!-- *************************************************************************************************** -->
     <control>
       <id>1</id>
       <type>image</type>
