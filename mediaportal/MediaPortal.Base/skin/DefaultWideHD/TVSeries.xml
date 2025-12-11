@@ -229,7 +229,7 @@
       <width>80</width>
       <height>80</height>
 	  <colordiffuse>ff704214</colordiffuse>  
-	  <texture>C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Skin FanArt\Media\Logos\Genres\#selecteditem.png</texture> 
+	  <texture>..\..\..\Thumbs\Skin FanArt\Media\Logos\Genres\#selecteditem.png</texture> 
       <visible>facadeview.list+control.isvisible(1240)+string.contains(#TVSeries.SimpleCurrentView,#TVSeries.Translation.Genres.Label)</visible>
     </control>
     <control>
@@ -242,7 +242,7 @@
       <height>109</height> 
 	  <colordiffuse>ffaf002a</colordiffuse> 
       <!--texture>Logos\Studios\#selecteditem.png</texture-->
-      <texture>C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Skin FanArt\Media\Logos\Studios\#selecteditem.png</texture> 
+      <texture>..\..\..\Thumbs\Skin FanArt\Media\Logos\Studios\#selecteditem.png</texture> 
       <visible>facadeview.list+control.isvisible(1240)+string.contains(#TVSeries.SimpleCurrentView,#TVSeries.Translation.Channels.Label)</visible>
     </control>
 	<control>
