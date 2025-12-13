@@ -15,6 +15,7 @@
         <control style="NoShadow">
           <description>listcontrol</description>
           <type>listcontrol</type>
+          <width>1132</width>
           <id>50</id>
         </control>
         <control>
@@ -22,29 +23,61 @@
           <type>listcontrol</type>
           <subtype>album</subtype>
           <id>50</id>
+		      <posX>120</posX>
+          <posY>250</posY>
           <width>1132</width>
-          <height>889</height>
-          <font>font13</font>
-          <font2>font13</font2>
-          <selectedColor>ff6FAFE1</selectedColor>
+          <height>750</height>
+          <spinPosX>3780</spinPosX>
+          <spinPosY>703</spinPosY>
+          <font>Label</font>
+          <font2>Label</font2>
+          <shadedColor>20ffffff</shadedColor>
+          <selectedColor3>FF00CC00</selectedColor3>
+          <selectedColor2>FF00CC00</selectedColor2>
+          <selectedColor>FF00CC00</selectedColor>
+          <playedColor>FFffffff</playedColor>
+          <playedColor2>FFffffff</playedColor2>
+          <playedColor3>FFffffff</playedColor3>
           <textcolor>ffffffff</textcolor>
-          <selectedColor2>ffffffff</selectedColor2>
+          <textcolorNoFocus>ffffffff</textcolorNoFocus>
           <textcolor2>ffffffff</textcolor2>
-          <textXOff2>1119</textXOff2>
-          <textYOff2>82</textYOff2>
-          <itemWidth>135</itemWidth>
-          <itemHeight>135</itemHeight>
-          <IconXOff>18</IconXOff>
-          <IconYOff>13</IconYOff>
-          <spaceBetweenItems>0</spaceBetweenItems>
-          <textureHeight>168</textureHeight>
-          <scrollOffset>1</scrollOffset>
+          <colordiffuse>ffffffff</colordiffuse>
+          <remoteColor>ff00ffff</remoteColor>
+          <remoteColor2>ff00ffff</remoteColor2>
+          <downloadColor>ff666666</downloadColor>
+          <downloadColor2>ff80ff80</downloadColor2>
+          <dimColor>90ffffff</dimColor>
+          <textXOff>16</textXOff>
+          <textXOff2>1150</textXOff2>
+          <textXOff3>87</textXOff3>
+          <textYOff>17</textYOff>
+          <textYOff2>17</textYOff2>
+          <textYOff3>35</textYOff3>
+          <itemWidth>76</itemWidth>
+          <itemHeight>76</itemHeight>
+          <IconXOff>10</IconXOff>
+          <IconYOff>2</IconYOff>
+          <PinIconXOff>1005</PinIconXOff>
+          <PinIconYOff>40</PinIconYOff>
+          <PinIconWidth>30</PinIconWidth>
+          <PinIconHeight>30</PinIconHeight>
+          <spaceBetweenItems>3</spaceBetweenItems>
+          <textureHeight>80</textureHeight>
+          <scrollOffset>4</scrollOffset>
           <textureFocus>list_sub_focus.png</textureFocus>
           <textureNoFocus>list_sub_nofocus.png</textureNoFocus>
           <onleft>2</onleft>
           <onright>50</onright>
           <onup>2</onup>
           <ondown>2</ondown>
+          <scrollbarHeight>400</scrollbarHeight>
+          <scrollbarbg>bar_vert.png</scrollbarbg>
+          <scrollbartop>mouse_left_horizontal.png</scrollbartop>
+          <scrollbarbottom>mouse_right_horizontal.png</scrollbarbottom>
+          <scrollbarXOff>40</scrollbarXOff>
+          <scrollbarYOff>0</scrollbarYOff>
+          <showScrollbar>yes</showScrollbar>
+          <scrollbarwidth>20</scrollbarwidth>
         </control>
         <control>
           <description>Thumbnail Panel</description>
