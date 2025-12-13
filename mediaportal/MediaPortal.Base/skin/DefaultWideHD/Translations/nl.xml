@@ -86,5 +86,11 @@ Spelen
   <!-- ***************************************************************************************-->
   <string Field="Important">Belangrijk !</string>
   <string Field="CloseBHE">Sluit BasicHome Editor</string>
-  <string Field="SaveBHE">om de instellingen correct op te slaan !</string>
+  <string Field="SaveBHE">om uw nieuwe instellingen op te slaan !</string>
+  <!-- ***************************************************************************************-->
+  <!-- ****************************   Skin translation for Picture Info  *********************-->
+  <!-- ***************************************************************************************-->
+  <string Field="EXIFDATA">EXIF-GEGEVENS</string>
+  <string Field="ImageInfos">Beeldinformatie</string>
+  <string Field="CameraSettings">Camera-instellingen</string>
 </strings>

@@ -184,6 +184,7 @@
           <description>Hide Rated</description>
           <type>checkbutton</type>
           <id>12</id>
+		  <width>439</width>
           <label>#Trakt.Translation.HideRated.Label</label>
           <onup>11</onup>
           <ondown>11899</ondown>
@@ -194,6 +195,7 @@
           <description>Trailers</description>
           <type>button</type>
           <id>11899</id>
+		  <width>439</width>
           <label>#Trailers.Translation.Trailers.Label...</label>
           <onup>12</onup>
           <ondown>2</ondown>

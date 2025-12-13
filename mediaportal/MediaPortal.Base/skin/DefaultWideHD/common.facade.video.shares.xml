@@ -2,6 +2,7 @@
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <controls>
+  <!--define>#selecteditem:#(iif(eq(#selectedtitem,'..'),'DefaultFolderBackBig.png','DefaultFolderBackBig.png'))</define-->
     <control>
       <description>group element</description>
       <type>group</type>
@@ -410,7 +411,7 @@
           <itemHeight>48</itemHeight>
           <IconXOff>18</IconXOff>
           <IconYOff>6</IconYOff>
-          <keepaspectratio>yes</keepaspectratio>
+          <keepaspectratio>no</keepaspectratio>
         </control>
       </control>
     </control>

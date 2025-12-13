@@ -252,7 +252,7 @@
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <zoom>no</zoom>
-      <texture>defaultTVlogo.png</texture>
+      <texture>DefaultMyradio.png</texture>
     </control>
     <control>
       <description>channel Label template</description>

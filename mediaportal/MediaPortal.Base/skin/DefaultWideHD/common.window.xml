@@ -51,7 +51,7 @@
       <posY>16</posY>
       <label>#selectedindex/#itemcount #currentmodule</label>
       <align>right</align>
-      <font>font10</font>
+      <font>RSS</font>
       <textcolor>lightgray</textcolor>
       <shadowAngle>10</shadowAngle>
       <shadowDistance>2</shadowDistance>
@@ -67,7 +67,7 @@
       <posY>16</posY>
       <label>#selectedindex/#itemcount #currentmodule #totalduration</label>
       <align>right</align>
-      <font>font10</font>
+      <font>RSS</font>
       <textcolor>lightgray</textcolor>
       <shadowAngle>10</shadowAngle>
       <shadowDistance>2</shadowDistance>
@@ -82,7 +82,7 @@
       <posY>16</posY>
       <label>#selectedindex/#Trakt.Items</label>
       <align>right</align>
-      <font>font10</font>
+      <font>RSS</font>
       <textcolor>lightgray</textcolor>
       <shadowAngle>10</shadowAngle>
       <shadowDistance>2</shadowDistance>

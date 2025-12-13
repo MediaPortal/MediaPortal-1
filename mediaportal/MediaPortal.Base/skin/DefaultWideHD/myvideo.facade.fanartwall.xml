@@ -33,26 +33,27 @@
           <downloadColor>ff666666</downloadColor>
           <downloadColor2>ff80ff80</downloadColor2>
           <dimColor>90ffffff</dimColor>
-          <textXOff2>875</textXOff2>
+          <textXOff2>875</textXOff2> 
           <textYOff2>1</textYOff2>
-          <textXOff3>3817</textXOff3>
+          <textXOff3>3817</textXOff3> 
           <textYOff3>12</textYOff3>
-          <textalign3>right</textalign3>
-          <font3>font9</font3>
+          <textalign2>right</textalign2>
+		  <textpadding>100</textpadding>
+		  <font3>font9</font3>
           <scrollOffset>2</scrollOffset>
           <spinCanFocus>no</spinCanFocus>
           <unfocusedAlpha>160</unfocusedAlpha>
           <folderPrefix />
           <folderSuffix />
           <textureFocus>#(iif(eq(#watchedcount,'0'),'listfocus_notwatched.png','listfocus.png'))</textureFocus>
-          <texturebg>osd_progress_background.png</texturebg>
-          <lefttexture>green.png</lefttexture>
-          <midtexture>green.png</midtexture>
-          <righttexture>green.png</righttexture>
-          <ProgressBarWidth>775</ProgressBarWidth>
-          <ProgressBarHeight>1</ProgressBarHeight>
+          <texturebg>videobar.png</texturebg>
+          <lefttexture>now_playing_progress_peach2.png </lefttexture> 
+          <midtexture>now_playing_progress_peach2.png </midtexture> 
+          <righttexture>now_playing_progress_peach2.png </righttexture> 
+          <ProgressBarWidth>755</ProgressBarWidth> 
+          <ProgressBarHeight>5</ProgressBarHeight>
           <ProgressBarXOffset>45</ProgressBarXOffset>
-          <ProgressBarYOffset>47</ProgressBarYOffset>
+          <ProgressBarYOffset>46</ProgressBarYOffset> 
           <SelectedProgressOnly>Yes</SelectedProgressOnly>
         </control>
         <control>
@@ -213,7 +214,7 @@
           <backgroundHeight>150</backgroundHeight>
           <backgroundWidth>2049</backgroundWidth>
           <backgroundX>0</backgroundX>
-          <backgroundY>600</backgroundY>
+          <backgroundY>650</backgroundY>
           <backgroundDiffuse>60000000</backgroundDiffuse>
           <background>roof.png</background>
           <showBackground>yes</showBackground>
@@ -271,12 +272,12 @@
               <control>
                 <description>Movie Details</description>
                 <type>fadelabel</type>
-                <posX>10</posX>
+                <posX>30</posX>
                 <posY>10</posY>
-                <width>230</width>
-                <label>#title</label>
+                <width>340</width>
+                <label>#scroll.wrap #title #scroll.wrap</label>
                 <font>font11</font>
-                <textcolor>lightgray</textcolor>
+                <textcolor>ff00bfff</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
                 <visible>string.equals(#hideinfo, true)</visible>
@@ -284,13 +285,13 @@
               <control>
                 <description>User group movie list</description>
                 <type>textboxscrollup</type>
-                <posX>20</posX>
-                <posY>40</posY>
-                <width>230</width>
-                <height>205</height>
+                <posX>30</posX>
+                <posY>50</posY>
+                <width>340</width>
+                <height>480</height>
                 <label>#groupmovielist</label>
-                <font>font9</font>
-                <lineSpacing>2</lineSpacing>
+                <font>font10</font>
+                <lineSpacing>3</lineSpacing>
                 <textcolor>lightgray</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
@@ -299,12 +300,12 @@
               <control>
                 <description>Movie Details</description>
                 <type>fadelabel</type>
-                <posX>10</posX>
+                <posX>20</posX>
                 <posY>10</posY>
-                <width>230</width>
-                <label>#title</label>
+                <width>340</width>
+                <label>#scroll.wrap #title #scroll.wrap</label>
                 <font>font11</font>
-                <textcolor>lightgray</textcolor>
+                <textcolor>ff00bfff</textcolor>
                 <shadowAngle>0</shadowAngle>
                 <shadowDistance>0</shadowDistance>
                 <visible>string.equals(#hideinfo, False)</visible>
@@ -312,12 +313,12 @@
               <control>
                 <type>imagelist</type>
                 <id>1</id>
-                <posX>10</posX>
+                <posX>20</posX>
                 <posY>45</posY>
                 <width>230</width>
                 <height>37</height>
-                <textureWidth>17</textureWidth>
-                <textureHeight>17</textureHeight>
+                <textureWidth>22</textureWidth>
+                <textureHeight>22</textureHeight>
                 <subitems>
                   <subitem>starbad.png</subitem>
                   <subitem>star.png</subitem>
@@ -470,7 +471,27 @@
     <scrollStartDelaySec>5</scrollStartDelaySec>
     <animation effect="fade" time="500">Visible</animation>
     <animation effect="fade" time="500">WindowOpen</animation>
-    <visible>facadeview.smallicons|facadeview.largeicons</visible>
+    <visible>[facadeview.smallicons|facadeview.largeicons]+[!string.contains(#currentmodule, Genre)+!string.contains(#currentmodule, Generi)+!string.contains(#currentmodule, G&#233;neros)]</visible>
+  </control>
+  
+  <control>
+    <description>Year,runtime, genre, progress below the movie title</description>
+    <type>fadelabel</type>
+    <label>#scroll.wrap #selecteditem #scroll.wrap</label>
+    <id>0</id>
+    <posX>80</posX> 
+    <posY>1024</posY>
+    <width>1600</width>
+    <align>center</align>
+    <font>Label</font>
+    <shadowAngle>45</shadowAngle>
+    <shadowDistance>3</shadowDistance>
+    <shadowColor>ff000000</shadowColor>
+    <textcolor>white</textcolor>
+    <scrollStartDelaySec>5</scrollStartDelaySec>
+    <animation effect="fade" time="500">Visible</animation>
+    <animation effect="fade" time="500">WindowOpen</animation>
+    <visible>[facadeview.smallicons|facadeview.largeicons]+[string.contains(#currentmodule, Genre)|string.contains(#currentmodule, Generi)|string.contains(#currentmodule, G&#233;neros)]</visible>
   </control>
   </controls>
 </window>

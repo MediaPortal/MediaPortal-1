@@ -88,5 +88,11 @@ Cómo jugar
   <!-- ***************************************************************************************-->
   <string Field="Important">¡ Importante !</string>
   <string Field="CloseBHE">¡ Cierre BasicHome Editor</string>
-  <string Field="SaveBHE">para guardar correctamente los ajustes !</string>
+  <string Field="SaveBHE">para guardar la nueva configuración !</string>
+  <!-- ***************************************************************************************-->
+  <!-- ****************************   Skin translation for Picture Info  *********************-->
+  <!-- ***************************************************************************************-->
+  <string Field="EXIFDATA">DATOS EXIF</string>
+  <string Field="ImageInfos">Información sobre la imagen</string>
+  <string Field="CameraSettings">Ajustes de la cámara</string>
 </strings>
