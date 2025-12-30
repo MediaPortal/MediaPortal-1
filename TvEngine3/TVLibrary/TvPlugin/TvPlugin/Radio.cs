@@ -161,6 +161,9 @@ namespace TvPlugin
         if (xmlreader.GetValueAsBool("myradio", "rememberlastgroup", true))
         {
           currentFolder = xmlreader.GetValueAsString("myradio", "lastgroup", null);
+          string channelName = xmlreader.GetValueAsString("myradio", "channel", null);
+          if (channelName == null)
+            currentFolder = null;
         }
         hideAllChannelsGroup = xmlreader.GetValueAsBool("myradio", "hideAllChannelsGroup", false);
         rootGroup = xmlreader.GetValueAsString("myradio", "rootgroup", "(none)");
