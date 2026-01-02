@@ -457,7 +457,12 @@ namespace TvPlugin
         }
       }
       string oldCurrentFolder = currentFolder;
-      currentFolder = strNewDirectory;
+      TvBusinessLayer layer = new TvBusinessLayer();
+      RadioChannelGroup newGroup = layer.GetRadioChannelGroupByName(strNewDirectory);
+      if (newGroup == null)
+        currentFolder = null;
+      else
+        currentFolder = strNewDirectory;
       GUIControl.ClearControl(GetID, facadeLayout.GetID);
 
       int totalItems = 0;
@@ -494,7 +499,6 @@ namespace TvPlugin
         }
         if (rootGroup != "(none)")
         {
-          TvBusinessLayer layer = new TvBusinessLayer();
           RadioChannelGroup root = layer.GetRadioChannelGroupByName(rootGroup);
           if (root != null)
           {
@@ -541,13 +545,7 @@ namespace TvPlugin
       }
       else
       {
-        TvBusinessLayer layer = new TvBusinessLayer();
-        RadioChannelGroup group = layer.GetRadioChannelGroupByName(currentFolder);
-        if (group == null)
-        {
-          return;
-        }
-        RadioHelper.SelectedGroup = group;
+        selectedGroup = newGroup;
         lastFolder = currentFolder;
         GUIListItem item = new GUIListItem();
         item.Label = "..";
@@ -556,7 +554,7 @@ namespace TvPlugin
         item.ThumbnailImage = String.Empty;
         Utils.SetDefaultIcons(item);
         facadeLayout.Add(item);
-        IList<RadioGroupMap> maps = group.ReferringRadioGroupMap();
+        IList<RadioGroupMap> maps = newGroup.ReferringRadioGroupMap();
         foreach (RadioGroupMap map in maps)
         {
           Channel channel = map.ReferencedChannel();
