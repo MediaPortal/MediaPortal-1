@@ -496,6 +496,22 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public static Dictionary<string, string> GetNonEmptyProperties()
+    {
+      var result = new Dictionary<string, string>();
+      lock (_properties)
+      {
+        foreach (var kv in _properties)
+        {
+          if (!String.IsNullOrEmpty(kv.Value))
+          {
+            result.Add(kv.Key, kv.Value);
+          }
+        }
+        return result;
+      }
+    }
+
     /// <summary>
     /// Removes the player properties from the hashtable.
     /// </summary>
