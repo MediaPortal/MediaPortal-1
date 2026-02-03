@@ -392,21 +392,46 @@
           <description>playlist listcontrol</description>
           <type>playlistcontrol</type>
           <id>50</id>
-          <posX>80</posX>
-          <posY>260</posY>
-          <width>963</width>
-          <height>750</height>
-          <upBtnXOffset>765</upBtnXOffset>
-          <downBtnXOffset>825</downBtnXOffset>
-          <deleteBtnXOffset>885</deleteBtnXOffset>
+		  <posX>100</posX>
+          <posY>247</posY>
+		  <width>875</width> 
+		  <height>770</height>
+		  <textXOff>15</textXOff>
+		  <textYOff>7</textYOff>
+		  <textcontent3>#duration</textcontent3>
+          <upBtnXOffset>721</upBtnXOffset> 
+          <downBtnXOffset>775</downBtnXOffset>
+          <deleteBtnXOffset>830</deleteBtnXOffset> 
           <onleft>2</onleft>
           <onright>2</onright>
-          <scrollOffset>2</scrollOffset>
+		  <selectedColor3>ff00ff00</selectedColor3> 
+          <selectedColor2>ff00ff00</selectedColor2>
+          <selectedColor>ff00ff00</selectedColor>
+		  <scrollOffset>2</scrollOffset>
+          <unfocusedAlpha>160</unfocusedAlpha>
+          <scrollbarHeight>400</scrollbarHeight>
+          <scrollbarbg>bar_vert.png</scrollbarbg>
+          <scrollbartop>mouse_left_horizontal.png</scrollbartop>
+          <scrollbarbottom>mouse_right_horizontal.png</scrollbarbottom>
+          <scrollbarXOff>32</scrollbarXOff> 
+          <scrollbarYOff>0</scrollbarYOff>
+          <showScrollbar>yes</showScrollbar>
+          <scrollbarwidth>20</scrollbarwidth>
           <itemWidth>48</itemWidth>
           <itemHeight>48</itemHeight>
-          <IconXOff>18</IconXOff>
-          <IconYOff>6</IconYOff>
+          <IconXOff>10</IconXOff> 
+          <IconYOff>2</IconYOff>
           <keepaspectratio>yes</keepaspectratio>
+		  <upBtnWidth>52</upBtnWidth>
+          <downBtnWidth>52</downBtnWidth>
+          <deleteBtnWidth>48</deleteBtnWidth>
+          <upBtnHeight>52</upBtnHeight>
+          <downBtnHeight>52</downBtnHeight>
+          <deleteBtnHeight>48</deleteBtnHeight>
+		  <upBtnYOffset>0</upBtnYOffset>
+          <downBtnYOffset>-4</downBtnYOffset>
+          <deleteBtnYOffset>1</deleteBtnYOffset>
+		  
         </control>
       </control>
     </control>
