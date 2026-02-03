@@ -80,7 +80,11 @@ namespace MediaPortal
 
     private bool isInFilter(NameValueItem item)
     {
-      return textBox1.Text.Length == 0 ? true : item.Name.IndexOf(textBox1.Text, StringComparison.OrdinalIgnoreCase) >= 0;
+      if (comboBox1.Text.Length == 0)
+        return true;
+
+      return comboBox1.Text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+        .Any(w => item.Name.IndexOf(w, StringComparison.OrdinalIgnoreCase) >= 0);
     }
 
     private void fillFiltered()
@@ -95,9 +99,23 @@ namespace MediaPortal
       filtered.ResetBindings();
     }
 
-    private void textBox1_TextChanged(object sender, EventArgs e)
+    private void comboBox1_TextChanged(object sender, EventArgs e)
     {
       fillFiltered();
+    }
+
+    private void comboBox1_KeyDown(object sender, KeyEventArgs e)
+    {
+      if (e.KeyCode == Keys.Enter)
+      {
+        string text = comboBox1.Text;
+        if (string.IsNullOrWhiteSpace(text))
+          return;
+
+        comboBox1.Items.Remove(text);
+        comboBox1.Items.Insert(0, text);
+        e.SuppressKeyPress = true;
+      }
     }
   }
 
@@ -114,14 +132,18 @@ namespace MediaPortal
         if (_value == value) return;
         _value = value;
         UpdatedAt = DateTime.Now;
+        StackTrace = Environment.StackTrace;
+
         if (PropertyChanged != null)
         {
           PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
           PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(UpdatedAt)));
+          PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(StackTrace)));
         }
       }
     }
     public DateTime UpdatedAt { get; private set; }
+    public string StackTrace { get; private set; }
 
     public NameValueItem(string name, string value)
     {
