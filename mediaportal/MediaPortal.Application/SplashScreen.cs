@@ -107,7 +107,7 @@ namespace MediaPortal
           useFullScreenSplash = xmlreader.GetValueAsBool("general", "usefullscreensplash", true);
           startFullScreen = !D3D.WindowedOverride && (D3D.FullscreenOverride || xmlreader.GetValueAsBool("general", "startfullscreen", true));
           screenNumber = xmlreader.GetValueAsInt("screenselector", "screennumber", 0);
-          _alwaysOnTop = xmlreader.GetValueAsBool("general", "alwaysontop", false);
+          _alwaysOnTop = !D3D.AlwaysOnTopOverride && xmlreader.GetValueAsBool("general", "alwaysontop", false);
           _usePrimaryScreen = xmlreader.GetValueAsBool("general", "useprimaryscreen", false);
           _screenDisplayName = xmlreader.GetValueAsString("screenselector", "screendisplayname", "");
           screenDeviceId = xmlreader.GetValueAsString("screenselector", "screendeviceid", "");

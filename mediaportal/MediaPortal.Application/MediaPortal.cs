@@ -551,6 +551,7 @@ public class MediaPortalApp : D3D, IRender
     WindowedOverride     = false;
     FullscreenOverride   = false;
     ScreenNumberOverride = -1;
+    AlwaysOnTopOverride = false;
     var ShowSkinProperties = false;
 
     if (args.Length > 0)
@@ -621,6 +622,7 @@ public class MediaPortalApp : D3D, IRender
         if (arg == "/SkinProperties")
         {
           ShowSkinProperties = true;
+          AlwaysOnTopOverride = true;
         }
 
         #if !DEBUG
