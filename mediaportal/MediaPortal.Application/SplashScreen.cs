@@ -57,7 +57,7 @@ namespace MediaPortal
     /// </summary>
     public void Run()
     {
-      var thread = new Thread(DoRun) {Name = "SplashScreen"};
+      var thread = new Thread(DoRun) { Name = "SplashScreen" };
       thread.Start();
     }
 
@@ -219,9 +219,9 @@ namespace MediaPortal
     /// </summary>
     private void ShowNormalSplash()
     {
-      _frm = new SplashForm {TopMost = _alwaysOnTop};
-      _frm.Location = new Point(CurrentDisplay.Bounds.X + CurrentDisplay.Bounds.Width/2 - _frm.Size.Width/2,
-                                CurrentDisplay.Bounds.Y + CurrentDisplay.Bounds.Height/2 - _frm.Size.Height/2);
+      _frm = new SplashForm { TopMost = _alwaysOnTop };
+      _frm.Location = new Point(CurrentDisplay.Bounds.X + CurrentDisplay.Bounds.Width / 2 - _frm.Size.Width / 2,
+                                CurrentDisplay.Bounds.Y + CurrentDisplay.Bounds.Height / 2 - _frm.Size.Height / 2);
       _frm.SetVersion(Version);
       _frm.Show();
       _frm.Update();
@@ -229,7 +229,7 @@ namespace MediaPortal
       string oldInfo = null;
 
       // run until stop of splash screen is requested
-      while (!_stopRequested) 
+      while (!_stopRequested)
       {
         if (oldInfo != _info)
         {
@@ -351,10 +351,10 @@ namespace MediaPortal
         }
         else if (strVersion.Length == 5)
         {
-          string day   = strVersion[2].Substring(0, 2);
+          string day = strVersion[2].Substring(0, 2);
           string month = strVersion[2].Substring(3, 2);
-          string year  = strVersion[2].Substring(6, 4);
-          string time  = strVersion[3].Substring(0, 5);
+          string year = strVersion[2].Substring(6, 4);
+          string time = strVersion[3].Substring(0, 5);
           string build = strVersion[4].Substring(0, 13).Trim();
           _cvsLabel.Text = string.Format("{0} {1} ({2}-{3}-{4} / {5} CET)", strVersion[1], build, year, month, day, time);
           Log.Info("Version: {0}", _cvsLabel.Text);
