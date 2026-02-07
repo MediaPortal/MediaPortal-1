@@ -28,6 +28,7 @@ namespace MediaPortal
       dataGridView1.DataSource = bindingSource;
       dataGridView1.AutoGenerateColumns = true;
       dataGridView1.Columns[nameof(NameValueItem.UpdatedAt)].DefaultCellStyle.Format = "HH:mm:ss.fff";
+      dataGridView1.Sort(dataGridView1.Columns[nameof(NameValueItem.Name)], ListSortDirection.Ascending);
     }
 
     private void SkinProperties_Shown(object sender, EventArgs e)
@@ -92,6 +93,7 @@ namespace MediaPortal
         filtered.Add(item);
       }
       filtered.RaiseListChangedEvents = true;
+      filtered.ReSort();
       filtered.ResetBindings();
     }
 
@@ -182,6 +184,10 @@ namespace MediaPortal
       OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
     }
 
+    public void ReSort()
+    {
+      ApplySortCore(_sortProperty, _sortDirection);
+    }
     protected override void RemoveSortCore()
     {
       _isSorted = false;
