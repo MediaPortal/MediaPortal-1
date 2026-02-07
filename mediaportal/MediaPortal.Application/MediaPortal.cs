@@ -623,6 +623,8 @@ public class MediaPortalApp : D3D, IRender
         {
           ShowSkinProperties = true;
           AlwaysOnTopOverride = true;
+          WindowedOverride = true;
+          HIDOverride.SuppressHID = true;
         }
 
         #if !DEBUG
@@ -1040,6 +1042,7 @@ public class MediaPortalApp : D3D, IRender
           var app = new MediaPortalApp();
           if (ShowSkinProperties)
           {
+            app._hidKeyboard = false;
             app.Shown += (s,e) => { new SkinProperties().Show(); };
           }
 

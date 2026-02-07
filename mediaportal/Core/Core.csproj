@@ -564,6 +564,7 @@
     <Compile Include="Ripper\Win32Functions.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="SuppressHID.cs" />
     <Compile Include="System.Threading\TaskExtrasExtensions.cs" />
     <Compile Include="System.Windows\DependencyPropertyAttribute.cs">
       <SubType>Code</SubType>
