@@ -61,11 +61,11 @@ namespace TvPlugin
     private static bool _autoTurnOnRadio = false;
     private SortMethod currentSortMethod = SortMethod.Number;
     private readonly DirectoryHistory directoryHistory = new DirectoryHistory();
-    private string currentFolder = null;
-    private string lastFolder = "..";
+    private static string currentFolder = null;
     private int selectedItemIndex = -1;
     private static bool hideAllChannelsGroup = false;
     private string rootGroup = "(none)";
+    private static RadioChannelGroup selectedGroup;
     public static List<RadioChannelGroup> AllRadioGroups = new List<RadioChannelGroup>();
     private static bool settingsRadioLoaded = false;
 
@@ -83,7 +83,7 @@ namespace TvPlugin
     {
       get
       {
-        if (RadioHelper.SelectedGroup == null)
+        if (selectedGroup == null)
         { // if user is at the root level then no group is selected
           // this then causes issues in guide as it does not know what
           // group to show so return the first available one
@@ -91,10 +91,10 @@ namespace TvPlugin
         }
         else
         {
-          return RadioHelper.SelectedGroup;
+          return selectedGroup;
         }
       }
-      set { RadioHelper.SelectedGroup = value; }
+      set { selectedGroup = value; }
     }
 
     #endregion
@@ -199,13 +199,6 @@ namespace TvPlugin
             xmlwriter.SetValue("myradio", "sort", "number");
             break;
         }
-
-        xmlwriter.SetValue("myradio", "lastgroup", lastFolder);
-        if (CurrentChannel != null)
-        {
-          xmlwriter.SetValue("myradio", "channel", CurrentChannel.DisplayName);
-        }
-
       }
     }
 
@@ -446,6 +439,16 @@ namespace TvPlugin
       return false;
     }
 
+    public override bool OnMessage(GUIMessage message)
+    {
+      if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED && facadeLayout.SelectedListItem.MusicTag is RadioChannelGroup)
+      {
+        GUIPropertyManager.SetProperty("#Radio.Folder", GUIPropertyManager.GetProperty("#selecteditem"));
+      }
+
+      return base.OnMessage(message);
+    }
+
     protected override void LoadDirectory(string strNewDirectory)
     {
       GUIListItem SelectedItem = facadeLayout.SelectedListItem;
@@ -458,11 +461,14 @@ namespace TvPlugin
       }
       string oldCurrentFolder = currentFolder;
       TvBusinessLayer layer = new TvBusinessLayer();
-      RadioChannelGroup newGroup = layer.GetRadioChannelGroupByName(strNewDirectory);
+      RadioChannelGroup newGroup = String.IsNullOrEmpty(strNewDirectory) ? null : layer.GetRadioChannelGroupByName(strNewDirectory);
       if (newGroup == null)
         currentFolder = null;
       else
+      {
         currentFolder = strNewDirectory;
+        GUIPropertyManager.SetProperty("#Radio.Folder", newGroup.GroupName);
+      }
       GUIControl.ClearControl(GetID, facadeLayout.GetID);
 
       int totalItems = 0;
@@ -541,12 +547,11 @@ namespace TvPlugin
             }
           }
         }
-        RadioHelper.SelectedGroup = null;
+        selectedGroup = null;
       }
       else
       {
         selectedGroup = newGroup;
-        lastFolder = currentFolder;
         GUIListItem item = new GUIListItem();
         item.Label = "..";
         item.IsFolder = true;
@@ -608,6 +613,8 @@ namespace TvPlugin
           if ((channel != null && CurrentChannel != null && channel.IdChannel == CurrentChannel.IdChannel) ||
                (item.IsFolder && item.Label == oldCurrentFolder))
           {
+            if (channel != null) // in this case currentFolder is non-empty
+              GUIPropertyManager.SetProperty("#Radio.Folder", currentFolder);
             selectedItemIndex = i;
             break;
           }
@@ -896,8 +903,17 @@ namespace TvPlugin
       GUIPropertyManager.RemovePlayerProperties();
       GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", CurrentChannel.DisplayName);
       GUIPropertyManager.SetProperty("#Play.Current.Album", CurrentChannel.DisplayName);
+      GUIPropertyManager.SetProperty("#Radio.Listen.Group", SelectedGroup.GroupName);
 
       RadioHelper.SetRadioProperties();
+      if (CurrentChannel != null)
+      {
+        using (Settings xmlwriter = new MPSettings())
+        {
+          xmlwriter.SetValue("myradio", "channel", CurrentChannel.DisplayName);
+          xmlwriter.SetValue("myradio", "lastgroup", SelectedGroup.GroupName);
+        }
+      }
 
       string strLogo = Utils.GetCoverArt(Thumbs.Radio, CurrentChannel.DisplayName);
       if (string.IsNullOrEmpty(strLogo))
