@@ -31,11 +31,9 @@ namespace TvPlugin
   public class RadioHelper
   {
     public static Channel CurrentChannel { get; set; } = null;
-    public static RadioChannelGroup SelectedGroup { get; set; }
 
     public static void SetRadioProperties()
     {
-
       if (CurrentChannel.IsWebstream() || CurrentChannel.CurrentProgram == null || CurrentChannel.NextProgram == null ||
         string.IsNullOrEmpty(CurrentChannel.CurrentProgram.Title) || string.IsNullOrEmpty(CurrentChannel.NextProgram.Title) ||
         !(g_Player.IsRadio && g_Player.Playing))
@@ -43,7 +41,6 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#Radio.Listen.Title", String.Empty);
         GUIPropertyManager.SetProperty("#Radio.Listen.Channel", CurrentChannel.DisplayName);
         GUIPropertyManager.SetProperty("#Radio.Listen.Genre", String.Empty);
-        GUIPropertyManager.SetProperty("#Radio.Listen.Group", SelectedGroup?.GroupName);
         GUIPropertyManager.SetProperty("#Radio.Listen.Played", GUIPropertyManager.GetProperty("#currentplaytime"));
         GUIPropertyManager.SetProperty("#Radio.Listen.Description", String.Empty);
         GUIPropertyManager.SetProperty("#Radio.Listen.Start", String.Empty);
@@ -58,7 +55,6 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#Radio.Listen.Title", CurrentChannel.CurrentProgram.Title);
         GUIPropertyManager.SetProperty("#Radio.Listen.Channel", CurrentChannel.DisplayName);
         GUIPropertyManager.SetProperty("#Radio.Listen.Genre", CurrentChannel.CurrentProgram.Genre);
-        GUIPropertyManager.SetProperty("#Radio.Listen.Group", SelectedGroup?.GroupName);
         GUIPropertyManager.SetProperty("#Radio.Listen.Description", CurrentChannel.CurrentProgram.Description);
         GUIPropertyManager.SetProperty("#Radio.Listen.Start", CurrentChannel.CurrentProgram.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat).ToString());
         GUIPropertyManager.SetProperty("#Radio.Listen.Stop", CurrentChannel.CurrentProgram.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat).ToString());

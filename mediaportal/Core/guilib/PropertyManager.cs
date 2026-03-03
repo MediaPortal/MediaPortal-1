@@ -206,6 +206,7 @@ namespace MediaPortal.GUI.Library
       _properties["#Radio.Listen.Stop"] = string.Empty;
       _properties["#Radio.Listen.Percentage"] = string.Empty;
       _properties["#Radio.Listen.Remaining"] = string.Empty;
+      _properties["#Radio.Folder"] = string.Empty;
 
       _properties["#Radio.Listen.Title"] = string.Empty;
       _properties["#Radio.Listen.Channel"] = string.Empty;
