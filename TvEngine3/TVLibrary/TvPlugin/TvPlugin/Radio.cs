@@ -601,7 +601,6 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#itemcount", Utils.GetObjectCountLabel(totalItems));
 
       SelectCurrentItem();
-      SetLabels();
 
       for (int i = 0; i < facadeLayout.Count; i++)
       {
