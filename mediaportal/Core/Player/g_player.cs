@@ -527,6 +527,8 @@ namespace MediaPortal.Player
       {
         //yes, then raise event
         Log.Info("g_Player.OnChanged()");
+        GUIPropertyManager.SetProperty("#Play.Current.Type", String.Empty);
+
         if (PlayBackChanged != null)
         {
           if ((_currentMedia == MediaType.TV || _currentMedia == MediaType.Video || _currentMedia == MediaType.Recording) &&
@@ -630,6 +632,10 @@ namespace MediaPortal.Player
           }
         }
         Log.Info("g_Player.OnStarted() {0} media:{1}", _currentFilePlaying, _currentMedia.ToString());
+        if (String.IsNullOrEmpty(GUIPropertyManager.GetProperty("#Play.Current.Type"))) {
+          GUIPropertyManager.SetProperty("#Play.Current.Type", _currentMedia.ToString());
+        }
+
         if (PlayBackStarted != null)
         {
           PlayBackStarted(_currentMedia, _currentFilePlaying);
@@ -668,6 +674,8 @@ namespace MediaPortal.Player
           BassCd.BASS_CD_Release(i);
         }
       }
+
+      GUIPropertyManager.SetProperty("#Play.Current.Type", String.Empty);
       if (_player != null)
       {
         Log.Debug("g_Player.doStop() keepTimeShifting = {0} keepExclusiveModeOn = {1}", keepTimeShifting,
@@ -1769,6 +1777,11 @@ namespace MediaPortal.Player
         _currentMediaForBassEngine = type;
 
         Log.Info("g_Player.Play({0} {1})", strFile, type);
+        if (type == MediaType.Video && _mediaInfo != null && !_mediaInfo.HasVideo)
+          GUIPropertyManager.SetProperty("#Play.Current.Type", "Audio");
+        else
+          GUIPropertyManager.SetProperty("#Play.Current.Type", type.ToString());
+
         if (!playingRemoteUrl && Util.Utils.IsVideo(strFile) && type != MediaType.Music)
         {
           if (!Util.Utils.IsRTSP(strFile) && extension != ".ts") // do not play recorded tv with external player

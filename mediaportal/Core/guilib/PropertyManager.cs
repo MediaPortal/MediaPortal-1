@@ -327,6 +327,8 @@ namespace MediaPortal.GUI.Library
       _properties["#Play.Current.Stream.Audio.Total"] = string.Empty;
       _properties["#Play.Current.Stream.Audio.IsMulti"] = string.Empty;
 
+      _properties["#Play.Current.Type"] = string.Empty;
+
       _properties["#Play.AlbumInfo.Review"] = string.Empty;
       _properties["#Play.AlbumInfo.Rating"] = string.Empty;
       _properties["#Play.AlbumInfo.Genre"] = string.Empty;
