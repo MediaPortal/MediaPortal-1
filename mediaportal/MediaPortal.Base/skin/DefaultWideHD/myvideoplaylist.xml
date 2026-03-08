@@ -185,8 +185,8 @@
       <textureWidth>25</textureWidth>
       <textureHeight>25</textureHeight>
       <subitems>
-        <subitem>starbad.png</subitem>
-        <subitem>star.png</subitem>
+        <subitem>starbad_small.png</subitem>
+        <subitem>star_small.png</subitem>
       </subitems>
       <orientation>horizontal</orientation>
       <align>left</align>
@@ -207,17 +207,6 @@
       <visible>facadeview.playlist+string.equals(#hideinfo, False)</visible>
     </control>
     <control>
-      <description>Default image</description>
-      <id>0</id>
-      <type>image</type>
-      <posX>1570</posX>
-      <posY>300</posY>
-      <width>270</width>
-      <height>375</height>
-      <texture mask="videothumbmask.png">missing_Coverart_video.png</texture>
-      <visible>facadeview.playlist+[Control.HasFocus(50)+!control.hasthumb(500)]</visible>
-    </control>
-    <control>
       <description>Actual cover/image</description>
       <id>500</id>
       <type>image</type>
@@ -227,6 +216,17 @@
       <height>375</height>
       <texture mask="videothumbmask.png">#selectedthumb</texture>
       <visible>facadeview.playlist</visible>
+    </control>
+	<control>
+      <description>DefaultVideoSeenBig</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>1570</posX>
+      <posY>300</posY>
+      <width>270</width>
+      <height>375</height>
+      <texture mask="videothumbmask.png">defaultVideoSeenBig.png</texture> 
+      <visible>facadeview.list+string.contains(#selectedthumb,defaultVideoBig.png)+!string.equals(#watchedcount,0)</visible>  
     </control>
     <control>
       <description>Collection banner</description>
@@ -260,7 +260,7 @@
       <height>30</height>
       <texture>overlaywatched.png</texture>
       <colordiffuse>ff33aaff</colordiffuse>
-      <visible>facadeview.list+!string.equals(#watchedcount,'0')+string.equals(#hideinfo, False)</visible>
+      <visible>facadeview.playlist+!string.equals(#watchedcount,0)+string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <description>Unwatched icon</description>
@@ -271,7 +271,7 @@
       <width>30</width>
       <height>30</height>
       <texture>overlayunwatched.png</texture>
-      <visible>facadeview.list+string.equals(#watchedcount,'0')+string.equals(#hideinfo, False)</visible>
+      <visible>facadeview.playlist+string.equals(#watchedcount,0)+string.equals(#hideinfo, False)</visible>
     </control>
     <control>
       <description>Genre images</description>
@@ -356,8 +356,47 @@
       <label>#year</label>
       <font>font11</font>
       <textcolor>lightgray</textcolor>
-      <visible>facadeview.playlist+ string.equals(#hideinfo, False)</visible>
+      <visible>facadeview.playlist+string.equals(#hideinfo, False)</visible>
     </control>
+	 <control>
+    <description>Watched Label</description>
+    <id>0</id>
+    <type>label</type>
+    <label>#(L(527))</label>
+    <posX>1305</posX>
+    <posY>412</posY>
+    <font>font10</font>
+    <align>left</align>
+    <textcolor>ff00bfff</textcolor>
+    <visible>facadeview.playlist+![string.equals(#watchedpercent,0)+string.equals(#watchedcount,0)]+string.equals(#hideinfo, False)</visible>
+  </control>
+  <control>
+    <type>group</type>
+    <description>group element</description>
+    <posX>1305</posX>
+    <posY>441</posY>
+    <layout>StackLayout(0, horizontal, true)</layout>
+    <control>
+      <description>Watched progress</description>
+      <type>label</type>
+      <id>1</id>
+      <width>100</width>
+      <label>#watchedpercent%</label>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+      <visible>facadeview.playlist+!string.equals(#watchedpercent,0)string.equals(#hideinfo, False)</visible>
+    </control>
+    <control>
+      <description>WatchedCount</description>
+      <type>label</type>
+      <id>1</id>
+      <width>80</width>
+      <label>#watchedcountx</label>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+      <visible>facadeview.playlist+!string.equals(#watchedcount,0)string.equals(#hideinfo, False)</visible>
+    </control>
+  </control>
     <control>
       <description>Runtime txt</description>
       <type>label</type>

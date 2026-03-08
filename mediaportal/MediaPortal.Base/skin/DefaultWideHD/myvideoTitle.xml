@@ -198,7 +198,7 @@
       </control>
     </control>
     <include condition="#(eq(#skin.thumbsview,'Normal'))">common.facade.video.title.xml</include>
-   <include condition="#(eq(#skin.thumbsview,'Fanart Wall'))">myvideo.facade.fanartwall.xml</include>
+    <include condition="#(eq(#skin.thumbsview,'Fanart Wall'))">myvideo.facade.fanartwall.xml</include>
     <control>
       <type>imagelist</type>
       <id>1</id>

@@ -303,7 +303,7 @@
       <imagesToDraw>10</imagesToDraw>
       <visible>!control.isvisible(24)</visible>
     </control>
-    <!--control>
+    <!--<control>
     <description>Text Rating Value</description>
     <type>label</type>
     <id>1</id>
@@ -313,7 +313,7 @@
     <font>font10</font>
     <align>left</align>
     <textcolor>lightgray</textcolor>
-  </control-->
+  </control>-->
     <!--     *******************************************************************************************  -->
     <!--     **************************************  MOVIE INFOS  **************************************  -->
     <!--     *******************************************************************************************  -->
@@ -514,19 +514,39 @@
         <font>font11</font>
         <textcolor>lightgray</textcolor>
       </control>
+	   <control>
+        <description>Watched count Label</description>
+        <type>label</type>
+        <id>1</id>
+        <height>36</height>
+        <posY>685</posY>
+        <label>1278</label>
+        <font>font10</font>
+        <textcolor>ff00bfff</textcolor>
+      </control>
+      <control>
+        <description>Watched count Value</description>
+        <type>label</type>
+        <id>1</id>
+        <height>36</height>
+        <posY>715</posY>
+        <label>#watchedcountx</label>
+        <font>font11</font>
+        <textcolor>lightgray</textcolor>
+      </control>
     </control>
     <control>
       <description>group element</description>
       <type>group</type>
       <layout>StackLayout(0, Vertical, True)</layout>
       <posX>425</posX>
-      <posY>561</posY> 
+      <posY>557</posY> 561
       <control>
         <description>MPAA Rating Label</description>
         <type>label</type>
         <id>1</id>
         <height>36</height>
-        <posY>547</posY>
+        <posY>570</posY> 547
         <label>173</label>
         <font>font10</font>
         <textcolor>ff00bfff</textcolor>
@@ -583,16 +603,36 @@
         <font>font11</font>
         <textcolor>lightgray</textcolor>
       </control>
+	  <control>
+        <description>Last watched Label</description>
+        <type>label</type>
+        <id>1</id>
+        <height>36</height>
+        <posY>744</posY>
+        <label>#SkinTranslation.Translations.LastWatched.Label (%):</label>
+        <font>font10</font>
+        <textcolor>ff00bfff</textcolor>
+      </control>
+      <control>
+        <description>Last watched Value</description>
+        <type>label</type>
+        <id>1</id>
+        <height>36</height>
+        <posY>774</posY>
+        <label>#watchedpercent%</label>
+        <font>font11</font>
+        <textcolor>lightgray</textcolor>
+      </control>
     </control>
     <!--     *******************************************************************************************  -->
-    <!--     ********************************  LAST UPDATE / WATCHCOUNT  *******************************  -->
+    <!--     ********************************  LAST UPDATE  ********************************************  -->
     <!--     *******************************************************************************************  -->
     <control>
       <description>Last update Label</description>
       <type>label</type>
       <id>1</id>
       <posX>75</posX>
-      <posY>825</posY>
+      <posY>865</posY>
       <label>1279</label>
       <font>font10</font>
       <align>left</align>
@@ -602,35 +642,14 @@
       <description>Last update Value Movie</description>
       <type>label</type>
       <id>1</id>
-      <posX>300</posX>
-      <posY>825</posY>
+      <posX>260</posX>
+      <posY>865</posY>
       <label>#lastupdate</label>
       <font>font10</font>
       <align>left</align>
       <textcolor>lightgray</textcolor>
     </control>
-    <control>
-      <description>Watched Count Label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>75</posX>
-      <posY>865</posY>
-      <label>1278</label>
-      <font>font10</font>
-      <align>left</align>
-      <textcolor>ff00bfff</textcolor>
-    </control>
-    <control>
-      <description>Watched Count Value</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>300</posX>
-      <posY>865</posY>
-      <label>#watchedcountx - #watchedpercent%</label>
-      <font>font10</font>
-      <align>left</align>
-      <textcolor>lightgray</textcolor>
-    </control>
+    
     <!--     *******************************************************************************************  -->
     <!--     ********************************  PLOT / USERREVIEW TEXT   **********************************  -->
     <!--     *******************************************************************************************  -->
@@ -683,6 +702,7 @@
     <!--     **************************************  MOVIE COVER  **************************************  -->
     <!--     *******************************************************************************************  -->
     <control>
+	<description>DefaultVideoBig</description>
       <id>1</id>
       <type>image</type>
       <posX>1500</posX>
@@ -690,8 +710,19 @@
       <width>360</width>
       <height>510</height>
       <texture mask="videothumbmask.png">defaultVideoBig.png</texture>
-      <visible>!control.isvisible(24)</visible>
+      <visible>!control.isvisible(24)+!control.hasthumb(21)</visible>
     </control>
+	<control>
+      <description>DefaultVideoSeenBig</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>1500</posX>
+      <posY>270</posY>
+      <width>360</width>
+      <height>510</height>
+      <texture mask="videothumbmask.png">defaultVideoSeenBig.png</texture> 
+      <visible>!control.isvisible(24)+!string.equals(#watchedcount,0)+!control.hasthumb(21)</visible> 
+    </control>	 
     <control>
       <description>Movie Cover Image</description>
       <type>image</type>
@@ -734,18 +765,7 @@
     <!--     *******************************************************************************************  -->
     <!--     **************************************  ACTOR INFOS  **************************************  -->
     <!--     *******************************************************************************************  -->
-    <control>
-      <description>Actors/Cast Image</description>
-      <id>1</id>
-      <type>image</type>
-      <posX>1500</posX>
-      <posY>270</posY>
-      <width>360</width>
-      <height>510</height>
-      <keepaspectratio>no</keepaspectratio>
-      <texture mask="videothumbmask.png">defaultActorBig.png</texture>
-      <visible>control.isvisible(24)+!control.hasthumb(25)</visible>
-    </control>
+  
     <control>
       <description>Actors/Cast Image</description>
       <type>image</type>
@@ -756,7 +776,19 @@
       <height>510</height>
       <keepaspectratio>yes</keepaspectratio>
       <texture mask="videothumbmask.png">#actorThumb</texture>
-      <visible>control.isvisible(24)</visible>
+      <visible>control.isvisible(24)+!string.equals(#actorThumb,defaultActor.png)</visible>
+    </control>
+	 <control>
+      <description>Actors/Cast default image</description>
+      <id>1</id>
+      <type>image</type>
+      <posX>1500</posX>
+      <posY>270</posY>
+      <width>360</width>
+      <height>510</height>
+      <keepaspectratio>no</keepaspectratio>
+      <texture mask="videothumbmask.png">defaultActorBig.png</texture>
+      <visible>control.isvisible(24)+string.equals(#actorThumb,defaultActor.png)</visible> 
     </control>
     <control>
       <description>Actors/Cast List</description>
@@ -769,6 +801,7 @@
       <onleft>2</onleft>
       <onright>2</onright>
       <scrollOffset>2</scrollOffset>
+	  <scrollbarXOff>22</scrollbarXOff> 
       <spinPosX>3405</spinPosX>
       <spinPosY>1020</spinPosY>
       <spinCanFocus>no</spinCanFocus>

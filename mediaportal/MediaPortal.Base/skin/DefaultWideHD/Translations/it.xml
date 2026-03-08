@@ -2,6 +2,7 @@
 <!-- Skin translation file -->
 <!-- English (US) -->
 <strings>
+  <string Field="LastWatched">Visto l'ultima volta</string>
   <string Field="Awards">Premi</string>
   <string Field="EPGRows">Linee nelle EPG di TV/Radio</string>
   <string Field="NumberEPGRows">Numero di linee</string>

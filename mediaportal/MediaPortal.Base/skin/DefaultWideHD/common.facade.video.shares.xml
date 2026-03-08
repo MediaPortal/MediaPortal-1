@@ -17,7 +17,7 @@
           <description>listcontrol</description>
           <type>listcontrol</type>
           <id>50</id>
-          <width>825</width>
+          <width>860</width> 
           <textXOff2>730</textXOff2>
           <textXOff3>850</textXOff3>
           <textcontent3>#duration</textcontent3>
@@ -51,14 +51,14 @@
           <folderPrefix />
           <folderSuffix />
           <textureFocus>#(iif(eq(#watchedcount,'0'),'listfocus_notwatched.png','listfocus.png'))</textureFocus>
-          <texturebg>osd_progress_background.png</texturebg>
-          <lefttexture>green.png</lefttexture>
-          <midtexture>green.png</midtexture>
-          <righttexture>green.png</righttexture>
-          <ProgressBarWidth>775</ProgressBarWidth>
-          <ProgressBarHeight>1</ProgressBarHeight>
+          <texturebg>videobar.png</texturebg> 
+          <lefttexture>now_playing_progress_peach2.png</lefttexture> 
+          <midtexture>now_playing_progress_peach2.png</midtexture>  
+          <righttexture>now_playing_progress_peach2.png</righttexture>  
+          <ProgressBarWidth>745</ProgressBarWidth>
+          <ProgressBarHeight>5</ProgressBarHeight> 
           <ProgressBarXOffset>45</ProgressBarXOffset>
-          <ProgressBarYOffset>47</ProgressBarYOffset>
+          <ProgressBarYOffset>46</ProgressBarYOffset> 
           <SelectedProgressOnly>Yes</SelectedProgressOnly>
         </control>
         <control>

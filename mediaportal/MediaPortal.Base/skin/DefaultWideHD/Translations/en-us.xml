@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Skin translation file -->
 <!-- English (US) -->
-<strings>
+<<strings>
+  <string Field="LastWatched">Last watched</string>
   <string Field="Awards">Awards</string>
   <string Field="EPGRows">Lines in TV/Radio EPGs</string>
   <string Field="NumberEPGRows">Number of lines</string>

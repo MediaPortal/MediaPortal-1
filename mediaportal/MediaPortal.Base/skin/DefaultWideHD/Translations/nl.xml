@@ -2,6 +2,7 @@
 <!-- Skin translation file -->
 <!-- Dutch (nl) -->
 <strings>
+  <string Field="LastWatched">Laatst gezien</string>
   <string Field="Awards">Onderscheidingen</string>
   <string Field="EPGRows">Lijnen in TV/Radio EPG's</string>
   <string Field="NumberEPGRows">Aantal lijnen</string>
