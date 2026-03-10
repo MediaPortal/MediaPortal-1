@@ -491,8 +491,8 @@
         <description>Channels Button</description>
         <type>button</type>
         <id>1</id>
-        <textureFocus>Logos\Audio\#music.channels.png</textureFocus>
-		<textureNoFocus>Logos\Audio\#music.channels.png</textureNoFocus>
+        <textureFocus>Logos\Audio\#Play.Current.Channels.png</textureFocus> 
+		<textureNoFocus>Logos\Audio\#Play.Current.Channels.png</textureNoFocus>
 		<width>70</width>
         <height>35</height>
         <label></label>

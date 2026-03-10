@@ -65,7 +65,7 @@
         <onright>99</onright>
       </control>
       <control>
-        <description>Channel button</description>
+        <description>Mini EPG</description>
         <type>button</type>
         <id>7</id>
         <label>10104</label>
@@ -187,14 +187,25 @@
       </control>
     </control>
     <control>
-      <description>LCD image</description>
+      <description>LCD image source selected</description>
       <type>image</type>
       <id>0</id>
       <posX>592</posX>
       <posY>115</posY>
       <width>732</width>
       <height>430</height>
-      <texture>LCD.png</texture>
+      <texture>LCD_on.png</texture>
+    </control>
+	<control>
+      <description>LCD image input source not specified</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>592</posX>
+      <posY>115</posY>
+      <width>732</width>
+      <height>430</height>
+      <texture>LCD_wait.png</texture>
+	  <visible>!player.hasvideo+!player.hasaudio</visible>
     </control>
     <control>
       <description>video window</description>
@@ -412,7 +423,7 @@
       <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)</visible>
     </control>
 	<control>
-      <description>Missong Video image</description>
+      <description>Missing Video image</description>
       <type>image</type>
       <id>1</id>
       <posX>120</posX>

@@ -58,6 +58,137 @@
     <include condition="#(eq(#hedit.mode,'Horizontal (scroll)'))">BasicHomeFanArt.xml</include>
     <include condition="#(eq(#hedit.mode,'Horizontal Text only'))">BasicHomeWeather.xml</include>
     <include condition="#(eq(#hedit.mode,'Horizontal (scroll)'))">BasicHomeWeather.xml</include>
+    
+	<!--     *******************************************************************************************  -->
+    <!--     **************************************  HOLIDAY FANART  ***********************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <visible>!string.contains(#highlightedbutton,WEATHER)+!player.hasaudio+!player.hasvideo</visible>
+      <control>
+        <description>DUMMY CONTROL FOR HOLIDAY FANART 1 VISIBILITY CONDITION</description>
+        <type>label</type>
+        <id>91919285</id>
+        <posX>0</posX>
+        <posY>0</posY>
+        <width>1</width>
+        <label />
+      </control>
+      <control>
+        <description>DUMMY CONTROL FOR HOLIDAY FANART 2 VISIBILITY CONDITION</description>
+        <type>label</type>
+        <id>91919286</id>
+        <posX>0</posX>
+        <posY>0</posY>
+        <width>1</width>
+        <label />
+      </control>
+      <control>
+        <description>DUMMY CONTROL FOR HOLIDAY FANART AVAILABILITY  CONDITION</description>
+        <type>label</type>
+        <id>91919284</id>
+        <posX>0</posX>
+        <posY>0</posY>
+        <width>1</width>
+        <label />
+      </control>
+      <control>
+        <description>FANART IMAGE 1</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>0</posX>
+        <posY>0</posY>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>#fanarthandler.holiday.backdrop1</texture>
+        <visible>control.isvisible(91919285)+control.isvisible(91919284)</visible>
+		<animation effect="fade" time="250">visible</animation>
+        <animation effect="fade" time="250" delay="250">hidden</animation>
+	  </control>
+      <control>
+        <description>FANART IMAGE 2</description>
+        <id>0</id>
+        <type>image</type>
+        <posX>0</posX>
+        <posY>0</posY>
+        <width>1920</width>
+        <height>1080</height>
+        <texture>#fanarthandler.holiday.backdrop2</texture>
+        <visible>control.isvisible(91919286)+control.isvisible(91919284)</visible>
+		<animation effect="fade" time="250">visible</animation>
+        <animation effect="fade" time="250" delay="250">hidden</animation>
+	  </control>
+	  <control>
+      <description>Dummy image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>180</height>
+      <colordiffuse>eeffffff</colordiffuse>
+      <texture>overlay_top.png</texture>
+    </control>
+    </control>
+    <!--     *******************************************************************************************  -->
+    <!--     **************************************  HOLIDAY TEXT   ************************************  -->
+    <!--     *******************************************************************************************  -->
+      <control>
+      <type>group</type>
+      <description>group element</description>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <visible>!string.contains(#highlightedbutton,WEATHER)+!string.equals(#fanarthandler.holiday.current,)+!player.hasaudio+!player.hasvideo</visible>
+    <control>
+        <description>Holiday banner</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>100</posX>
+        <posY>75</posY> 
+        <width>1720</width>
+        <height>50</height> 
+        <texture>Holiday_Banner.png</texture> 
+        <colordiffuse>b3ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>Holiday text</description>
+		<type>label</type>
+        <id>0</id>
+        <posX>330</posX> 
+        <posY>100</posY> 
+        <width>1250</width> 
+        <textcolor>fff4f4f4</textcolor>
+        <font>Label</font> 
+        <label>#fanarthandler.holiday.current</label>
+        <align>center</align>
+      </control>
+    </control>
+    <control>
+        <description>Calendar icon</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1610</posX>
+        <posY>80</posY> 
+        <width>40</width> 
+        <height>40</height> 
+        <texture>Calendaricon.png</texture>
+		<colordiffuse>d9ffffff</colordiffuse>
+        <visible>!string.contains(#highlightedbutton,WEATHER)+!player.hasaudio+!player.hasvideo+!string.equals(#fanarthandler.holiday.current,)</visible> 
+        <animation effect="fade" time="250">WindowOpen</animation>
+      </control>
+	   <control>
+        <description>Home Holiday icon</description>
+        <type>image</type>
+        <id>9870789</id>
+        <posX>144</posX>
+        <posY>80</posY> 
+        <width>40</width> 
+        <height>40</height>
+        <texture>#(iif(neq(#fanarthandler.holiday.icon,''),'#fanarthandler.holiday.icon','Calendaricon.png'))</texture>
+        <visible>!string.contains(#highlightedbutton,WEATHER)+!string.equals(#fanarthandler.holiday.current,)+!player.hasaudio+!player.hasvideo</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+      </control>
+      
   <!--     *******************************************************************************************  -->
   <!--     **************************************  MENU BUTTONS  *************************************  -->
   <!--     *******************************************************************************************  -->
@@ -74,6 +205,9 @@
   <include condition="#(eq(#hedit.mode,'Horizontal Text only'))">BasicHomeInfoRecentlyAddedText.xml</include>
   <import>BasicHomeEditorDefines.xml</import>
   
+  <!--     *******************************************************************************************  -->
+  <!--     **************************************  Date, Time, Weather  ****************************** -->
+  <!--     *******************************************************************************************  -->
   <control>
       <description>Date Time Weather</description>
       <type>group</type>
@@ -205,7 +339,6 @@
       <shadowColor>ff000000</shadowColor>
       <visible>skin.hastheme(Xmas)+!plugin.isenabled(World Weather)+!plugin.isenabled(World Weather Lite)</visible>
     </control>
-  
     <!-- ******************************************************************************************* -->
     <!-- *************************** INFOS ON BASIC HOME (NOW PLAYING AUDIO) *********************** -->
     <!-- ******************************************************************************************* -->

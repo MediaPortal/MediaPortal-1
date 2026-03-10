@@ -3,7 +3,7 @@
   <id>567834</id>
   <defaultcontrol>2</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
-  <!--<define>#header.label:#SkinTranslation.Translations.Games.Label #scroll.wrap Mastermind</define>-->  107783
+  <!--<define>#header.label:#SkinTranslation.Translations.Games.Label #scroll.wrap Mastermind</define>-->  
   <define>#header.hover:hover_my mastermind.png</define>
   <define>#itemcount:</define>
   <controls>
@@ -62,8 +62,9 @@
           <subitems>
             <subitem>Game: Standard</subitem>
             <subitem>Game: Same</subitem>
-           <!-- <subitem>Game: Different</subitem>-->
-            <!--<subitem>Game: Computer</subitem>--></subitems>
+           <subitem>Game: Different</subitem>
+           <!--subitem>Game: Computer</subitem-->
+          </subitems>
       </control>
       <control>
         <description>Level</description>
@@ -213,7 +214,7 @@
       <id>20</id>
       <visible>no</visible>
       <posX>562</posX>
-      <posY>182</posY>
+      <posY>162</posY> 
       <texture>Mastermind_Back.png</texture>
     </control>
     <control>
@@ -221,8 +222,8 @@
       <type>image</type>
       <id>21</id>
       <visible>no</visible>
-      <posX>1000</posX>
-      <posY>182</posY>
+      <posX>1100</posX> 
+      <posY>162</posY>
       <texture>Mastermind_Back2.png</texture>
     </control>
   </control>

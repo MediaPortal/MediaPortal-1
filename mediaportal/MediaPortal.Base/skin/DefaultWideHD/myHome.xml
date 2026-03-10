@@ -42,7 +42,7 @@
         <type>fadelabel</type>
         <description>Date Time Weather Label</description>
         <id>0</id>
-        <label>#time #scroll.wrap #date #scroll.wrap #WorldWeather.Location: #WorldWeather.TodayCondition</label>
+        <label>#time #scroll.wrap #date #scroll.wrap #WorldWeather.Location: #WorldWeather.TodayCondition</label> 
         <width>50</width>
         <maxWidth>1600</maxWidth>
         <textcolor>ff00bfff</textcolor>
@@ -94,6 +94,65 @@
       <visible>!plugin.isenabled(World Weather)+!plugin.isenabled(World Weather Lite)</visible>
     </control>
     <include>common.facade.home.xml</include>
+	
+	<!--     *******************************************************************************************  -->
+    <!--     **************************************  HOLIDAY TEXT   ************************************  -->
+    <!--     *******************************************************************************************  -->
+      <control>
+      <type>group</type>
+      <description>group element</description>
+      <animation effect="fade" time="250">WindowOpen</animation>
+      <visible>!string.equals(#fanarthandler.holiday.current,)+!player.hasaudio+!player.hasvideo</visible>
+    <control>
+        <description>Holiday banner</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>100</posX>
+        <posY>75</posY> 
+        <width>1720</width>
+        <height>50</height> 
+        <texture>Holiday_Banner.png</texture> 
+        <colordiffuse>b3ffffff</colordiffuse>
+      </control>
+      <control>
+        <description>Holiday text</description>
+		<type>label</type>
+        <id>0</id>
+        <posX>330</posX> 
+        <posY>100</posY> 
+        <width>1250</width> 
+        <textcolor>fff4f4f4</textcolor>
+        <font>Label</font> 
+        <label>#fanarthandler.holiday.current</label>
+        <align>center</align>
+      </control>
+    </control>
+    <control>
+        <description>Calendar icon</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1610</posX>
+        <posY>80</posY> 
+        <width>40</width>
+        <height>40</height>
+        <texture>Calendaricon.png</texture>
+		<colordiffuse>d9ffffff</colordiffuse>
+        <visible>!string.contains(#highlightedbutton,WEATHER)+!player.hasaudio+!player.hasvideo+!string.equals(#fanarthandler.holiday.current,)</visible> 
+        <animation effect="fade" time="250">WindowOpen</animation>
+      </control>
+	   <control>
+        <description>Home Holiday ICON</description>
+        <type>image</type>
+        <id>9870789</id>
+        <posX>144</posX>
+        <posY>80</posY> 
+        <width>40</width>
+        <height>40</height>
+        <texture>#(iif(neq(#fanarthandler.holiday.icon,''),'#fanarthandler.holiday.icon','Calendaricon.png'))</texture>
+        <visible>!string.contains(#highlightedbutton,WEATHER)+!string.equals(#fanarthandler.holiday.current,)+!player.hasaudio+!player.hasvideo</visible>
+        <animation effect="fade" time="250">WindowOpen</animation>
+      </control>
+	  
     <!-- ******************************************************************************************* -->
     <!-- ************************************** EXIT BUTTONS *************************************** -->
     <!-- ******************************************************************************************* -->
@@ -112,21 +171,21 @@
       <animation effect="fade" time="150">windowopen</animation>
       <animation effect="fade" time="50">windowclose</animation>
     </control>
-    <control>
+	<control>
       <type>group</type>
       <description>group element</description>
-      <layout>StackLayout(2, Vertical, true)</layout>
+      <layout>StackLayout(4, Vertical, true)</layout>
       <animation effect="fade" time="150">windowopen</animation>
       <animation effect="fade" time="50">windowclose</animation>
-      <posX>14</posX>
-      <posY>400</posY>
+      <posX>25</posX> 
+      <posY>405</posY>
       <visible>!control.hasfocus(50)+!control.hasfocus(1111)</visible>
       <control>
-        <description>hidden button for EXIT to BasicHome</description>
+        <description>Hidden button for EXIT to BasicHome</description>
         <type>button</type>
         <id>9997</id>
-        <width>56</width>
-        <height>56</height>
+        <width>52</width>
+        <height>52</height>
         <textureFocus>tb_back3.png</textureFocus>
         <textureNoFocus>tb_backNF.png</textureNoFocus>
         <label>-</label>
@@ -135,16 +194,17 @@
         <onleft>9997</onleft>
         <onup>9998</onup>
         <ondown>9999</ondown>
-        <animation effect="fade" time="150">windowopen</animation>
+		<animation effect="zoom" time="150" start="20,20" end="100,100">visible</animation>
+        <animation effect="fade" time="150">visible</animation>
         <animation effect="fade" time="50">windowclose</animation>
-        <animation effect="zoom" time="50" start="100,100" end="130,120">focus</animation>
+        <animation effect="zoom" time="50" start="100,100" end="130,130">focus</animation>
       </control>
       <control>
-        <description>hidden button for EXIT</description>
+        <description>Hidden button for EXIT</description>
         <type>button</type>
         <id>9999</id>
-        <width>56</width>
-        <height>56</height>
+        <width>52</width>
+        <height>52</height>
         <textureFocus>tb_exit3.png</textureFocus>
         <textureNoFocus>tb_exitNF.png</textureNoFocus>
         <label>-</label>
@@ -153,16 +213,17 @@
         <onleft>9999</onleft>
         <onup>9997</onup>
         <ondown>9998</ondown>
-        <animation effect="fade" time="150">windowopen</animation>
+		<animation effect="zoom" time="150" start="20,20" end="100,100" delay="50">visible</animation>
+        <animation effect="fade" time="150" delay="50">visible</animation>
         <animation effect="fade" time="50">windowclose</animation>
-        <animation effect="zoom" time="50" start="100,100" end="130,120">focus</animation>
+        <animation effect="zoom" time="50" start="100,100" end="130,130">focus</animation>
       </control>
       <control>
-        <description>hidden button for SHUTDOWN</description>
+        <description>Hidden button for SHUTDOWN</description>
         <type>button</type>
         <id>9998</id>
-        <width>56</width>
-        <height>56</height>
+        <width>52</width>
+        <height>52</height>
         <textureFocus>tb_shutdown3.png</textureFocus>
         <textureNoFocus>tb_shutdownNF.png</textureNoFocus>
         <label>-</label>
@@ -171,13 +232,14 @@
         <onleft>9998</onleft>
         <onup>9999</onup>
         <ondown>9997</ondown>
-        <animation effect="fade" time="150">windowopen</animation>
+		<animation effect="zoom" time="150" start="20,20" end="100,100" delay="100">visible</animation>
+        <animation effect="fade" time="150" delay="100">visible</animation>
         <animation effect="fade" time="50">windowclose</animation>
-        <animation effect="zoom" time="50" start="100,100" end="130,120">focus</animation>
+        <animation effect="zoom" time="50" start="100,100" end="130,130">focus</animation>
       </control>
     </control>
     <!-- ******************************************************************************************* -->
-    <!-- ****************** INFOS ON BASIC HOME (NOW PLAYING AUDIO) W FANART ******************** -->
+    <!-- ****************** INFOS ON BASIC HOME (NOW PLAYING AUDIO) W FANART *********************** -->
     <!-- ******************************************************************************************* -->
     <control>
       <type>group</type>

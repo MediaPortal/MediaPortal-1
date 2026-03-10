@@ -2,9 +2,13 @@
 <!-- Skin translation file -->
 <!-- English (US) -->
 <strings>
+  <string Field="LastWatched">Last watched</string>
+  <string Field="Awards">Awards</string>
   <string Field="EPGRows">Lines in TV/Radio EPGs</string>
   <string Field="NumberEPGRows">Number of lines</string>
-  <string Field="Thumbsview">Thumbnail View</string><string Field="Thumbsview.Select">Normal</string><string Field="WorldNewsTicker">Activate WorldNews Ticker</string>
+  <string Field="Thumbsview">Thumbnail View</string>
+  <string Field="Thumbsview.Select">Normal</string>
+  <string Field="WorldNewsTicker">Activate WorldNews Ticker</string>
   <string Field="AnalogClockOSD">Analog Clock in OSDs</string>
   <string Field="MusicNowPlayingFanart">Music NowPlaying Fanart in BasicHome</string>
   <string Field="MusicFanart">Random Music Fanart in BasicHome</string>
@@ -73,10 +77,16 @@ How to play
   <!-- ****************************   Skin translation for Connect4 ****************************-->
   <!-- ***************************************************************************************-->
   <string Field="WinAnimation">Show Win Animation</string>
-<!-- ***************************************************************************************-->
+ <!-- ***************************************************************************************-->
   <!-- ****************************   Skin translation for BHE ****************************-->
   <!-- ***************************************************************************************-->
   <string Field="Important">Important !</string>
   <string Field="CloseBHE">Close BasicHome Editor</string>
-  <string Field="SaveBHE">to save the settings correctly !</string>
+  <string Field="SaveBHE">to store your new settings !</string>
+  <!-- ***************************************************************************************-->
+  <!-- ****************************   Skin translation for Picture Info  *********************-->
+  <!-- ***************************************************************************************-->
+  <string Field="EXIFDATA">EXIF DATA</string>
+  <string Field="ImageInfos">Image information</string>
+  <string Field="CameraSettings">Camera settings</string>
 </strings>

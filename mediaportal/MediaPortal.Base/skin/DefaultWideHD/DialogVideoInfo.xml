@@ -44,7 +44,7 @@
       <texture>general_overlay.png</texture>
     </control>
     <control>
-      <description>Dummyy Button</description>
+      <description>Dummy Button</description>
       <type>button</type>
       <id>55</id>
       <label />
@@ -106,12 +106,12 @@
       </control>
       <control>
         <type>image</type>
+		<id>0</id>
         <posX>39</posX>
         <posY>117</posY>
         <width>480</width>
         <height>886</height>
         <texture>Backslide.png</texture>
-        <colorDiffuse>lightgrayf</colorDiffuse>
         <visible>!Control.HasFocus(24)|!control.hasfocus(54321)</visible>
         <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
         <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
@@ -133,7 +133,7 @@
           <font>font13</font>
           <onleft>55</onleft>
           <onright>55</onright>
-          <onup>11</onup>
+          <onup>11</onup> 
           <ondown>3</ondown>
         </control>
         <control>
@@ -201,56 +201,79 @@
           <ondown>11899</ondown>
         </control>
         <control>
-        <description>Trailers</description>
-        <type>button</type>
-        <id>11899</id>
-        <label>#Trailers.Translation.Trailers.Label...</label>
-        <onup>6</onup>
-        <ondown>2</ondown>
-        <visible>plugin.isenabled(Trailers)</visible>
-      </control>
+          <description>Trailers</description>
+          <type>button</type>
+          <id>11899</id>
+          <label>#Trailers.Translation.Trailers.Label...</label>
+          <onup>6</onup>
+          <ondown>50</ondown> 
+          <visible>plugin.isenabled(Trailers)</visible>
+        </control>
+	    <control>
+          <description>Awards Button</description>
+          <type>checkbutton</type>
+          <id>50</id>
+          <label>#SkinTranslation.Translations.Awards.Label</label>
+          <onleft>55</onleft>
+          <onright>55</onright>
+          <onup>11899</onup>
+          <ondown>52</ondown>
+        </control> 
+		<control>
+          <description>MPAA Button</description>
+          <type>checkbutton</type>
+          <id>52</id>
+          <label>MPAA</label>
+          <onleft>55</onleft>
+          <onright>55</onright>
+          <onup>50</onup>
+          <ondown>2</ondown>
+        </control>
+		
       </control>
       <!--     *******************************************************************************************  -->
       <!--     **************************************  SELECT BUTTONS  ***********************************  -->
       <!--     *******************************************************************************************  -->
       <control>
-        <description>select cover label</description>
+        <description>Select cover label</description>
         <type>label</type>
         <id>30</id>
-        <posX>97</posX>
-        <posY>765</posY>
+        <posX>100</posX>
+        <posY>810</posY> 
         <label>734</label>
         <font>font12</font>
         <align>left</align>
         <textcolor>ff00bfff</textcolor>
+		<visible>control.isvisible(10)</visible>
       </control>
       <control>
-        <description>&gt;select cover Spin Control</description>
+        <description>Select cover spin control</description>
         <type>spincontrol</type>
         <id>10</id>
-        <posX>97</posX>
-        <posY>832</posY>
-        <onup>8</onup>
+        <posX>110</posX> 
+        <posY>860</posY> 
+        <onup>8</onup> 
         <ondown>11</ondown>
-      </control>
+	  </control>
       <control>
-        <description>select disc label</description>
+        <description>Select disc label</description>
         <type>label</type>
         <id>100</id>
-        <posX>97</posX>
-        <posY>877</posY>
+        <posX>100</posX>
+        <posY>900</posY> 
         <label>427</label>
         <font>font12</font>
         <textcolor>ff00bfff</textcolor>
+		<visible>Control.IsVisible(11)</visible>
       </control>
       <control>
-        <description>select Disc spin control</description>
+        <description>Select Disc spin control</description>
         <type>spincontrol</type>
-        <id>11</id>
-        <posX>97</posX>
-        <posY>930</posY>
+        <id>11</id> 
+        <posX>110</posX>
+        <posY>950</posY> 
         <onup>10</onup>
-        <ondown>2</ondown>
+        <ondown>2</ondown> 
         <onleft>5</onleft>
         <onright>5</onright>
         <textcolor>lightgray</textcolor>
@@ -272,15 +295,15 @@
       <textureWidth>25</textureWidth>
       <textureHeight>25</textureHeight>
       <subitems>
-        <subitem>starbad.png</subitem>
-        <subitem>star.png</subitem>
+        <subitem>starbad_small.png</subitem>
+        <subitem>star_small.png</subitem>
       </subitems>
       <orientation>horizontal</orientation>
       <percentage>#rating</percentage>
       <imagesToDraw>10</imagesToDraw>
       <visible>!control.isvisible(24)</visible>
     </control>
-    <!--control>
+    <!--<control>
     <description>Text Rating Value</description>
     <type>label</type>
     <id>1</id>
@@ -290,20 +313,44 @@
     <font>font10</font>
     <align>left</align>
     <textcolor>lightgray</textcolor>
-  </control-->
+  </control>-->
     <!--     *******************************************************************************************  -->
     <!--     **************************************  MOVIE INFOS  **************************************  -->
     <!--     *******************************************************************************************  -->
     <control>
+      <description>Watched icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1875</posX>
+      <posY>277</posY>
+      <width>30</width>
+      <height>30</height>
+      <texture>overlaywatched.png</texture>
+      <colordiffuse>ff33aaff</colordiffuse>
+      <visible>!string.equals(#watchedcount,0)+!control.isvisible(24)</visible>
+    </control>
+    <control>
+      <description>Unwatched icon</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1875</posX>
+      <posY>277</posY>
+      <width>30</width>
+      <height>30</height>
+      <texture>overlayunwatched.png</texture>
+      <visible>string.equals(#watchedcount,0)+!control.isvisible(24)</visible>
+    </control>
+	<control>
       <description>Genre images</description>
       <id>0</id>
       <type>image</type>
       <posX>1875</posX>
-      <posY>277</posY>
+      <posY>317</posY>
       <width>30</width>
-      <height>375</height>
+      <height>335</height>
       <keepaspectratio>yes</keepaspectratio>
       <texture>#fanarthandler.movie.genres.selected.verticalall</texture>
+	  <visible>!control.isvisible(24)</visible>
     </control>
     <control>
       <description>Award images</description>
@@ -467,19 +514,39 @@
         <font>font11</font>
         <textcolor>lightgray</textcolor>
       </control>
+	   <control>
+        <description>Watched count Label</description>
+        <type>label</type>
+        <id>1</id>
+        <height>36</height>
+        <posY>685</posY>
+        <label>1278</label>
+        <font>font10</font>
+        <textcolor>ff00bfff</textcolor>
+      </control>
+      <control>
+        <description>Watched count Value</description>
+        <type>label</type>
+        <id>1</id>
+        <height>36</height>
+        <posY>715</posY>
+        <label>#watchedcountx</label>
+        <font>font11</font>
+        <textcolor>lightgray</textcolor>
+      </control>
     </control>
     <control>
       <description>group element</description>
       <type>group</type>
       <layout>StackLayout(0, Vertical, True)</layout>
       <posX>425</posX>
-      <posY>558</posY>
+      <posY>557</posY> 561
       <control>
         <description>MPAA Rating Label</description>
         <type>label</type>
         <id>1</id>
         <height>36</height>
-        <posY>547</posY>
+        <posY>570</posY> 547
         <label>173</label>
         <font>font10</font>
         <textcolor>ff00bfff</textcolor>
@@ -536,16 +603,36 @@
         <font>font11</font>
         <textcolor>lightgray</textcolor>
       </control>
+	  <control>
+        <description>Last watched Label</description>
+        <type>label</type>
+        <id>1</id>
+        <height>36</height>
+        <posY>744</posY>
+        <label>#SkinTranslation.Translations.LastWatched.Label (%):</label>
+        <font>font10</font>
+        <textcolor>ff00bfff</textcolor>
+      </control>
+      <control>
+        <description>Last watched Value</description>
+        <type>label</type>
+        <id>1</id>
+        <height>36</height>
+        <posY>774</posY>
+        <label>#watchedpercent%</label>
+        <font>font11</font>
+        <textcolor>lightgray</textcolor>
+      </control>
     </control>
     <!--     *******************************************************************************************  -->
-    <!--     ********************************  LAST UPDATE / WATCHCOUNT  *******************************  -->
+    <!--     ********************************  LAST UPDATE  ********************************************  -->
     <!--     *******************************************************************************************  -->
     <control>
       <description>Last update Label</description>
       <type>label</type>
       <id>1</id>
       <posX>75</posX>
-      <posY>825</posY>
+      <posY>865</posY>
       <label>1279</label>
       <font>font10</font>
       <align>left</align>
@@ -555,37 +642,16 @@
       <description>Last update Value Movie</description>
       <type>label</type>
       <id>1</id>
-      <posX>300</posX>
-      <posY>825</posY>
+      <posX>260</posX>
+      <posY>865</posY>
       <label>#lastupdate</label>
       <font>font10</font>
       <align>left</align>
       <textcolor>lightgray</textcolor>
     </control>
-    <control>
-      <description>Watched Count Label</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>75</posX>
-      <posY>855</posY>
-      <label>1278</label>
-      <font>font10</font>
-      <align>left</align>
-      <textcolor>ff00bfff</textcolor>
-    </control>
-    <control>
-      <description>Watched Count Value</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>300</posX>
-      <posY>855</posY>
-      <label>#watchedcount</label>
-      <font>font10</font>
-      <align>left</align>
-      <textcolor>lightgray</textcolor>
-    </control>
+    
     <!--     *******************************************************************************************  -->
-    <!--     ********************************  PLOT / USERINFO TEXT   **********************************  -->
+    <!--     ********************************  PLOT / USERREVIEW TEXT   **********************************  -->
     <!--     *******************************************************************************************  -->
     <control Style="NoShadow">
       <description>Plot value</description>
@@ -610,19 +676,53 @@
       <label>#userreview</label>
       <font>font10</font>
     </control>
+	 <control Style="NoShadow">
+      <description>Awards value</description>
+      <type>textboxscrollup</type>
+      <id>51</id>
+      <posX>855</posX>
+      <posY>270</posY>
+      <width>600</width>
+      <height>570</height>
+      <label>#awards</label>
+      <font>font10</font>
+    </control>
+	 <control Style="NoShadow">
+      <description>MPAA value</description>
+      <type>textboxscrollup</type>
+      <id>53</id>
+      <posX>855</posX>
+      <posY>270</posY>
+      <width>600</width>
+      <height>570</height>
+      <label>#mpaatext</label>
+      <font>font10</font>
+    </control>
     <!--     *******************************************************************************************  -->
     <!--     **************************************  MOVIE COVER  **************************************  -->
     <!--     *******************************************************************************************  -->
     <control>
+	<description>DefaultVideoBig</description>
       <id>1</id>
       <type>image</type>
       <posX>1500</posX>
       <posY>270</posY>
       <width>360</width>
       <height>510</height>
-      <texture mask="videothumbmask.png">missing_Coverart_video.png</texture>
-      <visible>!control.isvisible(24)</visible>
+      <texture mask="videothumbmask.png">defaultVideoBig.png</texture>
+      <visible>!control.isvisible(24)+!control.hasthumb(21)</visible>
     </control>
+	<control>
+      <description>DefaultVideoSeenBig</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>1500</posX>
+      <posY>270</posY>
+      <width>360</width>
+      <height>510</height>
+      <texture mask="videothumbmask.png">defaultVideoSeenBig.png</texture> 
+      <visible>!control.isvisible(24)+!string.equals(#watchedcount,0)+!control.hasthumb(21)</visible> 
+    </control>	 
     <control>
       <description>Movie Cover Image</description>
       <type>image</type>
@@ -631,22 +731,33 @@
       <posY>270</posY>
       <width>360</width>
       <height>510</height>
-      <colorkey>FFFF00FF</colorkey>
-      <colordiffuse>lightgray</colordiffuse>
+      <!--<colorkey>FFFF00FF</colorkey>--> 
       <keepaspectratio>no</keepaspectratio>
       <texture mask="videothumbmask.png">#thumb</texture>
+	  <colordiffuse>fff1f1f1</colordiffuse>
       <visible>!control.isvisible(24)</visible>
     </control>
+	<!--<control>
+      <description>Glass overlay</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1500</posX>
+      <posY>270</posY>
+      <width>360</width>
+      <height>510</height>
+      <texture mask="videothumbmask.png">glass_overlay_long.png</texture>
+      <visible>!control.isvisible(24)+control.hasthumb(21)</visible>
+    </control>-->
     <control>
-      <description>Movie Cover Glass Image and Dummy button to be able to activate action menu</description>
+      <description>Dummy button to be able to activate action menu</description>
       <type>button</type>
       <id>54321</id>
       <posX>1500</posX>
       <posY>270</posY>
       <width>360</width>
       <height>510</height>
-      <textureFocus>Videothumbframe.png</textureFocus>
-      <textureNoFocus>Videothumbframe.png</textureNoFocus>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
       <onleft>2</onleft>
       <action>68</action>
       <visible>!control.isvisible(24)</visible>
@@ -654,18 +765,7 @@
     <!--     *******************************************************************************************  -->
     <!--     **************************************  ACTOR INFOS  **************************************  -->
     <!--     *******************************************************************************************  -->
-    <control>
-      <description>Actors/Cast Image</description>
-      <id>1</id>
-      <type>image</type>
-      <posX>1500</posX>
-      <posY>270</posY>
-      <width>360</width>
-      <height>510</height>
-      <keepaspectratio>no</keepaspectratio>
-      <texture mask="videothumbmask.png">defaultActorBig.png</texture>
-      <visible>control.isvisible(24)+!control.hasthumb(25)</visible>
-    </control>
+  
     <control>
       <description>Actors/Cast Image</description>
       <type>image</type>
@@ -676,7 +776,19 @@
       <height>510</height>
       <keepaspectratio>yes</keepaspectratio>
       <texture mask="videothumbmask.png">#actorThumb</texture>
-      <visible>control.isvisible(24)</visible>
+      <visible>control.isvisible(24)+!string.equals(#actorThumb,defaultActor.png)</visible>
+    </control>
+	 <control>
+      <description>Actors/Cast default image</description>
+      <id>1</id>
+      <type>image</type>
+      <posX>1500</posX>
+      <posY>270</posY>
+      <width>360</width>
+      <height>510</height>
+      <keepaspectratio>no</keepaspectratio>
+      <texture mask="videothumbmask.png">defaultActorBig.png</texture>
+      <visible>control.isvisible(24)+string.equals(#actorThumb,defaultActor.png)</visible> 
     </control>
     <control>
       <description>Actors/Cast List</description>
@@ -689,6 +801,7 @@
       <onleft>2</onleft>
       <onright>2</onright>
       <scrollOffset>2</scrollOffset>
+	  <scrollbarXOff>22</scrollbarXOff> 
       <spinPosX>3405</spinPosX>
       <spinPosY>1020</spinPosY>
       <spinCanFocus>no</spinCanFocus>
@@ -714,6 +827,7 @@
       <label>#cast</label>
       <font>font11</font>
     </control>
+	
     <!--     *******************************************************************************************  -->
     <!--     **************************************  MEDIA LOGOS  **************************************  -->
     <!--     *******************************************************************************************  -->
@@ -739,7 +853,7 @@
         <description>Certification (MPAA) Logo</description>
         <type>image</type>
         <id>0</id>
-        <width>85</width>
+        <width>85</width> 
         <height>55</height>
         <texture>logos\#mpaarating.png</texture>
         <keepaspectratio>yes</keepaspectratio>

@@ -4,19 +4,19 @@
   <defaultcontrol>6</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
-    
-      <control>
-        <description>background image</description>
-        <type>image</type>
-        <id>1</id>
-        <posX>330</posX>
-      <posY>500</posY>
-      <width>1280</width>
-      <height>550</height>
-        <texture>context_background.png</texture>
-        <colordiffuse>99ffffff</colordiffuse>
-      </control>
-      <control>
+    <control>
+      <description>background image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>-20</posX>
+      <posY>170</posY>
+      <width>560</width>
+      <height>580</height>
+      <texture>Exifdata_bg.png</texture>
+      <colordiffuse>ccffffff</colordiffuse>
+      <animation effect="slide" time="200" start="-300,0" condition="true">conditional</animation>
+    </control>
+    <control>
       <id>3</id>
       <description>Dummy Image for showing old exif info when picture in full screen</description>
       <type>image</type>
@@ -32,343 +32,290 @@
       <animation effect="Fade" time="150">WindowOpen</animation>
       <animation effect="Fade" time="150">WindowClose</animation>
     </control>
+    <!--control>
+      <description>Exif Data</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>30</posX>
+      <posY>160</posY>
+      <width>500</width>
+      <align>center</align>
+      <label>#SkinTranslation.Translations.EXIFDATA.Label</label>
+      <font>font12</font>
+      <textcolor>ff00bfff</textcolor>
+      <animation effect="slide" time="200" start="-300,0" condition="true">conditional</animation>
+    </control-->
+    <control>
+      <description>Image Info label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>37</posX>
+      <posY>190</posY>
+      <label>#SkinTranslation.Translations.ImageInfos.Label</label>
+      <font>font11</font>font11bold
+      <textcolor>ff00bfff</textcolor>
+      <animation effect="slide" time="200" start="-300,0" condition="true">conditional</animation>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(2, Vertical, true)</layout>
+      <posX>37</posX>
+      <posY>230</posY>
+      <animation effect="slide" time="200" start="-300,0" condition="true">conditional</animation>
       <control>
-        <type>group</type>
-        <description>group element</description>
-        <layout>StackLayout(41, Vertical, true)</layout>
-        <posX>380</posX>
-      <posY>530</posY>
-        <control>
-          <description>Dimensions txt</description>
-          <type>label</type>
-          <id>1</id>
-          <label>9000</label>
-          <font>RSS</font>
-          <textcolor>ff00bfff</textcolor>
-        </control>
-        <control>
-          <description>Resolution txt</description>
-          <type>label</type>
-          <id>1</id>
-          <label>9001</label>
-          <font>RSS</font>
-          <textcolor>ff00bfff</textcolor>
-        </control>
-        <control>
-          <description>Flash txt</description>
-          <type>label</type>
-          <id>1</id>
-          <label>9002</label>
-          <font>RSS</font>
-          <textcolor>ff00bfff</textcolor>
-        </control>
-        <control>
-          <description>Metering mode txt</description>
-          <type>label</type>
-          <id>1</id>
-          <label>9003</label>
-          <font>RSS</font>
-          <textcolor>ff00bfff</textcolor>
-        </control>
-        <control>
-          <description>Exposure Compensation txt</description>
-          <type>label</type>
-          <id>1</id>
-          <label>9004</label>
-          <font>RSS</font>
-          <textcolor>ff00bfff</textcolor>
-        </control>
-        <control>
-          <description>Shutterspeed txt</description>
-          <type>label</type>
-          <id>1</id>
-          <label>9005</label>
-          <font>RSS</font>
-          <textcolor>ff00bfff</textcolor>
-        </control>
-        <control>
-          <description>Date Taken txt</description>
-          <type>label</type>
-          <id>1</id>
-          <label>9006</label>
-          <font>RSS</font>
-          <textcolor>ff00bfff</textcolor>
-        </control>
-        <control>
-          <description>Fstop txt</description>
-          <type>label</type>
-          <id>1</id>
-          <label>9007</label>
-          <font>RSS</font>
-          <textcolor>ff00bfff</textcolor>
-        </control>
-        <control>
-          <description>Exposure Time txt</description>
-          <type>label</type>
-          <id>1</id>
-          <label>9008</label>
-          <font>RSS</font>
-          <textcolor>ff00bfff</textcolor>
-        </control>
-        <control>
-          <description>Camera Model txt</description>
-          <type>label</type>
-          <id>1</id>
-          <label>9009</label>
-          <font>RSS</font>
-          <textcolor>ff00bfff</textcolor>
-        </control>
-        <control>
-          <description>Equipment make txt</description>
-          <type>label</type>
-          <id>1</id>
-          <label>9010</label>
-          <font>RSS</font>
-          <textcolor>ff00bfff</textcolor>
-        </control>
-        <control>
-          <description>View Comment txt</description>
-          <type>label</type>
-          <id>1</id>
-          <label>9011</label>
-          <font>RSS</font>
-          <textcolor>ff00bfff</textcolor>
-        </control>
+        <description>Equipment make icon</description>
+        <type>image</type>
+        <id>0</id>
+        <texture>C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\equipmentmake.png</texture>
+        <height>38</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <colordiffuse>ccffffff</colordiffuse>
       </control>
       <control>
-        <type>group</type>
-        <description>group element</description>
-        <layout>StackLayout(0, Vertical, true)</layout>
-        <posX>910</posX>
-      <posY>530</posY>
-        <control>
-          <description>Image Dimensions value</description>
-          <type>label</type>
-          <id>21</id>
-          <width>620</width>
-          <height>41</height>
-          <label>-</label>
-          <font>RSS</font>
-          <textcolor>lightgray</textcolor>
-        </control>
-        <control>
-          <description>Resolutions value</description>
-          <type>label</type>
-          <id>22</id>
-          <width>620</width>
-          <height>41</height>
-          <label>-</label>
-          <font>RSS</font>
-          <textcolor>lightgray</textcolor>
-        </control>
-        <control>
-          <description>Flash value</description>
-          <type>fadelabel</type>
-          <id>23</id>
-          <width>620</width>
-          <height>41</height>
-          <label>-</label>
-          <font>RSS</font>
-          <textcolor>lightgray</textcolor>
-        </control>
-        <control>
-          <description>Metering Mode value</description>
-          <type>fadelabel</type>
-          <id>24</id>
-          <width>620</width>
-          <height>41</height>
-          <label>-</label>
-          <font>RSS</font>
-          <textcolor>lightgray</textcolor>
-        </control>
-        <control>
-          <description>Exposure Compensation value</description>
-          <type>fadelabel</type>
-          <id>25</id>
-          <width>620</width>
-          <height>41</height>
-          <label>-</label>
-          <font>RSS</font>
-          <textcolor>lightgray</textcolor>
-        </control>
-        <control>
-          <description>Shutter Speed value</description>
-          <type>fadelabel</type>
-          <id>26</id>
-          <width>620</width>
-          <height>41</height>
-          <label>-</label>
-          <font>RSS</font>
-          <textcolor>lightgray</textcolor>
-        </control>
-        <control>
-          <description>Date Taken value</description>
-          <type>label</type>
-          <id>27</id>
-          <width>620</width>
-          <height>41</height>
-          <label>-</label>
-          <font>RSS</font>
-          <textcolor>lightgray</textcolor>
-        </control>
-        <control>
-          <description>Fstop value</description>
-          <type>label</type>
-          <id>28</id>
-          <width>620</width>
-          <height>41</height>
-          <label>-</label>
-          <font>RSS</font>
-          <textcolor>lightgray</textcolor>
-        </control>
-        <control>
-          <description>Exposure Time value</description>
-          <type>label</type>
-          <id>29</id>
-          <width>620</width>
-          <height>44</height>
-          <label>-</label>
-          <font>RSS</font>
-          <textcolor>lightgray</textcolor>
-        </control>
-        <control>
-          <description>Camera Model value</description>
-          <type>fadelabel</type>
-          <id>30</id>
-          <width>620</width>
-          <height>42</height>
-          <label>-</label>
-          <font>RSS</font>
-          <textcolor>lightgray</textcolor>
-        </control>
-        <control>
-          <description>Equipment Make value</description>
-          <type>fadelabel</type>
-          <id>31</id>
-          <width>620</width>
-          <height>42</height>
-          <label>-</label>
-          <font>RSS</font>
-          <textcolor>lightgray</textcolor>
-        </control>
-        <control>
-          <description>View Comments value</description>
-          <type>label</type>
-          <id>32</id>
-          <width>620</width>
-          <height>41</height>
-          <label>-</label>
-          <font>RSS</font>
-          <textcolor>lightgray</textcolor>
-        </control>
+        <description>Camera model Icon</description>
+        <type>image</type>
+        <id>0</id>
+        <texture>C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\cameramodel.png</texture>
+        <height>38</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <colordiffuse>ccffffff</colordiffuse>
       </control>
-      <!-- **************************  Separator lines   ***************************-->
       <control>
-        <type>group</type>
-        <description>group element</description>
-        <layout>StackLayout(40, Vertical, true)</layout>
-        <posX>330</posX>
-      <posY>572</posY>
-        <control>
-          <description>divider horizontal</description>
-          <type>image</type>
-          <id>0</id>
-          <width>1260</width>
-          <height>1</height>
-          <texture>horizontalbar.png</texture>
-          <colordiffuse>99ffffff</colordiffuse>
-        </control>
-        <control>
-          <description>divider horizontal</description>
-          <type>image</type>
-          <id>0</id>
-          <width>1260</width>
-          <height>1</height>
-          <texture>horizontalbar.png</texture>
-          <colordiffuse>99ffffff</colordiffuse>
-        </control>
-        <control>
-          <description>divider horizontal</description>
-          <type>image</type>
-          <id>0</id>
-          <width>1260</width>
-          <height>1</height>
-          <texture>horizontalbar.png</texture>
-          <colordiffuse>99ffffff</colordiffuse>
-        </control>
-        <control>
-          <description>divider horizontal</description>
-          <type>image</type>
-          <id>0</id>
-          <width>1260</width>
-          <height>1</height>
-          <texture>horizontalbar.png</texture>
-          <colordiffuse>99ffffff</colordiffuse>
-        </control>
-        <control>
-          <description>divider horizontal</description>
-          <type>image</type>
-          <id>0</id>
-          <width>1260</width>
-          <height>1</height>
-          <texture>horizontalbar.png</texture>
-          <colordiffuse>99ffffff</colordiffuse>
-        </control>
-        <control>
-          <description>divider horizontal</description>
-          <type>image</type>
-          <id>0</id>
-          <width>1260</width>
-          <height>1</height>
-          <texture>horizontalbar.png</texture>
-          <colordiffuse>99ffffff</colordiffuse>
-        </control>
-        <control>
-          <description>divider horizontal</description>
-          <type>image</type>
-          <id>0</id>
-          <width>1260</width>
-          <height>1</height>
-          <texture>horizontalbar.png</texture>
-          <colordiffuse>99ffffff</colordiffuse>
-        </control>
-        <control>
-          <description>divider horizontal</description>
-          <type>image</type>
-          <id>0</id>
-          <width>1260</width>
-          <height>1</height>
-          <texture>horizontalbar.png</texture>
-          <colordiffuse>99ffffff</colordiffuse>
-        </control>
-        <control>
-          <description>divider horizontal</description>
-          <type>image</type>
-          <id>0</id>
-          <width>1260</width>
-          <height>1</height>
-          <texture>horizontalbar.png</texture>
-          <colordiffuse>99ffffff</colordiffuse>
-        </control>
-        <control>
-          <description>divider horizontal</description>
-          <type>image</type>
-          <id>0</id>
-          <width>1260</width>
-          <height>1</height>
-          <texture>horizontalbar.png</texture>
-          <colordiffuse>99ffffff</colordiffuse>
-        </control>
-        <control>
-          <description>divider horizontal</description>
-          <type>image</type>
-          <id>0</id>
-          <width>1260</width>
-          <height>1</height>
-          <texture>horizontalbar.png</texture>
-          <colordiffuse>99ffffff</colordiffuse>
-        </control>
+        <description>Dimensions Icon</description>
+        <type>image</type>
+        <id>0</id>
+        <texture>C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\imagedimensions.png</texture>
+        <height>38</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <colordiffuse>ccffffff</colordiffuse>
       </control>
-    
-  </controls>
+      <control>
+        <description>Resolution Icon</description>
+        <type>image</type>
+        <id>0</id>
+        <texture>C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\resolution.png</texture>
+        <height>38</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <colordiffuse>ccffffff</colordiffuse>
+      </control>
+      <control>
+        <description>Date taken Icon</description>
+        <type>image</type>
+        <id>0</id>
+        <texture>C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\datepicturetaken.png</texture>
+        <height>38</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <colordiffuse>ccffffff</colordiffuse>
+      </control>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(0, Vertical, true)</layout>
+      <posX>90</posX>
+      <posY>230</posY>
+      <animation effect="slide" time="200" start="-300,0" condition="true">conditional</animation>
+      <control>
+        <description>Equipment Make value</description>
+        <type>fadelabel</type>
+        <id>31</id>
+        <width>440</width>
+        <height>41</height>
+        <label>-</label>
+        <font>font11</font>
+        <textcolor>lightgray</textcolor>
+      </control>
+      <control>
+        <description>Camera Model value</description>
+        <type>fadelabel</type>
+        <id>30</id>
+        <width>440</width>
+        <height>41</height>
+        <label>-</label>
+        <font>font11</font>
+        <textcolor>lightgray</textcolor>
+      </control>
+      <control>
+        <description>Image Dimensions value</description>
+        <type>label</type>
+        <id>21</id>
+        <width>440</width>
+        <height>41</height>
+        <label>-</label>
+        <font>font11</font>
+        <textcolor>lightgray</textcolor>
+      </control>
+      <control>
+        <description>Resolutions value</description>
+        <type>label</type>
+        <id>22</id>
+        <width>440</width>
+        <height>41</height>
+        <label>-</label>
+        <font>font11</font>
+        <textcolor>lightgray</textcolor>
+      </control>
+      <control>
+        <description>Date Taken value</description>
+        <type>label</type>
+        <id>27</id>
+        <width>440</width>
+        <height>41</height>
+        <label>-</label>
+        <font>font11</font>
+        <textcolor>lightgray</textcolor>
+      </control>
+    </control>
+    <control>
+      <description>Camera settings label</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>37</posX>
+      <posY>440</posY>
+      <label>#SkinTranslation.Translations.CameraSettings.Label</label>
+      <font>font11</font>
+      <textcolor>ff00bfff</textcolor>
+      <animation effect="slide" time="200" start="-300,0" condition="true">conditional</animation>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(2, Vertical, true)</layout>
+      <posX>37</posX>
+      <posY>480</posY>
+      <animation effect="slide" time="200" start="-300,0" condition="true">conditional</animation>
+      <control>
+        <description>Shutter Speed icon</description>
+        <type>image</type>
+        <id>0</id>
+        <texture>C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\shutterspeed.png</texture>
+        <height>38</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <colordiffuse>ccffffff</colordiffuse>
+      </control>
+      <control>
+        <description>Fstop  Icon</description>
+        <type>image</type>
+        <id>0</id>
+        <texture>C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\fstop.png</texture>
+        <height>38</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <colordiffuse>ccffffff</colordiffuse>
+      </control>
+      <control>
+        <description>Exposure Compensation Icon</description>
+        <type>image</type>
+        <id>0</id>
+        <texture>C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\exposurecompensation.png</texture>
+        <height>38</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <colordiffuse>ccffffff</colordiffuse>
+      </control>
+      <control>
+        <description>Exposure Time Icon</description>
+        <type>image</type>
+        <id>0</id>
+        <texture>C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\exposuretime.png</texture>
+        <height>38</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <colordiffuse>ccffffff</colordiffuse>
+      </control>
+      <control>
+        <description>Metering Mode Icon</description>
+        <type>image</type>
+        <id>0</id>
+        <texture>C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\meteringmode.png</texture>
+        <height>38</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <colordiffuse>ccffffff</colordiffuse>
+      </control>
+      <control>
+        <description>Flash Mode Icon</description>
+        <type>image</type>
+        <id>0</id>
+        <texture>C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\flash.png</texture>
+        <height>38</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <colordiffuse>ccffffff</colordiffuse>
+      </control>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <layout>StackLayout(0, Vertical, true)</layout>
+      <posX>90</posX>
+      <posY>480</posY>
+      <animation effect="slide" time="200" start="-300,0" condition="true">conditional</animation>
+      <control>
+        <description>Shutter Speed value</description>
+        <type>fadelabel</type>
+        <id>26</id>
+        <width>440</width>
+        <height>41</height>
+        <label>-</label>
+        <font>font11</font>
+        <textcolor>lightgray</textcolor>
+      </control>
+      <control>
+        <description>Fstop value</description>
+        <type>label</type>
+        <id>28</id>
+        <width>440</width>
+        <height>41</height>
+        <label>-</label>
+        <font>font11</font>
+        <textcolor>lightgray</textcolor>
+      </control>
+      <control>
+        <description>Exposure Compensation value</description>
+        <type>fadelabel</type>
+        <id>25</id>
+        <width>440</width>
+        <height>41</height>
+        <label>-</label>
+        <font>font11</font>
+        <textcolor>lightgray</textcolor>
+      </control>
+      <control>
+        <description>Exposure Time value</description>
+        <type>label</type>
+        <id>29</id>
+        <width>440</width>
+        <height>41</height>
+        <label>-</label>
+        <font>font11</font>
+        <textcolor>lightgray</textcolor>
+      </control>
+      <control>
+        <description>Metering Mode value</description>
+        <type>fadelabel</type>
+        <id>24</id>
+        <width>440</width>
+        <height>41</height>
+        <label>-</label>
+        <font>font11</font>
+        <textcolor>lightgray</textcolor>
+      </control>
+      <control>
+        <description>Flash value</description>
+        <type>fadelabel</type>
+        <id>23</id>
+        <width>440</width>
+        <height>41</height>
+        <label>-</label>
+        <font>font11</font>
+        <textcolor>lightgray</textcolor>
+      </control>
+      <!--<control>
+      <description>View Comments value</description>
+      <type>label</type>
+      <id>32</id>
+      <width>440</width>
+      <height>40</height>
+      <label>-</label>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+    </control>--></control>
+</controls>
 </window>
