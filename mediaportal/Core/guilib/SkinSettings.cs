@@ -131,8 +131,7 @@ namespace MediaPortal.GUI.Library
     /// <returns></returns>
     public static string GetSkinName(int key)
     {
-      SkinString skin = null;
-      if (_skinStringSettings.TryGetValue(key, out skin))
+      if (_skinStringSettings.TryGetValue(key, out SkinString skin))
       {
         return skin.Name;
       }
@@ -146,8 +145,7 @@ namespace MediaPortal.GUI.Library
     /// <returns></returns>
     public static string GetSkinString(int key)
     {
-      SkinString skin = null;
-      if (_skinStringSettings.TryGetValue(key, out skin))
+      if (_skinStringSettings.TryGetValue(key, out SkinString skin))
       {
         return skin.Value;
       }
@@ -161,8 +159,7 @@ namespace MediaPortal.GUI.Library
     /// <param name="newValue"></param>
     public static void SetSkinString(int key, string newValue)
     {
-      SkinString skin = null;
-      if (_skinStringSettings.TryGetValue(key, out skin))
+      if (_skinStringSettings.TryGetValue(key, out SkinString skin))
       {
         skin.Value = newValue;
 
@@ -178,8 +175,7 @@ namespace MediaPortal.GUI.Library
     {
       lock (_skinStringSettings) //Lock the dictionary, it might be getting saved at the moment
       {
-        int key;
-        if (_propertyLocation.TryGetValue(tag, out key))
+        if (_propertyLocation.TryGetValue(tag, out int key))
         {
           _skinStringSettings[key].Value = tagValue;
         }
@@ -258,8 +254,7 @@ namespace MediaPortal.GUI.Library
     /// <returns></returns>
     public static bool GetSkinBool(int key)
     {
-      SkinBool skinBool = null;
-      if (_skinBoolSettings.TryGetValue(key, out skinBool))
+      if (_skinBoolSettings.TryGetValue(key, out SkinBool skinBool))
       {
         return skinBool.Value;
       }
@@ -273,8 +268,7 @@ namespace MediaPortal.GUI.Library
     /// <param name="newValue"></param>
     public static void SetSkinBool(int key, bool newValue)
     {
-      SkinBool skinBool = null;
-      if (_skinBoolSettings.TryGetValue(key, out skinBool))
+      if (_skinBoolSettings.TryGetValue(key, out SkinBool skinBool))
       {
         skinBool.Value = newValue;
 
