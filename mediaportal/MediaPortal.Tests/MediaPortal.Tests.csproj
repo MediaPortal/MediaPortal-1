@@ -114,6 +114,8 @@
     <Compile Include="Core\UdpHelper\UdpHelperTest.cs" />
     <Compile Include="Core\InputDevices\InputHandlerTest.cs" />
     <Compile Include="Core\Util\TestConfig.cs" />
+    <Compile Include="Databases\Video\CSScriptLoader.cs" />
+    <Compile Include="Databases\Video\ScriptGrabberTest.cs" />
     <Compile Include="MockObjects\NoLog.cs" />
     <Compile Include="TagReader\TestTagReader.cs" />
     <Compile Include="Utils\Services\ServiceTest.cs" />
