@@ -4143,14 +4143,18 @@ namespace MediaPortal.Player
           return true;
         }
 
-        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
+        if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW ||
+            GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_RADIO_PLAYING_NOW)
         {
           GUIWindowManager.ShowPreviousWindow();
           return true;
         }
 
         Log.Info("g_Player: ShowFullScreenWindow: No Visualisation defined. Switching to Now Playing");
-        GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW);
+        if (IsRadio && GUIWindowManager.CanLoad((int)GUIWindow.Window.WINDOW_RADIO_PLAYING_NOW))
+          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_RADIO_PLAYING_NOW);
+        else
+          GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW);
         return true;
       }
       else

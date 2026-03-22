@@ -245,6 +245,7 @@ namespace MediaPortal.GUI.Library
     private static bool isSkinXMLLoading = false;
     private static int FocusID { get; set; }
     private static int FocusIDPrevious { get; set; }
+    public string WindowXmlFileName { get { return _windowXmlFileName; } }
 
     //-1=default from topbar.xml 
     // 0=flase from skin.xml
