@@ -894,6 +894,7 @@ namespace TvPlugin
       CurrentChannel = (Channel)item.MusicTag;
 
       Play();
+      g_Player.ShowFullScreenWindow();
     }
 
     public static void Play()
