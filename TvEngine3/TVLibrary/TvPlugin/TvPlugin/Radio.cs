@@ -216,33 +216,46 @@ namespace TvPlugin
 
     public override void OnAction(Action action)
     {
-      if (action.wID == Action.ActionType.ACTION_PREVIOUS_MENU)
+      switch (action.wID)
       {
-        if (facadeLayout.Focus)
-        {
-          GUIListItem item = facadeLayout[0];
-          if (item != null)
+        case Action.ActionType.ACTION_PREVIOUS_MENU:
+          if (facadeLayout.Focus)
           {
-            if (item.IsFolder && item.Label == "..")
+            GUIListItem item = facadeLayout[0];
+            if (item != null)
             {
-              LoadDirectory(null);
-              return;
+              if (item.IsFolder && item.Label == "..")
+              {
+                LoadDirectory(null);
+                return;
+              }
             }
           }
-        }
-      }
+          break;
 
-      if (action.wID == Action.ActionType.ACTION_PARENT_DIR)
-      {
-        GUIListItem item = facadeLayout[0];
-        if (item != null)
-        {
-          if (item.IsFolder && item.Label == "..")
+        case Action.ActionType.ACTION_PARENT_DIR:
           {
-            LoadDirectory(null);
+            GUIListItem item = facadeLayout[0];
+            if (item != null)
+            {
+              if (item.IsFolder && item.Label == "..")
+              {
+                LoadDirectory(null);
+              }
+            }
+            return;
           }
-        }
-        return;
+        case Action.ActionType.ACTION_NEXT_CHANNEL:
+        case Action.ActionType.ACTION_PREV_CHANNEL:
+          var newChannel = Radio.GetNextPrevChannel(RadioHelper.CurrentChannel, action.wID == Action.ActionType.ACTION_NEXT_CHANNEL);
+          if (newChannel != null)
+          {
+            RadioHelper.CurrentChannel = newChannel;
+            Radio.Play();
+            g_Player.ShowFullScreenWindow();
+
+          }
+          break;
       }
       base.OnAction(action);
     }
@@ -324,6 +337,38 @@ namespace TvPlugin
       }
 
       btnSortBy.SortChanged += SortChanged;
+    }
+
+    /// <summary>
+    /// Gets next or previous channel
+    /// </summary>
+    /// <param name="ch">current channel</param>
+    /// <param name="next"> selects next or previous</param>
+    /// <returns>Next or Previous channel if different from currentchannel, null otherwise</returns>
+    public static Channel GetNextPrevChannel(Channel ch, bool next)
+    {
+      IList<RadioGroupMap> maps = Radio.SelectedGroup.ReferringRadioGroupMap();
+      for (int i = 0; i < maps.Count; i++)
+      {
+        if (maps[i].ReferencedChannel() == ch)
+        {
+          if (next)
+          {
+            var nextI = i < maps.Count - 1 ? i + 1 : 0;
+            if (nextI == i)
+              return null;
+            return maps[nextI].ReferencedChannel();
+          }
+          else
+          {
+            var prevI = i > 0 ? i - 1 : maps.Count - 1;
+            if (prevI == i)
+              return null;
+            return maps[prevI].ReferencedChannel();
+          }
+        }
+      }
+      return null;
     }
 
     private static void LoadChannelGroups()

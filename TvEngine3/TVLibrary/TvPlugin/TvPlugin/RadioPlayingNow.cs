@@ -111,9 +111,22 @@ namespace TvPlugin
 
     public override void OnAction(Action action)
     {
-      if (action.wID == Action.ActionType.ACTION_STOP)
+      switch (action.wID)
       {
-        GUIWindowManager.ShowPreviousWindow();
+        case Action.ActionType.ACTION_STOP:
+          GUIWindowManager.ShowPreviousWindow();
+          break;
+        case Action.ActionType.ACTION_NEXT_CHANNEL:
+        case Action.ActionType.ACTION_PREV_CHANNEL:
+            {
+            var newChannel = Radio.GetNextPrevChannel(RadioHelper.CurrentChannel, action.wID == Action.ActionType.ACTION_NEXT_CHANNEL);
+            if (newChannel != null)
+            {
+              RadioHelper.CurrentChannel = newChannel;
+              Radio.Play();
+            }
+            break;
+          }
       }
 
       base.OnAction(action);
