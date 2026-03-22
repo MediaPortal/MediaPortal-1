@@ -441,7 +441,7 @@ namespace TvPlugin
 
     public override bool OnMessage(GUIMessage message)
     {
-      if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED && facadeLayout.SelectedListItem.MusicTag is RadioChannelGroup)
+      if (message.Message == GUIMessage.MessageType.GUI_MSG_ITEM_FOCUS_CHANGED && facadeLayout.SelectedListItem?.MusicTag is RadioChannelGroup)
       {
         GUIPropertyManager.SetProperty("#Radio.Folder", GUIPropertyManager.GetProperty("#selecteditem"));
       }
