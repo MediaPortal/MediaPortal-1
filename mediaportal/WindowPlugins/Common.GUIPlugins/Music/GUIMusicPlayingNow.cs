@@ -286,7 +286,7 @@ namespace MediaPortal.GUI.Music
       UpdateTrackInfo();
 
       // Do last.fm updates
-      if (g_Player.IsMusic && _lookupSimilarTracks && g_Player.CurrentPosition >= 10.0 && lstSimilarTracks != null && lstSimilarTracks.Count == 0)
+      if (g_Player.IsMusic && _lookupSimilarTracks && g_Player.CurrentPosition >= 10.0 && lstSimilarTracks.Count == 0)
       {
         Log.Debug("GUIMusicPlayingNow: Do Last.FM lookup for similar tracks");
         UpdateSimilarTracks(CurrentTrackFileName);

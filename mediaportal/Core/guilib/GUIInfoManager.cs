@@ -2915,7 +2915,6 @@ namespace MediaPortal.GUI.Library
           }
         }
       }
-      SkinSettings.PropertyChanged(tag, tagValue);
     }
 
     #endregion
