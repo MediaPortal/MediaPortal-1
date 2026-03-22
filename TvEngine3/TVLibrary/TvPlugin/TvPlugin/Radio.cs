@@ -313,7 +313,8 @@ namespace TvPlugin
 
       SetLastChannel();
 
-      if ((_autoTurnOnRadio) && !(g_Player.Playing && g_Player.IsRadio))
+      if ((_autoTurnOnRadio) && !(g_Player.Playing && g_Player.IsRadio) &&
+        PreviousWindowId != (int)Window.WINDOW_MUSIC_PLAYING_NOW && PreviousWindowId != (int)Window.WINDOW_RADIO_PLAYING_NOW)
       {
         GUIListItem item = facadeLayout.SelectedListItem;
         if (item != null && item.Label != ".." && !item.IsFolder)
