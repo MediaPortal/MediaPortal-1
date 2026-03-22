@@ -46,6 +46,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#Radio.Listen.Start", String.Empty);
         GUIPropertyManager.SetProperty("#Radio.Listen.Stop", String.Empty);
         GUIPropertyManager.SetProperty("#Radio.Listen.Remaining", String.Empty);
+        GUIPropertyManager.SetProperty("#Radio.Listen.Percentage", String.Empty);
 
         GUIPropertyManager.SetProperty("#Play.Current.Title", CurrentChannel.DisplayName); // No EPG
         GUIPropertyManager.SetProperty("#Play.Next.Title", string.Empty);
@@ -60,6 +61,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#Radio.Listen.Stop", CurrentChannel.CurrentProgram.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat).ToString());
         var remaining = CurrentChannel.CurrentProgram.CalculateTimeRemaining();
         GUIPropertyManager.SetProperty("#Radio.Listen.Remaining", Utils.SecondsToHMSString(remaining));
+        GUIPropertyManager.SetProperty("#Radio.Listen.Percentage", CurrentChannel.CurrentProgram.GetPercentage().ToString());
         GUIPropertyManager.SetProperty("#Play.Current.Title", CurrentChannel.CurrentProgram.Title);
         GUIPropertyManager.SetProperty("#Play.Current.Genre", CurrentChannel.CurrentProgram.Genre);
         GUIPropertyManager.SetProperty("#Play.Next.Title", CurrentChannel.NextProgram.Title);
