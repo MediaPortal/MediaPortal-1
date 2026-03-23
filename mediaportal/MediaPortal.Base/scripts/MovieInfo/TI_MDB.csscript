@@ -1,4 +1,4 @@
-//css_reference System.Core;
+﻿//css_reference System.Core;
 
 //css_reference "core.dll";
 //css_reference "Databases.dll";
@@ -296,7 +296,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
     if (GRABBER_ID_LOOKUP)
     {
       // Get IMDB ID from search string
-      Regex rximdbid = new Regex(@"(?:\s|\+|^)(?<imdbid>tt\d{7,8})\b");
+      Regex rximdbid = new Regex(@"(?:\s|\+|\[|^)(?<imdbid>tt\d{7,8})\b");
       Match matchimdbid = rximdbid.Match(searchStr);
       if (matchimdbid.Success)
       {
