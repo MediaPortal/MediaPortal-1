@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 
 using MediaPortal.Services;
@@ -12,16 +14,14 @@ namespace MediaPortal.Tests.Databases.Video
 {
   /// <summary>
   /// Integration tests for .csscript movie info grabbers.
-  /// These tests compile the csscript files at runtime and call the real TMDB/IMDB APIs,
-  /// so they require internet access and a valid API key in the script.
+  /// These tests compile all csscript files in the MovieInfo directory at runtime
+  /// and call the real TMDB/IMDB APIs, so they require internet access and a valid
+  /// API key in each script.
   /// </summary>
   [TestFixture]
   [Category("ScriptGrabber")]
   public class ScriptGrabberTest
   {
-    private Assembly _scriptAssembly;
-    private IIMDBScriptGrabber _grabber;
-
     [OneTimeSetUp]
     public void FixtureSetUp()
     {
@@ -34,67 +34,107 @@ namespace MediaPortal.Tests.Databases.Video
       {
         GlobalServiceProvider.Replace<ILog>(new NoLog());
       }
+    }
 
-      // Locate and compile the TI_MDB.csscript
+    public static IEnumerable<string> ScriptNames
+    {
+      get
+      {
+        string scriptsDir = CSScriptLoader.FindScriptsDirectory("MovieInfo");
+
+        foreach (string scriptPath in Directory.GetFiles(scriptsDir, "*.csscript"))
+        {
+          yield return Path.GetFileNameWithoutExtension(scriptPath);
+        }
+      }
+    }
+
+    private static IIMDBScriptGrabber LoadGrabber(string scriptName)
+    {
       string scriptsDir = CSScriptLoader.FindScriptsDirectory("MovieInfo");
-      string scriptPath = System.IO.Path.Combine(scriptsDir, "TI_MDB.csscript");
+      string scriptPath = Path.Combine(scriptsDir, scriptName + ".csscript");
+      Assembly assembly = CSScriptLoader.LoadScript(scriptPath);
+      return (IIMDBScriptGrabber)CSScriptLoader.CreateObject(assembly, "Grabber");
+    }
 
-      _scriptAssembly = CSScriptLoader.LoadScript(scriptPath);
-      _grabber = (IIMDBScriptGrabber)CSScriptLoader.CreateObject(_scriptAssembly, "Grabber");
+    public static IEnumerable<object[]> SearchStrings
+    {
+      get
+      {
+        // filename, hasTT
+        yield return new object[] { "The Shawshank Redemption", false };
+        yield return new object[] { "The Shawshank Redemption (1994) [tt0111161]", true };
+        yield return new object[] { "TSR [tt0111161]", true };
+        yield return new object[] { "TSR tt0111161", true };
+      }
     }
 
     [Test]
-    public void FindFilm_WithImdbId_ReturnsResults()
+    public void FindFilm_ReturnsResults(
+      [ValueSource(nameof(ScriptNames))] string scriptName,
+      [ValueSource(nameof(SearchStrings))] object[] searchCase)
     {
+      string searchString = (string)searchCase[0];
+      bool hasTT = (bool)searchCase[1];
+
+      IIMDBScriptGrabber grabber = LoadGrabber(scriptName);
       ArrayList elements = new ArrayList();
-      _grabber.FindFilm("Harry Potter and the Philosopher's Stone (2005) [tt0241527]", 10, elements);
 
-      Assert.IsTrue(elements.Count > 0, "FindFilm should return at least one result for tt0241527");
+      grabber.FindFilm(searchString, 10, elements);
 
-      IMDB.IMDBUrl firstResult = (IMDB.IMDBUrl)elements[0];
-      Assert.IsNotNull(firstResult, "First result should not be null");
-      Assert.IsNotEmpty(firstResult.URL, "Result URL should not be empty");
-      StringAssert.Contains("Harry Potter", firstResult.Title, "Result title should contain 'Harry Potter'");
+      if (hasTT)
+      {
+        Assert.AreEqual(1, elements.Count,
+          "FindFilm('{0}') with script {1} should return exactly one result but returned {2}",
+          searchString, scriptName, elements.Count);
+      }
+      else
+      {
+        Assert.IsTrue(elements.Count >= 1,
+          "FindFilm('{0}') with script {1} should return at least one result but returned {2}",
+          searchString, scriptName, elements.Count);
+      }
+
+      IMDB.IMDBUrl result = (IMDB.IMDBUrl)elements[0];
+      Assert.AreEqual("The Shawshank Redemption (1994)", result.Title,
+        "Title should be 'The Shawshank Redemption (1994)' for script {0} with search '{1}'",
+        scriptName, searchString);
     }
 
     [Test]
-    public void GetDetails_HarryPotter_DirectorIsChrisColumbus()
+    public void GetDetails_ReturnsCorrectData(
+      [ValueSource(nameof(ScriptNames))] string scriptName)
     {
+      IIMDBScriptGrabber grabber = LoadGrabber(scriptName);
       ArrayList elements = new ArrayList();
-      _grabber.FindFilm("Harry Potter and the Philosopher's Stone (2005) [tt0241527]", 10, elements);
 
-      Assert.IsTrue(elements.Count > 0, "FindFilm should return at least one result");
+      grabber.FindFilm("The Shawshank Redemption (1994) tt0111161", 10, elements);
+
+      Assert.IsTrue(elements.Count > 0,
+        "FindFilm should return at least one result for script {0}", scriptName);
 
       IMDB.IMDBUrl url = (IMDB.IMDBUrl)elements[0];
       IMDBMovie movieDetails = new IMDBMovie();
 
-      bool success = _grabber.GetDetails(url, ref movieDetails);
+      bool success = grabber.GetDetails(url, ref movieDetails);
 
-      Assert.IsTrue(success, "GetDetails should return true");
-      Assert.AreEqual("Chris Columbus", movieDetails.Director, "Director should be Chris Columbus");
-      Assert.IsNotEmpty(movieDetails.Title, "Title should not be empty");
-      Assert.IsNotEmpty(movieDetails.IMDBNumber, "IMDB number should not be empty");
-      Assert.IsTrue(movieDetails.Year > 0, "Year should be set");
-    }
-
-    [Test]
-    public void GetName_ReturnsGrabberName()
-    {
-      string name = _grabber.GetName();
-
-      Assert.IsNotNull(name, "GetName should not return null");
-      Assert.IsNotEmpty(name, "GetName should not return empty");
-      StringAssert.Contains("TMDB", name, "Grabber name should contain TMDB");
-    }
-
-    [Test]
-    public void GetLanguage_ReturnsLanguageCode()
-    {
-      string language = _grabber.GetLanguage();
-
-      Assert.IsNotNull(language, "GetLanguage should not return null");
-      Assert.IsNotEmpty(language, "GetLanguage should not return empty");
-      Assert.AreEqual(2, language.Length, "Language should be a two-letter code");
+      Assert.IsTrue(success, "GetDetails should return true for script {0}", scriptName);
+      Assert.AreEqual("Frank Darabont", movieDetails.Director,
+        "Director should be Frank Darabont for script {0}", scriptName);
+      Assert.IsNotEmpty(movieDetails.Title,
+        "Title should not be empty for script {0}", scriptName);
+      Assert.IsNotEmpty(movieDetails.IMDBNumber,
+        "IMDB number should not be empty for script {0}", scriptName);
+      Assert.IsTrue(movieDetails.Year > 0,
+        "Year should be set for script {0}", scriptName);
+      Assert.IsNotEmpty(movieDetails.Plot,
+        "Plot should not be empty for script {0}", scriptName);
+      Assert.IsNotEmpty(movieDetails.Genre,
+        "Genre should not be empty for script {0}", scriptName);
+      Assert.IsTrue(movieDetails.Rating > 0,
+        "Rating should be greater than 0 for script {0}", scriptName);
+      Assert.IsNotEmpty(movieDetails.Cast,
+        "Cast should not be empty for script {0}", scriptName);
     }
   }
 }

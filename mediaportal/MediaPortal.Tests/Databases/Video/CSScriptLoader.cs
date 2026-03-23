@@ -48,7 +48,11 @@ namespace MediaPortal.Tests.Databases.Video
       // Always include these framework assemblies
       resolvedReferences.Add("System.dll");
       resolvedReferences.Add("System.Core.dll");
+      resolvedReferences.Add("System.Data.dll");
       resolvedReferences.Add("System.Web.dll");
+      resolvedReferences.Add("System.Xml.dll");
+      resolvedReferences.Add("System.Windows.Forms.dll"); // TODO: remove this because a script to get data from the internet should not use Windows Forms
+      resolvedReferences.Add("System.Drawing.dll"); // TODO: remove this because a script to get data from the internet should not draw anything
 
       foreach (string cssRef in cssReferences)
       {
