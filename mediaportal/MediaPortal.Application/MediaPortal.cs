@@ -4420,7 +4420,10 @@ public class MediaPortalApp : D3D, IRender
         case Action.ActionType.ACTION_PREV_CHANNEL:
           if (!GUIWindowManager.IsRouted)
           {
-            window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
+            if (g_Player.Playing && g_Player.IsRadio)
+              window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_RADIO);
+            else
+              window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
             window.OnAction(action);
             return;
           }
@@ -4430,7 +4433,10 @@ public class MediaPortalApp : D3D, IRender
         case Action.ActionType.ACTION_NEXT_CHANNEL:
           if (!GUIWindowManager.IsRouted)
           {
-            window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
+            if (g_Player.Playing && g_Player.IsRadio)
+              window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_RADIO);
+            else
+              window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
             window.OnAction(action);
             return;
           }
