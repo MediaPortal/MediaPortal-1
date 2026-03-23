@@ -551,6 +551,8 @@ public class MediaPortalApp : D3D, IRender
     WindowedOverride     = false;
     FullscreenOverride   = false;
     ScreenNumberOverride = -1;
+    AlwaysOnTopOverride = false;
+    var ShowSkinProperties = false;
 
     if (args.Length > 0)
     {
@@ -615,6 +617,14 @@ public class MediaPortalApp : D3D, IRender
         if (arg == "/Debug")
         {
           Log.SetLogLevel(Level.Debug);
+        }
+
+        if (arg == "/SkinProperties")
+        {
+          ShowSkinProperties = true;
+          AlwaysOnTopOverride = true;
+          WindowedOverride = true;
+          HIDOverride.SuppressHID = true;
         }
 
         #if !DEBUG
@@ -1030,6 +1040,12 @@ public class MediaPortalApp : D3D, IRender
           Log.Debug("Main: Initializing DirectX");
 
           var app = new MediaPortalApp();
+          if (ShowSkinProperties)
+          {
+            app._hidKeyboard = false;
+            app.Shown += (s,e) => { new SkinProperties().Show(); };
+          }
+
           if (app.Init())
           {
             try
