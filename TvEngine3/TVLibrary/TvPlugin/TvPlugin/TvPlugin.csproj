@@ -117,6 +117,7 @@
       <Link>SolutionInfo.cs</Link>
     </Compile>
     <Compile Include="GuideBase.cs" />
+    <Compile Include="RadioPlayingNow.cs" />
     <Compile Include="RadioSearch.cs" />
     <Compile Include="Helper\BitHelper.cs" />
     <Compile Include="RadioRecorded.cs" />

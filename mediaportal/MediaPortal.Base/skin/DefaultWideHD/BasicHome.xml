@@ -212,7 +212,7 @@
     <control>
     <type>group</type>
     <description>group element</description>
-    <visible>!string.contains(#highlightedbutton,WEATHER)+player.hasaudio+!player.hasvideo</visible>
+    <visible>[!string.contains(#highlightedbutton,WEATHER)|string.equals(#editor.mode,Carousel)]+player.hasaudio+!player.hasvideo+!string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
     <control>
       <description>music area</description>
       <type>image</type>
@@ -222,7 +222,7 @@
       <width>2200</width>
       <height>77</height>
       <texture>black.png</texture>
-      <colordiffuse>80ffffff</colordiffuse>
+      <colordiffuse>60ffffff</colordiffuse>
     </control>
     <control>
       <description>divider horizontal</description>
@@ -334,9 +334,9 @@
       <description>Track - Title</description>
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>10</posX>
+      <posX>0</posX>
       <posY>89</posY>
-      <width>850</width>
+      <width>885</width>
       <align>right</align>
       <height>38</height>
       <visible>Player.HasMedia</visible>
@@ -346,7 +346,7 @@
         <id>0</id>
         <label>#(L(268)): </label>
         <width>10</width>
-        <maxWidth>100</maxWidth>
+        <maxWidth>200</maxWidth>
         <textcolor>ff00aaff</textcolor>
         <align>right</align>
         <font>font10</font>
@@ -360,7 +360,7 @@
         <id>0</id>
         <label>#Play.Current.Title</label>
         <width>10</width>
-        <maxWidth>800</maxWidth>
+        <maxWidth>840</maxWidth>
         <align>right</align>
         <font>font10</font>
         <shadowAngle>45</shadowAngle>
@@ -372,9 +372,9 @@
       <description>Track - Title</description>
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>10</posX>
+      <posX>0</posX>
       <posY>120</posY>
-      <width>850</width>
+      <width>885</width>
       <align>right</align>
       <height>38</height>
       <visible>Player.HasMedia</visible>
@@ -398,7 +398,7 @@
         <id>0</id>
         <label>#Play.Current.Artist</label>
         <width>10</width>
-        <maxWidth>800</maxWidth>
+        <maxWidth>840</maxWidth>
         <align>right</align>
         <font>font10</font>
         <shadowAngle>45</shadowAngle>
@@ -444,84 +444,6 @@
         <shadowColor>ff000000</shadowColor>
       </control>
     </control>
-    <control>
-      <description>Track - Title</description>
-      <type>group</type>
-      <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>1042</posX>
-      <posY>89</posY>
-      <width>885</width>
-      <align>left</align>
-      <height>38</height>
-      <visible>!string.equals(#duration)+plugin.isenabled(TuneIn)</visible>
-      <control>
-        <type>fadelabel</type>
-        <description>Track</description>
-        <id>0</id>
-        <label>#(L(602)): </label>
-        <width>10</width>
-        <maxWidth>200</maxWidth>
-        <textcolor>ff00aaff</textcolor>
-        <align>left</align>
-        <font>font10</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
-      </control>
-      <control>
-        <type>fadelabel</type>
-        <description>Title</description>
-        <id>0</id>
-        <label>#(iif(eq(#RadioTime.Play.Station,''),'#Play.Current.Album','#RadioTime.Play.Station #RadioTime.Play.Location'))</label>
-        <width>10</width>
-        <maxWidth>840</maxWidth>
-        <align>left</align>
-        <font>font10</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
-      </control>
-    </control>
-    
-    <control>
-      <description>Track - Title</description>
-      <type>group</type>
-      <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>1042</posX>
-      <posY>89</posY>
-      <width>885</width>
-      <align>left</align>
-      <height>38</height>
-      <visible>!string.equals(#duration)+!plugin.isenabled(TuneIn)</visible>
-      <control>
-        <type>fadelabel</type>
-        <description>Track</description>
-        <id>0</id>
-        <label>#(L(602)): </label>
-        <width>10</width>
-        <maxWidth>200</maxWidth>
-        <textcolor>ff00aaff</textcolor>
-        <align>left</align>
-        <font>font10</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
-      </control>
-      <control>
-        <type>fadelabel</type>
-        <description>Title</description>
-        <id>0</id>
-        <label>#Play.Current.Album</label>
-        <width>10</width>
-        <maxWidth>840</maxWidth>
-        <align>left</align>
-        <font>font10</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
-      </control>
-    </control>
-    
     <control>
       <description>Title Track Duration</description>
       <type>group</type>
@@ -606,11 +528,11 @@
       <control>
       <type>image</type>
       <id>0</id>
-      <posX>1450</posX>
-      <posY>129</posY>
+      <posX>1449</posX>
+      <posY>127</posY>
       <width>113</width>
-      <height>23</height>
-      <texture>horizontal_bar2.png</texture>
+      <height>19</height>
+      <texture>osd_progress_background.png</texture>
       <visible>string.equals(#duration)</visible>
     </control>
     <control>
@@ -620,17 +542,17 @@
       <posX>1438</posX>
       <posY>129</posY>
       <width>141</width>
-      <height>23</height>
+      <height>16</height>
       <label>#percentage</label>
       <texturebg>-</texturebg>
       <onlymidtexture>no</onlymidtexture>
-      <midwidth>286</midwidth>
-      <midheight>23</midheight>
+      <midwidth>121</midwidth>
+      <midheight>16</midheight>
       <midoffsetX>0</midoffsetX>
       <midoffsetY>0</midoffsetY>
-      <lefttexture>osd_progress_mid_tv2.png</lefttexture>
-      <midtexture>osd_progress_mid_tv2.png</midtexture>
-      <righttexture>osd_progress_right2.png</righttexture>
+      <lefttexture>osd_progress_left.png</lefttexture>
+      <midtexture>osd_progress_mid.png</midtexture>
+      <righttexture>osd_progress_right.png</righttexture>
       <visible>string.equals(#duration)</visible>
     </control>
     <control>
@@ -662,11 +584,334 @@
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
       <posX>1042</posX>
+      <posY>89</posY>
+      <width>885</width>
+      <align>left</align>
+      <height>38</height>
+      <visible>!string.equals(#duration)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(602)): </label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#(iif(eq(#RadioTime.Play.Station,''),'#Play.Current.Album','#RadioTime.Play.Station #RadioTime.Play.Location'))</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>1042</posX>
       <posY>120</posY>
       <width>885</width>
       <align>left</align>
       <height>38</height>
       <visible>!string.equals(#duration)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(34020))</label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#currentplaytime #(L(1656))</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+  </control>
+  
+  <!-- ******************************************************************************************* -->
+  <!-- *****************************  Properies DVB Radio  *************************************** -->
+  <!-- ******************************************************************************************* -->
+  <control>
+    <type>group</type>
+    <description>group element</description>
+    <visible>[!string.contains(#highlightedbutton,WEATHER)|string.equals(#editor.mode,Carousel)]+player.hasaudio+!player.hasvideo</visible>
+    <control>
+      <description>music area</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>-100</posX>
+      <posY>82</posY>
+      <width>2200</width>
+      <height>77</height>
+      <texture>black.png</texture>
+      <colordiffuse>60ffffff</colordiffuse>
+      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>82</posY>
+      <width>1995</width>
+      <height>1</height>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>90f5deb3</colordiffuse>
+      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>-20</posX>
+      <posY>159</posY>
+      <width>1995</width>
+      <height>1</height>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>90f5deb3</colordiffuse>
+      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
+    </control>
+    <control>
+      <description>music logo when no thumb</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>905</posX>
+      <posY>65</posY>
+      <width>109</width>
+      <height>109</height>
+      <centered>no</centered>
+      <keepaspectratio>no</keepaspectratio>
+      <texture mask="cdcase_mask.png">white.png</texture>
+      <colordiffuse>90f5deb3</colordiffuse>
+      <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)" reversible="false">conditional</animation>
+      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
+    </control>
+    <control>
+      <description>music logo when no thumb</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>907</posX>
+      <posY>67</posY>
+      <width>105</width>
+      <height>105</height>
+      <texture mask="cdcase_mask.png">black.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)" reversible="false">conditional</animation>
+      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
+    </control>
+    <control>
+      <description>music logo when no thumb</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>907</posX>
+      <posY>67</posY>
+      <width>105</width>
+      <height>105</height>
+      <centered>no</centered>
+      <keepaspectratio>no</keepaspectratio>
+      <visible>!control.hasthumb(12345)</visible>
+      <texture mask="cdcase_mask.png">defaultRadioBig.png</texture>
+      <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)" reversible="false">conditional</animation>
+      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
+    </control>
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>12345</id>
+      <posX>907</posX>
+      <posY>67</posY>
+      <width>105</width>
+      <height>105</height>
+      <centered>yes</centered>
+      <keepaspectratio>no</keepaspectratio>
+      <texture mask="cdcase_mask.png">#Radio.Listen.Thumb</texture>
+      <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)" reversible="false">conditional</animation>
+      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
+    </control>
+    <control>
+      <description>dummy label for changing Artist Thumb every 15 secs</description>
+      <type>label</type>
+      <id>66900</id>
+      <label />
+      <animation effect="fade" delay="15000" time="0">hidden</animation>
+      <visible>!control.isvisible(66901)+string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
+    </control>
+    <control>
+      <description>dummy label for changing Artist Thumb every 15 secs</description>
+      <type>label</type>
+      <id>66901</id>
+      <label />
+      <animation effect="fade" delay="15000" time="0">hidden</animation>
+      <visible>control.isvisible(66900)+string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
+    </control>
+    <control>
+      <description>music logo</description>
+      <type>image</type>
+      <id>77</id>
+      <posX>907</posX>
+      <posY>67</posY>
+      <width>105</width>
+      <height>105</height>
+      <centered>no</centered>
+      <keepaspectratio>no</keepaspectratio>
+      <texture mask="cdcase_mask.png">#Radio.Listen.Thumb</texture>
+      <visible>control.isvisible(66900)+string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
+      <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="[string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)]+control.isvisible(66900)" reversible="false">conditional</animation>
+      <animation effect="fade" time="1000" reversible="true">visiblechange</animation>
+    </control>
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>0</posX>
+      <posY>89</posY>
+      <width>885</width>
+      <align>right</align>
+      <height>38</height>
+      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(268)): </label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Radio.Listen.Title</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>0</posX>
+      <posY>120</posY>
+      <width>885</width>
+      <align>right</align>
+      <height>38</height>
+      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(635)): </label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Radio.Listen.Start - #Radio.Listen.Stop</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>1042</posX>
+      <posY>89</posY>
+      <width>885</width>
+      <align>left</align>
+      <height>38</height>
+      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(602)): </label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Radio.Listen.Channel (#Radio.Listen.Group)</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>1042</posX>
+      <posY>120</posY>
+      <width>885</width>
+      <align>left</align>
+      <height>38</height>
+      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
       <control>
         <type>fadelabel</type>
         <description>Track</description>

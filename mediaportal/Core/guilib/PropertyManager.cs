@@ -195,6 +195,19 @@ namespace MediaPortal.GUI.Library
       _properties["#TV.Guide.Classification"] = string.Empty;
       _properties["#TV.Guide.Group"] = string.Empty;
 
+      _properties["#Radio.Listen.Title"] = string.Empty;
+      _properties["#Radio.Listen.Channel"] = string.Empty;
+      _properties["#Radio.Listen.Group"] = string.Empty;
+      _properties["#Radio.Listen.Genre"] = string.Empty;
+      _properties["#Radio.Listen.Thumb"] = string.Empty;
+      _properties["#Radio.Listen.Description"] = string.Empty;
+      _properties["#Radio.Listen.Played"] = string.Empty;
+      _properties["#Radio.Listen.Start"] = string.Empty;
+      _properties["#Radio.Listen.Stop"] = string.Empty;
+      _properties["#Radio.Listen.Percentage"] = string.Empty;
+      _properties["#Radio.Listen.Remaining"] = string.Empty;
+      _properties["#Radio.Folder"] = string.Empty;
+
       _properties["#Radio.Guide.Day"] = string.Empty;
       _properties["#Radio.Guide.thumb"] = string.Empty;
       _properties["#Radio.Guide.Title"] = string.Empty;
@@ -313,6 +326,8 @@ namespace MediaPortal.GUI.Library
       _properties["#Play.Current.Buffer.BufferLevel"] = string.Empty;
       _properties["#Play.Current.Stream.Audio.Total"] = string.Empty;
       _properties["#Play.Current.Stream.Audio.IsMulti"] = string.Empty;
+
+      _properties["#Play.Current.Type"] = string.Empty;
 
       _properties["#Play.AlbumInfo.Review"] = string.Empty;
       _properties["#Play.AlbumInfo.Rating"] = string.Empty;
