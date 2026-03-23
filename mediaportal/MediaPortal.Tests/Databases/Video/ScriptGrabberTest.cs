@@ -46,10 +46,8 @@ namespace MediaPortal.Tests.Databases.Video
     [Test]
     public void FindFilm_WithImdbId_ReturnsResults()
     {
-      // Search using IMDB ID for "Harry Potter and the Philosopher's Stone" (2001)
-      // The tt0241527 preceded by space matches the script's IMDB ID regex
       ArrayList elements = new ArrayList();
-      _grabber.FindFilm("Harry Potter tt0241527", 10, elements);
+      _grabber.FindFilm("Harry Potter and the Philosopher's Stone (2005) [tt0241527]", 10, elements);
 
       Assert.IsTrue(elements.Count > 0, "FindFilm should return at least one result for tt0241527");
 
@@ -62,9 +60,8 @@ namespace MediaPortal.Tests.Databases.Video
     [Test]
     public void GetDetails_HarryPotter_DirectorIsChrisColumbus()
     {
-      // First find the movie to get its URL
       ArrayList elements = new ArrayList();
-      _grabber.FindFilm("Harry Potter tt0241527", 10, elements);
+      _grabber.FindFilm("Harry Potter and the Philosopher's Stone (2005) [tt0241527]", 10, elements);
 
       Assert.IsTrue(elements.Count > 0, "FindFilm should return at least one result");
 
