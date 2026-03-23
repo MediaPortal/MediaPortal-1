@@ -4315,7 +4315,8 @@ public class MediaPortalApp : D3D, IRender
               // As long as we're e.g. listening to music on "Playing Now" screen
               // we might not want to slow things down here.
               // This feature is mainly intended to save energy on idle 24/7 rigs.
-              if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
+              if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW &&
+                  GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_RADIO_PLAYING_NOW)
               {
                 if (!GUIGraphicsContext.SaveRenderCycles)
                 {
@@ -4840,10 +4841,21 @@ public class MediaPortalApp : D3D, IRender
               if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
               {
                 GUIWindowManager.ShowPreviousWindow();
-            }
+              }
               else
               {
                 GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW);
+              }
+            }
+            if (g_Player.IsRadio && GUIWindowManager.CanLoad((int)GUIWindow.Window.WINDOW_RADIO_PLAYING_NOW))
+            {
+              if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_RADIO_PLAYING_NOW)
+              {
+                GUIWindowManager.ShowPreviousWindow();
+              }
+              else
+              {
+                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_RADIO_PLAYING_NOW);
               }
             }
             break;

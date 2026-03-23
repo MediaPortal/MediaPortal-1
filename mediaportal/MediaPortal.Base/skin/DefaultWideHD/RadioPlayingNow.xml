@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>764</id>
+  <defaultcontrol>2</defaultcontrol>
+  <allowoverlay>no</allowoverlay>
+  <define>header.label:</define>
+  <define>#selecteditem:</define>
+  <controls>
+    <control>
+      <description>BG</description>
+      <type>image</type>
+      <id>0</id>
+      <texture>BH Nowplaying.jpg</texture>
+      <width>1920</width>
+      <height>1080</height>
+	 		<colordiffuse>90ffffff</colordiffuse>															 
+    </control>
+    <control>
+      <description>Title background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>379</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+	 	</control>
+    <import>MyMusicPlayingNowTime.xml</import>
+    <!-- *************************************************************************************************** -->
+    <!-- ***************************************** Properties DVB Radio  *********************************** -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>40</posX>
+      <posY>54</posY>
+      <width>1800</width>
+      <align>left</align>
+      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)+Player.hasaudio</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Titel + Artist</description>
+        <id>0</id>
+        <label>#(L(182)): </label>
+        <width>10</width>
+        <maxWidth>190</maxWidth>
+        <textcolor>ff00bfff</textcolor>
+        <align>left</align>
+        <font>Menutitle</font>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Radio.Listen.Title</label>
+        <width>10</width>
+        <maxWidth>990</maxWidth>
+        <align>left</align>
+        <font>Menutitle</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+    </control>
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>40</posX>
+      <posY>107</posY>
+      <width>1620</width>
+      <align>left</align>
+      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)+Player.hasaudio</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(602)): </label>
+        <width>10</width>
+        <maxWidth>190</maxWidth>
+        <textcolor>ff00bfff</textcolor>
+        <align>left</align>
+        <font>Label</font>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Radio.Listen.Channel (#Radio.Listen.Group) #scroll.wrap </label>
+        <width>10</width>
+        <maxWidth>1250</maxWidth>
+        <align>left</align>
+        <font>Label</font>
+        <textcolor>ffffffff</textcolor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>duration</description>
+        <id>0</id>
+        <label>#(L(635)): </label>
+        <width>10</width>
+        <maxWidth>1190</maxWidth>
+        <textcolor>ff00bfff</textcolor>
+        <align>left</align>
+        <font>Label</font>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>duration</description>
+        <id>0</id>
+        <label>#Radio.Listen.Start - #Radio.Listen.Stop</label>
+        <width>10</width>
+        <maxWidth>1190</maxWidth>
+        <textcolor>ffffffff</textcolor>
+        <align>left</align>
+        <font>Label</font>
+      </control>
+    </control>
+    
+    <control>
+        <description>The Radio</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>40</posX>
+        <posY>170</posY>
+        <width>1100</width>
+        <height>800</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Radio.jpg</texture>
+        <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)+Player.hasaudio</visible>
+      </control>
+      <control>
+        <description>The Radio Notes Shadow</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>487</posX>
+        <posY>387</posY>
+        <width>300</width>
+        <height>400</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <colordiffuse>ff222222</colordiffuse>
+        <texture>Radionotes.gif</texture>
+        <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)+Player.hasaudio</visible>
+      </control>
+      <control>
+        <description>The Radio Notes</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>490</posX>
+        <posY>390</posY>
+        <width>300</width>
+        <height>400</height>
+        <keepaspectratio>yes</keepaspectratio>
+        <texture>Radionotes.gif</texture>
+        <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)+Player.hasaudio</visible>
+      </control>
+      <!-- *************************************************************************************************** -->
+      <!-- ************************************   Progressbar DVB Radio  ************************************* -->
+      <!-- *************************************************************************************************** -->
+      <!--control>
+      <description>background image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1280</posX>
+      <posY>657</posY>
+      <width>506</width>
+      <height>120</height>
+      <texture>Music_Tab_OSD.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)+Player.hasaudio</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>117</id>
+      <posX>1403</posX> 
+      <posY>678</posY> 
+      <width>266</width> 
+      <height>23</height>
+      <texture>horizontal_bar2.png</texture>
+	  <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)+Player.hasaudio</visible>
+    </control>
+    <control>
+      <description>progress bar</description>
+      <type>progress</type>
+      <id>118</id>
+      <posX>1390</posX> 
+      <posY>677</posY> 
+      <width>304</width>
+      <height>23</height>
+      <label>#Radio.Listen.Played</label>
+      <texturebg>-</texturebg>
+      <onlymidtexture>no</onlymidtexture>
+      <midwidth>286</midwidth>
+      <midheight>23</midheight>
+      <midoffsetX>0</midoffsetX>
+      <midoffsetY>0</midoffsetY>
+      <lefttexture>osd_progress_mid_tv2.png</lefttexture> 
+      <midtexture>osd_progress_mid_tv2.png</midtexture> 
+      <righttexture>osd_progress_right2.png</righttexture> 
+      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)+Player.hasaudio</visible>
+    </control>
+    <control>
+      <type>label</type>
+      <description>track progress label</description>
+      <id>119</id>
+      <posX>1376</posX> 
+      <posY>668</posY> 
+      <label>#Radio.Listen.Played</label>
+      <font>Label</font>
+      <align>right</align>
+      <textcolor>lightgray</textcolor>
+      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)+Player.hasaudio</visible>
+    </control>
+    <control>
+      <type>label</type>
+      <description>track duration label</description>
+      <id>110</id>
+      <posX>1690</posX> 
+      <posY>668</posY> 
+      <label>#Radio.Listen.Remaining</label>
+      <font>Label</font>
+      <align>left</align>
+      <textcolor>lightgray</textcolor>
+      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)+Player.hasaudio</visible>
+    </control-->
+    <!-- *************************************************************************************************** -->
+    <!-- *******************************   Info on the right DVB Radio  ************************************ -->
+    <!-- *************************************************************************************************** -->  
+      <control>
+        <type>image</type>
+        <description>cd case image</description>
+        <id>0</id>
+        <posX>1301</posX>
+        <posY>167</posY>
+        <width>395</width>
+        <height>395</height>
+        <texture>#Radio.Listen.Thumb</texture>
+        <colordiffuse>dodgerblue</colordiffuse>
+        <visible>!string.equals(#Radio.Listen.Thumb, )</visible>
+      </control>
+      <control>
+        <description>music logo when no thumb</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1304</posX>
+        <posY>170</posY>
+        <width>389</width>
+        <height>389</height>
+        <keepaspectratio>no</keepaspectratio>
+        <texture mask="cdcase_mask.png">DefaultMyradioBig.png</texture>
+        <visible>string.equals(#Radio.Listen.Thumb, )</visible>
+      </control>
+      <control>
+        <description>music logo</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1304</posX>
+        <posY>170</posY>
+        <width>389</width>
+        <height>389</height>
+        <texture>#Radio.Listen.Thumb</texture>
+        <visible>!string.equals(#Radio.Listen.Thumb, )</visible>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>1</id>
+        <posX>1330</posX>
+        <posY>570</posY>
+        <label>#Radio.Listen.Played   -   #Radio.Listen.Remaining</label>
+        <width>500</width>
+        <textcolor>ffffffff</textcolor>
+        <align>left</align>
+        <font>Menutitle</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+        <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)+Player.hasaudio</visible>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>1</id>
+        <posX>1217</posX>
+        <posY>667</posY>
+        <label>#(L(202))</label>
+        <width>500</width>
+        <textcolor>ff00aaff</textcolor>
+        <align>left</align>
+        <font>font11</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+        <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)+Player.hasaudio</visible>
+      </control>
+      <control>
+        <type>textboxscrollup</type>
+        <description>Track</description>
+        <id>1</id>
+        <posX>1217</posX>
+        <posY>710</posY>
+        <label>#Radio.Listen.Description</label>
+        <width>650</width>
+        <height>300</height>
+        <textcolor>lightgray</textcolor>
+        <align>left</align>
+        <font>font11</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+        <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)+Player.hasaudio</visible>
+      </control>		   
+    <!-- *************************************************************************************************** -->
+    <!-- *******************************   Coming Next Info DVB Radio  ************************************* -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
+      <control>
+        <type>image</type>
+        <description>cd case image</description>
+        <id>0</id>
+        <posX>51</posX>
+        <posY>854</posY>
+        <width>206</width>
+        <height>206</height>
+        <texture>#Radio.Listen.Thumb</texture>
+        <colordiffuse>dodgerblue</colordiffuse>
+        <visible>!string.equals(#Radio.Listen.Thumb, )</visible>
+      </control>
+      <control>
+        <description>music logo when no thumb</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>54</posX>
+        <posY>857</posY>
+        <width>200</width>
+        <height>200</height>
+        <keepaspectratio>no</keepaspectratio>
+        <texture mask="cdcase_mask.png">DefaultMyradioBig.png</texture>
+        <visible>string.equals(#Radio.Listen.Thumb, )</visible>
+      </control>
+      <control>
+        <description>music logo</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>54</posX>
+        <posY>857</posY>
+        <width>200</width>
+        <height>200</height>
+        <texture>#Radio.Listen.Thumb</texture>
+        <visible>!string.equals(#Radio.Listen.Thumb, )</visible>
+      </control>
+      
+      <control>
+        <description>Track - Title</description>
+        <type>group</type>
+        <layout>StackLayout(7, Horizontal, true)</layout>
+        <posX>267</posX>
+        <posY>867</posY>
+        <align>left</align>
+        <width>1450</width>
+        <height>38</height>
+        <control>
+          <type>fadelabel</type>
+          <description>Title</description>
+          <id>1</id>
+          <label>4541</label>
+          <width>10</width>
+          <maxWidth>1250</maxWidth>
+          <align>left</align>
+          <font>Label</font>
+          <textcolor>ff00aaff</textcolor>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+        <control>
+          <type>fadelabel</type>
+          <description>Title</description>
+          <id>1</id>
+          <label>#Play.Next.Title</label>
+          <width>10</width>
+          <maxWidth>1250</maxWidth>
+          <align>left</align>
+          <font>Label</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+      </control>
+    </control>
+ 	</controls>
+</window>

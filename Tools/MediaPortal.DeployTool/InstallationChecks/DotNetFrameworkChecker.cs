@@ -32,7 +32,6 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     private string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
 
-    private static bool dotNet35 = false;
     private static bool dotNet40 = false;
 
     public string GetDisplayName()
@@ -54,22 +53,6 @@ namespace MediaPortal.DeployTool.InstallationChecks
     public bool Install()
     {
       bool result = false;
-
-      // .Net 3.5
-      if (!dotNet35)
-      {
-        int exitCode = Utils.RunCommandWait("DISM.EXE", "/Online /Enable-Feature /FeatureName:NetFx3 /All /Quiet /NoRestart");
-        // Return codes:
-        // 0               = success, no reboot required
-        // 3010            = success, reboot required
-        // any other value = failure
-
-        if (exitCode == 3010 || File.Exists("c:\\deploy_force_reboot"))
-        {
-          Utils.NotifyReboot(GetDisplayName());
-        }
-        result = result || (exitCode == 0);
-      }
 
       // .Net 4.0
       if (!dotNet40)
@@ -113,25 +96,6 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
       try
       {
-        RegistryKey key = Utils.LMOpenSubKey("SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v3.5");
-        using (key)
-        {
-          if (key != null)
-          {
-            key.Close();
-            dotNet35 = true;
-          }
-        }
-      }
-      catch (Exception)
-      {
-        MessageBox.Show("Failed to check the .Net Framework 3.5 installation status", "Error", 
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
-      }
-
-      try
-      {
         RegistryKey key = Utils.LMOpenSubKey("SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v4");
         using (key)
         {
@@ -170,7 +134,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         }
       }
 
-      if (dotNet35 && dotNet40)
+      if (dotNet40)
       {
         result.state = CheckState.INSTALLED;
       }

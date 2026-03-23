@@ -57,7 +57,7 @@ namespace MPRepository.Users
 
     public virtual DateTime LastLogin { get; set; }
 
-    public virtual ISet<MPUserPermission> Permissions { get; set; }
+    public virtual Iesi.Collections.Generic.ISet<MPUserPermission> Permissions { get; set; }
 
     #endregion
 
