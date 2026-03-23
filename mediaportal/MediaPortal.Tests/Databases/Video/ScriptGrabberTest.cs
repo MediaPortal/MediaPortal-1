@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 using MediaPortal.Services;
@@ -12,6 +13,14 @@ using NUnit.Framework;
 
 namespace MediaPortal.Tests.Databases.Video
 {
+  public enum TitleLanguage
+  {
+    En,
+    Es,
+    De,
+    Fr
+  }
+
   /// <summary>
   /// Integration tests for .csscript movie info grabbers.
   /// These tests compile all csscript files in the MovieInfo directory at runtime
@@ -22,6 +31,32 @@ namespace MediaPortal.Tests.Databases.Video
   [Category("ScriptGrabber")]
   public class ScriptGrabberTest
   {
+    private static readonly (string Name, bool HasTT, TitleLanguage Language)[] Scripts =
+    {
+      ("IMDB_MP117x", true, TitleLanguage.En),
+      ("IMDB_MP13x", true, TitleLanguage.En),
+      ("IMDB", true, TitleLanguage.En),
+      ("TMDB", true, TitleLanguage.En),
+      ("TI_MDB", true, TitleLanguage.En),
+      ("Allocine_fr", true, TitleLanguage.Fr),
+      ("APIFilmAffinityIMDbMP1", true, TitleLanguage.Es),
+      ("FilmAffinity_es", false, TitleLanguage.Es),
+      ("imdb_de_ofdb_MP13x", false, TitleLanguage.De),
+      ("TMDB_de", true, TitleLanguage.De),
+      ("TMDB_fr_MP13x", false, TitleLanguage.Fr),
+    };
+
+    public static IEnumerable<string> ScriptNames
+    {
+      get
+      {
+        foreach (var script in Scripts)
+        {
+          yield return script.Name;
+        }
+      }
+    }
+
     [OneTimeSetUp]
     public void FixtureSetUp()
     {
@@ -36,19 +71,6 @@ namespace MediaPortal.Tests.Databases.Video
       }
     }
 
-    public static IEnumerable<string> ScriptNames
-    {
-      get
-      {
-        string scriptsDir = CSScriptLoader.FindScriptsDirectory("MovieInfo");
-
-        foreach (string scriptPath in Directory.GetFiles(scriptsDir, "*.csscript"))
-        {
-          yield return Path.GetFileNameWithoutExtension(scriptPath);
-        }
-      }
-    }
-
     private static IIMDBScriptGrabber LoadGrabber(string scriptName)
     {
       string scriptsDir = CSScriptLoader.FindScriptsDirectory("MovieInfo");
@@ -57,25 +79,55 @@ namespace MediaPortal.Tests.Databases.Video
       return (IIMDBScriptGrabber)CSScriptLoader.CreateObject(assembly, "Grabber");
     }
 
-    public static IEnumerable<object[]> SearchStrings
+    [Test]
+    public void Scripts_MatchesFilesOnDisk()
     {
-      get
+      string scriptsDir = CSScriptLoader.FindScriptsDirectory("MovieInfo");
+
+      foreach (string file in Directory.GetFiles(scriptsDir, "*.csscript"))
       {
-        // filename, hasTT
-        yield return new object[] { "The Shawshank Redemption", false };
-        yield return new object[] { "The Shawshank Redemption (1994) [tt0111161]", true };
-        yield return new object[] { "TSR [tt0111161]", true };
-        yield return new object[] { "TSR tt0111161", true };
+        string name = Path.GetFileNameWithoutExtension(file);
+        Assert.IsTrue(ScriptNames.Contains(name),
+          "Script '{0}' found on disk but not in Scripts list", name);
       }
     }
 
-    [Test]
-    public void FindFilm_ReturnsResults(
-      [ValueSource(nameof(ScriptNames))] string scriptName,
-      [ValueSource(nameof(SearchStrings))] object[] searchCase)
+    private static string ShawshankTitle(TitleLanguage language)
     {
-      string searchString = (string)searchCase[0];
-      bool hasTT = (bool)searchCase[1];
+      switch (language) // C# 7.3 doesn't support switch expressions yet
+      {
+        case TitleLanguage.Fr: return "Les Évadés";
+        case TitleLanguage.De: return "Die Verurteilten";
+        case TitleLanguage.Es: return "Cadena Perpetua";
+        default: return "The Shawshank Redemption";
+      }
+    }
+
+    public static IEnumerable<TestCaseData> FindFilmCases
+    {
+      get
+      {
+        foreach (var script in Scripts)
+        {
+          string title = ShawshankTitle(script.Language);
+          string expectedTitle = title + " (1994)";
+
+          yield return new TestCaseData(script.Name, title, expectedTitle);
+
+          if (script.HasTT)
+          {
+            yield return new TestCaseData(script.Name, title + " (1994) [tt0111161]", expectedTitle);
+            yield return new TestCaseData(script.Name, "TSR [tt0111161]", expectedTitle);
+            yield return new TestCaseData(script.Name, "TSR tt0111161", expectedTitle);
+          }
+        }
+      }
+    }
+
+    [TestCaseSource(nameof(FindFilmCases))]
+    public void FindFilm_ReturnsResults(string scriptName, string searchString, string expectedTitle)
+    {
+      bool hasTT = searchString.Contains("tt0111161");
 
       IIMDBScriptGrabber grabber = LoadGrabber(scriptName);
       ArrayList elements = new ArrayList();
@@ -96,22 +148,39 @@ namespace MediaPortal.Tests.Databases.Video
       }
 
       IMDB.IMDBUrl result = (IMDB.IMDBUrl)elements[0];
-      Assert.AreEqual("The Shawshank Redemption (1994)", result.Title,
-        "Title should be 'The Shawshank Redemption (1994)' for script {0} with search '{1}'",
-        scriptName, searchString);
+      Assert.IsTrue(
+        result.Title == expectedTitle || result.Title == "tt0111161",
+        "Title should be '{0}' or 'tt0111161' for script {1} with search '{2}', but was '{3}'",
+        expectedTitle, scriptName, searchString, result.Title);
     }
 
-    [Test]
-    public void GetDetails_ReturnsCorrectData(
-      [ValueSource(nameof(ScriptNames))] string scriptName)
+    public static IEnumerable<TestCaseData> GetDetailsCases
     {
+      get
+      {
+        foreach (var script in Scripts)
+        {
+          string title = ShawshankTitle(script.Language);
+          string searchString = title + " (1994)" + (script.HasTT ? " tt0111161" : "");
+          yield return new TestCaseData(script.Name, searchString);
+        }
+      }
+    }
+
+    /// <summary>
+    /// This test gives each script title data in the most favourable format, and checks that GetDetails returns correct data for the movie.
+    /// </summary>
+    [TestCaseSource(nameof(GetDetailsCases))]
+    public void GetDetails_ReturnsCorrectData(string scriptName, string searchString)
+    {
+
       IIMDBScriptGrabber grabber = LoadGrabber(scriptName);
       ArrayList elements = new ArrayList();
 
-      grabber.FindFilm("The Shawshank Redemption (1994) tt0111161", 10, elements);
+      grabber.FindFilm(searchString, 10, elements);
 
       Assert.IsTrue(elements.Count > 0,
-        "FindFilm should return at least one result for script {0}", scriptName);
+        "FindFilm('{0}') should return at least one result for script {1}", searchString, scriptName);
 
       IMDB.IMDBUrl url = (IMDB.IMDBUrl)elements[0];
       IMDBMovie movieDetails = new IMDBMovie();
