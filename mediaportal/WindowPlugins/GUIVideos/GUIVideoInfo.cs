@@ -1205,7 +1205,7 @@ namespace MediaPortal.GUI.Video
           
           if (!File.Exists(largeThumb))
           {
-            largeThumb = "defaultActorBig.png";
+            largeThumb = "defaultActor.png";
           }
           
           item.IconImage = largeThumb;

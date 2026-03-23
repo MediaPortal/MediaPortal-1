@@ -3777,4 +3777,3 @@ namespace MediaPortal.GUI.Video
    #endregion
   }
 }
-
