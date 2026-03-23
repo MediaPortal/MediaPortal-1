@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -60,12 +60,14 @@ namespace MediaPortal.Tests.Core.InputDevices
     }
 
     [Test]
-    [ExpectedException(typeof (XmlException))]
     public void CorruptXml()
     {
       string xmlFile = "TestCorrupt";
-      InputHandler inputHandler = new InputHandler(xmlFile);
-      Assert.AreEqual(Path.Combine(InputHandler.DefaultsDirectory, "TestCorrupt.xml"), inputHandler.GetXmlPath(xmlFile));
+      Assert.Throws<XmlException>(() =>
+      {
+        InputHandler inputHandler = new InputHandler(xmlFile);
+        Assert.AreEqual(Path.Combine(InputHandler.DefaultsDirectory, "TestCorrupt.xml"), inputHandler.GetXmlPath(xmlFile));
+      });
     }
 
     [Test]

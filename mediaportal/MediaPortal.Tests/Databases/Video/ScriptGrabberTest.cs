@@ -22,7 +22,7 @@ namespace MediaPortal.Tests.Databases.Video
     private Assembly _scriptAssembly;
     private IIMDBScriptGrabber _grabber;
 
-    [TestFixtureSetUp]
+    [OneTimeSetUp]
     public void FixtureSetUp()
     {
       // Register NoLog so that Log.Info/Debug/Error calls in scripts and Core don't throw
