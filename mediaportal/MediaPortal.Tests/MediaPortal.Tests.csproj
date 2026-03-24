@@ -230,9 +230,6 @@
     <Content Include="MediaPortalDirs.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="sqlite.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <None Include="TagReader\Music\DingDong.m4a">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
