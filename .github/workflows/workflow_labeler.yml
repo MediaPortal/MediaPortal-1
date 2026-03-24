@@ -18,3 +18,4 @@ jobs:
           configuration-path: .github/labeler.yml
           enable-versioned-regex: 0
           include-title: 1
+          include-body: 0
