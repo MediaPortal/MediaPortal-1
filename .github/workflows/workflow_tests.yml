@@ -1,0 +1,51 @@
+﻿name: MediaPortal Tests
+
+on:
+  push:
+    branches:
+      - master
+    tags-ignore:
+      - '**'
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run MediaPortal.Tests
+    runs-on: windows-2022
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v6
+
+      - name: Git Submodule Update
+        run: |
+          git submodule update --init --recursive
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Restore NuGet Packages
+        run: |
+          Build\NuGet.exe restore mediaportal\MediaPortal.sln
+        shell: cmd
+
+      - name: Build MediaPortal.Tests
+        run: |
+          msbuild mediaportal\MediaPortal.Tests\MediaPortal.Tests.csproj /p:Configuration=Debug /p:Platform=AnyCPU /t:Build
+        shell: cmd
+
+      - name: Run Tests
+        run: |
+          vstest.console.exe mediaportal\MediaPortal.Tests\bin\Debug\MediaPortal.Tests.dll --logger:trx --ResultsDirectory:TestResults
+        shell: cmd
+
+      - name: Upload Test Results
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: test-results
+          path: TestResults\*.trx
+          retention-days: 7
