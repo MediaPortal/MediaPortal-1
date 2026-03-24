@@ -1,6 +1,7 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.4.11612.150 stable
+VisualStudioVersion = 18.4.11612.150
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{D214B2BD-4CA7-45CD-9EC5-CF7CC244C03A}"
 EndProject
@@ -160,12 +161,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{
 		..\.github\workflows\mediaportal_release.yml = ..\.github\workflows\mediaportal_release.yml
 		..\.github\workflows\mediaportal_test_build.yml = ..\.github\workflows\mediaportal_test_build.yml
 		..\.github\workflows\workflow_codeql.yml = ..\.github\workflows\workflow_codeql.yml
+		..\.github\workflows\run_test_projects.yml = ..\.github\workflows\run_test_projects.yml
 		..\.github\workflows\workflow_grabber_test.yml = ..\.github\workflows\workflow_grabber_test.yml
 		..\.github\workflows\workflow_labeler.yml = ..\.github\workflows\workflow_labeler.yml
 		..\.github\workflows\workflow_milestone.yml = ..\.github\workflows\workflow_milestone.yml
 		..\.github\workflows\workflow_size_labels.yml = ..\.github\workflows\workflow_size_labels.yml
 		..\.github\workflows\workflow_stale.yml = ..\.github\workflows\workflow_stale.yml
-		..\.github\workflows\workflow_tests.yml = ..\.github\workflows\workflow_tests.yml
 		..\.github\workflows\workflow_xml_validate.yml = ..\.github\workflows\workflow_xml_validate.yml
 		..\.github\workflows\workflow_yaml_lint.yml = ..\.github\workflows\workflow_yaml_lint.yml
 	EndProjectSection

@@ -14,29 +14,31 @@ on:
 jobs:
   test:
     name: Run MediaPortal.Tests
-    runs-on: windows-2022
+    runs-on: windows-latest
 
     steps:
       - name: Git Checkout
         uses: actions/checkout@v6
+        with:
+          submodules: recursive
 
-      - name: Git Submodule Update
-        run: |
-          git submodule update --init --recursive
-
+      # MSBuild is required because this is a legacy (non-SDK) .NET Framework 4.7.2 project; dotnet build does not support it.
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
+      # nuget.exe restore is required because this project uses legacy packages.config, not PackageReference; dotnet restore does not support it.
       - name: Restore NuGet Packages
         run: |
           Build\NuGet.exe restore mediaportal\MediaPortal.sln
         shell: cmd
 
+      # Explicit build step is required because vstest.console.exe only runs pre-compiled assemblies; unlike dotnet test, it cannot build and test in one step.
       - name: Build MediaPortal.Tests
         run: |
           msbuild mediaportal\MediaPortal.Tests\MediaPortal.Tests.csproj /p:Configuration=Debug /p:Platform=AnyCPU /t:Build
         shell: cmd
 
+      # vstest.console.exe is required because this is a legacy (non-SDK) .NET Framework 4.7.2 project; dotnet test does not support it.
       - name: Run Tests
         run: |
           vstest.console.exe mediaportal\MediaPortal.Tests\bin\Debug\MediaPortal.Tests.dll --logger:trx --ResultsDirectory:TestResults
