@@ -264,7 +264,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <PropertyGroup>
-    <PostBuildEvent>"$(ProjectDir)PostBuild.bat"</PostBuildEvent>
-  </PropertyGroup>
 </Project>
