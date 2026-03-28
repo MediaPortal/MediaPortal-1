@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - master
-    tags-ignore:
-      - '**'
   pull_request:
     branches:
       - master
@@ -19,8 +17,6 @@ jobs:
     steps:
       - name: Git Checkout
         uses: actions/checkout@v6
-        with:
-          submodules: recursive
 
       # MSBuild is required because this is a legacy (non-SDK) .NET Framework 4.7.2 project; dotnet build does not support it.
       - name: Setup MSBuild
@@ -44,9 +40,11 @@ jobs:
           vstest.console.exe mediaportal\MediaPortal.Tests\bin\Debug\MediaPortal.Tests.dll --logger:trx --ResultsDirectory:TestResults
         shell: cmd
 
-      - name: Upload Test Results
-        uses: actions/upload-artifact@v7
+      # The following code is intended to reproduce the `dotnet test` functionality `--report-trx`, allowing test results to be published to the GitHub Actions UI.
+      - name: Publish Test Results
+        uses: dorny/test-reporter@v1
         if: always()
         with:
-          name: test-results
-          path: TestResults\*.trx
+          name: Test Results
+          path: TestResults/*.trx
+          reporter: dotnet-trx
