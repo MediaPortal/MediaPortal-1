@@ -1,4 +1,4 @@
-﻿name: MediaPortal Tests
+﻿name: Workflow / MediaPortal Tests
 
 on:
   push:
