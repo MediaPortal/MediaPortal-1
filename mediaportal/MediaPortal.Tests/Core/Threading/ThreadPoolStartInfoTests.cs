@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -98,7 +98,7 @@ namespace MediaPortal.Tests.Core.Threading
     [Test]
     public void TestMaxThreadsOutOfRange()
     {
-      ThreadPoolStartInfo tpsi = new ThreadPoolStartInfo(0, 0);
+      ThreadPoolStartInfo tpsi = new ThreadPoolStartInfo(1, 0);
       try
       {
         ThreadPoolStartInfo.Validate(tpsi);

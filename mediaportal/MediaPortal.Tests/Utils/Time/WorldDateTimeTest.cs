@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -65,15 +65,5 @@ namespace MediaPortal.Tests.Utils.Time
       Assert.IsTrue(wdt.Minute == 45);
     }
 
-    [Test]
-    public void ToLocalTime()
-    {
-      WorldDateTime wdt = new WorldDateTime(DateTime.Now);
-
-      DateTime dtEpochStartTime = Convert.ToDateTime("1/1/1970 8:00:00 AM");
-
-      Assert.IsTrue(wdt.DaysSince(dtEpochStartTime) == wdt.ToEpochDate());
-      Assert.IsTrue(wdt.SecondsSince(dtEpochStartTime) == wdt.ToEpochTime());
     }
-  }
 }

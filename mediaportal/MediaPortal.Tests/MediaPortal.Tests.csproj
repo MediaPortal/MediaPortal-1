@@ -204,27 +204,35 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="InputDeviceMappings\custom\TestCustom.xml">
+      <Link>InputDeviceMappings\TestCustom.xml</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="InputDeviceMappings\custom\TestFallbackVersion.xml">
+      <Link>InputDeviceMappings\TestFallbackVersion.xml</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="InputDeviceMappings\custom\TestVersion2.xml">
+      <Link>InputDeviceMappings\TestVersion2.xml</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="InputDeviceMappings\defaults\TestCorrupt.xml">
+      <Link>Defaults\InputDeviceMappings\TestCorrupt.xml</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="InputDeviceMappings\defaults\TestDefault.xml">
+      <Link>Defaults\InputDeviceMappings\TestDefault.xml</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="InputDeviceMappings\defaults\TestFallbackVersion.xml">
+      <Link>Defaults\InputDeviceMappings\TestFallbackVersion.xml</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="InputDeviceMappings\defaults\TestVersion.xml">
+      <Link>Defaults\InputDeviceMappings\TestVersion.xml</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="InputDeviceMappings\defaults\TestVersion2.xml">
+      <Link>Defaults\InputDeviceMappings\TestVersion2.xml</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="MediaPortalDirs.xml">
