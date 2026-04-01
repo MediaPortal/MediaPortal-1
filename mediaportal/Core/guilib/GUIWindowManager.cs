@@ -758,6 +758,14 @@ namespace MediaPortal.GUI.Library
       return _previousActiveWindowId;
     }
 
+    public static bool CanLoad(int windowId)
+    {
+      GUIWindow win;
+      if (_listWindows.TryGetValue(windowId, out win))
+        return File.Exists(win.WindowXmlFileName);
+      return false;
+     }
+
     /// <summary>
     /// ActivateWindow() 
     /// This function will show/present/activate the window specified
@@ -1055,8 +1063,9 @@ namespace MediaPortal.GUI.Library
       if (isFullscreen && (!Player.g_Player.Playing || (!Player.g_Player.HasVideo && !Player.g_Player.HasViz)))
         ShowPreviousWindow();
 
-      // do not go back to music now playing screen if music is not playing
-      if (_previousActiveWindowId == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW && ! (g_Player.Playing && g_Player.IsMusic))
+      // do not go back to music/radio now playing screen if music/radio is not playing
+      if ((_previousActiveWindowId == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW && !(g_Player.Playing && g_Player.IsMusic)) ||
+          (_previousActiveWindowId == (int)GUIWindow.Window.WINDOW_RADIO_PLAYING_NOW && !(g_Player.Playing && g_Player.IsRadio)))
       {
         ShowPreviousWindow();
       }

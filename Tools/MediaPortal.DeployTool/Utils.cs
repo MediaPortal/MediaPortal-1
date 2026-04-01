@@ -782,7 +782,7 @@ namespace MediaPortal.DeployTool
         case "max":
           major = 1;
           minor = 38;
-          revision = 0;
+          revision = 2;
           break;
       }
       Version ver = new Version(major, minor, revision);
@@ -803,7 +803,7 @@ namespace MediaPortal.DeployTool
     {
       int major = 1;
       int minor = 38;
-      int revision = 001;
+      int revision = 003;
 
       Version ver = new Version(major, minor, revision);
       return ver;
@@ -853,7 +853,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.38.1 Tatiana & Leo";
+      return "1.38.3 Tatiana & Leo";
     }
 
     /// <summary>
@@ -1040,3 +1040,4 @@ namespace MediaPortal.DeployTool
     #endregion
   }
 }
+
