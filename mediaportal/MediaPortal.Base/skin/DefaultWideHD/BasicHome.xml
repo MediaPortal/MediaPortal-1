@@ -472,7 +472,7 @@
       <width>850</width>
       <align>right</align>
       <height>38</height>
-      <visible>Player.HasMedia</visible>
+      <visible>Player.HasAudio+!string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
       <control>
         <type>fadelabel</type>
         <description>Track</description>
@@ -510,7 +510,7 @@
       <width>850</width>
       <align>right</align>
       <height>38</height>
-      <visible>Player.HasMedia</visible>
+      <visible>Player.HasMedia+!string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
       <control>
         <type>fadelabel</type>
         <description>Track</description>
@@ -529,7 +529,7 @@
         <type>fadelabel</type>
         <description>Title</description>
         <id>0</id>
-        <label>#Play.Current.Artist</label>
+        <label>#(iif(eq(#Play.Current.Artist,''),'n/a','#Play.Current.Artist'))</label>
         <width>10</width>
         <maxWidth>800</maxWidth>
         <align>right</align>
@@ -548,12 +548,12 @@
       <width>885</width>
       <align>left</align>
       <height>38</height>
-      <visible>string.equals(#duration)</visible>
+      <visible>string.equals(#duration)+!string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
       <control>
         <type>fadelabel</type>
         <description>Track</description>
         <id>0</id>
-        <label>#(L(170))</label>
+        <label>#(iif(eq(#Play.Current.Type,'Music'),'#(L(170))','#(L(602)):'))</label>
         <width>10</width>
         <maxWidth>200</maxWidth>
         <textcolor>ff00aaff</textcolor>
@@ -577,6 +577,9 @@
         <shadowColor>ff000000</shadowColor>
       </control>
     </control>
+    
+    <!-- Radiotime -->
+    
     <control>
       <description>Track - Title</description>
       <type>group</type>
@@ -586,7 +589,7 @@
       <width>885</width>
       <align>left</align>
       <height>38</height>
-      <visible>!string.equals(#duration)+plugin.isenabled(TuneIn)</visible>
+      <visible>!string.equals(#Play.Current.Album,#Radio.Listen.Channel)+!string.equals(#duration)+plugin.isenabled(TuneIn)</visible>
       <control>
         <type>fadelabel</type>
         <description>Track</description>
@@ -664,7 +667,7 @@
       <align>left</align>
       <width>885</width>
       <height>38</height>
-      <visible>string.equals(#duration)</visible>
+      <visible>string.equals(#duration)+!string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
       <control>
         <type>fadelabel</type>
         <description>Titlenumber Label</description>
@@ -744,7 +747,7 @@
       <width>113</width>
       <height>23</height>
       <texture>horizontal_bar2.png</texture>
-      <visible>string.equals(#duration)</visible>
+      <visible>string.equals(#duration)+!string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
     </control>
     <control>
       <description>Progress Bar</description>
@@ -764,7 +767,7 @@
       <lefttexture>osd_progress_mid_tv2.png</lefttexture>
       <midtexture>osd_progress_mid_tv2.png</midtexture>
       <righttexture>osd_progress_right2.png</righttexture>
-      <visible>string.equals(#duration)</visible>
+      <visible>string.equals(#duration)+!string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
     </control>
     <control>
       <description>play time label</description>
@@ -776,7 +779,7 @@
       <font>font10</font>
       <align>right</align>
       <textcolor>fff5deb3</textcolor>
-      <visible>string.equals(#duration)</visible>
+      <visible>string.equals(#duration)+!string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
     </control>
     <control>
       <type>label</type>
@@ -788,8 +791,166 @@
       <align>left</align>
       <font>font10</font>
       <textcolor>fff5deb3</textcolor>
-      <visible>string.equals(#duration)</visible>
+      <visible>string.equals(#duration)+!string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
     </control>
+    
+    <!-- ******************************************************************************************* -->
+  <!-- *****************************  Properies DVB Radio  *************************************** -->
+  <!-- ******************************************************************************************* -->
+  
+    <control>
+      <description>Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>10</posX>
+      <posY>89</posY>
+      <width>850</width>
+      <align>right</align>
+      <height>38</height>
+      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(268)): </label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#(iif(eq(#Play.Current.Title,''),'#Radio.Listen.Title','#Play.Current.Title'))</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>10</posX>
+      <posY>120</posY>
+      <width>850</width>
+      <align>right</align>
+      <height>38</height>
+      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(iif(eq(#Play.Current.Artist,''),'#(L(635)): ','#(L(171))'))</label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#(iif(eq(#Play.Current.Artist,''),'#Radio.Listen.Start - #Radio.Listen.Stop','#Play.Current.Artist'))</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>1042</posX>
+      <posY>89</posY>
+      <width>885</width>
+      <align>left</align>
+      <height>38</height>
+      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(602)): </label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Radio.Listen.Channel (#Radio.Listen.Group)</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>1042</posX>
+      <posY>120</posY>
+      <width>885</width>
+      <align>left</align>
+      <height>38</height>
+      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(34020))</label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#currentplaytime #(L(1656))</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+  
     <control>
       <description>Track - Title</description>
       <type>group</type>

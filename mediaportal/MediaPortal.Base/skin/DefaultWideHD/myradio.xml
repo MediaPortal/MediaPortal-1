@@ -82,7 +82,7 @@
       <posY>54</posY>
       <width>1620</width>
       <align>left</align>
-      <label>#currentmodule #scroll.wrap #(L(971)): #Radio.Guide.Group</label>
+      <label>#currentmodule #scroll.wrap #(L(971)): #Radio.Folder</label>
       <align>left</align>
       <font>Label</font>
     </control>
