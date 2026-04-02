@@ -185,7 +185,7 @@
           <onright>50</onright>
           <onup>4</onup>
           <ondown>7</ondown>
-          <action>15</action>
+          <action>95</action>
         </control>
         <control>
           <description>Next</description>
@@ -195,7 +195,7 @@
           <onup>6</onup>
           <ondown>8</ondown>
           <onright>50</onright>
-          <action>14</action>
+          <action>94</action>
         </control>
         <control>
           <description>Radio Guide</description>

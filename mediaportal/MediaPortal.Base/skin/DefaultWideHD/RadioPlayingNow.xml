@@ -183,26 +183,36 @@
     </control>
     
     <control>
-      <description>No program info</description>
-      <type>group</type>
-      <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>45</posX>
-      <posY>99</posY>
-      <width>1620</width>
-      <align>left</align>
-      <visible>Player.hasaudio+[string.equals(#Play.Current.Artist, )|string.equals(#Play.Next.Title,'')]+string.equals(#Radio.Listen.Start, )</visible>
-      <control>
-        <type>fadelabel</type>
-        <description>program info</description>
-        <id>0</id>
-        <label>#(iif(eq(#Play.Next.Title,''),'#(L(736))','#Play.Next.Title'))</label>
-        <width>1620</width>
-        <maxWidth>1620</maxWidth>
-        <textcolor>ff00bfff</textcolor>
-        <align>left</align>
-        <font>Label</font>
-      </control>
-      </control>
+          <type>fadelabel</type>
+          <description>Title</description>
+          <id>1</id>
+          <posX>267</posX>
+          <posY>867</posY>
+          <label>4541</label>
+          <width>1000</width>
+          <align>left</align>
+          <font>Label</font>
+          <textcolor>ff00aaff</textcolor>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+        <control>
+          <type>fadelabel</type>
+          <description>Title</description>
+          <id>1</id>
+          <posX>267</posX>
+          <posY>907</posY>
+          <label>#(iif(eq(#Play.Next.Title,''),'#(L(736)): ','#Radio.Listen.Stop - #Play.Next.Title'))</label>
+          <width>1000</width>
+          <maxWidth>1250</maxWidth>
+          <align>left</align>
+          <font>Label</font>
+          <textcolor>ffffffff</textcolor>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
       
     <!-- *************************************************************************************************** -->
     <!-- ***************************  Properties webstreams with metadata *********************************** -->
@@ -302,67 +312,15 @@
       <description>image frame</description>
       <type>image</type>
       <id>0</id>
-      <posX>37</posX>
-      <posY>167</posY>
-      <width>1106</width>
+      <posX>37</posX> 
+      <posY>167</posY> 
+      <width>1106</width> 
       <height>652</height> 
-      <texture>imageframe.png</texture>
+      <texture mask="musicfanart_mask.png">white.png</texture>
+      <colordiffuse>ff3a88ff</colordiffuse>
 	  <visible>Player.hasaudio</visible>
     </control>
-	 <!--control>
-      <description>purple background</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>39</posX> 
-      <posY>169</posY> 
-      <width>1102</width> 
-      <height>648</height> 
-      <texture mask="musicfanart_mask.png">Purple_bg.png</texture> 
-      <colordiffuse>ffffffff</colordiffuse>
-	  <visible>Player.hasaudio</visible>
-    </control>
-	<control>
-      <description>blue background</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>39</posX> 
-      <posY>169</posY> 
-      <width>1102</width> 
-      <height>648</height> 
-      <texture mask="musicfanart_mask.png">Blue_bg.png</texture> 
-      <colordiffuse>ffffffff</colordiffuse>
-	  <animation effect="fade" time="10000" delay="20000" pulse="true" condition="Player.hasaudio">Conditional</animation>
-      <visible>Player.hasaudio</visible>
-    </control>
-    <control>
-      <description>green background</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>39</posX> 
-      <posY>169</posY> 
-      <width>1102</width> 
-      <height>648</height> 
-      <texture mask="musicfanart_mask.png">Green_bg.png</texture> 
-      <colordiffuse>ffffffff</colordiffuse>
-	  <animation effect="fade" time="15000" delay="30000" pulse="true" condition="Player.hasaudio">Conditional</animation>
-      <visible>Player.hasaudio</visible>
-    </control>
-	<control>
-      <description>violet background</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>39</posX> 
-      <posY>169</posY> 
-      <width>1102</width> 
-      <height>648</height> 
-      <texture mask="musicfanart_mask.png">Violet_bg.png</texture> 
-      <colordiffuse>ffffffff</colordiffuse>
-	  <animation effect="fade" time="25000" delay="70000" pulse="true" condition="Player.hasaudio">Conditional</animation>
-      <visible>Player.hasaudio</visible>
-    </control-->
-	
-	<!--  Hint: You can change the background color by adjusting the value for <colordiffuse>...</colordiffuse> ! -->
-    
+	   
 	<control>
       <description>radio</description>
       <type>image</type>
@@ -371,7 +329,7 @@
       <posY>169</posY> 
       <width>1102</width> 
       <height>648</height> 
-      <texture>radio.jpg</texture> 
+      <texture mask="musicfanart_mask.png">Radio.jpg</texture> 
       <colordiffuse>ffffffff</colordiffuse>
       <visible>Player.hasaudio</visible>
     </control>
@@ -379,56 +337,28 @@
       <description>The Radio Notes Shadow</description>
       <type>image</type>
       <id>0</id>
-      <posX>237</posX>
-      <posY>247</posY>
-      <width>500</width>
-      <height>550</height>
-      <keepaspectratio>no</keepaspectratio>
+      <posX>487</posX> 
+      <posY>380</posY> 
+      <width>340</width> 
+      <height>420</height> 
       <colordiffuse>ff222222</colordiffuse>
       <texture>Radionotes.gif</texture>
       <animation effect="fade" start="0" end="100" time="1000" delay="1000" condition="true">conditional</animation>
-      <visible>+Player.hasaudio</visible>
+      <visible>Player.hasaudio</visible>
     </control>
     <control>
       <description>The Radio Notes</description>
       <type>image</type>
       <id>0</id>
-      <posX>240</posX>
-      <posY>250</posY>
-      <width>500</width>
-      <height>550</height>
-      <keepaspectratio>no</keepaspectratio>
+      <posX>490</posX> 
+      <posY>384</posY> 
+      <width>340</width>
+      <height>420</height> 
       <texture>Radionotes.gif</texture>
       <animation effect="fade" start="0" end="100" time="1000" delay="1000" condition="true">conditional</animation>
-      <visible>+Player.hasaudio</visible>
+      <visible>Player.hasaudio</visible>
     </control>
-    <control>
-      <description>The Radio Notes Shadow</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>577</posX>
-      <posY>247</posY>
-      <width>500</width>
-      <height>550</height>
-      <keepaspectratio>no</keepaspectratio>
-      <colordiffuse>ff222222</colordiffuse>
-      <texture>Radionotes.gif</texture>
-      <animation effect="fade" start="0" end="100" time="1500" delay="3000" condition="true">conditional</animation>
-      <visible>+Player.hasaudio</visible>
-    </control>
-    <control>
-      <description>The Radio Notes</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>580</posX>
-      <posY>250</posY>
-      <width>500</width>
-      <height>550</height>
-      <keepaspectratio>no</keepaspectratio>
-      <texture>Radionotes.gif</texture>
-      <animation effect="fade" start="0" end="100" time="1500" delay="3000" condition="true">conditional</animation>
-      <visible>+Player.hasaudio</visible>
-    </control>
+    
      
     <!-- *************************************************************************************************** -->
     <!-- *******************************   Info DVB radio on the right   *********************************** -->
@@ -497,7 +427,7 @@
       <label>-</label>
       <font>font10</font>
       <align>center</align>
-      <action>95</action>
+      <action>94</action>
       <textcolorNoFocus>ff00c0ff</textcolorNoFocus>
 	  <textureFocus>Arrow_left_button_small.png</textureFocus> 
       <textureNoFocus>Arrow_left_button_dark_small.png</textureNoFocus>
@@ -529,7 +459,7 @@
       <label>-</label>
       <font>font10</font>
       <align>center</align>
-      <action>94</action>
+      <action>95</action>
       <textcolorNoFocus>ff00c0ff</textcolorNoFocus>
 	  <textureFocus>Arrow_right_button_small.png</textureFocus>  
       <textureNoFocus>Arrow_right_button_dark_small.png</textureNoFocus> 
@@ -681,22 +611,13 @@
       </control>
       
       <control>
-        <description>Track - Title</description>
-        <type>group</type>
-        <layout>StackLayout(7, Horizontal, true)</layout>
-        <visible>!string.equals(#Radio.Listen.Thumb, )+Player.hasaudio</visible>
-        <posX>267</posX>
-        <posY>867</posY>
-        <align>left</align>
-        <width>1450</width>
-        <height>38</height>
-        <control>
           <type>fadelabel</type>
           <description>Title</description>
           <id>1</id>
+          <posX>267</posX>
+          <posY>867</posY>
           <label>4541</label>
-          <width>10</width>
-          <maxWidth>1250</maxWidth>
+          <width>1000</width>
           <align>left</align>
           <font>Label</font>
           <textcolor>ff00aaff</textcolor>
@@ -708,16 +629,19 @@
           <type>fadelabel</type>
           <description>Title</description>
           <id>1</id>
-          <label>#(iif(eq(#Play.Next.Title,''),'#(L(736))','#Play.Next.Title'))</label>
-          <width>10</width>
+          <posX>267</posX>
+          <posY>907</posY>
+          <label>#(iif(eq(#Play.Next.Title,''),'#(L(736)): ','#Radio.Listen.Stop - #Play.Next.Title'))</label>
+          <width>1000</width>
           <maxWidth>1250</maxWidth>
           <align>left</align>
           <font>Label</font>
+          <textcolor>ffffffff</textcolor>
           <shadowAngle>45</shadowAngle>
           <shadowDistance>4</shadowDistance>
           <shadowColor>ff000000</shadowColor>
         </control>
-      </control>
+      
     </control>
 	
 	<control>
