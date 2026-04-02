@@ -191,7 +191,7 @@
         <type>fadelabel</type>
         <description>Title</description>
         <id>0</id>
-        <label>#Play.Current.Artist</label>
+        <label>#(iif(eq(#Play.Current.Artist,''),'n/a','#Play.Current.Artist'))</label>
         <width>10</width>
         <maxWidth>800</maxWidth>
         <align>right</align>
@@ -617,7 +617,7 @@
         <type>fadelabel</type>
         <description>Title</description>
         <id>0</id>
-        <label>#Radio.Listen.Title</label>
+        <label>#(iif(eq(#Play.Current.Title,''),'#Radio.Listen.Title','#Play.Current.Title'))</label>
         <width>10</width>
         <maxWidth>840</maxWidth>
         <align>right</align>
@@ -641,7 +641,7 @@
         <type>fadelabel</type>
         <description>Track</description>
         <id>0</id>
-        <label>#(L(635)): </label>
+        <label>#(iif(eq(#Play.Current.Artist,''),'#(L(635)): ','#(L(171))'))</label>
         <width>10</width>
         <maxWidth>200</maxWidth>
         <textcolor>ff00aaff</textcolor>
@@ -655,7 +655,7 @@
         <type>fadelabel</type>
         <description>Title</description>
         <id>0</id>
-        <label>#Radio.Listen.Start - #Radio.Listen.Stop</label>
+        <label>#(iif(eq(#Play.Current.Artist,''),'#Radio.Listen.Start - #Radio.Listen.Stop','#Play.Current.Artist'))</label>
         <width>10</width>
         <maxWidth>840</maxWidth>
         <align>right</align>

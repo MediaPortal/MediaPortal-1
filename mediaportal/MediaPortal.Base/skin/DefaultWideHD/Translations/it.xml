@@ -2,6 +2,8 @@
 <!-- Skin translation file -->
 <!-- English (US) -->
 <strings>
+  <string Field="LastWatched">Visto l'ultima volta</string>
+  <string Field="Awards">Premi</string>
   <string Field="EPGRows">Linee nelle EPG di TV/Radio</string>
   <string Field="NumberEPGRows">Numero di linee</string>
   <string Field="Thumbsview">Visualizzazione miniature</string>
@@ -87,5 +89,11 @@ Come giocare
   <!-- ***************************************************************************************-->
   <string Field="Important">Importante !</string>
   <string Field="CloseBHE">Chiudi BasicHome Editor</string>
-  <string Field="SaveBHE">per salvare correttamente le impostazioni !</string>
+  <string Field="SaveBHE">per salvare le nuove impostazioni !</string>
+  <!-- ***************************************************************************************-->
+  <!-- ****************************   Skin translation for Picture Info  *********************-->
+  <!-- ***************************************************************************************-->
+  <string Field="EXIFDATA">DATI EXIF</string>
+  <string Field="ImageInfos">Bildinformationen</string>
+  <string Field="CameraSettings">Informazioni sull'immagine</string>
 </strings>

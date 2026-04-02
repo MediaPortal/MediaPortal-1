@@ -6,20 +6,11 @@
   <allowoverlay>no</allowoverlay>
   <controls>
     <import>common.dialog.xml</import>
-    <!-- Override the definition in common.dialog.xml, as we need more space for the Always and Never buttons -->
-    <control>
-      <type>image</type>
-      <id>0</id>
-      <posX>420</posX>
-      <posY>349</posY>
-      <width>1077</width>
-      <height>453</height>
-      <texture>dialog_background.png</texture>
-    </control>
+  
     <control>
       <type>image</type>
       <id>100</id>
-      <posX>549</posX>
+      <posX>564</posX> 
       <posY>555</posY>
       <width>799</width>
       <texture>osd_progress_background.png</texture>
@@ -28,7 +19,7 @@
       <description>progress control</description>
       <type>progress</type>
       <id>20</id>
-      <posX>519</posX>
+      <posX>534</posX> 
       <posY>552</posY>
       <width>799</width>
     </control>
@@ -36,12 +27,13 @@
       <description>Yes button</description>
       <type>button</type>
       <id>11</id>
-      <posX>546</posX>
+      <posX>584</posX> 
       <posY>618</posY>
+	  <textalign>center</textalign>
       <width>213</width>
       <height>55</height>
       <textYOff>3</textYOff>
-      <textureFocus>button_focus.png</textureFocus>
+      <textureFocus>OSDlabel_button.png</textureFocus>
       <textureNoFocus>button_nofocus.png</textureNoFocus>
       <label>107</label>
       <onleft>14</onleft>
@@ -53,12 +45,13 @@
       <description>No button</description>
       <type>button</type>
       <id>10</id>
-      <posX>852</posX>
+      <posX>847</posX> 
       <posY>618</posY>
+	  <textalign>center</textalign>
       <width>213</width>
       <height>55</height>
       <textYOff>3</textYOff>
-      <textureFocus>button_focus.png</textureFocus>
+      <textureFocus>OSDlabel_button.png</textureFocus>
       <textureNoFocus>button_nofocus.png</textureNoFocus>
       <label>106</label>
       <onleft>11</onleft>
@@ -67,15 +60,16 @@
       <ondown>13</ondown>
     </control>
     <control>
-      <description>Always</description>
+      <description>Always button</description>
       <type>button</type>
       <id>12</id>
-      <posX>546</posX>
+      <posX>584</posX>
       <posY>684</posY>
+	  <textalign>center</textalign>
       <width>213</width>
       <height>55</height>
       <textYOff>3</textYOff>
-      <textureFocus>button_focus.png</textureFocus>
+      <textureFocus>OSDlabel_button.png</textureFocus>
       <textureNoFocus>button_nofocus.png</textureNoFocus>
       <label>511</label>
       <onleft>13</onleft>
@@ -84,15 +78,16 @@
       <ondown>11</ondown>
     </control>
     <control>
-      <description>Never</description>
+      <description>Never button</description>
       <type>button</type>
       <id>13</id>
-      <posX>852</posX>
+      <posX>847</posX>
       <posY>684</posY>
+	  <textalign>center</textalign>
       <width>213</width>
       <height>55</height>
       <textYOff>3</textYOff>
-      <textureFocus>button_focus.png</textureFocus>
+      <textureFocus>OSDlabel_button.png</textureFocus>
       <textureNoFocus>button_nofocus.png</textureNoFocus>
       <label>512</label>
       <onleft>12</onleft>
@@ -104,12 +99,13 @@
       <description>Cancel button</description>
       <type>button</type>
       <id>14</id>
-      <posX>1119</posX>
+      <posX>1110</posX> 
       <posY>618</posY>
+	  <textalign>center</textalign>
       <width>213</width>
       <height>55</height>
       <textYOff>3</textYOff>
-      <textureFocus>button_focus.png</textureFocus>
+      <textureFocus>OSDlabel_button.png</textureFocus>
       <textureNoFocus>button_nofocus.png</textureNoFocus>
       <label>510</label>
       <onleft>10</onleft>
@@ -117,5 +113,7 @@
       <onup>14</onup>
       <ondown>14</ondown>
     </control>
+	
+	
   </controls>
 </window>
