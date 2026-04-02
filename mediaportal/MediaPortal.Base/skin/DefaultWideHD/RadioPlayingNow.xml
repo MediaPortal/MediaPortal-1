@@ -47,7 +47,7 @@
         <type>fadelabel</type>
         <description>Titel + Artist</description>
         <id>0</id>
-        <label>#(L(182)): </label>
+        <label>#(L(268)): </label>  
         <width>10</width>
         <maxWidth>190</maxWidth>
         <textcolor>ff00bfff</textcolor>
@@ -312,12 +312,12 @@
       <description>image frame</description>
       <type>image</type>
       <id>0</id>
-      <posX>37</posX> 
-      <posY>167</posY> 
-      <width>1106</width> 
-      <height>652</height> 
+      <posX>36</posX> 
+      <posY>166</posY> 
+      <width>1108</width> 
+      <height>654</height> 
       <texture mask="musicfanart_mask.png">white.png</texture>
-      <colordiffuse>ff3a88ff</colordiffuse>
+      <colordiffuse>ff294f7c</colordiffuse> 
 	  <visible>Player.hasaudio</visible>
     </control>
 	   
