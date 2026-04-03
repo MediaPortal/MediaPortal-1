@@ -103,6 +103,7 @@ namespace MediaPortal
             this.Text = "SkinProperties";
             this.Activated += new System.EventHandler(this.SkinProperties_Activated);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.SkinProperties_FormClosed);
+            this.Load += new System.EventHandler(this.SkinProperties_Load);
             this.Shown += new System.EventHandler(this.SkinProperties_Shown);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);

@@ -115,6 +115,18 @@ namespace MediaPortal
         e.SuppressKeyPress = true;
       }
     }
+
+    private void AttachMouseMove(Control parent)
+    {
+      parent.MouseMove += SkinProperties_Activated;
+      foreach (Control ctrl in parent.Controls)
+        AttachMouseMove(ctrl);
+    }
+
+    private void SkinProperties_Load(object sender, EventArgs e)
+    {
+      AttachMouseMove(this);
+    }
   }
 
   class NameValueItem : INotifyPropertyChanged
