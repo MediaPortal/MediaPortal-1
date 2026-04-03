@@ -45,7 +45,60 @@
         <onright>19001</onright>
         <ondown>#(iif(eq(#skin.basichome.editor,'True'),'770101','10'))</ondown>
       </control>
-	
+	  
+	    <control>
+        <description>Gear8 active</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1075</posX>
+        <posY>179</posY>
+        <width>25</width>
+        <height>25</height>
+        <texture>gear_8_teeth.png</texture> 
+		<colordiffuse>ffd3d3d3</colordiffuse>
+        <animation effect="rotate" time="9980" end="-360" loop="true" condition="skin.hassetting(#skin.basichome.editor)">conditional</animation>	
+		<visible>skin.hassetting(#skin.basichome.editor)</visible>
+      </control>
+	   <control>
+        <description>Gear12 active</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1095</posX>
+        <posY>159</posY>
+        <width>38</width>
+        <height>38</height>
+        <texture>gear_12_teeth.png</texture> 
+		<colordiffuse>ffd3d3d3</colordiffuse>
+        <animation effect="rotate" time="15000" end="360" loop="true" condition="skin.hassetting(#skin.basichome.editor)">conditional</animation>	
+		<visible>skin.hassetting(#skin.basichome.editor)</visible>
+      </control>
+	  <control>
+        <description>Gear8 inactive</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1075</posX>
+        <posY>179</posY>
+        <width>25</width>
+        <height>25</height>
+        <texture>gear_8_teeth.png</texture> 
+		<colordiffuse>ff00bfff</colordiffuse> 
+        <animation effect="rotate" time="9980" end="-360" loop="true" condition="skin.hassetting(#skin.basichome.editor)">conditional</animation>	
+		<visible>!skin.hassetting(#skin.basichome.editor)</visible>
+      </control>
+	   <control>
+        <description>Gear12 inactive</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>1095</posX>
+        <posY>159</posY>
+        <width>38</width>
+        <height>38</height>
+        <texture>gear_12_teeth.png</texture> 
+		<colordiffuse>ff00bfff</colordiffuse>
+        <animation effect="rotate" time="15000" end="360" loop="true" condition="skin.hassetting(#skin.basichome.editor)">conditional</animation>	
+		<visible>!skin.hassetting(#skin.basichome.editor)</visible>
+      </control>
+	   
       <control>
         <description>group element</description>
         <type>group</type>

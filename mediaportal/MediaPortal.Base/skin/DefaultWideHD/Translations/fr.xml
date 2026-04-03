@@ -2,6 +2,8 @@
 <!-- Skin translation file -->
 <!-- English (US) -->
 <strings>
+  <string Field="LastWatched">Vu en dernier</string>
+  <string Field="Awards">Récompenses</string>
   <string Field="EPGRows">Lignes dans les EPG TV/Radio</string>
   <string Field="NumberEPGRows">Nombre de lignes</string>
   <string Field="Thumbsview">Vue en miniature</string>
@@ -86,10 +88,16 @@ Comment jouer
 <string Field="About">Qu'est-ce que Tetris ?</string>
   <string Field="HighFive">Une partie des graphiques et des animations est fournie par High_Five :)</string>
   <string Field="Highscore">*** Félicitations !  *** Vous avez atteint un nouveau record!</string>
-<!-- ***************************************************************************************-->
+  <!-- ***************************************************************************************-->
   <!-- ****************************   Skin translation for BHE ****************************-->
   <!-- ***************************************************************************************-->
   <string Field="Important">Important !</string>
   <string Field="CloseBHE">Fermez BasicHome Editor</string>
-  <string Field="SaveBHE">pour enregistrer correctement les paramètres !</string>
+  <string Field="SaveBHE">pour enregistrer vos nouveaux paramètres !</string>
+  <!-- ***************************************************************************************-->
+  <!-- ****************************   Skin translation for Picture Info  *********************-->
+  <!-- ***************************************************************************************-->
+  <string Field="EXIFDATA">DONNÉES EXIF</string>
+  <string Field="ImageInfos">Informations sur l'image</string>
+  <string Field="CameraSettings">Réglages de la caméra</string>
 </strings>
