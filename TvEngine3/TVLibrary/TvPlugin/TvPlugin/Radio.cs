@@ -252,7 +252,6 @@ namespace TvPlugin
           {
             RadioHelper.CurrentChannel = newChannel;
             Radio.Play();
-            g_Player.ShowFullScreenWindow();
 
           }
           break;
