@@ -120,7 +120,8 @@ namespace MediaPortal.GUI.Library
           _VideoPixelShaders = new PixelShaderCollection(DX9Device);
         return _VideoPixelShaders;
       }
-    }private static PixelShaderCollection _VideoPixelShaders = null;
+    }
+    private static PixelShaderCollection _VideoPixelShaders = null;
 
     // ReSharper disable InconsistentNaming
     public static Graphics graphics = null; // GDI+ Graphics object
@@ -189,7 +190,7 @@ namespace MediaPortal.GUI.Library
     private static bool _allowRememberLastFocusedItem = true;
     private static bool _fullHD3DFormat = false;
     private static bool _tabWithBlackBars = false;
-    
+
     /// <summary>
     /// Device lost event
     /// </summary>
@@ -564,7 +565,7 @@ namespace MediaPortal.GUI.Library
         var intPixelRatio = (int)pixelRatio;
         xmlWriter.SetValue("screen", "pixelratio", intPixelRatio.ToString(CultureInfo.InvariantCulture));
         xmlWriter.SetValue("screen", "subtitles", _subtitles.ToString(CultureInfo.InvariantCulture));
-       
+
         Log.Debug("GraphicContext: Settings saved to {0}", strFileName);
       }
     }
@@ -2399,14 +2400,15 @@ namespace MediaPortal.GUI.Library
     /// <param name="e"></param>
     public static void OnDeviceLost(object sender, EventArgs e)
     {
-        if (DeviceLost != null)
-          DeviceLost(sender, e);
+      if (DeviceLost != null)
+        DeviceLost(sender, e);
     }
 
     public static Direct3D Direct3D
     {
       get { return _d3d; }
-    } private static Direct3D _d3d;
+    }
+    private static Direct3D _d3d;
 
     public static void Direct3DLoad()
     {
