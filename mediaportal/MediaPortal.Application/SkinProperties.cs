@@ -18,6 +18,7 @@ namespace MediaPortal
     private List<NameValueItem> allItems = new List<NameValueItem>();
     private SortableBindingList<NameValueItem> filtered = new SortableBindingList<NameValueItem>();
     private Dictionary<string, NameValueItem> mirror = new Dictionary<string, NameValueItem>();
+    private string[] filterText = new string[] { };
 
     public SkinProperties()
     {
@@ -54,7 +55,7 @@ namespace MediaPortal
       GUIPropertyManager.OnPropertyChanged -= GUIPropertyManager_OnPropertyChanged;
     }
 
-    private void GUIPropertyManager_OnPropertyChanged(string tag, string tagValue)
+    private void SetItem(string tag, string tagValue)
     {
       if (mirror.TryGetValue(tag, out var item))
         item.Value = tagValue;
@@ -64,6 +65,19 @@ namespace MediaPortal
         if (isInFilter(nwItem))
           filtered.Add(nwItem);
       }
+    }
+
+    private void GUIPropertyManager_OnPropertyChanged(string tag, string tagValue)
+    {
+      if (InvokeRequired)
+      {
+        BeginInvoke(new System.Action(() =>
+        {
+          SetItem(tag, tagValue);
+        }));
+      }
+      else
+        SetItem(tag, tagValue);
     }
 
     private void SkinProperties_Activated(object sender, EventArgs e)
@@ -77,11 +91,10 @@ namespace MediaPortal
 
     private bool isInFilter(NameValueItem item)
     {
-      if (comboBox1.Text.Length == 0)
+      if (filterText.Length == 0)
         return true;
 
-      return comboBox1.Text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-        .Any(w => item.Name.IndexOf(w, StringComparison.OrdinalIgnoreCase) >= 0);
+      return filterText.Any(w => item.Name.IndexOf(w, StringComparison.OrdinalIgnoreCase) >= 0);
     }
 
     private void fillFiltered()
@@ -99,6 +112,7 @@ namespace MediaPortal
 
     private void comboBox1_TextChanged(object sender, EventArgs e)
     {
+      filterText = comboBox1.Text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
       fillFiltered();
     }
 
