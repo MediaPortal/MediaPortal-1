@@ -1821,29 +1821,7 @@ namespace MediaPortal.GUI.Library
     /// false: does not belong to the my tv plugin</returns>
     public static bool IsTvWindow(int windowId)
     {
-      GUIWindow window = GUIWindowManager.GetWindow(windowId);
-
-      if (window != null && window.IsTv)
-      {
-        return true;
-      }
-
-      switch (windowId)
-      {
-        case (int)GUIWindow.Window.WINDOW_TV:
-        case (int)GUIWindow.Window.WINDOW_TVFULLSCREEN:
-        case (int)GUIWindow.Window.WINDOW_TVGUIDE:
-        case (int)GUIWindow.Window.WINDOW_RECORDEDTV:
-        case (int)GUIWindow.Window.WINDOW_SCHEDULER:
-        case (int)GUIWindow.Window.WINDOW_SEARCHTV:
-        case (int)GUIWindow.Window.WINDOW_TELETEXT:
-        case (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT:
-        case (int)GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES:
-        case (int)GUIWindow.Window.WINDOW_TV_NO_SIGNAL:
-        case (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO:
-          return true;
-      }
-      return false;
+      return GUIWindowManager.IsTv(windowId);
     }
 
     /// <summary>
