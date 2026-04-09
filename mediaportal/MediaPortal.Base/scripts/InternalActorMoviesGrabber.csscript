@@ -23,12 +23,12 @@ using MediaPortal.Database;
 using MediaPortal.Video.Database;
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 {
-  const string strGrabberVersion = "20250719.I";
+  const string strGrabberVersion = "20260405.V";
 
-  private string _strBody = string.Empty;
   private TMDBMovie tmdbMovie;
   private TMDBMovie imdbMovie;
 
@@ -55,16 +55,33 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     string thumb = string.Empty;
 
     string uri;
-    string strUrl = String.Format("https://m.imdb.com/title/{0}/", imdbId);
-    string strBody = GetPage(strUrl, "utf-8", out uri);
-    string regex = @"ld\+json[^}]+?image.:.(?<poster>.*?)\.jpg";
-    thumb = Regex.Match(strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["poster"].Value;
+    string strUrl = String.Format("https://api.imdbapi.dev/titles/{0}", imdbId);
+    string json = GetPage(strUrl, "utf-8", out uri);
 
-    if (!string.IsNullOrEmpty(thumb))
+    if (string.IsNullOrEmpty(json))
     {
-      thumb += "UX" + Convert.ToString((int)Thumbs.ThumbLargeResolution) + "_.jpg";
+      Log.Debug("GetThumbImdb IMDB = {0}, JSON not found.", imdbId);
+      return thumb;
     }
 
+    try
+    {
+      IMDBMovieDetails Movie = JsonConvert.DeserializeObject<IMDBMovieDetails>(json);
+      if (Movie == null)
+      {
+        Log.Debug("GetThumbImdb IMDB = {0}, JSON changed!?.", imdbId);
+        return thumb;
+      }
+
+      if (Movie.primaryImage != null && Movie.primaryImage.url != null && !string.IsNullOrEmpty(Movie.primaryImage.url))
+      {
+        thumb = Movie.primaryImage.url.Replace("_V1_","_V1_UX" + Convert.ToString((int)Thumbs.ThumbLargeResolution));
+      }
+    }
+    catch (Exception ex)
+    {
+      Log.Debug("GetThumbImdb IMDB = {0}, Exception {1}, JSON changed!?.", imdbId, ex.Message);
+    }
     return thumb;
   }
 
@@ -83,23 +100,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     // Plot
     string shortPlot = string.Empty;
     string fullPlot =  string.Empty;
-    if (string.IsNullOrEmpty(tmdbMovie.Plot) && string.IsNullOrEmpty(imdbMovie.Plot))
-    {
-      // Short plot
-      string strUrl = String.Format("https://m.imdb.com/title/{0}/", movie.IMDBNumber);
-      string regex = @"plotText.+?plainText.:.(?<moviePlot>.+?).,.__typename";
-
-      _strBody = string.Empty;
-      shortPlot = GetPlot(strUrl, regex, ref _strBody);
-
-      // Full plot
-      strUrl = String.Format("https://m.imdb.com/title/{0}/plotsummary/", movie.IMDBNumber);
-      regex = @"plotText.+?plainText.:.(?<moviePlot>.+?)""";
-
-      _strBody = string.Empty;
-      fullPlot = GetPlot(strUrl, regex, ref _strBody);
-    }
-    else
+    if (!string.IsNullOrEmpty(tmdbMovie.Plot) || !string.IsNullOrEmpty(imdbMovie.Plot))
     {
       shortPlot = GetMiniDescription(string.IsNullOrEmpty(tmdbMovie.Plot) ? imdbMovie.Plot : tmdbMovie.Plot);
       fullPlot = string.IsNullOrEmpty(tmdbMovie.Plot) ? imdbMovie.Plot : tmdbMovie.Plot;
@@ -340,8 +341,6 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
         movie.Cast = strActor;
       }
     }
-
-    _strBody = string.Empty;
   }
 
   #endregion
@@ -392,63 +391,56 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
       Log.Error("FindIMDBActor exception for DB lookup of {0} err: {1} stack: {2}", strURL, ex.Message, ex.StackTrace);
     }
 
+    string absoluteUri;
+    string URL = string.Format(API_SearchPersons, HttpUtility.UrlEncode(dbActor), API_KEY);
+    string json = GetPage(URL, "utf-8", out absoluteUri);
+
+    if (string.IsNullOrEmpty(json))
+    {
+      return elements;
+    }
+
     try
     {
-      string absoluteUri;
-      // UTF-8 have problem with special country chars, default IMDB enc is used
-      string strBody = GetPage(strURL, "utf-8", out absoluteUri);
-      string value = string.Empty;
-      HTMLParser parser = new HTMLParser(strBody);
-
-      if ((parser.skipToEndOf("<title>")) &&
-          (parser.extractTo("</title>", ref value)) &&
-          !value.ToLowerInvariant().Equals("find - imdb"))
+      json = json.Replace("results", "person_results");
+      FindObject Person = JsonConvert.DeserializeObject<FindObject>(json);
+      if (Person != null & Person.person_results != null && Person.person_results.Count > 0)
       {
-        value = new HTMLUtil().ConvertHTMLToAnsi(value);
-        value = Utils.RemoveParenthesis(value).Trim();
-        IMDB.IMDBUrl oneUrl = new IMDB.IMDBUrl(absoluteUri, value, "IMDB");
-        elements.Add(oneUrl);
-        return elements;
-      }
-
-      string regexJson = @"type=.application\/json.>(?<json>{.+?})<";
-      string json = Regex.Match(strBody, regexJson, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["json"].Value;
-      if (string.IsNullOrEmpty(json))
-      {
-        Log.Debug("FindIMDBActor IMDB = {0}, JSON not found.", strURL);
-        return elements;
-      }
-
-      string regexPattern = @".id.:.(?<id>nm\d{7,8})[^}]+?displayNameText.:.(?<name>[^}]+?)"",[^}]+?Actor[^}]+?knownForTitleText.:.(?<role>[^}]+?)"",(?:[^}]+?akaName.:.(?<aka>[^}]+?)"",)?";
-      MatchCollection mc = Regex.Matches(json, regexPattern);
-      if (mc.Count != 0)
-      {
-        foreach (Match m in mc)
+        foreach (PersonFind person in Person.person_results)
         {
-          string url = HttpUtility.HtmlDecode(m.Groups["id"].Value.Trim());
-          string name = HttpUtility.HtmlDecode(m.Groups["name"].Value.Trim());
-          string role = HttpUtility.HtmlDecode(m.Groups["role"].Value.Trim());
-          string aka = HttpUtility.HtmlDecode(m.Groups["aka"].Value.Trim());
-
-          if (string.IsNullOrEmpty(url) || string.IsNullOrEmpty(name))
+          URL = string.Format(API_DetailsPerson, person.id, API_KEY);
+          json = GetPage(URL, "utf-8", out absoluteUri);
+          if (string.IsNullOrEmpty(json))
           {
             continue;
           }
-          url = string.Format(@"https://www.imdb.com/name/{0}/", url);
 
-          if (!string.IsNullOrEmpty(role))
+          ActorDetails Actor = JsonConvert.DeserializeObject<ActorDetails>(json);
+          if (Actor != null && !string.IsNullOrEmpty(Actor.name) && !string.IsNullOrEmpty(Actor.imdb_id))
           {
-            name += " - " + role;
-          }
-          if (!string.IsNullOrEmpty(aka))
-          {
-            name += " - " + aka;
-          }
+            Log.Debug("FindIMDBActor: IMDB: {0} TMDB: {1} - {2}", Actor.imdb_id, Actor.id, Actor.name);
 
-          name = Utils.RemoveParenthesis(name).Trim();
-          IMDB.IMDBUrl newUrl = new IMDB.IMDBUrl(url, name, "IMDB");
-          elements.Add(newUrl);
+            string url = string.Format(@"https://www.imdb.com/name/{0}/", Actor.imdb_id);
+            string name = Actor.name;
+            string role = string.Empty;
+            string aka = Actor.known_for_department;
+
+            if (!string.IsNullOrEmpty(role))
+            {
+              name += " - " + role;
+            }
+            if (!string.IsNullOrEmpty(aka))
+            {
+              name += " - " + aka;
+            }
+            IMDB.IMDBUrl newUrl = new IMDB.IMDBUrl(url, name, "IMDB");
+            elements.Add(newUrl);
+          }
         }
+      }
+      else
+      {
+        Log.Debug("FindIMDBActor: Actor not found: {0}", dbActor);
       }
     }
     catch (Exception ex)
@@ -476,7 +468,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
         // Get IMDBID
         actor.IMDBActorID = matchimdbid.Groups["imdbid"].Value;
         Log.Debug("InternalActorsGrabber - GetActorDetails - IMDBID Found {0}", actor.IMDBActorID);
-        url.URL = string.Format("https://m.imdb.com/name/{0}/", actor.IMDBActorID);
+        url.URL = string.Format("https://api.imdbapi.dev/names/{0}", actor.IMDBActorID);
       }
       else
       {
@@ -488,8 +480,6 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 
       string absoluteUri;
       string html = GetPage(url.URL, "utf-8", out absoluteUri);
-      string regex;
-
       if (string.IsNullOrEmpty(html))
       {
         return false;
@@ -499,40 +489,13 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 
       #region Actor Main Image
 
-      if (string.IsNullOrEmpty(JsonActor.ThumbnailUrl))
-      {
-        regex = @"<meta property=.og:image.\scontent=.(?<image>.+?)\.jpg.\/>";
-        string imdbImage = Regex.Match(html, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["image"].Value;
-        if (!string.IsNullOrEmpty(imdbImage))
-        {
-          imdbImage += "UX" + Convert.ToString((int)Thumbs.ThumbLargeResolution) + "_.jpg";
-          actor.ThumbnailUrl = imdbImage;
-        }
-      }
-      else
-      {
-        actor.ThumbnailUrl = JsonActor.ThumbnailUrl;
-      }
+      actor.ThumbnailUrl = JsonActor.ThumbnailUrl;
 
       #endregion
 
       #region Actor name
 
-      // Actor name
-      if (!string.IsNullOrEmpty(JsonActor.Name))
-      {
-        actor.Name = JsonActor.Name;
-      }
-      else
-      {
-        regex = @"<span[^>]+?>(?<name>[^<].+?)<\/span";
-        string imdbName = Regex.Match(html, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["name"].Value;
-        if (!string.IsNullOrEmpty(imdbName))
-        {
-          actor.Name = imdbName;
-        }
-      }
-
+      actor.Name = JsonActor.Name;
       if (string.IsNullOrEmpty(actor.Name))
       {
         actor.Name = url.Title;
@@ -540,102 +503,37 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 
       #endregion
 
-      HTMLParser parser = new HTMLParser(html);
       string value = string.Empty;
 
       #region Actor Birth date/place
 
       // Birth Date
       actor.DateOfBirth = string.Empty;
-
       if (!string.IsNullOrEmpty(JsonActor.DateOfBirth))
       {
         DateTime date = DateTime.Parse(JsonActor.DateOfBirth);
         actor.DateOfBirth = String.Format("{0:D}", date);
       }
-      else if (parser.skipToEndOf(">Born</span>") && parser.extractTo("</span>", ref value))
-      {
-        regex = @">(?<date>[^<]+?\s\d{1,2},\s\d{4})<";
-        string birthday = Regex.Match(value, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["date"].Value;
-        if (!string.IsNullOrEmpty(birthday))
-        {
-          DateTime date = DateTime.Parse(birthday);
-          actor.DateOfBirth = String.Format("{0:D}", date);
-        }
-      }
-
-      if (string.IsNullOrEmpty(actor.DateOfBirth))
-      {
-        parser.resetPosition();
-        if (parser.skipToEndOf("\"birthDate\":{") && parser.skipToEndOf("dateComponents\":") && parser.extractTo(",\"__typename\"", ref value))
-        {
-          value = Utils.stripHTMLtags(value).Trim();
-          regex = @":(?<day>\d{1,2}),.+?:(?<month>\d{1,2}),.+?:(?<year>\d{4})";
-          Match m = Regex.Match(value, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-          if (m.Success)
-          {
-            string birthday = string.Format("{0}-{1}-{2}", m.Groups["year"].Value, m.Groups["month"].Value, m.Groups["day"].Value);
-            DateTime date = DateTime.Parse(birthday);
-            actor.DateOfBirth = String.Format("{0:D}", date);
-          }
-        }
-      }
 
       // Birth Place
-      if (parser.skipToEndOf("\"birthLocation\":{\"text\":\"") && parser.extractTo("\",\"displayableProperty\"", ref value))
-      {
-        actor.PlaceOfBirth = HttpUtility.HtmlDecode(value);
-      }
+      actor.PlaceOfBirth = JsonActor.PlaceOfBirth;
 
       #endregion
-
-      parser.resetPosition();
 
       #region Actor Death date/place
 
       // Death Date
       actor.DateOfDeath = string.Empty;
-
       if (!string.IsNullOrEmpty(JsonActor.DateOfDeath))
       {
         DateTime date = DateTime.Parse(JsonActor.DateOfDeath);
         actor.DateOfDeath = String.Format("{0:D}", date);
       }
-      else if (parser.skipToEndOf(">Died</span>") && parser.extractTo("</span>", ref value))
-      {
-        regex = @">(?<date>[^<]+?\s\d{1,2},\s\d{4})<";
-        string deathday = Regex.Match(value, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["date"].Value;
-        if (!string.IsNullOrEmpty(deathday))
-        {
-          DateTime date = DateTime.Parse(deathday);
-          actor.DateOfDeath = String.Format("{0:D}", date);
-        }
-      }
-
-      if (string.IsNullOrEmpty(actor.DateOfDeath))
-      {
-        parser.resetPosition();
-        if (parser.skipToEndOf("\"deathDate\":{") && parser.skipToEndOf("dateComponents\":") && parser.extractTo(",\"__typename\"", ref value))
-        {
-          value = Utils.stripHTMLtags(value).Trim();
-          regex = @":(?<day>\d{1,2}),.+?:(?<month>\d{1,2}),.+?:(?<year>\d{4})";
-          Match m = Regex.Match(value, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase);
-          if (m.Success)
-          {
-            string deathday = string.Format("{0}-{1}-{2}", m.Groups["year"].Value, m.Groups["month"].Value, m.Groups["day"].Value);
-            DateTime date = DateTime.Parse(deathday);
-            actor.DateOfDeath = String.Format("{0:D}", date);
-          }
-        }
-      }
 
       if (!string.IsNullOrEmpty(actor.DateOfDeath))
       {
         // Death Place
-        if (parser.skipToEndOf("\"deathLocation\":{\"text\":\"") && parser.extractTo("\",\"displayableProperty\"", ref value))
-        {
-          actor.PlaceOfDeath = HttpUtility.HtmlDecode(value);
-        }
+        actor.PlaceOfDeath = JsonActor.PlaceOfDeath;
       }
 
       #endregion
@@ -696,54 +594,17 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 
       #endregion
 
-      parser.resetPosition();
-
       #region Actor biography
 
       // Mini Biography
-      if (string.IsNullOrEmpty(tmdbActor.MiniBiography))
-      {
-        if (parser.skipToEndOf("href=\"/name/" + actor.IMDBActorID + "/bio?ref_=") &&
-            parser.skipToEndOf("<div class=\"ipc-html-content-inner-div\">") &&
-            parser.extractTo("</div>", ref value))
-        {
-          value = new HTMLUtil().ConvertHTMLToAnsi(value);
-          value = Utils.stripHTMLtags(value).Trim();
-          value = HttpUtility.HtmlDecode(value);
-          actor.MiniBiography = GetMiniDescription(value);
-          // Log.Debug("*** IMDB Mini Bio: {0}", value.Replace("\n", " "));
-        }
-      }
-
       actor.Biography = string.Empty;
-      if (string.IsNullOrEmpty(tmdbActor.Biography) || FULL_ACTOR_INFO)
-      {
-        //Full Biography
-        string fullBioUrl = string.Format("https://m.imdb.com/name/{0}/bio/", actor.IMDBActorID);
-        html = GetPage(fullBioUrl, "utf-8", out absoluteUri);
-
-        regex = @"bio[^}]+?plainText.:.(?<bio>[^}]+?).}";
-        string bio = Regex.Match(value, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["bio"].Value;
-        if (!string.IsNullOrEmpty(bio))
-        {
-          value = new HTMLUtil().ConvertHTMLToAnsi(bio);
-          value = Utils.stripHTMLtags(value).Trim();
-          value = HttpUtility.HtmlDecode(value);
-          actor.Biography = value;
-          // Log.Debug("*** IMDB Full Bio: {0}", value.Replace("\n", " "));
-        }
-      }
-
       if (!string.IsNullOrEmpty(tmdbActor.Biography))
       {
-        if (FULL_ACTOR_INFO)
-        {
-          actor.Biography = tmdbActor.Biography + "\n\n" + actor.Biography;
-        }
-        else
-        {
-          actor.Biography = tmdbActor.Biography;
-        }
+        actor.Biography = tmdbActor.Biography;
+      }
+      else
+      {
+        actor.Biography = tmdbActor.MiniBiography;
       }
 
       // IMDB Awards
@@ -757,90 +618,11 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
       #endregion
 
       // Person is movie director or an actor/actress
-      bool isActor = false;
-      bool isActress = false;
-      bool isDirector = false;
-      bool isWriter = false;
-      bool isSelf = false;
-
-      url.URL = string.Format("https://m.imdb.com/name/{0}/fullcredits/", actor.IMDBActorID);
-      html = GetPage(url.URL, "utf-8", out absoluteUri);
-
-      if (string.IsNullOrEmpty(html))
-      {
-        return false;
-      }
-
-      parser.Content = html;
-
-      #region Check person role in movie (actor, director or writer)
-
-      if (parser.skipToEndOf("id=\"name-filmography-filter-director\""))
-      {
-        isDirector = true;
-      }
-
-      parser.resetPosition();
-
-      if (parser.skipToEndOf("id=\"name-filmography-filter-writer\""))
-      {
-        isWriter = true;
-      }
-
-      parser.resetPosition();
-
-      if (parser.skipToEndOf("id=\"name-filmography-filter-actress\""))
-      {
-        isActress = true;
-      }
-
-      parser.resetPosition();
-
-      if (parser.skipToEndOf("id=\"name-filmography-filter-actor\""))
-      {
-        isActor = true;
-      }
-
-      parser.resetPosition();
-
-      if (parser.skipToEndOf("id=\"name-filmography-filter-self\""))
-      {
-        isSelf = true;
-      }
-
-      #endregion
-
-      parser = null;
-
       #region Get movies for every role
 
       // Get filmography Director
-      if (isDirector)
-      {
-        GetActorMovies(actor, false, false, true, false, false);
-      }
-
-      // Get filmography for writers
-      if (isWriter)
-      {
-        GetActorMovies(actor, false, false, false, true, false);
-      }
-
-      // Get filmography Actor
-      if (isActor || isActress)
-      {
-        GetActorMovies(actor, isActor, isActress, false, false, false);
-      }
-
-      // Get filmography Actor self
-      if (isSelf)
-      {
-        GetActorMovies(actor, false, false, false, false, true);
-      }
-
-      ClearPageCache();
-
-      if (!isActor && !isActress && !isDirector && !isWriter && !isSelf)
+      GetActorMovies(actor);
+      if (actor.Count == 0)
       {
          Log.Error("InternalActorsGrabber - GetActorDetails - {0} | Strange person, perhaps the IMDB markup has changed.", url.URL);
       }
@@ -862,174 +644,78 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     return false;
   }
 
-  // Actor Movies
-  public class JsonIMDBActorMovies
+  private void GetActorMovies(IMDBActor imdbActor)
   {
-      public JsonIMDBActorMoviesProps props { get; set; }
-  }
-
-  public class JsonIMDBActorMoviesProps
-  {
-      public JsonIMDBActorMoviesPageProps pageProps { get; set; }
-  }
-
-  public class JsonIMDBActorMoviesPageProps
-  {
-      public JsonIMDBActorMoviesSearchResults searchResults { get; set; }
-  }
-
-  public class JsonIMDBActorMoviesSearchResults
-  {
-      public JsonIMDBActorMoviesTitleResults titleResults { get; set; }
-  }
-
-  public class JsonIMDBActorMoviesTitleResults
-  {
-      public List<JsonIMDBActorMoviesTitleListItem> titleListItems { get; set; }
-      public string total { get; set; }
-  }
-
-  public class JsonIMDBActorMoviesTitleListItem
-  {
-      public string titleId { get; set; }
-      public string originalTitleText { get; set; }
-      public string titleText { get; set; }
-      public JsonIMDBActorMoviesReleaseDate releaseDate { get; set; }
-      public JsonIMDBActorMoviesTitleType titleType { get; set; }
-      public JsonIMDBActorMoviesCreditsMetadataForName creditsMetadataForName { get; set; }
-  }
-
-  public class JsonIMDBActorMoviesReleaseDate
-  {
-      public string day { get; set; }
-      public string month { get; set; }
-      public string year { get; set; }
-  }
-
-  public class JsonIMDBActorMoviesTitleType
-  {
-      public string id { get; set; }
-  }
-
-  public class JsonIMDBActorMoviesCreditsMetadataForName
-  {
-      public List<JsonIMDBActorMoviesCrew> crews { get; set; }
-      public JsonIMDBActorMoviesCast cast { get; set; }
-  }
-
-  public class JsonIMDBActorMoviesCrew
-  {
-      public JsonIMDBActorMoviesCategory category { get; set; }
-  }
-
-  public class JsonIMDBActorMoviesCast
-  {
-      public JsonIMDBActorMoviesCategory category { get; set; }
-      public List<string> characters { get; set; }
-  }
-
-  public class JsonIMDBActorMoviesCategory
-  {
-      public string id { get; set; }
-      public string text { get; set; }
-  }
-
-  private void GetActorMovies(IMDBActor imdbActor, bool actor, bool actress, bool director, bool writer, bool self)
-  {
-    string filter = string.Empty;
-    if (actor)
-    {
-      filter = "actor";
-    }
-    if (actress)
-    {
-      filter = "actress";
-    }
-    if (director)
-    {
-      filter = "director";
-    }
-    if (writer)
-    {
-      filter = "writer";
-    }
-    if (self)
-    {
-      filter = "self";
-    }
-
     string uri;
-    string actorUrl = string.Format("https://m.imdb.com/search/title/?role={0}&job_categories={1}&explore=credits&title_type=feature&sort=release_date,desc", imdbActor.IMDBActorID, filter);
-    string actorHtml = GetPage(actorUrl, "utf-8", out uri);
-    if (string.IsNullOrEmpty(actorHtml)) return;
-
-    string regex = @"type=.application\/json.>(?<json>{.+?})<";
-    string json = Regex.Match(actorHtml, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["json"].Value;
+    string actorUrl = string.Format("https://api.imdbapi.dev/names/{0}/filmography?pageSize=50", imdbActor.IMDBActorID);
+    string json = GetPages(actorUrl, "utf-8", out uri);
     if (string.IsNullOrEmpty(json))
     {
-      Log.Debug("GetActorMovies IMDB = {0}, JSON not found.", imdbActor.IMDBActorID);
+      Log.Debug("GetActorMovies: IMDB = {0}, JSON not found.", imdbActor.IMDBActorID);
       return;
     }
 
     try
     {
-      JsonIMDBActorMovies Data = JsonConvert.DeserializeObject<JsonIMDBActorMovies>(json);
-      if (Data == null)
+      IMDBFilmography Movies = JsonConvert.DeserializeObject<IMDBFilmography>(json);
+      if (Movies == null || Movies.credits == null)
       {
-        Log.Debug("GetActorMovies IMDB = {0}, JSON changed!?.", imdbActor.IMDBActorID);
-        // Log.Debug("{0}", json);
+        Log.Debug("GetActorMovies: IMDB = {0}, JSON changed!?.", imdbActor.IMDBActorID);
         return;
       }
-      if (Data.props == null || Data.props.pageProps == null || Data.props.pageProps.searchResults == null || Data.props.pageProps.searchResults.titleResults == null)
+      if (Movies.credits.Count == 0)
       {
-        Log.Debug("GetActorMovies - Data for IMDB = {0}, JSON changed!?.", imdbActor.IMDBActorID);
-        // Log.Debug("{0}", json);
         return;
       }
+      Log.Debug("GetActorMovies: IMDB = {0}, Movies credits: {1}", imdbActor.IMDBActorID, Movies.credits);
 
-      List<JsonIMDBActorMoviesTitleListItem> Movies = Data.props.pageProps.searchResults.titleResults.titleListItems;
-      if (Movies == null)
+      foreach (IMDBMovies item in Movies.credits)
       {
-        Log.Debug("GetActorMovies - Items for IMDB = {0}, JSON changed!?.", imdbActor.IMDBActorID);
-        // Log.Debug("{0}", json);
-        return;
-      }
-      if (Movies.Count == 0)
-      {
-        return;
-      }
-
-      foreach (JsonIMDBActorMoviesTitleListItem item in Movies)
-      {
-        string imdbID = !string.IsNullOrEmpty(item.titleId) ? item.titleId : string.Empty;
-        string title = !string.IsNullOrEmpty(item.titleText) ? item.titleText : string.Empty;
-        if (string.IsNullOrEmpty(title))
+        if (item.title == null || item.title.type != "movie")
         {
-          title = !string.IsNullOrEmpty(item.originalTitleText) ? item.originalTitleText : string.Empty;
+          continue;
         }
-        string strYear = item.releaseDate != null ? item.releaseDate.year : string.Empty;
+        bool writer = false;
+        bool director = false ;
+        bool self = false ;
+
+        string imdbID = !string.IsNullOrEmpty(item.title.id) ? item.title.id : string.Empty;
+        string title = !string.IsNullOrEmpty(item.title.primaryTitle) ? item.title.primaryTitle : (!string.IsNullOrEmpty(item.title.originalTitle) ? item.title.originalTitle : string.Empty);
         string role = string.Empty;
-        if (item.creditsMetadataForName != null)
+        if (item.category != null)
         {
-          foreach (JsonIMDBActorMoviesCrew crew in item.creditsMetadataForName.crews)
+          if (item.category != "actor" &&
+              item.category != "actress" &&
+              item.category != "director" &&
+              item.category != "writer" &&
+              item.category != "self")
           {
-            if (crew.category.id == "director")
-            {
-              role = role + (!string.IsNullOrEmpty(role) ? ", " : string.Empty) + GUILocalizeDirector().Replace(":", string.Empty);
-            }
-            else if (crew.category.id == "writer")
-            {
-              role = role + (!string.IsNullOrEmpty(role) ? ", " : string.Empty) + GUILocalizeWriter().Replace(":", string.Empty);
-            }
-            else if (!string.IsNullOrEmpty(crew.category.text))
-            {
-              role = role + (!string.IsNullOrEmpty(role) ? ", " : string.Empty) + crew.category.text;
-            }
+            continue;
           }
 
-          if (item.creditsMetadataForName.cast != null && item.creditsMetadataForName.cast.characters != null)
+          if (item.category == "director")
           {
-            foreach (string character in item.creditsMetadataForName.cast.characters)
+            role = role + (!string.IsNullOrEmpty(role) ? ", " : string.Empty) + GUILocalizeDirector().Replace(":", string.Empty);
+            director = true;
+          }
+          else if (item.category == "writer")
+          {
+            role = role + (!string.IsNullOrEmpty(role) ? ", " : string.Empty) + GUILocalizeWriter().Replace(":", string.Empty);
+            writer = true;
+          }
+          else if (item.category == "self")
+          {
+            role = role + (!string.IsNullOrEmpty(role) ? ", " : string.Empty) + item.category;
+            self = true;
+          }
+          else if (!string.IsNullOrEmpty(item.category))
+          {
+            role = role + (!string.IsNullOrEmpty(role) ? ", " : string.Empty) + item.category;
+          }
+
+          if (item.characters != null)
+          {
+            foreach (string character in item.characters)
             {
               if (!string.IsNullOrEmpty(character))
               {
@@ -1038,16 +724,15 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
             }
           }
         }
-        // Log.Debug("GetActorMovies: Found for {0}: {1} | {2} ({3}) | {4}", imdbActor.IMDBActorID, imdbID, title, strYear, role);
+        // Log.Debug("GetActorMovies: Found for {0}: {1} | {2} ({3}) | {4}", imdbActor.IMDBActorID, imdbID, title, item.title.startYear, role);
 
         if (!string.IsNullOrEmpty(title))
         {
           // Year
-          int year = 0;
           // Set near future for movies without year (99% it's a future project)
-          if (string.IsNullOrEmpty(strYear) || !Int32.TryParse(strYear, out year))
+          if (item.title.startYear == 0)
           {
-            year = DateTime.Today.Year + 5;
+            item.title.startYear = DateTime.Today.Year + 5;
           }
 
           // Actor
@@ -1055,7 +740,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 
           actorMovie.MovieTitle = title;
           actorMovie.Role = role;
-          actorMovie.Year = year;
+          actorMovie.Year = item.title.startYear;
           actorMovie.MovieImdbID = imdbID;
 
           // Check if director/writer/self movie exists in actors movies, append role
@@ -1068,15 +753,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
             {
               if (imdbActor[j].MovieImdbID == imdbID)
               {
-                if (!string.IsNullOrEmpty(imdbActor[j].Role))
-                {
-                  imdbActor[j].Role = role + ", " + imdbActor[j].Role;
-                }
-                else
-                {
-                  imdbActor[j].Role = role;
-                }
-
+                imdbActor[j].Role = !string.IsNullOrEmpty(imdbActor[j].Role) ? role + ", " + imdbActor[j].Role : role;
                 skip = true;
                 break;
               }
@@ -1086,56 +763,15 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
           if (!skip)
           {
             imdbActor.Add(actorMovie);
-            Log.Debug("GetActorMovies: Added for {0}: {1} | {2} ({3}) | {4}", imdbActor.IMDBActorID, imdbID, title, year, role);
+            Log.Debug("GetActorMovies: Added for {0}: {1} | {2} ({3}) | {4}", imdbActor.IMDBActorID, imdbID, title, item.title.startYear, role);
           }
         }
       }
     }
     catch (Exception ex)
     {
-      Log.Debug("GetActorMovies IMDB = {0}, Exception {1}, JSON changed!?.", imdbActor.IMDBActorID, ex.Message);
+      Log.Debug("GetActorMovies: IMDB = {0}, Exception {1}, JSON changed!?.", imdbActor.IMDBActorID, ex.Message);
     }
-  }
-
-  /// <summary>
-  /// Removes HTML tags, cleans \n (to space) and \r (to empty string), decode string and remove last slash char
-  /// </summary>
-  /// <param name="stringToClean"></param>
-  /// <returns></returns>
-  private string CleanCrlf(string stringToClean)
-  {
-    string cleanString = string.Empty;
-
-    cleanString = Utils.stripHTMLtags(stringToClean).Trim();
-    cleanString = HttpUtility.HtmlDecode(cleanString.Replace("\n", " ").Replace("\r", string.Empty).Trim());
-    cleanString = cleanString.Replace("&nbsp;", " ").Trim();
-    cleanString = cleanString.Replace("  /", string.Empty).Trim();
-
-    if (cleanString != null && cleanString.EndsWith("/"))
-    {
-      cleanString = cleanString.Remove(cleanString.LastIndexOf("/"));
-    }
-
-    return cleanString;
-  }
-
-  private string RemoveParenthesis(string name)
-  {
-    while (name.IndexOf("(") != -1)
-    {
-      int start = name.IndexOf("(");
-      int end = name.IndexOf(")");
-      if (end != -1)
-      {
-        name = name.Substring(0, start) + name.Substring(end + 1);
-      }
-      else
-      {
-        break;
-      }
-    }
-
-    return name;
   }
 
   #endregion
@@ -1250,62 +886,56 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 
     ArrayList actorList = new ArrayList();
 
-    string absUri = string.Empty;
-    string movieURL = string.Format("https://www.imdb.com/title/{0}/reference/", imdbMovieID);
-    string strBodyActors = GetPage(movieURL, "utf-8", out absUri);
-    if (string.IsNullOrEmpty(strBodyActors))
-    {
-      Log.Debug("GetIMDBMovieActorsList IMDB = {0}, Empty page, fallback to TMDB.", imdbMovieID);
-      return GetTMDBMovieActorsList (imdbMovieID, shortActorsList);
-    }
-
-    string regex = @"type=.application\/(ld\+)?json.>(?<json>{.+?})<";
-    string json = Regex.Match(strBodyActors, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["json"].Value;
+    string uri;
+    string strUrl = String.Format("https://api.imdbapi.dev/titles/{0}/credits?pageSize=50", imdbMovieID);
+    string json = GetPages(strUrl, "utf-8", out uri);
     if (string.IsNullOrEmpty(json))
     {
-      Log.Debug("GetIMDBMovieActorsList IMDB = {0}, JSON not found. Fallback to TMDB", imdbMovieID);
-      return GetTMDBMovieActorsList (imdbMovieID, shortActorsList);
+      Log.Debug("GetIMDBMovieActorsList IMDB = {0}, JSON not found.", imdbMovieID);
+      return actorList;
     }
 
     try
     {
-      JsonIMDBCasts Casts = JsonConvert.DeserializeObject<JsonIMDBCasts>(json);
-      if (Casts == null || Casts.props == null || Casts.props.pageProps == null || Casts.props.pageProps.mainColumnData == null)
+      IMDBMovieCast MovieCast = JsonConvert.DeserializeObject<IMDBMovieCast>(json);
+      if (MovieCast == null)
       {
         Log.Debug("GetIMDBMovieActorsList IMDB = {0}, JSON changed!?.", imdbMovieID);
         return actorList;
       }
 
-      JsonIMDBCastMainColumnData Data = Casts.props.pageProps.mainColumnData;
-      if (Data.titleText != null && Data.titleText.text != null)
+      if (MovieCast.credits != null && MovieCast.credits.Count > 0)
       {
-        Log.Debug("GetIMDBMovieActorsList for IMDB {0}: {1}", "Title", Data.titleText.text);
-      }
-
-      foreach (JsonIMDBCastCreditCategory categories in Data.creditCategories)
-      {
-        foreach (JsonIMDBCastEdge edge in categories.credits.edges)
+        Log.Debug("GetIMDBMovieActorsList: IMDB = {0}, Movies Cast credits: {1}", imdbMovieID, MovieCast.credits.Count);
+        foreach (IMDBActors cast in MovieCast.credits)
         {
-          if (categories.category.id == "director")
+          if (cast.category == "director")
           {
             // Add prefix that it's director, will be removed on fetching details
-            actorList.Add("*d" + edge.node.name.nameText.text + "|" + edge.node.name.id + "|" + GUILocalizeDirector().Replace(":", string.Empty));
-          }
-          if (categories.category.id == "writer")
+            actorList.Add("*d" + cast.name.displayName + "|" + cast.name.id + "|" + GUILocalizeDirector().Replace(":", string.Empty));
+          } 
+        }
+        foreach (IMDBActors cast in MovieCast.credits)
+        {
+          if (cast.category == "writer")
           {
-            actorList.Add(edge.node.name.nameText.text + "|" + edge.node.name.id + "|" + GUILocalizeWriter().Replace(":", string.Empty));
+            actorList.Add(cast.name.displayName + "|" + cast.name.id + "|" + GUILocalizeWriter().Replace(":", string.Empty));
           }
         }
-      }
-
-      int actorsCount = 0;
-      foreach (JsonIMDBCastCreditCategory categories in Data.creditCategories)
-      {
-        foreach (JsonIMDBCastEdge edge in categories.credits.edges)
+  
+        int actorsCount = 0;
+        foreach (IMDBActors cast in MovieCast.credits)
         {
-          if (categories.category.id == "cast")
+          if (cast.category != "director" && cast.category != "writer")
           {
-            actorList.Add(edge.node.name.nameText.text + "|" + edge.node.name.id + "|" + edge.node.characters[0].name);
+            if (cast.characters != null && cast.characters.Count > 0)
+            {
+              actorList.Add(cast.name.displayName + "|" + cast.name.id + "|" + cast.characters[0]);
+            }
+            else
+            {
+              actorList.Add(cast.name.displayName + "|" + cast.name.id + "|");
+            }
 
             actorsCount++;
             if (shortActorsList && actorsCount >= 15)
@@ -1332,279 +962,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 
   #endregion
 
-  #region IMDB Json
-
-  public class JsonIMDBBase
-  {
-    [JsonProperty("@type")]
-    public string type { get; set; }
-  }
-
-  public class JsonIMDBText
-  {
-    public string text { get; set; }
-  }
-
-  public class JsonIMDBPlainText
-  {
-    public string plainText { get; set; }
-  }
-
-  public class JsonIMDBReleaseYear
-  {
-    public int year { get; set; }
-  }
-
-  public class JsonIMDBPlot
-  {
-    public JsonIMDBPlainText plotText { get; set; }
-  }
-
-  public class JsonIMDBPrimaryImage
-  {
-    public string url { get; set; }
-    public int height { get; set; }
-    public int width { get; set; }
-    public JsonIMDBPlainText caption { get; set; }
-  }
-  public class JsonIMDBPosterData
-  {
-    public string constId { get; set; }
-    public JsonIMDBPosterImage image { get; set; }
-    public string type { get; set; }
-  }
-
-  public class JsonIMDBPosterImage
-  {
-    public string url { get; set; }
-    public int maxHeight { get; set; }
-    public int maxWidth { get; set; }
-    public string caption { get; set; }
-  }
-
-  // Movie
-  public class JsonIMDBPerson : JsonIMDBBase
-  {
-    public string url { get; set; }
-    public string name { get; set; }
-  }
-
-  public class JsonIMDBActor : JsonIMDBPerson
-  {
-      public string image { get; set; }
-      public string description { get; set; }
-      public string birthDate { get; set; }
-      public string deathDate { get; set; }
-  }    
-
-  public class JsonIMDBAggregateRating : JsonIMDBBase
-  {
-    public int ratingCount { get; set; }
-    public int bestRating { get; set; }
-    public int worstRating { get; set; }
-    public double ratingValue { get; set; }
-  }
-
-  public class JsonIMDBMovie : JsonIMDBBase
-  {
-    [JsonProperty("@context")]
-    public string context { get; set; }
-
-    public string url { get; set; }
-    public string name { get; set; }
-    public string alternateName { get; set; }
-    public string image { get; set; }
-    public string description { get; set; }
-    public JsonIMDBAggregateRating aggregateRating { get; set; }
-    public string contentRating { get; set; }
-    public List<string> genre { get; set; }
-    public string datePublished { get; set; }
-    public string keywords { get; set; }
-    public List<JsonIMDBPerson> actor { get; set; }
-    public List<JsonIMDBPerson> director { get; set; }
-    public List<JsonIMDBPerson> creator { get; set; }
-    public string duration { get; set; }
-  }
-
-  // IMDB Awards
-  public class JsonIMDBAwards
-  {
-    public JsonIMDBAwardsProps props { get; set; }
-    public string page { get; set; }
-  }
-
-  public class JsonIMDBAwardsProps
-  {
-    public JsonIMDBAwardsPageProps pageProps { get; set; }
-  }
-
-  public class JsonIMDBAwardsPageProps
-  {
-    public JsonIMDBAwardsContentData contentData { get; set; }
-  }
-
-  public class JsonIMDBAwardsContentData
-  {
-    public string parentDisplayText { get; set; }
-    public JsonIMDBEntityMetadata entityMetadata { get; set; }
-    public JsonIMDBPosterData posterData { get; set; }
-    public List<JsonIMDBAwardsCategory> categories { get; set; }
-    public int nominationsCount { get; set; }
-    public int winsCount { get; set; }
-  }
-
-  public class JsonIMDBEntityMetadata
-  {
-    public string id { get; set; }
-    public JsonIMDBText titleText { get; set; }
-    public JsonIMDBText originalTitleText { get; set; }
-    public JsonIMDBReleaseYear releaseYear { get; set; }
-    public JsonIMDBPlot plot { get; set; }
-    public JsonIMDBPrimaryImage primaryImage { get; set; }
-  }
-
-  public class JsonIMDBAwardsCategory
-  {
-    public string id { get; set; }
-    public string name { get; set; }
-    public JsonIMDBAwardsSection section { get; set; }
-  }
-
-  public class JsonIMDBAwardsSection
-  {
-    public int listItemType { get; set; }
-    public List<JsonIMDBAwardsSectionItem> items { get; set; }
-    public int total { get; set; }
-    public string endCursor { get; set; }
-  }
-
-  public class JsonIMDBAwardsSectionItem
-  {
-    public string id { get; set; }
-    public List<JsonIMDBAwardsListContent> listContent { get; set; }
-    public string rowTitle { get; set; }
-    public string rowSubTitle { get; set; }
-    public string rowLink { get; set; }
-    public List<JsonIMDBAwardsSubListContent> subListContent { get; set; }
-  }
-
-  public class JsonIMDBAwardsListContent
-  {
-    public string className { get; set; }
-    public string text { get; set; }
-  }
-
-  public class JsonIMDBAwardsSubListContent
-  {
-    public string text { get; set; }
-    public string subText { get; set; }
-    public string href { get; set; }
-  }
-
-  // IMDB Casts
-  public class JsonIMDBCasts
-  {
-    public JsonIMDBCastProps props { get; set; }
-  }
-
-  public class JsonIMDBCastProps
-  {
-    public JsonIMDBCastPageProps pageProps { get; set; }
-  }
-
-  public class JsonIMDBCastPageProps
-  {
-    public string tconst { get; set; }
-    public JsonIMDBCastMainColumnData mainColumnData { get; set; }
-  }
-  
-  public class JsonIMDBCastMainColumnData
-  {
-    public string id { get; set; }
-    public JsonIMDBCastText titleText { get; set; }
-    public JsonIMDBCastText originalTitleText { get; set; }
-    public JsonIMDBCastPlot plot { get; set; }
-    public JsonIMDBCastReleaseDate releaseDate { get; set; }
-    public List<JsonIMDBCastCreditCategory> creditCategories { get; set; }
-    public JsonIMDBCastTaglines taglines { get; set; }
-  }
-
-  public class JsonIMDBCastText
-  {
-    public string text { get; set; }
-  }
-  
-  public class JsonIMDBCastPlotText
-  {
-    public string plainText { get; set; }
-  }
-
-  public class JsonIMDBCastPlot
-  {
-    public JsonIMDBCastPlotText plotText { get; set; }
-  }
-
-  public class JsonIMDBCastReleaseDate
-  {
-    public int day { get; set; }
-    public int month { get; set; }
-    public int year { get; set; }
-    public JsonIMDBCastText country { get; set; }
-  }
-  
-  public class JsonIMDBCastTaglines
-  {
-    public List<JsonIMDBCastEdge> edges { get; set; }
-    public int total { get; set; }
-  }
-
- 
-  public class JsonIMDBCastCreditCategory
-  {
-    public JsonIMDBCastCategory category { get; set; }
-    public JsonIMDBCastCredits credits { get; set; }
-  }
-
-  public class JsonIMDBCastCategory
-  {
-    public string id { get; set; }
-  }
-
-
-  public class JsonIMDBCastCredits
-  {
-    public int total { get; set; }
-    public List<JsonIMDBCastEdge> edges { get; set; }
-  }
-
-  public class JsonIMDBCastEdge
-  {
-    public JsonIMDBCastNode node { get; set; }
-  }
-
-  public class JsonIMDBCastNode
-  {
-    public JsonIMDBCastName name { get; set; }
-    public List<JsonIMDBCastCharacter> characters { get; set; }
-    public string text { get; set; }
-  }
-
-  public class JsonIMDBCastName
-  {
-    public string id { get; set; }
-    public JsonIMDBCastText nameText { get; set; }
-    public JsonIMDBCastPrimaryImage primaryImage { get; set; }
-  }
-
-  public class JsonIMDBCastPrimaryImage
-  {
-    public string url { get; set; }
-  }
-
-  public class JsonIMDBCastCharacter
-  {
-    public string name { get; set; }
-  }
+  #region IMDB Details
 
   public IMDBActor GetIMDBActorDetails(string imdbID, string page)
   {
@@ -1617,34 +975,45 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
       return oReturn;
     }
 
-    string regex = @"type=.application\/(ld\+)?json.>(?<json>{.+?})<";
-    string json = Regex.Match(page, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["json"].Value;
-    if (string.IsNullOrEmpty(json))
-    {
-      Log.Debug("GetIMDBActorDetails IMDB = {0}, JSON not found.", imdbID);
-      return oReturn;
-    }
-
     try
     {
-      JsonIMDBActor Actor = JsonConvert.DeserializeObject<JsonIMDBActor>(json);
+      IMDBActorDetails Actor = JsonConvert.DeserializeObject<IMDBActorDetails>(page);
       if (Actor == null)
       {
         Log.Debug("GetIMDBActorDetails IMDB = {0}, JSON changed!?.", imdbID);
         return oReturn;
       }
 
-      if (!string.IsNullOrEmpty(Actor.name))
+      if (!string.IsNullOrEmpty(Actor.displayName))
       {
-        Log.Debug("IMDB {0}: {1}", "Name", Actor.name);
+        Log.Debug("IMDB {0}: {1}", "Name", Actor.displayName);
       }
 
-      oReturn.Name = Actor.name;
+      oReturn.Name = Actor.displayName;
       oReturn.IMDBActorID = imdbID;
-      oReturn.MiniBiography = Actor.description;
-      oReturn.ThumbnailUrl = string.IsNullOrEmpty(Actor.image) ? string.Empty : Actor.image.Replace("_V1_","_V1_UX" + Convert.ToString((int)Thumbs.ThumbLargeResolution));
-      oReturn.DateOfBirth = Actor.birthDate;
-      oReturn.DateOfDeath = Actor.deathDate;
+      oReturn.MiniBiography = Actor.biography;
+      if (Actor.primaryImage != null && Actor.primaryImage.url != null && !string.IsNullOrEmpty(Actor.primaryImage.url))
+      {
+        oReturn.ThumbnailUrl = Actor.primaryImage.url.Replace("_V1_","_V1_UX" + Convert.ToString((int)Thumbs.ThumbLargeResolution));
+      }
+      else
+      {
+        oReturn.ThumbnailUrl = string.Empty;
+      }
+      if (Actor.birthDate != null)
+      {
+        oReturn.DateOfBirth = string.Format("{0}-{1:D2}-{2:D2}", Actor.birthDate.year, Actor.birthDate.month, Actor.birthDate.day);
+        oReturn.PlaceOfBirth = !string.IsNullOrEmpty(Actor.birthLocation) ? Actor.birthLocation : string.Empty;
+      }
+      if (Actor.birthDate != null)
+      {
+        oReturn.DateOfDeath = string.Format("{0}-{1:D2}-{2:D2}", Actor.deathDate.year, Actor.deathDate.month, Actor.deathDate.day);
+        oReturn.PlaceOfDeath = !string.IsNullOrEmpty(Actor.deathLocation) ? Actor.deathLocation : string.Empty;
+        if (!string.IsNullOrEmpty(Actor.deathLocation) && !string.IsNullOrEmpty(Actor.deathReason))
+        {
+          oReturn.PlaceOfDeath = oReturn.PlaceOfDeath + " | " + Actor.deathReason;
+        }
+      }
     }
     catch (Exception ex)
     {
@@ -1660,15 +1029,10 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 
     TMDBMovie oReturn = new TMDBMovie();
 
-    if (string.IsNullOrEmpty(_strBody))
-    {
-      string uri;
-      string strUrl = String.Format("https://m.imdb.com/title/{0}/", imdbID);
-      _strBody = GetPage(strUrl, "utf-8", out uri);
-    }
+    string uri;
+    string strUrl = String.Format("https://api.imdbapi.dev/titles/{0}", imdbID);
+    string json = GetPage(strUrl, "utf-8", out uri);
 
-    string regex = @"type=.application\/(ld\+)?json.>(?<json>{.+?})<";
-    string json = Regex.Match(_strBody, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["json"].Value;
     if (string.IsNullOrEmpty(json))
     {
       Log.Debug("GetIMDBDetails IMDB = {0}, JSON not found.", imdbID);
@@ -1677,89 +1041,117 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 
     try
     {
-      JsonIMDBMovie Movie = JsonConvert.DeserializeObject<JsonIMDBMovie>(json);
+      IMDBMovieDetails Movie = JsonConvert.DeserializeObject<IMDBMovieDetails>(json);
       if (Movie == null)
       {
         Log.Debug("GetIMDBDetails IMDB = {0}, JSON changed!?.", imdbID);
         return oReturn;
       }
 
-      if (!string.IsNullOrEmpty(Movie.name))
+      if (!string.IsNullOrEmpty(Movie.primaryTitle))
       {
-        Log.Debug("IMDB {0}: {1}", "Title", Movie.name);
+        Log.Debug("IMDB {0}: {1}", "Title", Movie.primaryTitle);
       }
-      oReturn.Title = Movie.name;
-      oReturn.IMDBNumber = imdbID;
-      oReturn.Plot = Movie.description;
-      oReturn.ThumbURL = string.IsNullOrEmpty(Movie.image) ? string.Empty : Movie.image.Replace("_V1_","_V1_UX" + Convert.ToString((int)Thumbs.ThumbLargeResolution));
-
-      if (!string.IsNullOrEmpty(Movie.duration))
+      if (!string.IsNullOrEmpty(Movie.originalTitle))
       {
-        regex = @"PT(?:(?<hour>\d*)H)?(?<minutes>\d+?)M";
-        string hour = Regex.Match(Movie.duration, regex).Groups["hour"].Value;
-        string minutes = Regex.Match(Movie.duration, regex).Groups["minutes"].Value;
-        if (string.IsNullOrEmpty(hour))
-        {
-          hour = "0";
-        }
-        if (string.IsNullOrEmpty(minutes))
-        {
-          minutes = "0";
-        }
-        oReturn.RunTime = Int32.Parse(hour) * 60 + Int32.Parse(minutes);
+        Log.Debug("IMDB {0}: {1}", "Original Title", Movie.originalTitle);
+      }
+      oReturn.Title = !string.IsNullOrEmpty(Movie.primaryTitle) ? Movie.primaryTitle : (!string.IsNullOrEmpty(Movie.originalTitle) ? Movie.originalTitle : string.Empty);
+      oReturn.IMDBNumber = Movie.id;
+      oReturn.Plot = Movie.plot;
+      if (Movie.primaryImage != null && Movie.primaryImage.url != null && !string.IsNullOrEmpty(Movie.primaryImage.url))
+      {
+        oReturn.ThumbURL = Movie.primaryImage.url.Replace("_V1_","_V1_UX" + Convert.ToString((int)Thumbs.ThumbLargeResolution));
+      }
+      else
+      {
+        oReturn.ThumbURL = string.Empty;
+      }
+
+      if (Movie.runtimeSeconds > 0)
+      {
+        oReturn.RunTime = Movie.runtimeSeconds / 60;
       }
 
       oReturn.Genre = string.Empty;
-      if (Movie.genre != null && Movie.genre.Count > 0)
+      if (Movie.interests != null && Movie.interests.Count > 0) 
       {
-        foreach (string g in Movie.genre)
+        foreach (IMDBInterest g in Movie.interests)
+        {
+          if (!g.isSubgenre)
+          {
+            oReturn.Genre += (!string.IsNullOrEmpty(oReturn.Genre) ? " / " : string.Empty) + g.name;
+          }
+        }
+      }
+      else if (Movie.genres != null && Movie.genres.Count > 0)
+      {
+        foreach (string g in Movie.genres)
         {
           oReturn.Genre += (!string.IsNullOrEmpty(oReturn.Genre) ? " / " : string.Empty) + g;
         }
+      }
+    }
+    catch (Exception ex)
+    {
+      Log.Debug("GetIMDBDetails IMDB = {0}, Exception {1}, JSON changed!?.", imdbID, ex.Message);
+    }
+
+    strUrl = String.Format("https://api.imdbapi.dev/titles/{0}/credits?pageSize=50", imdbID);
+    json = GetPages(strUrl, "utf-8", out uri);
+
+    if (string.IsNullOrEmpty(json))
+    {
+      Log.Debug("GetIMDBDetails IMDB = {0}, JSON not found.", imdbID);
+      return oReturn;
+    }
+
+    try
+    {
+      IMDBMovieCast MovieCast = JsonConvert.DeserializeObject<IMDBMovieCast>(json);
+      if (MovieCast == null)
+      {
+        Log.Debug("GetIMDBDetails IMDB = {0}, JSON changed!?.", imdbID);
+        return oReturn;
       }
 
       List<TMDBPerson> tReturn = new List<TMDBPerson>();
       string sCast = string.Empty;
 
-      if (Movie.actor != null && Movie.actor.Count > 0)
+      if (MovieCast.credits != null && MovieCast.credits.Count > 0)
       {
-        foreach (JsonIMDBPerson cast in Movie.actor)
+        Log.Debug("GetIMDBDetails: IMDB = {0}, Movies Cast credits: {1}", imdbID, MovieCast.credits.Count);
+        foreach (IMDBActors cast in MovieCast.credits)
         {
-          if (cast.type == "Person")
+          if (cast.category == "director")
           {
             TMDBPerson aPerson = new TMDBPerson();
-            aPerson.Id = cast.url;
-            aPerson.Name = cast.name;
+            aPerson.Id = cast.name.id;
+            aPerson.Name = cast.name.displayName;
+            aPerson.As = "Director";
             tReturn.Add(aPerson);
-          }
-        }
-      }
-
-      if (Movie.creator != null && Movie.creator.Count > 0)
-      {
-        foreach (JsonIMDBPerson creator in Movie.creator)
-        {
-          if (creator.type == "Person")
+          } 
+          else if (cast.category == "writer")
           {
             TMDBPerson aPerson = new TMDBPerson();
-            aPerson.Id = creator.url;
-            aPerson.Name = creator.name;
+            aPerson.Id = cast.name.id;
+            aPerson.Name = cast.name.displayName;
             aPerson.As = "Writer";
             tReturn.Add(aPerson);
           }
-        }
-      }
-
-      if (Movie.director  != null)
-      {
-        foreach (JsonIMDBPerson director in Movie.director)
-        {
-          if (director.type == "Person")
+          else
           {
             TMDBPerson aPerson = new TMDBPerson();
-            aPerson.Id = director.url;
-            aPerson.Name = director.name;
-            aPerson.As = "Director ";
+            aPerson.Id = cast.name.id;
+            aPerson.Name = cast.name.displayName;
+            if (cast.characters != null && cast.characters.Count > 0)
+            {
+              aPerson.As = cast.characters[0];
+            }
+            else
+            {
+              aPerson.As = string.Empty;
+            }
             tReturn.Add(aPerson);
           }
         }
@@ -1795,6 +1187,9 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 
     try
     {
+      return string.Empty;
+
+      /* 
       string absoluteUri;
       string _awardsURL = string.Format("https://www.imdb.com/name/{0}/awards/", IMDBID);
       string _awardsPage = GetPage(_awardsURL, "utf-8", out absoluteUri);
@@ -1905,6 +1300,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
       {
         Log.Debug("{0} GetIMDBAwards IMDB = {1}, Exception {2}, JSON changed!?.", "GetActorDetails", IMDBID, ex.Message);
       }
+      */
 
     }
     catch (Exception ex)
@@ -1912,6 +1308,144 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
       Log.Error("{0} GetIMDBAwards error: {1}", "GetActorDetails", ex.Message);
     }
     return string.Empty;
+  }
+
+  #endregion
+
+  #region IMDB API
+
+  public class IMDBDate
+  {
+    public int year { get; set; }
+    public int month { get; set; }
+    public int day { get; set; }
+  }
+
+  public class IMDBMeterRanking
+  {
+    public int currentRank { get; set; }
+    public string changeDirection { get; set; }
+    public int difference { get; set; }
+  }
+
+  public class IMDBPrimaryImage
+  {
+    public string url { get; set; }
+    public int width { get; set; }
+    public int height { get; set; }
+    public string type { get; set; }
+  }
+
+  public class IMDBInterest // Genres
+  {
+    public string id { get; set; }
+    public string name { get; set; }
+    public IMDBPrimaryImage primaryImage { get; set; }
+    public string description { get; set; }
+    public bool isSubgenre { get; set; }
+    // public List<IMDBSimilarInterest> similarInterests { get; set; }
+  }
+
+  public class IMDBMetacritic
+  {
+    public string url { get; set; }
+    public int score { get; set; }
+    public int reviewCount { get; set; }
+  }
+
+  public class IMDBSpokenLanguage
+  {
+    public string code { get; set; }
+    public string name { get; set; }
+  }
+
+  public class IMDBOriginCountry
+  {
+    public string code { get; set; }
+    public string name { get; set; }
+  }
+
+  public class IMDBRating
+  {
+    public float aggregateRating { get; set; }
+    public int voteCount { get; set; }
+  }
+
+  // Names
+  // https://api.imdbapi.dev/names/nm0000116
+  public class IMDBActorDetails
+  {
+    public string id { get; set; }
+    public string displayName { get; set; }
+    public List<string> alternativeNames { get; set; }
+    public IMDBPrimaryImage primaryImage { get; set; }
+    public List<string> primaryProfessions { get; set; }
+    public string biography { get; set; }
+    public int heightCm { get; set; }
+    public string birthName { get; set; }
+    public IMDBDate birthDate { get; set; }
+    public string birthLocation { get; set; }
+    public IMDBDate deathDate { get; set; }
+    public string deathLocation { get; set; }
+    public string deathReason { get; set; }
+    public IMDBMeterRanking meterRanking { get; set; }
+  }
+
+  // Titles
+  // https://api.imdbapi.dev/titles/tt1532503
+  public class IMDBMovieDetails
+  {
+    public string id { get; set; }
+    public string type { get; set; }
+    public bool isAdult { get; set; }
+    public string primaryTitle { get; set; }
+    public string originalTitle { get; set; }
+    public IMDBPrimaryImage primaryImage { get; set; }
+    public int startYear { get; set; }
+    public int endYear { get; set; }
+    public int runtimeSeconds { get; set; }
+    public List<string> genres { get; set; }
+    public IMDBRating rating { get; set; }
+    public IMDBMetacritic metacritic { get; set; }
+    public string plot { get; set; }
+    public List<IMDBActorDetails> directors { get; set; }
+    public List<IMDBActorDetails> writers { get; set; }
+    public List<IMDBActorDetails> stars { get; set; }
+    public List<IMDBOriginCountry> originCountries { get; set; }
+    public List<IMDBSpokenLanguage> spokenLanguages { get; set; }
+    public List<IMDBInterest> interests { get; set; }
+  }
+
+  // Title Credits
+  // https://api.imdbapi.dev/titles/tt1532503/credits
+  public class IMDBActors
+  {
+    public IMDBActorDetails name { get; set; }
+    public string category { get; set; }
+    public List<string> characters { get; set; }
+  }
+
+  public class IMDBMovieCast
+  {
+    public List<IMDBActors> credits { get; set; }
+    public int totalCount { get; set; }
+    public string nextPageToken { get; set; }
+  }
+
+  // Name Filmography
+  // https://api.imdbapi.dev/names/nm0000116/filmography?categories=self
+  public class IMDBMovies
+  {
+    public IMDBMovieDetails title { get; set; }
+    public string category { get; set; }
+    public List<string> characters { get; set; }
+  }
+
+  public class IMDBFilmography
+  {
+    public List<IMDBMovies> credits { get; set; }
+    public int totalCount { get; set; }
+    public string nextPageToken { get; set; }
   }
 
   #endregion
@@ -1933,12 +1467,14 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
   public const string API_MovieInfo = API_BaseUrl + "movie/{0}?api_key={1}";
   public const string API_Casts = API_BaseUrl + "movie/{0}/casts?api_key={1}";
   public const string API_ReleaseInfo = API_BaseUrl + "movie/{0}/releases?api_key={1}";
+  public const string API_SearchPersons = API_BaseUrl + "search/person?query={0}&api_key={1}";
+  public const string API_Person_eIDs = API_BaseUrl + "person/{0}/external_ids?api_key={1}";
 
   private static Dictionary<string, string> Alphabet = new Dictionary<string, string>()
   {
     { "RU", @"^([АаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЪъЫыЬьЭэЮюЯя\s\.-]+)$"},
     { "UA", @"^([АаБбВвГгҐґДдЕеЄєЖжЗзИиІіЇїЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЬьЮюЯя\s\.-]+)$"},
-	{ "DE", @"^([AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzÄäÖöÜüẞß\s\.-]+)$"}
+    { "DE", @"^([AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzÄäÖöÜüẞß\s\.-]+)$"}
   };
 
   private static bool CanTranslate()
@@ -2541,9 +2077,9 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
   private static Dictionary<string, string> Zodiac = new Dictionary<string, string>()
   {
     { "EN", "Capricorn|Aquarius|Pisces|Aries|Taurus|Gemini|Cancer|Leo|Virgo|Libra|Scorpio|Sagittarius" },
-	{ "RU", "Козерог|Водолей|Рыбы|Овен|Телец|Близнецы|Рак|Лев|Дева|Весы|Скорпион|Стрелец" },
-	{ "UA", "Козеріг|Водолій|Риби|Овен|Телець|Близнюки|Рак|Лев|Діва|Терези|Скорпіон|Стрілець"},
-	{ "DE", "Steinbock|Wassermann|Fische|Widder|Stier|Zwillinge|Krebs|Löwe|Jungfrau|Waage|Skorpion|Schütze" }
+    { "RU", "Козерог|Водолей|Рыбы|Овен|Телец|Близнецы|Рак|Лев|Дева|Весы|Скорпион|Стрелец" },
+    { "UA", "Козеріг|Водолій|Риби|Овен|Телець|Близнюки|Рак|Лев|Діва|Терези|Скорпіон|Стрілець"},
+    { "DE", "Steinbock|Wassermann|Fische|Widder|Stier|Zwillinge|Krebs|Löwe|Jungfrau|Waage|Skorpion|Schütze" }
   };
 
   private static string GetZodiac(string sDate)
@@ -2558,7 +2094,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     {
       return string.Empty;
     }
-	  
+      
     return GetZodiac(dt);
   }
 
@@ -2569,19 +2105,19 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
       return string.Empty;
     }
 
-	string zodiac = Zodiac.Where(x => x.Key == API_LANG).Select(x => x.Value).FirstOrDefault();
-	if (string.IsNullOrEmpty(zodiac))
-	{
+    string zodiac = Zodiac.Where(x => x.Key == API_LANG).Select(x => x.Value).FirstOrDefault();
+    if (string.IsNullOrEmpty(zodiac))
+    {
       zodiac = Zodiac.Where(x => x.Key == "EN").Select(x => x.Value).FirstOrDefault();
-	}
-	if (string.IsNullOrEmpty(zodiac))
-	{
-	  return string.Empty;
-	}
+    }
+    if (string.IsNullOrEmpty(zodiac))
+    {
+      return string.Empty;
+    }
 
     int month = dt.Month;
     int day = dt.Day;
-	string[] zodiac_sign = zodiac.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
+    string[] zodiac_sign = zodiac.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries);
     switch (month)
     {
       case 1:
@@ -2647,35 +2183,6 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     return string.Empty;
   }
 
-  private ArrayList Parse(string input, string pattern) 
-  {
-    ArrayList keyedMatches  = new ArrayList();
-    try 
-    {
-      Regex regEx             = new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.Singleline);
-      MatchCollection matches = regEx.Matches(input);
-      
-      // write matches and groups to variables
-      foreach (Match currMatch in matches) 
-      {
-        // store the groups in the match
-        if (currMatch.Groups.Count > 1) 
-        {
-          Hashtable groupings = new Hashtable( );
-          for (int i = 1; i < currMatch.Groups.Count; i++)
-              groupings.Add(regEx.GroupNameFromNumber(i), currMatch.Groups[i].Value.Trim());
-          keyedMatches.Add(groupings);
-        }
-      }
-    }
-    catch (Exception e) 
-    {
-      Log.Error("InternalActorsScriptGrabber Parse: Regex expression failed! Exception: {0}", e.Message);
-      Log.Error(e);
-    }
-    return keyedMatches;
-  }
-
   private static string GUILocalizeDirector()
   {
     string Director = string.Empty;
@@ -2723,7 +2230,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
       {
         i++;
         var punctuation = line.Where(Char.IsPunctuation).Distinct().ToArray();
-        var words = line.Split().Select(x => x.Trim(punctuation));		
+        var words = line.Split().Select(x => x.Trim(punctuation));      
         description += string.IsNullOrEmpty(description) ? line : "\n" + line;
         if (words == null || words.Count() > 3 || i >= 2)
         {
@@ -2747,9 +2254,9 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     IMDBPageCache = new Hashtable();
   }
 
-  private string GetPage(string strUrl, string strEncode, out string absoluteUri, bool cache = false)
+  private string GetPage(string strUrl, string strEncode, out string absoluteUri, bool cache = false, int retryCount = 0)
   {
-    Log.Debug("InternalActorsScriptGrabber - GetPage: {0}", HideAPIKey(strUrl));
+    Log.Debug("InternalActorsScriptGrabber - GetPage: {0} (Attempt: {1})", HideAPIKey(strUrl), retryCount + 1);
 
     string strBody = string.Empty;
     absoluteUri = string.Empty;
@@ -2763,53 +2270,87 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 
       if (IMDBPageCache.Contains(strUrl))
       {
-        Log.Debug("InternalActorsScriptGrabber - GetPage from Cache: {0}", HideAPIKey(strUrl));
+        Log.Debug("InternalActorsScriptGrabber - GetPage: From Cache: {0}", HideAPIKey(strUrl));
         return (string)IMDBPageCache[strUrl];
       }
     }
 
-    HttpWebRequest req;
+    HttpWebRequest req = null;
     try
     {
       // Make the Webrequest
       req = (HttpWebRequest)WebRequest.Create(strUrl);
-
+    
       // Set Headers
-      req.UserAgent  = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36";
+      req.UserAgent  = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36";
       req.Headers.Add("Accept-Language", "en-US,en;q=0.5");
-
+      req.Accept = "application/json";
+  
       // Proxy 
       req.Proxy.Credentials = CredentialCache.DefaultCredentials;
-
+  
+      // Cookie
+      req.CookieContainer = new CookieContainer();
+  
       // Timeout
       req.Timeout = 20000;
       req.ReadWriteTimeout = 20000;
-
+  
       // Response
-      WebResponse response = req.GetResponse();
-      Stream receiveStream = response.GetResponseStream();
-
-      // Encoding: depends on selected page
-      Encoding encode = Encoding.GetEncoding(strEncode);
-
-      // Get Page
-      using (StreamReader sr = new StreamReader(receiveStream, encode))
+      using (HttpWebResponse response = (HttpWebResponse)req.GetResponse())
       {
-        strBody = sr.ReadToEnd();
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+          Log.Debug("InternalActorsScriptGrabber - GetPage: Response code {0}/{1}", (int)response.StatusCode, response.StatusCode);
+        }
+  
+        // URI
+        absoluteUri = response.ResponseUri.AbsoluteUri;
+  
+        // Encoding: depends on selected page
+        Encoding encode = Encoding.GetEncoding(strEncode);
+  
+        // Get Page
+        using (Stream receiveStream = response.GetResponseStream())
+        {
+          using (StreamReader sr = new StreamReader(receiveStream, encode))
+          {
+            strBody = sr.ReadToEnd().Trim();
+          }
+        }
       }
-      absoluteUri = response.ResponseUri.AbsoluteUri;
-      response.Close();
+    }
+    catch (WebException webEx)
+    {
+      var response = webEx.Response as HttpWebResponse;
+      if (response != null && (int)response.StatusCode == 429 && retryCount < 3)
+      {
+          int sleepMs = (retryCount + 1) * 5000;
+          string retryAfter = response.Headers["Retry-After"];
+          int seconds = 0;
+          if (!string.IsNullOrEmpty(retryAfter) && int.TryParse(retryAfter, out seconds))
+          {
+            if (seconds > 0)
+            {
+              sleepMs = seconds * 1000;
+            }
+          }
+          Log.Debug("InternalActorsScriptGrabber - 429 Too Many Requests. Attempt: {0}. Wait {1}ms...", retryCount + 1, sleepMs);
+          System.Threading.Thread.Sleep(sleepMs);
+          
+          return GetPage(strUrl, strEncode, out absoluteUri, cache, retryCount + 1);
+      }
+      Log.Error("InternalActorsScriptGrabber - GetPage: WebException: {0} err:{1}", HideAPIKey(strUrl), webEx.Message);
     }
     catch (Exception ex)
     {
-      Log.Error("InternalActorsScriptGrabber - GetPage: Exception for WebPage: {0} err:{1}", HideAPIKey(strUrl), ex.Message);
+      Log.Error("InternalActorsScriptGrabber - GetPage: Exception for WebPage: {0}/{1} err:{2}", HideAPIKey(strUrl), HideAPIKey(absoluteUri), ex.Message);
     }
     finally
     {
       req = null;
     }
 
-    strBody = strBody.Trim();
     if (string.IsNullOrEmpty(strBody))
     {
       Log.Debug("InternalActorsScriptGrabber - GetPage empty response for: {0}", HideAPIKey(strUrl));
@@ -2817,9 +2358,56 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 
     if (cache && !string.IsNullOrEmpty(strBody))
     {
-      Log.Debug("InternalActorsScriptGrabber - GetPage put Page to Cache: {0}", HideAPIKey(strUrl));
+      Log.Debug("InternalActorsScriptGrabber - GetPage: Page to Cache: {0}", HideAPIKey(strUrl));
       IMDBPageCache.Add(strUrl, strBody);
     }
     return strBody;
+  }
+
+  public string GetPages(string strUrl, string strEncode, out string absoluteUri, bool cache = true)
+  {
+    JObject mainResult = null;
+    string currentPage = strUrl;
+
+    while (true)
+    {
+      string json = GetPage(currentPage, strEncode, out absoluteUri, cache);
+      if (string.IsNullOrWhiteSpace(json))
+      {
+        break;
+      }
+
+      JObject pageData = JObject.Parse(json);
+      if (mainResult == null)
+      {
+        mainResult = pageData;
+      }
+      else
+      {
+        var arrayProperty = pageData.Properties().FirstOrDefault(p => p.Value.Type == JTokenType.Array);
+        if (arrayProperty != null)
+        {
+          var mainArray = mainResult[arrayProperty.Name] as JArray;
+          if (mainArray != null)
+          {
+            mainArray.Merge(arrayProperty.Value);
+          }
+        }
+      }
+      var token = pageData["nextPageToken"];
+      if (token == null || string.IsNullOrEmpty(token.ToString()))
+      {
+        break;
+      }
+
+      string separator = strUrl.Contains("?") ? "&" : "?";
+      currentPage = string.Format("{0}{1}pageToken={2}", strUrl, separator, token.ToString());
+    }
+
+    if (mainResult != null)
+    {
+      return mainResult.ToString();
+    }
+    return string.Empty;
   }
 }
