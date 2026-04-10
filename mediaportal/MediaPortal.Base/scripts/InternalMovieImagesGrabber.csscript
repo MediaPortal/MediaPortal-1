@@ -116,114 +116,65 @@ internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInter
   {
     Log.Debug("GetIMPAwardsImages v{0} IMDB = {1}/{2}", strGrabberVersion, imdbMovieID, movieName);
     ArrayList impAwardsImages = new ArrayList();
-
-    movieName = movieName.Replace(" ", "+");
-    string resultGoogle = string.Empty;
-    string resultImpAw = string.Empty;
-    string url = string.Format("https://www.google.com/search?as_q={0}+poster+site:www.impawards.com&tbm=isch", movieName);
     IMPAwardsSearch x = new IMPAwardsSearch();
-    WebClient wc = new WebClient();
 
-    try
+    string uri;
+    string url = string.Format("http://www.impawards.com/search.php?search_data={0}", movieName.Replace(" ", "+"));
+    string page = GetPage(url, "utf-8", out uri);
+    if (string.IsNullOrEmpty(page))
     {
-      wc.Proxy.Credentials = CredentialCache.DefaultCredentials;
-      byte[] buffer = wc.DownloadData(url);
-      resultGoogle = Encoding.UTF8.GetString(buffer);
-    }
-    catch (Exception)
-    {
+      Log.Debug("GetIMPAwardsImages v{0} IMDB = {1}/{2}, empty page.", strGrabberVersion, imdbMovieID, movieName);
       return impAwardsImages;
     }
-    finally
-    {
-      wc.Dispose();
-    }
 
-    MatchCollection mGoogle = Regex.Matches(resultGoogle, @"www.impawards.com.(?<year>\d{4}/).*?html");
-    for (int i = 0; i < mGoogle.Count; i++)
+    string baseImpAw = "http://www.impawards.com";
+    string resultImpAw = string.Empty;
+    MatchCollection mIMP = Regex.Matches(page, @"\s\/(?<year>\d{4})\/[^\/]+?html");
+    foreach (Match mImpAwList in mIMP)
     {
-      
-      Match mImpAw = mGoogle[i];
       // Check if /year/ is in link, if no that is no cover
-      string year = mImpAw.Groups["year"].Value.Replace("/", string.Empty);
+      string year = mImpAwList.Groups["year"].Value;
       if (!string.IsNullOrEmpty(year))
       {
-        string url2 = mImpAw.Value;
-        url2 = "http://" + url2;
-        try
-        {
-          byte[] buffer = wc.DownloadData(url2);
-          resultImpAw = Encoding.UTF8.GetString(buffer);
-        }
-        catch (Exception)
-        {
-          return impAwardsImages;
-        }
-        finally
-        {
-          wc.Dispose();
-        }
+        url = baseImpAw + mImpAwList.Value.Trim();
+        resultImpAw = GetPage(url, "utf-8", out uri);
 
         // Check if IMDB number on poster page is equal to  IMDB ttnumber, if not-> next link
         Match ttcheck = Regex.Match(resultImpAw, @"tt\d{7,8}");
-
         if (ttcheck.Value != imdbMovieID)
         {
           continue;
         }
 
-        Match urlImpAw = Regex.Match(url2, @".*?\d{4}./*?");
-        // get main poster displayed on html-page
-        mImpAw = Regex.Match(resultImpAw, "posters/.*?.jpg");
+        string urlImpAw = baseImpAw + "/" + year + "/";
 
+        // Get main poster displayed on html-page
+        Match mImpAw = Regex.Match(resultImpAw, "posters/.*?.jpg");
         if (mImpAw.Success)
         {
-          // Check duplicate entries because Google page links can point to
+          // Check duplicate entries because page links can point to
           // same cover more than once so we don't need them
-          int check = 0;
+          if (impAwardsImages.Contains(urlImpAw + mImpAw.Value))
+          {
+            break;
+          }
+          impAwardsImages.Add(urlImpAw + mImpAw.Value);
 
-          foreach (string text in impAwardsImages)
-          {
-            if (text == urlImpAw + mImpAw.Value)
-            {
-              check = 1;
-              break;
-            }
-          }
-          // No duplicates (check=0)
-          if (check == 0)
-          {
-            impAwardsImages.Add(urlImpAw + mImpAw.Value);
-          }
-          // get other posters displayed on this html-page as thumbs
+          // Get other posters displayed on this html-page as thumbs
           MatchCollection mcImpAw = Regex.Matches(resultImpAw, "thumbs/imp_(?<poster>.*?.jpg)");
-
           foreach (Match m1 in mcImpAw)
           {
-            // Check duplicate entries because Google page links can point to
+            // Check duplicate entries because page links can point to
             // same cover more than once so we don't need them
-            check = 0;
-
-            foreach (string text in impAwardsImages)
+            if (impAwardsImages.Contains(urlImpAw + "posters/" + m1.Groups["poster"]))
             {
-              if (text == urlImpAw + "posters/" + m1.Groups["poster"])
-              {
-                check = 1;
-                break;
-              }
+              continue;
             }
-
-            if (check == 0)
-            {
-              impAwardsImages.Add(urlImpAw + "posters/" + m1.Groups["poster"].Value);
-            }
+            impAwardsImages.Add(urlImpAw + "posters/" + m1.Groups["poster"].Value);
           }
         }
       }
-
-      // mGoogle = mGoogle.NextMatch();
     }
-
     return impAwardsImages;
   }
 

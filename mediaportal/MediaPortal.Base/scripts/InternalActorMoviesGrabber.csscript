@@ -667,7 +667,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
       {
         return;
       }
-      Log.Debug("GetActorMovies: IMDB = {0}, Movies credits: {1}", imdbActor.IMDBActorID, Movies.credits);
+      Log.Debug("GetActorMovies: IMDB = {0}, Movies credits: {1}", imdbActor.IMDBActorID, Movies.credits.Count);
 
       foreach (IMDBMovies item in Movies.credits)
       {
