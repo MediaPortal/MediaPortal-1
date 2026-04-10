@@ -908,7 +908,7 @@
           <type>fadelabel</type>
           <description>TuneIn Title label</description>
           <id>0</id>
-          <label>#(L(182)):</label>
+          <label>#(L(268)):</label>
           <width>50</width>
           <maxWidth>1030</maxWidth>
           <align>left</align>
@@ -1109,7 +1109,7 @@
       <font>font10</font>
       <align>left</align>
       <textcolor>lightgray</textcolor>
-      <visible>[string.equals(#Play.Current.Album,#Radio.Listen.Channel)]</visible>
+      <visible>player.hasaudio+!string.equals(#duration)+[string.equals(#Play.Current.Album,#Radio.Listen.Channel)]</visible>
     </control> 
     
     

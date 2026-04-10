@@ -664,6 +664,20 @@
       <label>#(iif(eq(#fanarthandler.movie.awards.selected.text,''),'#plot','#plot &#xA;&#xA; **** #fanarthandler.movie.awards.selected.text ****'))</label>
       <font>font10</font>
       <textcolor>lightgray</textcolor>
+	  <visible>plugin.isenabled(Fanart Handler)</visible>
+    </control>
+	 <control Style="NoShadow">
+      <description>Plot value</description>
+      <type>textboxscrollup</type>
+      <id>20</id>
+      <posX>855</posX>
+      <posY>270</posY>
+      <width>600</width>
+      <height>570</height>
+      <label>#plot</label>
+      <font>font10</font>
+      <textcolor>lightgray</textcolor>
+	  <visible>!plugin.isenabled(Fanart Handler)</visible>
     </control>
     <control Style="NoShadow">
       <description>Review value</description>
