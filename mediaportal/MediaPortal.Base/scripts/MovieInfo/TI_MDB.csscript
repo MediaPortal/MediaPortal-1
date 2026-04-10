@@ -285,11 +285,15 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
 
   public const string IMDB_Awards = IMDB_BaseUrl + "awards/";
   public const string IMDB_Parents = IMDB_BaseUrl + "parentalguide/";
-  public const string IMDB_Trivia = IMDB_BaseUrl + "trivia/";
-  public const string IMDB_Review = IMDB_BaseUrl + "reviews/?sort=totalVotes&dir=desc&ratingFilter=0";
+  // public const string IMDB_Trivia = IMDB_BaseUrl + "trivia/";
+  public const string IMDB_Trivia = "https://web.archive.org/web/2/" + IMDB_BaseUrl + "trivia/";
+  // public const string IMDB_Review = IMDB_BaseUrl + "reviews/?sort=totalVotes&dir=desc&ratingFilter=0";
+  public const string IMDB_Review = "https://web.archive.org/web/2/" + IMDB_BaseUrl + "reviews/";
   public const string IMDB_Ratings = IMDB_BaseUrl + "ratings/";
-  public const string IMDB_Taglines = IMDB_BaseUrl + "taglines/";
-  public const string IMDB_Tech = IMDB_BaseUrl + "technical/";
+  // public const string IMDB_Taglines = IMDB_BaseUrl + "taglines/";
+  public const string IMDB_Taglines = "https://web.archive.org/web/2/" + IMDB_BaseUrl + "taglines/";
+  // public const string IMDB_Tech = IMDB_BaseUrl + "technical/";
+  public const string IMDB_Tech = "https://web.archive.org/web/2/" + IMDB_BaseUrl + "technical/";
 
   #endregion IMDB Const
 
@@ -1017,7 +1021,6 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
       movieDetails.Studios = GetStudiosIMDB(movieDetails.IMDBNumber);
     }
 
-    /*
     // IMDB TagLine
     if (string.IsNullOrEmpty(movieDetails.TagLine))
     {
@@ -1037,7 +1040,6 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
     {
       movieDetails.Plot += "\n\n" + GRABBER_Technical() + ":\n" + technical;
     }
-    */
   }
 
   private static string GetAwardsIMDB(string IMDBID)
@@ -1183,9 +1185,6 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
 
   private static string GetTriviaIMDB(string IMDBID)
   {
-    return string.Empty;
-
-    /*
     try
     {
       string _triviaURL = string.Format(IMDB_Trivia, IMDBID);
@@ -1228,14 +1227,10 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
       Log.Error("{0} IMDB Script GetTrivia error: {1}", strGrabber, ex.Message);
     }
     return string.Empty;
-    */
   }
 
   private static string GetUserReviewIMDB(string IMDBID)
   {
-    return string.Empty;
-
-    /*
     string json = string.Empty;
     try
     {
@@ -1321,7 +1316,6 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
       Log.Debug("{0} IMDB GetUserReview, Exception {1}, JSON changed!?.", strGrabber, ex.Message);
     }
     return string.Empty;
-    */
   }
 
   private static string GetMPARating(string IMDBID)
