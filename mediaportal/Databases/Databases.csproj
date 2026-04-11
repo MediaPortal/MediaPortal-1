@@ -246,8 +246,8 @@
       <HintPath>..\MediaPortal.Base\CSScriptLibrary.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="HtmlAgilityPack">
-      <HintPath>..\..\Packages\HtmlAgilityPack.1.11.46\lib\Net40-client\HtmlAgilityPack.dll</HintPath>
+    <Reference Include="HtmlAgilityPack, Version=1.12.4.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\HtmlAgilityPack.1.12.4\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
     <Reference Include="MediaInfo.Wrapper, Version=21.9.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\Packages\MediaInfo.Wrapper.21.9.3\lib\net40\MediaInfo.Wrapper.dll</HintPath>
