@@ -236,8 +236,8 @@
       <Project>{6DA0E4DF-6230-4642-98B5-E690BB6942BB}</Project>
       <Name>Utils</Name>
     </ProjectReference>
-    <Reference Include="Bass.Net, Version=2.4.14.1, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
-      <HintPath>..\..\Packages\BASS.NET.2.4.14.1\lib\net40\Bass.Net.dll</HintPath>
+    <Reference Include="Bass.Net, Version=2.4.17, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\BASS.NET.2.4.17\lib\net47\Bass.Net.dll</HintPath>
     </Reference>
     <Reference Include="BassRegistration, Version=2.4.14.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\Packages\BassRegistration.2.4.14.1\lib\net40\BassRegistration.dll</HintPath>

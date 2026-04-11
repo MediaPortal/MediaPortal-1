@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2025 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 /*
-// Copyright (C) 2005-2025 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -690,40 +690,40 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\core\bin\${BUILD_TYPE}\Bass.Net.dll"
   File "${git_MP}\core\bin\${BUILD_TYPE}\\BassRegistration.dll"
   !if "${Architecture}" == "x64"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bass.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x64\bass.dll"
   !else
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\bass.dll"
   !endif
   File "${git_ROOT}\Packages\System.Management.Automation.6.1.7601.17515\lib\net40\System.Management.Automation.dll"
   ; Bass Addons
   SetOutPath "$MPdir.Base\"
   !if "${Architecture}" == "x64"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bassasio.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bass_fx.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bassmix.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bass_vst.dll"
-  ; File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass_wadsp.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\basswasapi.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bassenc.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\basscd.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\Plugins\OptimFROG.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x64\bassasio.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x64\bass_fx.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x64\bassmix.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x64\bass_vst.dll"
+  ; File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\bass_wadsp.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x64\basswasapi.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x64\bassenc.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x64\basscd.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x64\Plugins\OptimFROG.dll"
   !else
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bassasio.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass_fx.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bassmix.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass_vst.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass_wadsp.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\basswasapi.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bassenc.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\basscd.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\Plugins\OptimFROG.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\bassasio.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\bass_fx.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\bassmix.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\bass_vst.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\bass_wadsp.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\basswasapi.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\bassenc.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\basscd.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\Plugins\OptimFROG.dll"
   !endif
   ; Bass AudioDecoders
   SetOutPath "$MPdir.Base\MusicPlayer\plugins\audio decoders"
   !if "${Architecture}" == "x64"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\plugins\bass*.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x64\plugins\bass*.dll"
   !else
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\plugins\bass*.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\plugins\bass*.dll"
   !endif
   ; taglib-sharp
   SetOutPath "$MPdir.Base\"

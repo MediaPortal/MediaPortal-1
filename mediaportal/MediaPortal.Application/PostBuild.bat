@@ -212,37 +212,37 @@ REM Bass Core
 xcopy %1\core\bin\%2\Bass.Net.dll . /Y /D
 xcopy %1\core\bin\%2\BassRegistration.dll . /Y /D
 if /I "%3" EQU "x64" (
-  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\bass.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.17\content\x64\bass.dll . /Y /D
 ) ELSE (
-  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x86\bass.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.17\content\x86\bass.dll . /Y /D
 )
 
 REM Bass AddOns
 if /I "%3" EQU "x64" (
-  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\bass_fx.dll . /Y /D
-  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\bass_vst.dll . /Y /D
-  REM xcopy %1\..\Packages\BASSCombined.2.4.15\content\x86\bass_wadsp.dll . /Y /D
-  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\bassasio.dll . /Y /D
-  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\basscd.dll . /Y /D
-  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\bassmix.dll . /Y /D
-  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\basswasapi.dll . /Y /D
-  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\plugins\OptimFROG.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.17\content\x64\bass_fx.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.17\content\x64\bass_vst.dll . /Y /D
+  REM xcopy %1\..\Packages\BASSCombined.2.4.17\content\x86\bass_wadsp.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.17\content\x64\bassasio.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.17\content\x64\basscd.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.17\content\x64\bassmix.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.17\content\x64\basswasapi.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.17\content\x64\plugins\OptimFROG.dll . /Y /D
 ) ELSE (
-  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x86\bass_fx.dll . /Y /D
-  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x86\bass_vst.dll . /Y /D
-  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x86\bass_wadsp.dll . /Y /D
-  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x86\bassasio.dll . /Y /D
-  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x86\basscd.dll . /Y /D
-  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x86\bassmix.dll . /Y /D
-  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x86\basswasapi.dll . /Y /D
-  xcopy %1\..\Packages\BASSCombined.2.4.15\content\x86\plugins\OptimFROG.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.17\content\x86\bass_fx.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.17\content\x86\bass_vst.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.17\content\x86\bass_wadsp.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.17\content\x86\bassasio.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.17\content\x86\basscd.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.17\content\x86\bassmix.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.17\content\x86\basswasapi.dll . /Y /D
+  xcopy %1\..\Packages\BASSCombined.2.4.17\content\x86\plugins\OptimFROG.dll . /Y /D
 )
 
 REM Bass AudioDecoders
 if /I "%3" EQU "x64" (
-xcopy %1\..\Packages\BASSCombined.2.4.15\content\x64\plugins\bass*.dll "MusicPlayer\plugins\audio decoders\" /Y /D
+xcopy %1\..\Packages\BASSCombined.2.4.17\content\x64\plugins\bass*.dll "MusicPlayer\plugins\audio decoders\" /Y /D
 ) ELSE (
-xcopy %1\..\Packages\BASSCombined.2.4.15\content\x86\plugins\bass*.dll "MusicPlayer\plugins\audio decoders\" /Y /D
+xcopy %1\..\Packages\BASSCombined.2.4.17\content\x86\plugins\bass*.dll "MusicPlayer\plugins\audio decoders\" /Y /D
 )
 
 REM iMON Display 

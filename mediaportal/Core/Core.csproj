@@ -276,9 +276,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\AxInterop.WMPLib.dll</HintPath>
     </Reference>
-    <Reference Include="Bass.Net, Version=2.4.14.1, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
-      <HintPath>..\..\Packages\BASS.NET.2.4.14.1\lib\net40\Bass.Net.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Bass.Net">
+      <HintPath>..\..\Packages\BASS.NET.2.4.17\lib\net47\Bass.Net.dll</HintPath>
     </Reference>
     <Reference Include="BassRegistration, Version=2.4.14.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\Packages\BassRegistration.2.4.14.1\lib\net40\BassRegistration.dll</HintPath>
@@ -1767,6 +1766,61 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="UserInterfaceControls\Resources\mp.ico" />
+    <Content Include="x64\bass.dll" />
+    <Content Include="x64\bassasio.dll" />
+    <Content Include="x64\basscd.dll" />
+    <Content Include="x64\bassenc.dll" />
+    <Content Include="x64\bassmix.dll" />
+    <Content Include="x64\basswasapi.dll" />
+    <Content Include="x64\bass_fx.dll" />
+    <Content Include="x64\bass_vst.dll" />
+    <Content Include="x64\Plugins\bassalac.dll" />
+    <Content Include="x64\Plugins\bassape.dll" />
+    <Content Include="x64\Plugins\bassdsd.dll" />
+    <Content Include="x64\Plugins\bassflac.dll" />
+    <Content Include="x64\Plugins\basshls.dll" />
+    <Content Include="x64\Plugins\bassmidi.dll" />
+    <Content Include="x64\Plugins\bassopus.dll" />
+    <Content Include="x64\Plugins\basswebm.dll" />
+    <Content Include="x64\Plugins\basswma.dll" />
+    <Content Include="x64\Plugins\basswv.dll" />
+    <Content Include="x64\Plugins\bass_aac.dll" />
+    <Content Include="x64\Plugins\bass_ac3.dll" />
+    <Content Include="x64\Plugins\bass_mpc.dll" />
+    <Content Include="x64\Plugins\bass_ofr.dll" />
+    <Content Include="x64\Plugins\bass_spx.dll" />
+    <Content Include="x64\Plugins\bass_tta.dll" />
+    <Content Include="x64\Plugins\OptimFROG.dll" />
+    <Content Include="x64\Plugins\tags.dll" />
+    <Content Include="x86\bass.dll" />
+    <Content Include="x86\bassasio.dll" />
+    <Content Include="x86\basscd.dll" />
+    <Content Include="x86\bassenc.dll" />
+    <Content Include="x86\bassmix.dll" />
+    <Content Include="x86\basswasapi.dll" />
+    <Content Include="x86\bass_fx.dll" />
+    <Content Include="x86\bass_vst.dll" />
+    <Content Include="x86\bass_wadsp.dll" />
+    <Content Include="x86\Plugins\bassalac.dll" />
+    <Content Include="x86\Plugins\bassape.dll" />
+    <Content Include="x86\Plugins\bassdsd.dll" />
+    <Content Include="x86\Plugins\bassflac.dll" />
+    <Content Include="x86\Plugins\basshls.dll" />
+    <Content Include="x86\Plugins\bassmidi.dll" />
+    <Content Include="x86\Plugins\bassopus.dll" />
+    <Content Include="x86\Plugins\basswebm.dll" />
+    <Content Include="x86\Plugins\basswma.dll" />
+    <Content Include="x86\Plugins\basswv.dll" />
+    <Content Include="x86\Plugins\bass_aac.dll" />
+    <Content Include="x86\Plugins\bass_ac3.dll" />
+    <Content Include="x86\Plugins\bass_adx.dll" />
+    <Content Include="x86\Plugins\bass_aix.dll" />
+    <Content Include="x86\Plugins\bass_mpc.dll" />
+    <Content Include="x86\Plugins\bass_ofr.dll" />
+    <Content Include="x86\Plugins\bass_spx.dll" />
+    <Content Include="x86\Plugins\bass_tta.dll" />
+    <Content Include="x86\Plugins\OptimFROG.dll" />
+    <Content Include="x86\Plugins\tags.dll" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -1783,15 +1837,15 @@ xcopy "$(TargetDir)core.*" "$(SolutionDir)MediaPortal.Application\bin\$(Configur
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets'))" />
     <Error Condition="!Exists('..\..\Packages\FFmpeg.Win32.Static.4.1.1.1\build\FFmpeg.Win32.Static.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\FFmpeg.Win32.Static.4.1.1.1\build\FFmpeg.Win32.Static.targets'))" />
     <Error Condition="!Exists('..\..\Packages\FFmpeg.Win64.Static.4.1.1.1\build\FFmpeg.Win64.Static.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\FFmpeg.Win64.Static.4.1.1.1\build\FFmpeg.Win64.Static.targets'))" />
     <Error Condition="!Exists('..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets'))" />
     <Error Condition="!Exists('..\..\Packages\Sqlite.3.50.2\build\sqlite.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\Sqlite.3.50.2\build\sqlite.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\BASSCombined.2.4.17\build\basscombined.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\BASSCombined.2.4.17\build\basscombined.targets'))" />
   </Target>
-  <Import Project="..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets" Condition="Exists('..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets')" />
   <Import Project="..\..\Packages\FFmpeg.Win64.Static.4.1.1.1\build\FFmpeg.Win64.Static.targets" Condition="Exists('..\..\Packages\FFmpeg.Win64.Static.4.1.1.1\build\FFmpeg.Win64.Static.targets')" />
   <Import Project="..\..\Packages\FFmpeg.Win32.Static.4.1.1.1\build\FFmpeg.Win32.Static.targets" Condition="Exists('..\..\Packages\FFmpeg.Win32.Static.4.1.1.1\build\FFmpeg.Win32.Static.targets')" />
   <Import Project="..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets" Condition="Exists('..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets')" />
   <Import Project="..\..\Packages\Sqlite.3.50.2\build\sqlite.targets" Condition="Exists('..\..\Packages\Sqlite.3.50.2\build\sqlite.targets')" />
+  <Import Project="..\..\Packages\BASSCombined.2.4.17\build\basscombined.targets" Condition="Exists('..\..\Packages\BASSCombined.2.4.17\build\basscombined.targets')" />
 </Project>
