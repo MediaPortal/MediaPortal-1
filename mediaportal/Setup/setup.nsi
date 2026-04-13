@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2025 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 /*
-// Copyright (C) 2005-2025 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -674,9 +674,9 @@ Section "MediaPortal core files (required)" SecCore
   ; NuGet binaries Sqlite
   SetOutPath "$MPdir.Base\"
   !if "${Architecture}" == "x64"
-  File "${git_ROOT}\Packages\Sqlite.3.50.2\sqlite\x64\sqlite.dll"
+  File "${git_ROOT}\Packages\Sqlite.3.51.3\sqlite\x64\sqlite.dll"
   !else
-  File "${git_ROOT}\Packages\Sqlite.3.50.2\sqlite\x86\sqlite.dll"
+  File "${git_ROOT}\Packages\Sqlite.3.51.3\sqlite\x86\sqlite.dll"
   !endif
   ; NuGet binaries EXIF
   SetOutPath "$MPdir.Base\"
