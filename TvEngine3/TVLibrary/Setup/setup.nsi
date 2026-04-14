@@ -593,8 +593,8 @@ ${MementoSection} "MediaPortal TV Server" SecServer
     File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\libcurl.dll"
     File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\libssl-3.dll"
   !endif
-  File "${git_ROOT}\Packages\MediaInfo.Wrapper.26.1.0\lib\net40\MediaInfo.Wrapper.dll"
-  File "${git_ROOT}\Packages\System.ValueTuple.4.5.0\lib\portable-net40+sl4+win8+wp8\System.ValueTuple.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Wrapper.26.1.0\lib\net45\MediaInfo.Wrapper.dll"
+  File "${git_ROOT}\Packages\System.ValueTuple.4.6.2\lib\net462\System.ValueTuple.dll"
 
   ; thumbnail software
   ${If} ${RunningX64}
