@@ -1,1 +1,0 @@
-rem cd bin\%2
