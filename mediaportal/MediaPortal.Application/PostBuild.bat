@@ -202,7 +202,7 @@ if /I "%3" EQU "x64" (
 )
 
 REM Exif
-xcopy %1\..\Packages\MetadataExtractor.2.8.0\lib\net35\MetadataExtractor.dll . /Y /D
+xcopy %1\..\Packages\MetadataExtractor.2.9.3\lib\netstandard2.0\MetadataExtractor.dll . /Y /D
 xcopy %1\..\Packages\XmpCore.6.1.10.1\lib\net35\XmpCore.dll . /Y /D
 
 REM ffmpeg 
