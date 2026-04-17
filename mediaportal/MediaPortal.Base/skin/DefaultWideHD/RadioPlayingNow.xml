@@ -358,7 +358,96 @@
       <animation effect="fade" start="0" end="100" time="1000" delay="1000" condition="true">conditional</animation>
       <visible>Player.hasaudio</visible>
     </control>
+    <!-- *************************************************************************************************** -->
+    <!-- ************************************   The Fanart  ************************************************ -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <description>DUMMY CONTROL FOR FANART 1 VISIBILITY CONDITION</description>
+      <type>label</type>
+      <id>91919295</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <visible>yes</visible>
+    </control>
+    <control>
+      <description>DUMMY CONTROL FOR FANART 2 VISIBILITY CONDITION</description>
+      <type>label</type>
+      <id>91919296</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+      <visible>no</visible>
+    </control>
+    <control>
+      <description>DUMMY CONTROL FOR FANART AVAILABILITY  CONDITION</description>
+      <type>label</type>
+      <id>91919294</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1</width>
+    </control>
+    <control>
+      <description>DEFAULT FANART IMAGE</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>39</posX> 
+      <posY>169</posY> 
+      <width>1102</width> 
+      <height>648</height>
+      <keepaspectratio>no</keepaspectratio>
+      <colordiffuse>ffffffff</colordiffuse>
+      <texture mask="musicfanart_mask.png">DefaultFanart.gif</texture>
+      <visible>Player.hasaudio+[!control.isvisible(91919294)|String.Equals(#Play.Current.Type,Radio)+]</visible>
+      <animation effect="fade" time="300">visible</animation>
+      <animation effect="fade" time="300">hidden</animation>
+    </control>
+    <control>
+      <description>FANART IMAGE 1</description>
+      <id>897688</id>
+      <type>image</type>
+      <posX>39</posX> 
+      <posY>169</posY> 
+      <width>1102</width> 
+      <height>648</height>
+      <keepaspectratio>no</keepaspectratio>
+      <colordiffuse>ffffffff</colordiffuse>
+      <texture mask="musicfanart_mask.png">#fanarthandler.music.backdrop1.play</texture>
+      <visible>Player.hasaudio+control.isvisible(91919295)+control.isvisible(91919294)</visible>
+      <animation effect="fade" time="300">visible</animation>
+      <animation effect="fade" time="300">hidden</animation>
+    </control>
+    <control>
+      <description>FANART IMAGE 2</description>
+      <id>897689</id>
+      <type>image</type>
+      <posX>39</posX> 
+      <posY>169</posY> 
+      <width>1102</width> 
+      <height>648</height>
+      <keepaspectratio>no</keepaspectratio>
+      <colordiffuse>ffffffff</colordiffuse>
+      <texture mask="musicfanart_mask.png">#fanarthandler.music.backdrop2.play</texture>
+      <visible>Player.hasaudio+control.isvisible(91919296)+control.isvisible(91919294)</visible>
+      <animation effect="fade" time="300">visible</animation>
+      <animation effect="fade" time="300">hidden</animation>
+    </control>
     
+    <!-- *************************************************************************************************** -->
+    <!-- ******************************* Here is the Spectrum Analyzer ************************************* -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <description>Music Spectrum</description>
+      <id>0</id>
+      <type>image</type>
+      <posX>50</posX>
+      <posY>710</posY>
+      <width>1070</width>
+      <height>100</height>
+      <texture>#VUSpectrum</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>string.equals(#spectrumanalyzer.available,true)</visible>
+    </control>
      
     <!-- *************************************************************************************************** -->
     <!-- *******************************   Info DVB radio on the right   *********************************** -->
@@ -543,7 +632,7 @@
       <type>label</type>
       <id>0</id>
       <posX>1290</posX>
-      <posY>619</posY> 618
+      <posY>623</posY> 618
       <label>#(L(34020)) #currentplaytime #(L(1656))</label>
       <font>font12</font> 
       <align>left</align>
@@ -571,45 +660,65 @@
     <!-- *******************************   Coming next info DVB Radio  ************************************* -->
     <!-- *************************************************************************************************** -->
     <control>
-      <description>Track - Title</description>
-      <type>group</type>
-      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
-      <control>
-        <type>image</type>
-        <description>cd case image</description>
-        <id>0</id>
-        <posX>54</posX>
+      <description>background for radio logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>54</posX>
         <posY>857</posY>
         <width>200</width>
         <height>200</height>
-        <texture>tvlogoback.png</texture>
-        <colordiffuse>dodgerblue</colordiffuse>
-        <visible>Player.hasaudio+!string.equals(#Radio.Listen.Thumb, )</visible> 
-      </control>
-	  <control>
-        <type>image</type>
-        <description>cd case image</description>
-        <id>0</id>
-        <posX>51</posX>
-        <posY>854</posY>
-        <width>206</width>
-        <height>206</height>
-        <texture mask="cdcase_mask.png">tvlogoback.png</texture>
-        <colordiffuse>ff00bfff</colordiffuse>
-        <visible>Player.hasaudio+string.equals(#Radio.Listen.Thumb, DefaultMyradioBig.png)</visible> 
-      </control>
-      <control>
-        <description>music logo</description>
-        <type>image</type>
-        <id>0</id>
-        <posX>54</posX>
+      <texture>tvlogoback.png</texture>
+      <colordiffuse>ff0042a7</colordiffuse>
+      <visible>string.equals(#selectedthumb, )+Player.hasaudio+!string.equals(#Radio.Listen.Thumb, )</visible>
+    </control>
+	<control>
+	  <description>background for radio default image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>54</posX>
         <posY>857</posY>
         <width>200</width>
         <height>200</height>
-        <texture mask="cdcase_mask.png">#Radio.Listen.Thumb</texture>
-        <visible>!string.equals(#Radio.Listen.Thumb, )+Player.hasaudio</visible>
-      </control>
+      <texture mask="cdcase_mask.png">tvlogoback.png</texture>
+      <colordiffuse>ff256ede</colordiffuse>
+      <visible>Player.hasaudio+string.equals(#Radio.Listen.Thumb, DefaultMyradioBig.png)</visible> 
+    </control>
+    <control>
+      <description>radio logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>54</posX>
+        <posY>857</posY>
+        <width>200</width>
+        <height>200</height>
+      <texture mask="cdcase_mask.png">#Radio.Listen.Thumb</texture>
+      <visible>!string.equals(#Radio.Listen.Thumb, )+Player.hasaudio</visible>
+    </control>
       
+	<control>
+	  <description>background for radio default image</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>54</posX>
+        <posY>857</posY>
+        <width>200</width>
+        <height>200</height>
+      <texture mask="cdcase_mask.png">tvlogoback.png</texture>
+      <colordiffuse>ff256ede</colordiffuse>
+      <visible>Player.hasaudio+string.equals(#Radio.Listen.Thumb, DefaultMyradioBig.png)</visible> 
+    </control>
+    <control>
+      <description>radio logo</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>54</posX>
+        <posY>857</posY>
+        <width>200</width>
+        <height>200</height>
+      <texture mask="cdcase_mask.png">#Radio.Listen.Thumb</texture>
+      <visible>!string.equals(#Radio.Listen.Thumb, )+Player.hasaudio</visible>
+    </control>
+     
       <control>
           <type>fadelabel</type>
           <description>Title</description>
@@ -642,7 +751,7 @@
           <shadowColor>ff000000</shadowColor>
         </control>
       
-    </control>
+    
 	
 	<control>
         <type>fadelabel</type>
