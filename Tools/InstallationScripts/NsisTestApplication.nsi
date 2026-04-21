@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2010 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 /*
-// Copyright (C) 2005-2010 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -191,7 +191,6 @@ Section /o "OS, .Net and VCRedist Tests"
   !insertmacro MediaPortalOperatingSystemCheck
   !insertmacro MediaPortalAdminCheck
   !insertmacro MediaPortalVCRedistCheck
-  !insertmacro MediaPortalNetFrameworkCheck
 
 SectionEnd
 

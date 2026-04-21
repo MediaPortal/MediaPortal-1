@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2024 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 /*
-// Copyright (C) 2005-2024 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -850,27 +850,8 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
   ${LOG_TEXT} "INFO" "============================"
 !macroend
 
-!macro MediaPortalNetFrameworkCheck
-  ${LOG_TEXT} "INFO" ".: Microsoft .Net Framework Check :."
-
-  ; check if .Net Framework 3.5 is installed
-  ReadRegDWORD $0 HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5" "Install"
-  ; check if .Net Framework 3.5 SP1 is installed
-  ReadRegDWORD $1 HKLM "SOFTWARE\Microsoft\NET Framework Setup\NDP\v3.5" "SP"
-
-  ${LOG_TEXT} "INFO" ".Net 3.5 installed? $0"
-  ${LOG_TEXT} "INFO" ".Net 3.5 ServicePack: $1"
-
-  ${If} $0 != 1  ; if no 3.5
-  ${OrIf} $1 < 1  ; if 3.5, but no sp1
-    !insertmacro ShowMissingComponent "     - Microsoft .NET Framework 3.5 Service Pack 1"
-  ${EndIf}
-
-  ${LOG_TEXT} "INFO" "============================"
-!macroend
-
 !macro MediaPortalNet4FrameworkCheck
-  ${LOG_TEXT} "INFO" ".: Microsoft .Net Framework Check :."
+  ${LOG_TEXT} "INFO" ".: Microsoft .Net 4.0 Framework Check :."
   
   ${If} ${HasDotNet4.0}
     DetailPrint "Microsoft .NET Framework 4.0 installed."
@@ -878,7 +859,6 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
         DetailPrint "Microsoft .NET Framework 4.0 is at least SP1."
     ${Else}
         DetailPrint "Microsoft .NET Framework 4.0 SP1 not installed."
-    ${LOG_TEXT} "INFO" "============================"
     ${EndIf}
     ${If} ${DOTNETVER_4_0} HasDotNetClientProfile 1
         DetailPrint "Microsoft .NET Framework 4.0 (Client Profile) available."
@@ -889,11 +869,12 @@ DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\MediaPort
     ${If} ${DOTNETVER_4_0} HasDotNetFullProfile 0
         DetailPrint "Microsoft .NET Framework 4.0 (Full Profile) not available."
         !insertmacro ShowMissingComponent "     - Microsoft .NET Framework 4.0"
-    ${LOG_TEXT} "INFO" "============================"
     ${EndIf}
   ${Else}
       !insertmacro ShowMissingComponent "     - Microsoft .NET Framework 4.0"
-${EndIf}
+  ${EndIf}
+
+  ${LOG_TEXT} "INFO" "============================"
 !macroend
 
 !ifdef GIT_BUILD

@@ -681,7 +681,7 @@ Section "MediaPortal core files (required)" SecCore
   ; NuGet binaries EXIF
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\MetadataExtractor.2.9.3\lib\netstandard2.0\MetadataExtractor.dll"
-  File "${git_ROOT}\Packages\XmpCore.6.1.10.1\lib\net35\XmpCore.dll"
+  File "${git_ROOT}\Packages\XmpCore.6.1.10.1\lib\netstandard2.0\XmpCore.dll"
   ; NuGet binaries UnidecodeSharp
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\UnidecodeSharpFork.1.0.1\lib\UnidecodeSharpFork.dll"
@@ -738,7 +738,7 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\SharpLibDisplay.0.3.4\lib\net40\SharpLibDisplay.dll"
   ; Naudio
-  File "${git_ROOT}\Packages\NAudio.1.10.0\lib\net35\NAudio.dll" 
+  File "${git_ROOT}\Packages\NAudio.1.10.0\lib\netstandard2.0\NAudio.dll" 
   ; CSCore
   File "${git_ROOT}\Packages\CSCore.1.2.1.2\lib\net35-client\CSCore.dll"
   ; SharpDX
@@ -1529,7 +1529,6 @@ Function .onInit
     SetRegView 32
   !endif
 
-  !insertmacro MediaPortalNetFrameworkCheck
   !insertmacro MediaPortalNet4FrameworkCheck
 
   StrCpy $MPTray_Running 0
