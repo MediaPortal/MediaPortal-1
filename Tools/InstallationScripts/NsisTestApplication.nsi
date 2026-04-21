@@ -191,6 +191,7 @@ Section /o "OS, .Net and VCRedist Tests"
   !insertmacro MediaPortalOperatingSystemCheck
   !insertmacro MediaPortalAdminCheck
   !insertmacro MediaPortalVCRedistCheck
+  !insertmacro MediaPortalNet4FrameworkCheck
 
 SectionEnd
 
