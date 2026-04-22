@@ -1,0 +1,23 @@
+name: Workflow / Release Drafter
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  draft_release:
+    name: 📝 Draft Release
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📝 Draft Release
+        id: release_drafter
+        uses: release-drafter/release-drafter@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
