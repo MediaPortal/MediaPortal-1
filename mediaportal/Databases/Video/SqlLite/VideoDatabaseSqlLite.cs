@@ -4059,6 +4059,8 @@ namespace MediaPortal.Video.Database
     {
       try
       {
+        DatabaseUtility.RemoveInvalidChars(ref folderName);
+
         string sql = String.Format("UPDATE movie SET watched = 0 WHERE movie.idPath IN (SELECT idPath FROM path WHERE strPath='{0}' OR strPath LIKE '{0}\\%')", folderName);
         m_db.Execute(sql);
       }

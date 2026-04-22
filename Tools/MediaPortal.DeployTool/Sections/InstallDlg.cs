@@ -212,7 +212,7 @@ namespace MediaPortal.DeployTool.Sections
       // AddPackageToListView(new VcRedistChecker2015());
       AddPackageToListView(new VcRedistChecker2022());
       AddPackageToListView(new WindowsMediaPlayerChecker());
-switch (InstallationProperties.Instance["InstallType"])
+      switch (InstallationProperties.Instance["InstallType"])
       {
         case "singleseat":
           AddPackageToListView(new MediaPortalChecker());
@@ -288,6 +288,7 @@ switch (InstallationProperties.Instance["InstallType"])
           if (OSInfo.OSInfo.Win10OrLater() && Utils.Is64bitOS)
           {
             AddPackageToListView(new MySQLChecker());
+            AddPackageToListView(new MariaDBChecker());
           }
           else
           {

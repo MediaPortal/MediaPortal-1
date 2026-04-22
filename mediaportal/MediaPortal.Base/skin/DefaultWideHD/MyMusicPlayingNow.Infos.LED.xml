@@ -1,0 +1,798 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<!--version="1.0" encoding="utf-8" standalone="yes"-->
+<window>
+  <defaultcontrol>333</defaultcontrol>
+  <controls>
+    <!-- *************************************************************************************************** -->
+    <!-- ********** Here are the Lyrics/Artist/Playlist/Top Tracks Buttons and Artist Info ***************** -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <description>Dummy Button for Action Menu</description>  
+      <type>button</type>
+      <id>333</id>
+      <posX>0</posX>
+      <posY>70</posY>
+      <width>140</width>
+      <height>984</height>
+      <label>-</label>
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>-</textureNoFocus>
+      <action>1</action>
+      <ondown>333</ondown>
+      <onup>17</onup>
+      <onright>333</onright>
+      <onleft>555</onleft>
+    </control>
+	<control>
+      <type>actiongroup</type>
+      <description>action menu</description>
+      <defaultcontrol>555</defaultcontrol>
+      <onexit>333</onexit>
+      <buttonX>0</buttonX>
+      <buttonY>0</buttonY> 
+      <buttonwidth>140</buttonwidth> 
+      <buttonheight>984</buttonheight> 
+      <textureFocus>-</textureFocus>
+      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <width>168</width>
+      <height>798</height>
+      <dimColor>00ffffff</dimColor>
+      <allowoverlay>false</allowoverlay>
+	  <control>
+        <type>image</type>
+        <posX>-40</posX>
+        <posY>185</posY> 
+        <width>490</width>
+        <height>395</height> 
+        <texture>backslide2.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <visible>!Control.HasFocus(333)+!skin.hassetting(#skin.music.nowplaying.fullscreen)</visible>
+        <animation effect="slide" time="100" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="100" end="-300,0" reversible="false">hidden</animation>
+      </control>
+	<control>
+        <type>image</type>
+        <posX>-40</posX>
+        <posY>186</posY>
+        <width>490</width>
+        <height>161</height>
+        <texture>toptrackbg.png</texture>
+        <colordiffuse>ccffffff</colordiffuse>
+        <visible>control.isvisible(555)+skin.hassetting(#skin.music.nowplaying.fullscreen)+!plugin.isenabled(Spectrum Analyzer)</visible>
+        <animation effect="slide" time="100" start="-300,0" reversible="false">visible</animation> 
+	    <animation effect="slide" time="100" end="-300,0" reversible="false">hidden</animation>
+      </control>
+	  <control>
+        <type>image</type>
+        <posX>-40</posX>
+        <posY>186</posY>
+        <width>490</width>
+        <height>220</height>
+        <texture>fullscreeninfo.png</texture>
+        <colordiffuse>ccffffff</colordiffuse> 
+        <visible>control.isvisible(555)+skin.hassetting(#skin.music.nowplaying.fullscreen)+plugin.isenabled(Spectrum Analyzer)</visible>
+        <animation effect="slide" time="100" start="-300,0" reversible="false">visible</animation>
+	    <animation effect="slide" time="100" end="-300,0" reversible="false">hidden</animation>
+      </control>
+	  <control>
+        <type>group</type>
+        <description>group element</description>
+        <animation effect="slide" time="100" start="-300,0" reversible="false">visible</animation>
+        <animation effect="slide" time="100" end="-300,0" reversible="false">hidden</animation>
+        <visible>!Control.HasFocus(333)</visible>
+        <layout>StackLayout(0, Vertical, true)</layout>
+        <posX>19</posX>
+        <posY>207</posY> 
+		<control>
+          <id>555</id>
+          <description>Fanart in fullscreen</description>
+          <type>checkbutton</type>
+          <label>#SkinTranslation.Translations.Fullscreen.Label</label>
+          <selected>#(skin.hassetting('#skin.music.nowplaying.fullscreen'))</selected>
+          <onclick>#(skin.togglesetting('#skin.music.nowplaying.fullscreen'))             
+                   #(skin.setfocus(510,333))</onclick>
+          <onright>333</onright>
+          <onleft>333</onleft>
+          <onup>17</onup>
+          <ondown>666</ondown>
+		</control>
+        <control>
+          <id>666</id>
+          <description>Lyrics in fullscreen</description>
+          <type>checkbutton</type>
+          <label>Lyrics</label>
+          <selected>#(skin.hassetting('#skin.music.nowplaying.lyrics'))</selected>
+          <onclick>#(skin.togglesetting('#skin.music.nowplaying.lyrics'))             #(skin.setfocus(510,333))</onclick>
+          <onright>333</onright>
+          <onleft>333</onleft>
+          <onup>555</onup>
+          <ondown>777</ondown>
+          <visible>skin.hassetting(#skin.music.nowplaying.fullscreen)</visible>
+        </control>
+		 <control>
+          <id>777</id>
+          <description>Change view and VU Meters in fullscreen</description>
+          <type>checkbutton</type>
+          <label>#(L(9151))</label>
+          <selected>#(skin.hassetting('#skin.music.nowplaying.VUMeters'))</selected>
+          <onclick>#(skin.togglesetting('#skin.music.nowplaying.VUMeters'))             #(skin.setfocus(510,333))</onclick>
+          <onright>333</onright>
+          <onleft>333</onleft>
+          <onup>666</onup>
+          <ondown>9875</ondown>
+          <visible>skin.hassetting(#skin.music.nowplaying.fullscreen)+plugin.isenabled(Spectrum Analyzer)</visible> 
+        </control>
+        <control>
+          <id>9875</id>
+          <description>Album Info Button</description>
+          <type>button</type>
+          <label>#(L(270))-#(L(1020))</label>
+          <onright>333</onright>
+          <onleft>333</onleft>
+          <onup>555</onup>
+          <ondown>9876</ondown>
+		  <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)</visible>
+        </control>
+        <control>
+          <description>Show Artist Info</description>
+          <type>button</type>
+          <id>9876</id>
+          <label>102011</label>
+          <ondown>9877</ondown>
+          <onup>9875</onup>
+          <onright>333</onright>
+          <onleft>333</onleft>
+		  <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)</visible>
+        </control>
+        <control>
+          <description>Show Lyrics</description>
+          <type>button</type>
+          <id>9877</id>
+          <label>Lyrics</label>
+          <visible>plugin.isenabled(My Lyrics)</visible>
+          <hyperlink>90478</hyperlink>
+          <ondown>9878</ondown>
+          <onup>9876</onup>
+          <onright>333</onright>
+          <onleft>333</onleft>
+		  <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)</visible>
+        </control>
+        <control>
+          <description>Current Playlist</description>
+          <type>button</type>
+          <id>9878</id>
+          <label>4555</label>
+          <hyperlink>500</hyperlink>
+          <onright>333</onright>
+          <onup>9877</onup>
+          <ondown>9879</ondown>
+          <onleft>333</onleft>
+		  <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)</visible>
+        </control>
+        <control>
+          <description>Show Top Tracks Info</description>
+          <type>button</type>
+          <id>9879</id>
+          <label>33011</label>
+          <ondown>155</ondown>
+          <onup>9878</onup>
+          <onright>333</onright>
+          <onleft>333</onleft>
+		  <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)</visible>
+        </control>
+      </control>
+    </control>
+	<!-- *************************************************************************************************** -->
+    <!-- *************************************** Here are the Lyrics Info ***************************** -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <type>image</type>
+      <id>337</id>
+      <posX>-40</posX>
+      <posY>581</posY> 
+      <width>855</width>
+      <height>475</height>
+      <texture>backslide2.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+control.hasFocus(9877)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>615</posY>
+      <width>45</width>
+      <height>45</height>
+      <texture>tb_extend3b.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+control.hasFocus(9877)</visible>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <type>label</type>
+      <id>0</id>
+      <posX>98</posX>
+      <posY>615</posY>
+      <width>583</width>
+      <label>Lyrics</label>
+      <font>Label</font>
+      <textcolor>ff00bfff</textcolor>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+control.hasFocus(9877)</visible>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>Lyrics</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>664</posY>
+      <width>744</width>
+      <height>351</height>
+      <font>font11</font>
+      <label>#Play.Current.Lyrics</label>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+control.hasFocus(9877)</visible>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <!-- *************************************************************************************************** -->
+    <!-- *************************************** Here are the Artist Bio. Info ***************************** -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <type>image</type>
+      <id>336</id>
+      <posX>-40</posX>
+      <posY>581</posY>
+      <width>855</width>
+      <height>475</height>
+      <texture>backslide2.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+control.hasFocus(9876)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>615</posY>
+      <width>45</width>
+      <height>45</height>
+      <texture>tb_extend3b.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+control.hasFocus(9876)</visible>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <type>label</type>
+      <id>0</id>
+      <posX>98</posX>
+      <posY>615</posY>
+      <width>583</width>
+      <label>102011</label>
+      <font>Label</font>
+      <textcolor>ff00bfff</textcolor>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+control.hasFocus(9876)</visible>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>Artist Bio</description>
+      <type>textboxscrollup</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>667</posY>
+      <width>744</width>
+      <height>350</height>
+      <font>font11</font>
+      <label>#Play.ArtistInfo.Bio</label>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+control.hasFocus(9876)</visible>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <!-- *************************************************************************************************** -->
+    <!-- *************************************** Here are the Album Info *********************************** -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <type>image</type>
+      <id>335</id>
+      <posX>-40</posX>
+      <posY>581</posY>
+      <width>855</width>
+      <height>485</height>
+      <texture>backslide2.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+control.hasFocus(9875)</visible>
+    </control>
+    <control>
+      <type>image</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>615</posY>
+      <width>45</width>
+      <height>45</height>
+      <texture>tb_extend3b.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+control.hasFocus(9875)</visible>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <type>label</type>
+      <id>0</id>
+      <posX>98</posX>
+      <posY>615</posY>
+      <width>583</width>
+      <label>Album Information</label>
+      <font>Label</font>
+      <textcolor>ff00bfff</textcolor>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+control.hasFocus(9875)</visible>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>Album Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>664</posY>
+      <label>#(L(170))</label>
+      <font>font11</font>
+      <textcolor>ff00bfff</textcolor>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>Album</description>
+      <id>0</id>
+      <type>fadelabel</type>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+      <posX>281</posX>
+      <posY>664</posY>
+      <width>491</width>
+      <label>#Play.Current.Album  (#Play.Current.Year)</label>
+      <scrollStartDelaySec>2</scrollStartDelaySec>
+      
+      <font>font11</font>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>701</posY>
+      <width>723</width>
+      <height>1</height>
+      <texture>horizontal_bar.png</texture>
+      <colordiffuse>40ffffff</colordiffuse>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+    </control>
+    <control>
+      <description>Title Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>700</posY>
+      <label>#(L(182)):</label>
+      <font>font11</font>
+      <textcolor>ff00bfff</textcolor>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <id>0</id>
+      <description>Title</description>
+      <type>fadelabel</type>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+      <posX>281</posX>
+      <posY>700</posY>
+      <width>491</width>
+      <label>#Play.Current.Title  (##Play.Current.Track)</label>
+      <font>font11</font>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>736</posY>
+      <width>723</width>
+      <height>1</height>
+      <texture>horizontal_bar.png</texture>
+      <colordiffuse>40ffffff</colordiffuse>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+    </control>
+    <control>
+      <description>Artist Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>735</posY>
+      <label>#(L(171))</label>
+      <font>font11</font>
+      <textcolor>ff00bfff</textcolor>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>Artist</description>
+      <id>0</id>
+      <type>fadelabel</type>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+      <posX>281</posX>
+      <posY>735</posY>
+      <width>491</width>
+      <label>#Play.Current.Artist</label>
+      <font>font11</font>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>771</posY>
+      <width>723</width>
+      <height>1</height>
+      <texture>horizontal_bar.png</texture>
+      <colordiffuse>40ffffff</colordiffuse>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+    </control>
+    <control>
+      <description>Born Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>770</posY>
+      <label>686</label>
+      <font>font11</font>
+      <textcolor>ff00bfff</textcolor>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>Born</description>
+      <id>0</id>
+      <type>fadelabel</type>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+      <posX>281</posX>
+      <posY>770</posY>
+      <width>491</width>
+      <label>#ArtistInfo.Born\r#ArtistInfo.Born</label> #(iif(eq(#ArtistInfo.Born, ''), '-', '#ArtistInfo.Born'))
+      <scrollStartDelaySec>6</scrollStartDelaySec>
+      
+      <font>font11</font>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>806</posY>
+      <width>723</width>
+      <height>1</height>
+      <texture>horizontal_bar.png</texture>
+      <colordiffuse>40ffffff</colordiffuse>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+    </control>
+    <control>
+      <description>Years Artist Active Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>805</posY>
+      <label>687</label>
+      <font>font11</font>
+      <textcolor>ff00bfff</textcolor>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>Years Active</description>
+      <id>0</id>
+      <type>fadelabel</type>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+      <posX>281</posX>
+      <posY>805</posY>
+      <width>491</width>
+      <label>#(iif(eq(#ArtistInfo.YearsActive, ''), '-', '#ArtistInfo.YearsActive'))</label>
+      <scrollStartDelaySec>2</scrollStartDelaySec>
+      <font>font11</font>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>842</posY>
+      <width>723</width>
+      <height>1</height>
+      <texture>horizontal_bar.png</texture>
+      <colordiffuse>40ffffff</colordiffuse>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+    </control>
+    <control>
+      <description>Genre Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>840</posY>
+      <label>#(L(135)):</label>
+      <font>font11</font>
+      <textcolor>ff00bfff</textcolor>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <id>0</id>
+      <description>Artist Genre</description>
+      <type>fadelabel</type>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)+!string.equals(#AlbumInfo.Genre)</visible>
+      <posX>281</posX>
+      <posY>840</posY>
+      <width>491</width>
+      <label>#(iif(eq(#ArtistInfo.Genres, ''), '-', '#ArtistInfo.Genres'))</label>
+      <font>font11</font>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>877</posY>
+      <width>723</width>
+      <height>1</height>
+      <texture>horizontal_bar.png</texture>
+      <colordiffuse>40ffffff</colordiffuse>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+    </control>
+    <control>
+      <description>Styles Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>875</posY>
+      <label>176</label>
+      <font>font11</font>
+      <textcolor>ff00bfff</textcolor>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>Album Styles</description>
+      <id>0</id>
+      <type>fadelabel</type>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)+string.equals(#AlbumInfo.Styles)</visible>
+      <posX>281</posX>
+      <posY>875</posY>
+      <width>491</width>
+      <label>#(iif(eq(#AlbumInfo.Styles, ''), '-', '#AlbumInfo.Styles'))</label>
+      <font>font11</font>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>912</posY>
+      <width>723</width>
+      <height>1</height>
+      <texture>horizontal_bar.png</texture>
+      <colordiffuse>40ffffff</colordiffuse>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+    </control>
+    <control>
+      <description>Tones Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>910</posY>
+      <label>175</label>
+      <font>font11</font>
+      <textcolor>ff00bfff</textcolor>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>Artist Tones</description>
+      <id>0</id>
+      <type>fadelabel</type>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)+string.equals(#AlbumInfo.Tones)</visible>
+      <posX>281</posX>
+      <posY>910</posY>
+      <width>491</width>
+      <label>#(iif(eq(#AlbumInfo.Tones, ''), '-', '#AlbumInfo.Tones'))</label>
+      <scrollStartDelaySec>2</scrollStartDelaySec>
+      
+      <font>font11</font>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>947</posY>
+      <width>723</width>
+      <height>1</height>
+      <texture>horizontal_bar.png</texture>
+      <colordiffuse>40ffffff</colordiffuse>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+    </control>
+    <control>
+      <description>Instruments Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>946</posY>
+      <label>688</label>
+      <font>font11</font>
+      <textcolor>ff00bfff</textcolor>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>Instruments</description>
+      <id>0</id>
+      <type>fadelabel</type>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+      <posX>281</posX>
+      <posY>946</posY>
+      <width>463</width>
+      <label>#(iif(eq(#ArtistInfo.Instruments, ''), '-', '#ArtistInfo.Instruments'))</label>
+      <scrollStartDelaySec>2</scrollStartDelaySec>
+      
+      <font>font11</font>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>981</posY>
+      <width>723</width>
+      <height>1</height>
+      <texture>horizontal_bar.png</texture>
+      <colordiffuse>40ffffff</colordiffuse>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+    </control>
+    <control>
+      <description>Composer Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>981</posY>
+      <label>#(L(1214)):</label>
+      <font>font11</font>
+      <textcolor>ff00bfff</textcolor>
+      <visible>Control.HasFocus(9875)</visible>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>Composer</description>
+      <id>0</id>
+      <type>fadelabel</type>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+      <posX>281</posX>
+      <posY>981</posY>
+      <width>491</width>
+      <label>#(iif(eq(#music.composer, ''), '-', '#music.composer'))</label>
+      <scrollStartDelaySec>2</scrollStartDelaySec>
+      
+      <font>font11</font>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>1016</posY>
+      <width>723</width>
+      <height>1</height>
+      <texture>horizontal_bar.png</texture>
+      <colordiffuse>40ffffff</colordiffuse>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+    </control>
+    <control>
+      <description>Conductor Label</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>42</posX>
+      <posY>1016</posY>
+      <label>#(L(2135))-#(L(2136)):</label>
+      <font>font11</font>
+      <textcolor>ff00bfff</textcolor>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <control>
+      <description>Conductor</description>
+      <id>0</id>
+      <type>fadelabel</type>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+Control.HasFocus(9875)</visible>
+      <posX>281</posX>
+      <posY>1016</posY>
+      <width>491</width>
+      <label>#(L(864)): #music.filetype\r#(L(6001)): #music.codec\r#(L(670)): #Play.Current.BitRate kbit/s, #music.bitratemode, #music.samplerate Hz\r#(L(627)) #music.channels\r#(L(1209)): #music.timesplayedx\r#(L(1230)) #music.dateadded\r#(L(1231)) #music.datelastplayed</label>
+      <scrollStartDelaySec>10</scrollStartDelaySec>
+      <wrapString />
+      <font>font11</font>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+    </control>
+    <!-- *************************************************************************************************** -->
+    <!-- *************************** Here are the top tracks / related tracks  ***************************** -->
+    <!-- *************************************************************************************************** -->
+    <control>
+      <type>image</type>
+      <id>334</id>
+      <posX>-40</posX>
+      <posY>600</posY> 616
+      <width>855</width>
+      <height>224</height> 240
+      <texture>toptrackbg.png</texture> 
+      <colordiffuse>ddffffff</colordiffuse>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+[control.hasFocus(9879)|control.hasFocus(155)|control.hasFocus(166)]</visible>
+    </control>
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+      <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)+control.hasFocus(9879)|control.isvisible(334)</visible>
+      <control>
+        <type>listcontrol</type>
+        <description>list of best tag tracks</description>
+        <id>155</id>
+        <posX>56</posX>
+        <posY>676</posY> 
+        <width>695</width>
+        <height>253</height>
+        <onup>9879</onup>
+        <onleft>333</onleft>
+        <onright>333</onright>
+        <ondown>333</ondown>
+        <spinColor>-</spinColor>
+        <image>-</image>
+        <textureUp>-</textureUp>
+        <textureNoFocus>-</textureNoFocus>
+        <textureDown>-</textureDown>
+        <textureUpFocus>-</textureUpFocus>
+        <textureDownFocus>-</textureDownFocus>
+        <textureFocus>listfocus_menu.png</textureFocus>
+        <textureNoFocus>listnofocus.png</textureNoFocus>
+		<IconXOff>2000</IconXOff>				   
+        <dimColor>ffffffff</dimColor>
+        <shadedColor>ffffffff</shadedColor>
+        <textcolor>ffffffff</textcolor>
+        <textcolorNoFocus>ffffffff</textcolorNoFocus>
+        <textureHeight>42</textureHeight>
+        <font>font11</font>
+      </control>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>42</posX>
+        <posY>634</posY>
+        <width>45</width>
+        <height>45</height>
+        <texture>tb_extend3b.png</texture>
+        <colordiffuse>ffffffff</colordiffuse>
+        <animation effect="slide" time="100" start="-300,0" reversible="true">visible</animation>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>best tag tracks label</description>
+        <id>28</id>
+        <posX>98</posX>
+        <posY>634</posY>
+        <width>730</width>
+        <font>Label</font>
+        <label>33011</label>
+        <textcolor>ff00bfff</textcolor>
+      </control>
+    </control>
+  </controls>
+</window>

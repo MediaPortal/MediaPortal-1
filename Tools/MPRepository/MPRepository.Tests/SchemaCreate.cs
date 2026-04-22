@@ -44,7 +44,7 @@ namespace MPRepository.Tests
       int x = 0;
       x += 5;
       System.Console.WriteLine("Value is {0}", x);
-      Assert.That(x, Is.EqualTo(5));
+      Assert.AreEqual(x,5);
     }
 
     [Test]

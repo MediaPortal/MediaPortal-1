@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -418,7 +418,7 @@ namespace MediaPortal.GUI.Pictures
               value = _currentMetaData.ResolutionAsString();
               break;
             case nameof(ExifMetadata.Metadata.Location):
-              if (_currentMetaData.Location != null)
+              if (!_currentMetaData.Location.IsZero)
               {
                 string latitude = _currentMetaData.Location.Latitude.ToLatitudeString() ?? string.Empty;
                 string longitude = _currentMetaData.Location.Longitude.ToLongitudeString() ?? string.Empty;
@@ -431,7 +431,7 @@ namespace MediaPortal.GUI.Pictures
               }
               break;
             case nameof(ExifMetadata.Metadata.Altitude):
-              if (_currentMetaData.Location != null)
+              if (!_currentMetaData.Location.IsZero)
               {
                 value = _currentMetaData.Altitude.ToAltitudeString();
               }

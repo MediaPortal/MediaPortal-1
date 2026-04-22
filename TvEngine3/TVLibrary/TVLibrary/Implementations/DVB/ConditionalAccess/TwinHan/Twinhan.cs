@@ -193,11 +193,23 @@ namespace TvLibrary.Implementations.DVB
       [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)] public String AnswerStr;
 
       public Int32 Type;
-    } ;
+    };
 
     #endregion
 
     #region helper functions
+
+    [StructLayout(LayoutKind.Sequential), ComVisible(true)]
+    private struct CmdStruct
+    {
+      public Guid guid;
+      public uint controlCode;
+      public IntPtr inbuffer;
+      public Int32 inbufferSize;
+      public IntPtr outbuffer;
+      public Int32 outbufferSize;
+      public IntPtr bytesReturned;
+    }
 
     /// <summary>
     /// Initialized structure for passing to Filter
@@ -207,27 +219,21 @@ namespace TvLibrary.Implementations.DVB
     /// <param name="InBufferSize"></param>
     /// <param name="OutBuffer"></param>
     /// <param name="OutBufferSize"></param>
-    private void InitStructure(Int32 ControlCode, IntPtr InBuffer, Int32 InBufferSize, IntPtr OutBuffer,
+    private void InitStructure(uint ControlCode, IntPtr InBuffer, Int32 InBufferSize, IntPtr OutBuffer,
                                Int32 OutBufferSize)
     {
-      Marshal.WriteInt32(_thbdaBuf, 0, 0x255e0082);
-      //GUID_THBDA_CMD  = new Guid( "255E0082-2017-4b03-90F8-856A62CB3D67" );
-      Marshal.WriteInt16(_thbdaBuf, 4, 0x2017);
-      Marshal.WriteInt16(_thbdaBuf, 6, 0x4b03);
-      Marshal.WriteByte(_thbdaBuf, 8, 0x90);
-      Marshal.WriteByte(_thbdaBuf, 9, 0xf8);
-      Marshal.WriteByte(_thbdaBuf, 10, 0x85);
-      Marshal.WriteByte(_thbdaBuf, 11, 0x6a);
-      Marshal.WriteByte(_thbdaBuf, 12, 0x62);
-      Marshal.WriteByte(_thbdaBuf, 13, 0xcb);
-      Marshal.WriteByte(_thbdaBuf, 14, 0x3d);
-      Marshal.WriteByte(_thbdaBuf, 15, 0x67);
-      Marshal.WriteInt32(_thbdaBuf, 16, ControlCode); //dwIoControlCode
-      Marshal.WriteInt32(_thbdaBuf, 20, InBuffer.ToInt32()); //lpInBuffer
-      Marshal.WriteInt32(_thbdaBuf, 24, InBufferSize); //nInBufferSize
-      Marshal.WriteInt32(_thbdaBuf, 28, OutBuffer.ToInt32()); //lpOutBuffer
-      Marshal.WriteInt32(_thbdaBuf, 32, OutBufferSize); //nOutBufferSize
-      Marshal.WriteInt32(_thbdaBuf, 36, (int)_ptrDwBytesReturned); //lpBytesReturned
+      Log.Log.WriteFile("This is the new initstruct!!!3");
+      var tmp = new CmdStruct()
+      {
+        guid = GUID_THBDA_CMD,
+        controlCode = (uint)ControlCode,
+        inbuffer = InBuffer,
+        inbufferSize = InBufferSize,
+        outbuffer = OutBuffer,
+        outbufferSize = OutBufferSize,
+        bytesReturned = _ptrDwBytesReturned
+      };
+      Marshal.StructureToPtr(tmp, _thbdaBuf, false);
     }
 
     #endregion
@@ -262,8 +268,8 @@ namespace TvLibrary.Implementations.DVB
     public Twinhan(IBaseFilter tunerFilter)
     {
       _ptrPmt = Marshal.AllocCoTaskMem(8192);
-      _ptrDwBytesReturned = Marshal.AllocCoTaskMem(4); // int32
-      _thbdaBuf = Marshal.AllocCoTaskMem(8192);
+      _ptrDwBytesReturned = Marshal.AllocCoTaskMem(Marshal.SizeOf<IntPtr>());
+      _thbdaBuf = Marshal.AllocCoTaskMem(Marshal.SizeOf<CmdStruct>());
       _ptrOutBuffer = Marshal.AllocCoTaskMem(8192);
       _ptrOutBuffer2 = Marshal.AllocCoTaskMem(8192);
       _ptrDiseqc = Marshal.AllocCoTaskMem(8192);
@@ -335,7 +341,7 @@ namespace TvLibrary.Implementations.DVB
       {
         try
         {
-          InitStructure((int)THBDA_IOCTL_CI_GET_STATE, IntPtr.Zero, 0, _ptrOutBuffer, 4096);
+          InitStructure(THBDA_IOCTL_CI_GET_STATE, IntPtr.Zero, 0, _ptrOutBuffer, 4096);
           int hr = propertySet.Set(THBDA_TUNER, 0, _thbdaBuf, thbdaLen, _thbdaBuf, thbdaLen);
           if (hr == 0)
           {
@@ -398,7 +404,7 @@ namespace TvLibrary.Implementations.DVB
       bool success = false;
       try
       {
-        InitStructure((int)THBDA_IOCTL_CHECK_INTERFACE, IntPtr.Zero, 0, IntPtr.Zero, 0);
+        InitStructure(THBDA_IOCTL_CHECK_INTERFACE, IntPtr.Zero, 0, IntPtr.Zero, 0);
         if (propertySet != null)
         {
           int hr = propertySet.Set(THBDA_TUNER, 0, _thbdaBuf, thbdaLen, _thbdaBuf, thbdaLen);
@@ -429,7 +435,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Marshal.WriteByte(_ptrPmt, i, 0);
       }
-      InitStructure((int)THBDA_IOCTL_CI_GET_PMT_REPLY, IntPtr.Zero, 0, _ptrPmt, 1024);
+      InitStructure(THBDA_IOCTL_CI_GET_PMT_REPLY, IntPtr.Zero, 0, _ptrPmt, 1024);
       if (propertySet != null)
       {
         int hr = propertySet.Set(THBDA_TUNER, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
@@ -466,7 +472,7 @@ namespace TvLibrary.Implementations.DVB
       bool suceeded = false;
       Marshal.Copy(caPMT, 0, _ptrPmt, caPMTLen);
 
-      InitStructure((int)THBDA_IOCTL_CI_SEND_PMT, _ptrPmt, caPMTLen, IntPtr.Zero, 0);
+      InitStructure(THBDA_IOCTL_CI_SEND_PMT, _ptrPmt, caPMTLen, IntPtr.Zero, 0);
       if (propertySet != null)
       {
         int failedAttempts = 0;
@@ -534,7 +540,7 @@ namespace TvLibrary.Implementations.DVB
       Marshal.WriteByte(_ptrDiseqc, 18, 0);
       Marshal.WriteByte(_ptrDiseqc, 19, 0);
 
-      InitStructure((int)THBDA_IOCTL_SET_LNB_DATA, _ptrDiseqc, disEqcLen, IntPtr.Zero, 0);
+      InitStructure(THBDA_IOCTL_SET_LNB_DATA, _ptrDiseqc, disEqcLen, IntPtr.Zero, 0);
       if (propertySet != null)
       {
         int hr = propertySet.Set(THBDA_TUNER, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
@@ -592,7 +598,7 @@ namespace TvLibrary.Implementations.DVB
       }
 
       DVB_MMI.DumpBinary(_ptrDiseqc, 0, disEqcLen);
-      InitStructure((int)THBDA_IOCTL_SET_DiSEqC, _ptrDiseqc, disEqcLen, IntPtr.Zero, 0);
+      InitStructure(THBDA_IOCTL_SET_DiSEqC, _ptrDiseqc, disEqcLen, IntPtr.Zero, 0);
       bool success = false;
       if (propertySet != null)
       {
@@ -628,7 +634,7 @@ namespace TvLibrary.Implementations.DVB
 
       bool success = false;
 
-      InitStructure((int)THBDA_IOCTL_GET_DiSEqC, IntPtr.Zero, 0, _ptrDiseqc, disEqcLen);
+      InitStructure(THBDA_IOCTL_GET_DiSEqC, IntPtr.Zero, 0, _ptrDiseqc, disEqcLen);
       if (propertySet != null)
       {
         int hr = propertySet.Set(THBDA_TUNER, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
@@ -707,7 +713,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public bool EnterCIMenu()
     {
-      InitStructure((int)THBDA_IOCTL_CI_INIT_MMI, IntPtr.Zero, 0, IntPtr.Zero, 0);
+      InitStructure(THBDA_IOCTL_CI_INIT_MMI, IntPtr.Zero, 0, IntPtr.Zero, 0);
       if (propertySet != null)
       {
         int hr = propertySet.Set(THBDA_TUNER, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
@@ -728,7 +734,7 @@ namespace TvLibrary.Implementations.DVB
     /// <returns></returns>
     public bool CloseCIMenu()
     {
-      InitStructure((int)THBDA_IOCTL_CI_CLOSE_MMI, IntPtr.Zero, 0, IntPtr.Zero, 0);
+      InitStructure(THBDA_IOCTL_CI_CLOSE_MMI, IntPtr.Zero, 0, IntPtr.Zero, 0);
       if (propertySet != null)
       {
         int hr = propertySet.Set(THBDA_TUNER, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
@@ -787,7 +793,7 @@ namespace TvLibrary.Implementations.DVB
       int sizeMMI = Marshal.SizeOf(MMI);
       Log.Log.Debug("SendMMI: size {0}", sizeMMI);
       DVB_MMI.DumpBinary(_ptrMMIBuffer, 0, sizeMMI);
-      InitStructure((int)THBDA_IOCTL_CI_ANSWER, IntPtr.Zero, 0, _ptrMMIBuffer, sizeMMI);
+      InitStructure(THBDA_IOCTL_CI_ANSWER, IntPtr.Zero, 0, _ptrMMIBuffer, sizeMMI);
       if (propertySet != null)
       {
         int hr = propertySet.Set(THBDA_TUNER, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
@@ -815,7 +821,7 @@ namespace TvLibrary.Implementations.DVB
       {
         Marshal.WriteInt32(_ptrMMIBuffer, i, 0);
       }
-      InitStructure((int)THBDA_IOCTL_CI_GET_MMI, IntPtr.Zero, 0, _ptrMMIBuffer, 8192);
+      InitStructure(THBDA_IOCTL_CI_GET_MMI, IntPtr.Zero, 0, _ptrMMIBuffer, 8192);
       if (propertySet != null)
       {
         int hr = propertySet.Set(THBDA_TUNER, 0, _ptrOutBuffer2, 0x18, _thbdaBuf, thbdaLen);
@@ -912,7 +918,7 @@ namespace TvLibrary.Implementations.DVB
           Thread.Sleep(500);
         }
       }
-      catch (ThreadAbortException) {}
+      catch (ThreadAbortException) { }
       catch (Exception ex)
       {
         Log.Log.Debug("TwinHan: error in CiMenuHandler thread\r\n{0}", ex.ToString());
@@ -935,10 +941,10 @@ namespace TvLibrary.Implementations.DVB
         {
           CiMenuThread.Abort();
         }
-        catch {}
+        catch { }
       }
       Marshal.FreeCoTaskMem(_ptrPmt);
-      Marshal.FreeCoTaskMem(_ptrDwBytesReturned); // int32
+      Marshal.FreeCoTaskMem(_ptrDwBytesReturned);
       Marshal.FreeCoTaskMem(_thbdaBuf);
       Marshal.FreeCoTaskMem(_ptrOutBuffer);
       Marshal.FreeCoTaskMem(_ptrOutBuffer2);

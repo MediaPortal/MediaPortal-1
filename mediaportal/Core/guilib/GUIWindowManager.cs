@@ -131,7 +131,7 @@ namespace MediaPortal.GUI.Library
       NOT_FOCUSED = 0,
       FOCUSED = 1,
       JUST_LOST_FOCUS = 2
-    } ;
+    };
 
     #region delegates and events
 
@@ -183,9 +183,9 @@ namespace MediaPortal.GUI.Library
     #region ctor
 
     // singleton. Dont allow any instance of this class
-    private GUIWindowManager() {}
+    private GUIWindowManager() { }
 
-    static GUIWindowManager() {}
+    static GUIWindowManager() { }
 
     #endregion
 
@@ -219,7 +219,7 @@ namespace MediaPortal.GUI.Library
           Delegate[] delegates = OnPostRenderAction.GetInvocationList();
           for (int i = 0; i < delegates.Length; ++i)
           {
-            if ((FocusState)delegates[i].DynamicInvoke(new object[] {null, message, false}) == FocusState.FOCUSED)
+            if ((FocusState)delegates[i].DynamicInvoke(new object[] { null, message, false }) == FocusState.FOCUSED)
             {
               return;
             }
@@ -478,7 +478,7 @@ namespace MediaPortal.GUI.Library
           for (int i = 0; i < delegates.Length; ++i)
           {
             int iActiveWindow = ActiveWindow;
-            FocusState focusState = (FocusState)delegates[i].DynamicInvoke(new object[] {action, null, false});
+            FocusState focusState = (FocusState)delegates[i].DynamicInvoke(new object[] { action, null, false });
             if (focusState == FocusState.FOCUSED || iActiveWindow != ActiveWindow)
             {
               return;
@@ -542,7 +542,7 @@ namespace MediaPortal.GUI.Library
       if (null != pWindow)
       {
         if (!foundOverlayRecentlyLostFocus)
-          // Don't send it to window if overlay has just lost focus. Correct control already focused!
+        // Don't send it to window if overlay has just lost focus. Correct control already focused!
         {
           pWindow.OnAction(action);
         }
@@ -558,7 +558,7 @@ namespace MediaPortal.GUI.Library
               for (int i = 0; i < delegates.Length; ++i)
               {
                 int iActiveWindow = ActiveWindow;
-                focusState = (FocusState)delegates[i].DynamicInvoke(new object[] {action, null, true});
+                focusState = (FocusState)delegates[i].DynamicInvoke(new object[] { action, null, true });
                 if (focusState == FocusState.FOCUSED || iActiveWindow != ActiveWindow)
                 {
                   break;
@@ -584,7 +584,7 @@ namespace MediaPortal.GUI.Library
               for (int i = 0; i < delegates.Length; ++i)
               {
                 int iActiveWindow = ActiveWindow;
-                focusState = (FocusState)delegates[i].DynamicInvoke(new object[] {action, null, true});
+                focusState = (FocusState)delegates[i].DynamicInvoke(new object[] { action, null, true });
                 if (focusState == FocusState.FOCUSED || iActiveWindow != ActiveWindow)
                 {
                   break;
@@ -756,6 +756,14 @@ namespace MediaPortal.GUI.Library
     public static int GetPreviousActiveWindow()
     {
       return _previousActiveWindowId;
+    }
+
+    public static bool CanLoad(int windowId)
+    {
+      GUIWindow win;
+      if (_listWindows.TryGetValue(windowId, out win))
+        return File.Exists(win.WindowXmlFileName);
+      return false;
     }
 
     /// <summary>
@@ -1055,8 +1063,9 @@ namespace MediaPortal.GUI.Library
       if (isFullscreen && (!Player.g_Player.Playing || (!Player.g_Player.HasVideo && !Player.g_Player.HasViz)))
         ShowPreviousWindow();
 
-      // do not go back to music now playing screen if music is not playing
-      if (_previousActiveWindowId == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW && ! (g_Player.Playing && g_Player.IsMusic))
+      // do not go back to music/radio now playing screen if music/radio is not playing
+      if ((_previousActiveWindowId == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW && !(g_Player.Playing && g_Player.IsMusic)) ||
+          (_previousActiveWindowId == (int)GUIWindow.Window.WINDOW_RADIO_PLAYING_NOW && !(g_Player.Playing && g_Player.IsRadio)))
       {
         ShowPreviousWindow();
       }
@@ -1293,6 +1302,33 @@ namespace MediaPortal.GUI.Library
       }
     }
 
+    public static bool IsTv(int dwID)
+    {
+      var window = GetWindow(dwID, false);
+
+      if (window != null && window.IsTv)
+      {
+        return true;
+      }
+
+      switch (dwID)
+      {
+        case (int)GUIWindow.Window.WINDOW_TV:
+        case (int)GUIWindow.Window.WINDOW_TVFULLSCREEN:
+        case (int)GUIWindow.Window.WINDOW_TVGUIDE:
+        case (int)GUIWindow.Window.WINDOW_RECORDEDTV:
+        case (int)GUIWindow.Window.WINDOW_SCHEDULER:
+        case (int)GUIWindow.Window.WINDOW_SEARCHTV:
+        case (int)GUIWindow.Window.WINDOW_TELETEXT:
+        case (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT:
+        case (int)GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES:
+        case (int)GUIWindow.Window.WINDOW_TV_NO_SIGNAL:
+        case (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO:
+          return true;
+      }
+      return false;
+    }
+
     private static GUIWindow GetWindow(int dwID, bool tryRestoreSkin)
     {
       GUIWindow win;
@@ -1464,10 +1500,10 @@ namespace MediaPortal.GUI.Library
     {
       get
       {
-      // Do we need IsRouted here?
-      return GUIWindowManager.IsRouted || 
-              GUIWindowManager.ActiveWindowEx == (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD || 
-              GUIWindowManager.ActiveWindowEx == (int)GUIWindow.Window.WINDOW_TV_SEARCH;
+        // Do we need IsRouted here?
+        return GUIWindowManager.IsRouted ||
+                GUIWindowManager.ActiveWindowEx == (int)GUIWindow.Window.WINDOW_VIRTUAL_KEYBOARD ||
+                GUIWindowManager.ActiveWindowEx == (int)GUIWindow.Window.WINDOW_TV_SEARCH;
       }
     }
 
@@ -1542,7 +1578,7 @@ namespace MediaPortal.GUI.Library
       lock (thisLock)
       {
         GUIWindow currentRoutedWindow = _routedWindow;
-        
+
         if (currentRoutedWindow != null)
         {
           Log.Debug("WindowManager: unroute to {0}:{1}->{2}:{3}",
@@ -1555,7 +1591,7 @@ namespace MediaPortal.GUI.Library
           GUIPropertyManager.SetProperty("#selecteditem", _selecteditem);
           GUIPropertyManager.SetProperty("#selectedindex", _selectedindex);
           GUIPropertyManager.SetProperty("#highlightedbutton", _highlightedbutton);
-        
+
         }
         //if (_currentWindowName != string.Empty && _routedWindow != null)
         {

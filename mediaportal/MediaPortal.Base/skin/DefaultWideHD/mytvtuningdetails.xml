@@ -48,31 +48,7 @@
       <align>left</align>
       <textcolor>lightgray</textcolor>
     </control>
-    <!--control>
-      <description>LCD image</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>1195</posX>
-      <posY>120</posY>
-      <width>535</width>
-      <height>310</height>
-      <texture>LCD.png</texture>
-      <visible>player.hasvideo+window.isvisible(3012)</visible>
-    </control>
-    <control>
-      <description>video window</description>
-      <type>videowindow</type>
-      <id>99</id>
-      <posX>1205</posX>
-      <posY>130</posY>
-      <width>515</width>
-      <height>290</height>
-      <onleft>2</onleft>
-      <onright>2</onright>
-      <action>18</action>
-      <textureFocus>tv_green_border.png</textureFocus>
-      <visible>player.hasvideo+window.isvisible(3012)</visible>
-    </control-->
+    
     <control>
       <description>Channel</description>
       <type>label</type>
@@ -81,7 +57,7 @@
       <posY>273</posY>
       <label>Channel Name:</label>
       <font>font12</font>
-      <textcolor>ff00bfff</textcolor>
+      <textcolor>ff7ad4ed</textcolor>
     </control>
     <control>
       <description>Channel name</description>
@@ -100,7 +76,7 @@
       <posY>309</posY>
       <label>Provider:</label>
       <font>font12</font>
-      <textcolor>ff00bfff</textcolor>
+      <textcolor>ff7ad4ed</textcolor>
     </control>
     <control>
       <description>Provider name</description>
@@ -108,7 +84,7 @@
       <id>3</id>
       <posX>532</posX>
       <posY>309</posY>
-      <label>#(iif(neq(#TV.TuningDetails.Provider,''),'#TV.TuningDetails.Provider','IPTV'))</label>
+      <label>#TV.TuningDetails.Provider</label>
       <font>font12</font>
     </control>
     <control>
@@ -118,7 +94,7 @@
       <posX>159</posX>
       <posY>345</posY>
       <width>1066</width>
-      <textcolor>ff00bfff</textcolor>
+      <textcolor>ff7ad4ed</textcolor>
       <label>RTSP URL:</label>
       <font>font12</font>
     </control>
@@ -139,33 +115,123 @@
       <posY>433</posY>
       <label>Signal Level: #TV.TuningDetails.SignalLevel</label>
       <font>font12</font>
-      <textcolor>ff00bfff</textcolor>
+      <textcolor>ff67b4ff</textcolor> 
     </control>
+	
     <control>
       <description>Signal level 0</description>
       <type>label</type>
       <id>0</id>
-      <posX>522</posX>
+      <posX>519</posX>
       <posY>400</posY>
       <label> 0</label>
       <font>font11</font>
       <textcolor>white</textcolor>
     </control>
+	<control>
+      <description>Signal level 10</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>631</posX>
+      <posY>405</posY>
+      <label> 10</label>
+      <font>font9</font>
+      <textcolor>ffbebebe</textcolor>
+	  
+    </control>
+	<control>
+      <description>Signal level 20</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>750</posX>
+      <posY>405</posY>
+      <label> 20</label>
+      <font>font9</font>
+      <textcolor>ffbebebe</textcolor>
+	  
+    </control>
+	<control>
+      <description>Signal level 30</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>869</posX>
+      <posY>405</posY>
+      <label> 30</label>
+      <font>font9</font>
+      <textcolor>ffbebebe</textcolor>
+	 
+    </control>
+	<control>
+      <description>Signal level 40</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>986</posX>
+      <posY>405</posY>
+      <label> 40</label>
+      <font>font9</font>
+      <textcolor>ffbebebe</textcolor>
+	  
+    </control>
     <control>
       <description>Signal level 50</description>
       <type>label</type>
       <id>0</id>
-      <posX>1104</posX>
+      <posX>1102</posX>
       <posY>400</posY>
       <label> 50</label>
       <font>font11</font>
-      <textcolor>white</textcolor>
+      <textcolor>ffffffff</textcolor>
+	 
+    </control>
+	<control>
+      <description>Signal level 60</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1223</posX>
+      <posY>405</posY>
+      <label> 60</label>
+      <font>font9</font>
+      <textcolor>ffbebebe</textcolor>
+	  
+    </control>
+	<control>
+      <description>Signal level 70</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1342</posX>
+      <posY>405</posY>
+      <label> 70</label>
+      <font>font9</font>
+      <textcolor>ffbebebe</textcolor>
+	  
+    </control>
+	<control>
+      <description>Signal level 80</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1460</posX>
+      <posY>405</posY>
+      <label> 80</label>
+      <font>font9</font>
+      <textcolor>ffbebebe</textcolor>
+	  
+    </control>
+	<control>
+      <description>Signal level 90</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1578</posX>
+      <posY>405</posY>
+      <label> 90</label>
+      <font>font9</font>
+      <textcolor>ffbebebe</textcolor>
+	 
     </control>
     <control>
       <description>Signal level 100</description>
       <type>label</type>
       <id>0</id>
-      <posX>1752</posX>
+      <posX>1732</posX>
       <posY>400</posY>
       <label> 100</label>
       <font>font11</font>
@@ -173,22 +239,23 @@
       <textcolor>white</textcolor>
     </control>
     <control>
-      <description>Progress background</description>
+      <description>Progress background top</description>
       <type>image</type>
       <id>0</id>
       <posX>532</posX>
       <posY>439</posY>
       <width>1183</width>
       <height>28</height>
-      <texture>osd_progress_background.png</texture>
+      <texture>osd_progress_background.png</texture> 
     </control>
+	
     <control>
-      <description>Signal level progress bar</description>
+      <description>Signal level progress bar top</description>
       <type>progress</type>
       <id>23</id>
-      <posX>516</posX>
+      <posX>520</posX> 
       <posY>441</posY>
-      <width>1215</width>
+      <width>1217</width>
       <height>25</height>
       <label>#TV.TuningDetails.SignalLevel</label>
       <texturebg>-</texturebg>
@@ -197,31 +264,29 @@
       <righttexture>osd_progress_right.png</righttexture>
       <visible>yes</visible>
     </control>
-    <control>
-      <description>Signal level Bar 50</description>
-      <type>label</type>
+	 <control>
+      <description>Metric scale top</description>
+      <type>image</type>
       <id>0</id>
-      <posX>1123</posX>
-      <posY>426</posY>
-      <label>|</label>
-      <font>font16</font>
-      <textcolor>white</textcolor>
-      <shadowAngle>0</shadowAngle>
-      <shadowDistance>0</shadowDistance>
-      <shadowColor />
-    </control>
+      <posX>532</posX>
+      <posY>439</posY>
+      <width>1183</width>
+      <height>28</height>
+      <texture>metric_scale.png</texture> 
+	 </control>
+   
     <control>
       <description>Signal Quality</description>
       <type>label</type>
       <id>0</id>
       <posX>159</posX>
       <posY>490</posY>
-      <label>Signal Quality:  #TV.TuningDetails.SignalQuality</label>
+      <label>Signal Quality: #TV.TuningDetails.SignalQuality</label>
       <font>font12</font>
-      <textcolor>ff00bfff</textcolor>
+      <textcolor>ff67b4ff</textcolor>
     </control>
     <control>
-      <description>Progress background</description>
+      <description>Progress background below</description>
       <type>image</type>
       <id>0</id>
       <posX>532</posX>
@@ -230,13 +295,14 @@
       <height>28</height>
       <texture>osd_progress_background.png</texture>
     </control>
+	
     <control>
-      <description>Signal level progress bar</description>
+      <description>Signal level progress bar below</description>
       <type>progress</type>
       <id>23</id>
-      <posX>516</posX>
+      <posX>520</posX> 
       <posY>498</posY>
-      <width>1215</width>
+      <width>1217</width>
       <height>25</height>
       <label>#TV.TuningDetails.SignalQuality</label>
       <texturebg>-</texturebg>
@@ -245,19 +311,17 @@
       <righttexture>osd_progress_right.png</righttexture>
       <visible>yes</visible>
     </control>
-    <control>
-      <description>Signal level Bar 50</description>
-      <type>label</type>
+	 <control>
+      <description>Metric scale below</description>
+      <type>image</type>
       <id>0</id>
-      <posX>1123</posX>
-      <posY>483</posY>
-      <label>|</label>
-      <font>font16</font>
-      <textcolor>white</textcolor>
-      <shadowAngle>0</shadowAngle>
-      <shadowDistance>0</shadowDistance>
-      <shadowColor />
-    </control>
+      <posX>532</posX>
+      <posY>496</posY>
+      <width>1183</width>
+      <height>28</height>
+      <texture>metric_scale.png</texture>
+	 </control>
+   
     <control>
       <type>group</type>
       <description>group element</description>
@@ -531,9 +595,11 @@
       </control>
       <control>
         <description>AudioPid value</description>
-        <type>label</type>
+        <type>fadelabel</type>
         <id>16</id>
-        <label>#TV.TuningDetails.AudioPid</label>
+        <label>#TV.TuningDetails.AudioPid\r#TV.TuningDetails.AudioPid</label>
+        <scrollStartDelaySec>5</scrollStartDelaySec>
+		<width>500</width>
         <font>font12</font>
       </control>
       <control>
