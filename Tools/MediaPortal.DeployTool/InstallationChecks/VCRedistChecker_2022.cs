@@ -54,7 +54,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     public bool Install()
     {
-      int exitCode = Utils.RunCommandWait(_fileName, "/Q");
+      int exitCode = Utils.RunCommandWait(_fileName, "/q /norestart");
       // Return codes:
       // 0               = success, no reboot required
       // 3010            = success, reboot required
