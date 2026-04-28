@@ -25,6 +25,10 @@ IF NOT "%2"=="" (
 )
 
 ECHO.
+ECHO Building Tools...
+CALL BuildTools.cmd %ARCH%
+
+ECHO.
 ECHO Building Installer...
 
 "%progpath%\NSIS\makensis.exe" %ARCH% "%GIT_ROOT%\Tools\InstallationScripts\DeployToolUnPacker-x64.nsi" %OUTF%
