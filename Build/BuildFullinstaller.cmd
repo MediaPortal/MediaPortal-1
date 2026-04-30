@@ -26,7 +26,7 @@ IF NOT "%2"=="" (
 
 ECHO.
 ECHO Building Tools...
-CALL BuildTools.cmd
+CALL BuildTools.cmd %OUTF%
 
 ECHO.
 ECHO Building Installer...
