@@ -30,7 +30,7 @@ namespace MediaPortal.DeployTool
     /// The main entry point for the application.
     /// </summary>
     [STAThread]
-    private static void Main()
+    private static void Main(string[] args)
     {
       // .NET 4.0: Use TLS v1.2. Many download sources no longer support the older and now insecure TLS v1.0/1.1 and SSL v3.
       try
@@ -47,11 +47,24 @@ namespace MediaPortal.DeployTool
       //Set TLS Schannel to higher security
       Utils.SetHigherNetFramework4TlsSecurity();
 
+      bool isContinue = false;
+      if (args != null && args.Length > 0)
+      {
+        foreach (string arg in args)
+        {
+          if (arg.ToLower() == "/continue")
+          {
+            isContinue = true;
+            break;
+          }
+        }
+      }
+
       if (Utils.CheckStartupPath())
       {
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
-        Application.Run(new DeployTool());
+        Application.Run(new DeployTool(isContinue));
       }
     }
   }
