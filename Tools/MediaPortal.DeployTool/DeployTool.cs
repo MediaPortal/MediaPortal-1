@@ -72,7 +72,7 @@ namespace MediaPortal.DeployTool
     [System.Runtime.InteropServices.DllImport("user32.dll")]
     public static extern bool ReleaseCapture();
 
-    public DeployTool(bool isContinue))
+    public DeployTool(bool isContinue)
     {
       // Create necessary directory tree
       if (!Directory.Exists(Application.StartupPath + "\\deploy"))
