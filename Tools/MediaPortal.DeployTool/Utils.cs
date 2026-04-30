@@ -613,10 +613,14 @@ namespace MediaPortal.DeployTool
         // Close DeployTool
         Environment.Exit(-3);
       }
+      return false;
     }
 
     public static void NotifyReboot(string DisplayName)
     {
+      InstallationProperties.Instance.Set("Reboot_Required", "yes");
+      return;
+
       // Write Run registry key
       Utils.AutoRunApplication();
 

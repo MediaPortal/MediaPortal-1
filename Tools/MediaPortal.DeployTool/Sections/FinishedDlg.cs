@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -53,6 +53,12 @@ namespace MediaPortal.DeployTool.Sections
       linkWiki.Text = Localizer.GetBestTranslation("Finished_linkWiki");
       labelEbay.Text = Localizer.GetBestTranslation("Finished_labelEbay");
       labelSectionHeader.Text = "";
+      if (InstallationProperties.Instance["Reboot_Required"] == "yes")
+      {
+        // labelReboot.Text = Localizer.GetBestTranslation("Need_Reboot");
+        labelReboot.Visible = true;
+      }
+
     }
 
     public override DeployDialog GetNextDialog()
