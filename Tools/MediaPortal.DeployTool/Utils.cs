@@ -613,6 +613,7 @@ namespace MediaPortal.DeployTool
         // Close DeployTool
         Environment.Exit(-3);
       }
+      return false;
     }
 
     public static void NotifyReboot(string DisplayName)
