@@ -29,7 +29,7 @@
       <colordiffuse>ddffffff</colordiffuse>
 	</control>
 	
-    <import>MyMusicPlayingNowTime.xml</import>
+    <import>common.time.xml</import>
     
     <!-- *************************************************************************************************** -->
     <!-- ***************************************** Properties DVB radio  *********************************** -->
@@ -563,7 +563,7 @@
       <type>label</type>
       <id>1</id>
       <posX>1258</posX>
-      <posY>642</posY> 650
+      <posY>642</posY>
 	  <width>540</width>
 	  <align>center</align>
       <label> </label>
@@ -576,7 +576,7 @@
       <type>image</type>
       <id>1</id>
       <posX>1403</posX>
-      <posY>628</posY> 640
+      <posY>628</posY>
       <width>258</width>
       <height>26</height>
       <texture>horizontal_bar2.png</texture> 
@@ -587,7 +587,7 @@
       <type>progress</type>
       <id>1</id>
       <posX>1390</posX> 
-      <posY>629</posY> 641
+      <posY>629</posY>
       <width>288</width> 
       <height>23</height>
       <label>#Radio.Listen.Percentage</label>
@@ -607,7 +607,7 @@
       <type>label</type>
       <id>1</id>
       <posX>1391</posX>
-      <posY>621</posY> 633
+      <posY>621</posY>
       <label>#Radio.Listen.Played</label>
       <font>Label</font> 
       <align>right</align>
@@ -632,13 +632,28 @@
       <type>label</type>
       <id>0</id>
       <posX>1290</posX>
-      <posY>623</posY> 618
+      <posY>623</posY>
       <label>#(L(34020)) #currentplaytime #(L(1656))</label>
       <font>font12</font> 
       <align>left</align>
       <textcolor>lightgray</textcolor>
-      <visible>player.hasaudio+!string.equals(#duration)</visible>
+      <visible>player.hasaudio+string.equals(#Radio.Listen.Percentage, )+!player.paused</visible>
     </control> 
+    
+    <control>
+      <id>0</id>
+      <description>Pause</description>
+      <type>label</type>
+      <posX>1230</posX>
+      <posY>641</posY>
+      <width>600</width>
+      <align>center</align>
+      <font>font11</font>
+      <textcolor>ffd3d3d3</textcolor>
+      <label>:: :: :: #(L(112)) :: :: ::</label>
+      <visible>player.paused</visible>
+    </control>
+    
     <control>
       <type>textboxscrollup</type>
       <description>Track</description>
