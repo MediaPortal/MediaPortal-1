@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -213,10 +213,14 @@ namespace MediaPortal.GUI.Pictures
       }
 
       // GPS Location: 50,5323033300363, 30,4931270299872
-      myMetadata.Location = gpsDirectory.GetGeoLocation();
-      if (myMetadata.Location != null && myMetadata.Location.IsZero)
+      var Location = gpsDirectory.GetGeoLocation();
+      if (Location.HasValue && !Location.Value.IsZero)
       {
-        myMetadata.Location = null;
+        myMetadata.Location = Location.Value;
+      }
+      else
+      {
+        myMetadata.Location = default;
       }
     }
 
@@ -442,7 +446,7 @@ namespace MediaPortal.GUI.Pictures
           ParseiptcDirectory(ref MyMetadata, iptcDirectory);
         }
 
-        if (MyMetadata.Location == null)
+        if (MyMetadata.Location.IsZero)
         {
           var gpsDirectory = directories.OfType<GpsDirectory>().FirstOrDefault();
           if (gpsDirectory != null)

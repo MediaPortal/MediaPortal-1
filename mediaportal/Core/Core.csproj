@@ -276,9 +276,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\AxInterop.WMPLib.dll</HintPath>
     </Reference>
-    <Reference Include="Bass.Net, Version=2.4.14.1, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
-      <HintPath>..\..\Packages\BASS.NET.2.4.14.1\lib\net40\Bass.Net.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Bass.Net">
+      <HintPath>..\..\Packages\BASS.NET.2.4.17\lib\net47\Bass.Net.dll</HintPath>
     </Reference>
     <Reference Include="BassRegistration, Version=2.4.14.1, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\Packages\BassRegistration.2.4.14.1\lib\net40\BassRegistration.dll</HintPath>
@@ -291,6 +290,9 @@
     <Reference Include="CSScriptLibrary">
       <HintPath>..\MediaPortal.Base\CSScriptLibrary.dll</HintPath>
     </Reference>
+    <Reference Include="Mono.Posix">
+      <HintPath>..\MediaPortal.Base\Mono.Posix.dll</HintPath>
+    </Reference>
     <Reference Include="edtftpnet-1.2.2, Version=1.2.2.0, Culture=neutral, PublicKeyToken=4b0c991f43097782">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\edtftpnet-1.2.2.dll</HintPath>
@@ -299,11 +301,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\MediaPortal.Base\Interop.WMPLib.dll</HintPath>
     </Reference>
-    <Reference Include="MediaInfo.Wrapper, Version=21.9.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\Packages\MediaInfo.Wrapper.21.9.3\lib\net40\MediaInfo.Wrapper.dll</HintPath>
+    <Reference Include="MediaInfo.Wrapper, Version=26.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\MediaInfo.Wrapper.26.1.0\lib\net45\MediaInfo.Wrapper.dll</HintPath>
     </Reference>
-    <Reference Include="MetadataExtractor, Version=2.8.0.0, Culture=neutral, PublicKeyToken=b66b5ccaf776c301, processorArchitecture=MSIL">
-      <HintPath>..\..\Packages\MetadataExtractor.2.8.0\lib\net35\MetadataExtractor.dll</HintPath>
+    <Reference Include="MetadataExtractor, Version=2.9.3.0, Culture=neutral, PublicKeyToken=b66b5ccaf776c301, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\MetadataExtractor.2.9.3\lib\netstandard2.0\MetadataExtractor.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualC" />
     <Reference Include="Microsoft.WindowsAPICodePack.Shell">
@@ -330,6 +332,9 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
+    <Reference Include="System.Buffers, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\System.Buffers.4.6.1\lib\net462\System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -347,15 +352,26 @@
       <HintPath>..\..\Packages\System.Management.Automation.6.1.7601.17515\lib\net40\System.Management.Automation.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Memory, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\System.Memory.4.6.3\lib\net462\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\System.Numerics.Vectors.4.6.1\lib\net462\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Serialization.Formatters.Soap">
       <Name>System.Runtime.Serialization.Formatters.Soap</Name>
     </Reference>
     <Reference Include="System.ServiceProcess">
       <Name>System.ServiceProcess</Name>
     </Reference>
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\Packages\System.ValueTuple.4.5.0\lib\portable-net40+sl4+win8+wp8\System.ValueTuple.dll</HintPath>
+    <Reference Include="System.Text.Encoding.CodePages, Version=10.0.0.5, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\Packages\System.Text.Encoding.CodePages.10.0.5\lib\net462\System.Text.Encoding.CodePages.dll</HintPath>
     </Reference>
+    <Reference Include="System.ValueTuple" />
     <Reference Include="System.Web">
       <Name>System.Web</Name>
     </Reference>
@@ -1767,6 +1783,61 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="UserInterfaceControls\Resources\mp.ico" />
+    <Content Include="x64\bass.dll" />
+    <Content Include="x64\bassasio.dll" />
+    <Content Include="x64\basscd.dll" />
+    <Content Include="x64\bassenc.dll" />
+    <Content Include="x64\bassmix.dll" />
+    <Content Include="x64\basswasapi.dll" />
+    <Content Include="x64\bass_fx.dll" />
+    <Content Include="x64\bass_vst.dll" />
+    <Content Include="x64\Plugins\bassalac.dll" />
+    <Content Include="x64\Plugins\bassape.dll" />
+    <Content Include="x64\Plugins\bassdsd.dll" />
+    <Content Include="x64\Plugins\bassflac.dll" />
+    <Content Include="x64\Plugins\basshls.dll" />
+    <Content Include="x64\Plugins\bassmidi.dll" />
+    <Content Include="x64\Plugins\bassopus.dll" />
+    <Content Include="x64\Plugins\basswebm.dll" />
+    <Content Include="x64\Plugins\basswma.dll" />
+    <Content Include="x64\Plugins\basswv.dll" />
+    <Content Include="x64\Plugins\bass_aac.dll" />
+    <Content Include="x64\Plugins\bass_ac3.dll" />
+    <Content Include="x64\Plugins\bass_mpc.dll" />
+    <Content Include="x64\Plugins\bass_ofr.dll" />
+    <Content Include="x64\Plugins\bass_spx.dll" />
+    <Content Include="x64\Plugins\bass_tta.dll" />
+    <Content Include="x64\Plugins\OptimFROG.dll" />
+    <Content Include="x64\Plugins\tags.dll" />
+    <Content Include="x86\bass.dll" />
+    <Content Include="x86\bassasio.dll" />
+    <Content Include="x86\basscd.dll" />
+    <Content Include="x86\bassenc.dll" />
+    <Content Include="x86\bassmix.dll" />
+    <Content Include="x86\basswasapi.dll" />
+    <Content Include="x86\bass_fx.dll" />
+    <Content Include="x86\bass_vst.dll" />
+    <Content Include="x86\bass_wadsp.dll" />
+    <Content Include="x86\Plugins\bassalac.dll" />
+    <Content Include="x86\Plugins\bassape.dll" />
+    <Content Include="x86\Plugins\bassdsd.dll" />
+    <Content Include="x86\Plugins\bassflac.dll" />
+    <Content Include="x86\Plugins\basshls.dll" />
+    <Content Include="x86\Plugins\bassmidi.dll" />
+    <Content Include="x86\Plugins\bassopus.dll" />
+    <Content Include="x86\Plugins\basswebm.dll" />
+    <Content Include="x86\Plugins\basswma.dll" />
+    <Content Include="x86\Plugins\basswv.dll" />
+    <Content Include="x86\Plugins\bass_aac.dll" />
+    <Content Include="x86\Plugins\bass_ac3.dll" />
+    <Content Include="x86\Plugins\bass_adx.dll" />
+    <Content Include="x86\Plugins\bass_aix.dll" />
+    <Content Include="x86\Plugins\bass_mpc.dll" />
+    <Content Include="x86\Plugins\bass_ofr.dll" />
+    <Content Include="x86\Plugins\bass_spx.dll" />
+    <Content Include="x86\Plugins\bass_tta.dll" />
+    <Content Include="x86\Plugins\OptimFROG.dll" />
+    <Content Include="x86\Plugins\tags.dll" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -1783,15 +1854,17 @@ xcopy "$(TargetDir)core.*" "$(SolutionDir)MediaPortal.Application\bin\$(Configur
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets'))" />
     <Error Condition="!Exists('..\..\Packages\FFmpeg.Win32.Static.4.1.1.1\build\FFmpeg.Win32.Static.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\FFmpeg.Win32.Static.4.1.1.1\build\FFmpeg.Win32.Static.targets'))" />
     <Error Condition="!Exists('..\..\Packages\FFmpeg.Win64.Static.4.1.1.1\build\FFmpeg.Win64.Static.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\FFmpeg.Win64.Static.4.1.1.1\build\FFmpeg.Win64.Static.targets'))" />
-    <Error Condition="!Exists('..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets'))" />
-    <Error Condition="!Exists('..\..\Packages\Sqlite.3.50.2\build\sqlite.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\Sqlite.3.50.2\build\sqlite.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\MediaInfo.Native.26.1.0\build\MediaInfo.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\MediaInfo.Native.26.1.0\build\MediaInfo.Native.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\BASSCombined.2.4.17\build\basscombined.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\BASSCombined.2.4.17\build\basscombined.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\Sqlite.3.51.3\build\sqlite.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\Sqlite.3.51.3\build\sqlite.targets'))" />
+    <Error Condition="!Exists('..\..\Packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\Packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets'))" />
   </Target>
-  <Import Project="..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets" Condition="Exists('..\..\Packages\BASSCombined.2.4.15\build\basscombined.targets')" />
   <Import Project="..\..\Packages\FFmpeg.Win64.Static.4.1.1.1\build\FFmpeg.Win64.Static.targets" Condition="Exists('..\..\Packages\FFmpeg.Win64.Static.4.1.1.1\build\FFmpeg.Win64.Static.targets')" />
   <Import Project="..\..\Packages\FFmpeg.Win32.Static.4.1.1.1\build\FFmpeg.Win32.Static.targets" Condition="Exists('..\..\Packages\FFmpeg.Win32.Static.4.1.1.1\build\FFmpeg.Win32.Static.targets')" />
-  <Import Project="..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets" Condition="Exists('..\..\Packages\MediaInfo.Native.21.9.1\build\MediaInfo.Native.targets')" />
-  <Import Project="..\..\Packages\Sqlite.3.50.2\build\sqlite.targets" Condition="Exists('..\..\Packages\Sqlite.3.50.2\build\sqlite.targets')" />
+  <Import Project="..\..\Packages\MediaInfo.Native.26.1.0\build\MediaInfo.Native.targets" Condition="Exists('..\..\Packages\MediaInfo.Native.26.1.0\build\MediaInfo.Native.targets')" />
+  <Import Project="..\..\Packages\BASSCombined.2.4.17\build\basscombined.targets" Condition="Exists('..\..\Packages\BASSCombined.2.4.17\build\basscombined.targets')" />
+  <Import Project="..\..\Packages\Sqlite.3.51.3\build\sqlite.targets" Condition="Exists('..\..\Packages\Sqlite.3.51.3\build\sqlite.targets')" />
+  <Import Project="..\..\Packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets" Condition="Exists('..\..\Packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets')" />
 </Project>

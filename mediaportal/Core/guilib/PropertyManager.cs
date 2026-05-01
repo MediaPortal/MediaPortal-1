@@ -197,19 +197,7 @@ namespace MediaPortal.GUI.Library
 
       _properties["#Radio.Listen.Title"] = string.Empty;
       _properties["#Radio.Listen.Channel"] = string.Empty;
-      _properties["#Radio.Listen.Group"] = string.Empty;
-      _properties["#Radio.Listen.Genre"] = string.Empty;
-      _properties["#Radio.Listen.Thumb"] = string.Empty;
-      _properties["#Radio.Listen.Description"] = string.Empty;
-      _properties["#Radio.Listen.Played"] = string.Empty;
-      _properties["#Radio.Listen.Start"] = string.Empty;
-      _properties["#Radio.Listen.Stop"] = string.Empty;
-      _properties["#Radio.Listen.Percentage"] = string.Empty;
-      _properties["#Radio.Listen.Remaining"] = string.Empty;
-      _properties["#Radio.Folder"] = string.Empty;
-
-      _properties["#Radio.Listen.Title"] = string.Empty;
-      _properties["#Radio.Listen.Channel"] = string.Empty;
+      _properties["#Radio.Listen.Duration"] = string.Empty;
       _properties["#Radio.Listen.Group"] = string.Empty;
       _properties["#Radio.Listen.Genre"] = string.Empty;
       _properties["#Radio.Listen.Thumb"] = string.Empty;

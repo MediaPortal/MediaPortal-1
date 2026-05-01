@@ -40,6 +40,7 @@ namespace TvPlugin
       {
         GUIPropertyManager.SetProperty("#Radio.Listen.Title", String.Empty);
         GUIPropertyManager.SetProperty("#Radio.Listen.Channel", CurrentChannel.DisplayName);
+        GUIPropertyManager.SetProperty("#Radio.Listen.Duration", String.Empty);
         GUIPropertyManager.SetProperty("#Radio.Listen.Genre", String.Empty);
         GUIPropertyManager.SetProperty("#Radio.Listen.Played", GUIPropertyManager.GetProperty("#currentplaytime"));
         GUIPropertyManager.SetProperty("#Radio.Listen.Description", String.Empty);
@@ -55,6 +56,7 @@ namespace TvPlugin
       {
         GUIPropertyManager.SetProperty("#Radio.Listen.Title", CurrentChannel.CurrentProgram.Title);
         GUIPropertyManager.SetProperty("#Radio.Listen.Channel", CurrentChannel.DisplayName);
+        GUIPropertyManager.SetProperty("#Radio.Listen.Duration", Utils.SecondsToHMSString(CurrentChannel.CurrentProgram.EndTime- CurrentChannel.CurrentProgram.StartTime));
         GUIPropertyManager.SetProperty("#Radio.Listen.Genre", CurrentChannel.CurrentProgram.Genre);
         GUIPropertyManager.SetProperty("#Radio.Listen.Description", CurrentChannel.CurrentProgram.Description);
         GUIPropertyManager.SetProperty("#Radio.Listen.Start", CurrentChannel.CurrentProgram.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat).ToString());
