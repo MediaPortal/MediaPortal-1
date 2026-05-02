@@ -616,10 +616,16 @@ namespace MediaPortal.DeployTool
       return false;
     }
 
-    public static void NotifyReboot(string DisplayName)
+    public static void NotifyReboot(string DisplayName, int action = 0)
     {
-      InstallationProperties.Instance.Set("Reboot_Required", "yes");
-      return;
+      // action 0 - no reboot
+      //        1 - exit and reboot
+      //        2 - ask (not realized)
+      if (action == 0)
+      {
+        InstallationProperties.Instance.Set("Reboot_Required", "yes");
+        return;
+      }
 
       // Write Run registry key
       Utils.AutoRunApplication();

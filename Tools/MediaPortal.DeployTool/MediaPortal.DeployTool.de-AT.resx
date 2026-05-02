@@ -509,6 +509,9 @@ und Stuttering empfehlen wir Windows AERO zu aktivieren. </value>
     <value>Eine Microsoft Komponente benötigt einen Neustart.
 Bitte fahren Sie nach dem Neustart mit der Installation fort.</value>
   </data>
+  <data name="Need_Reboot" xml:space="preserve">
+    <value>Starten Sie Ihren Computer unbedingt neu, bevor Sie MediaPortal verwenden.</value>
+  </data>
   <data name="SkinChoice_labelExistingSkin" xml:space="preserve">
     <value>Existierenden Skin verwenden (Wird auf Kompatibilität geprüft)</value>
   </data>

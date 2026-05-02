@@ -131,6 +131,7 @@ namespace MediaPortal.DeployTool
         firstDlg = DialogType.Welcome;
         Localizer.SwitchCulture("en-US");
       }
+      InstallationProperties.Instance.Set("Reboot_Required", "no");
       _currentDialog = DialogFlowHandler.Instance.GetDialogInstance(firstDlg);
       splitContainer2.Panel1.Controls.Add(_currentDialog);
       InstallationProperties.Instance.Set("InstallTypeHeader", "Choose installation type");

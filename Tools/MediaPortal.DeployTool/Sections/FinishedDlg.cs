@@ -55,7 +55,7 @@ namespace MediaPortal.DeployTool.Sections
       labelSectionHeader.Text = "";
       if (InstallationProperties.Instance["Reboot_Required"] == "yes")
       {
-        // labelReboot.Text = Localizer.GetBestTranslation("Need_Reboot");
+        labelReboot.Text = Localizer.GetBestTranslation("Need_Reboot");
         labelReboot.Visible = true;
       }
 
