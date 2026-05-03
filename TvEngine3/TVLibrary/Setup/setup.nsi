@@ -1191,7 +1191,6 @@ Function .onInit
     SetRegView 32
   !endif
 
-  !insertmacro MediaPortalNetFrameworkCheck
   !insertmacro MediaPortalNet4FrameworkCheck
 
   #### check and parse cmdline parameter

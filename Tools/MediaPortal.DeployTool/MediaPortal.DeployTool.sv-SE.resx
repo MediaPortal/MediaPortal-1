@@ -511,6 +511,9 @@ Genom att använda AERO minskas även CPU belastningen vilket kan leda till att 
     <value>En omstart av datorn krävs av en Microsoft-komponent.
 Innan du fortsätter med installationen av MediaPortal måste du starta om datorn.</value>
   </data>
+  <data name="Need_Reboot" xml:space="preserve">
+    <value>Se till att starta om datorn innan du använder MediaPortal.</value>
+  </data>
   <data name="ExtensionChoice_LAV" xml:space="preserve">
     <value>Installera LAV filter för att kunna spela upp många vanliga ljud och video format</value>
   </data>
