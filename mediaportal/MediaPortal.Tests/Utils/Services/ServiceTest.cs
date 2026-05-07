@@ -1,4 +1,4 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+﻿#region Copyright (C) 2005-2011 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -43,16 +43,16 @@ namespace MediaPortal.Tests.Utils.Services
     /// registered.
     /// </summary>
     [Test]
-    [
-      ExpectedException(typeof (ArgumentException),
-        "A service of type MediaPortal.Services.ILog is already present")]
     public void TestAddDuplicateService1()
     {
       ServiceProvider provider = new ServiceProvider();
       ILog log1 = new NoLog();
       ILog log2 = new NoLog();
-      provider.Add<ILog>(log1);
-      provider.Add<ILog>(log2);
+      Assert.Throws<ArgumentException>(() =>
+      {
+        provider.Add<ILog>(log1);
+        provider.Add<ILog>(log2);
+      });
     }
 
     /// <summary>
