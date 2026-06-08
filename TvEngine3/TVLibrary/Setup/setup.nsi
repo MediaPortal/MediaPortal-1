@@ -845,18 +845,18 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\TvThumbnails.dll"
 
   ; MediaInfo
-  Delete "$MPdir.Base\MediaInfo.dll"
-  Delete "$MPdir.Base\libcurl.dll"
-  Delete "$MPdir.Base\libssh2.dll"
-  Delete "$MPdir.Base\brotlicommon.dll"
-  Delete "$MPdir.Base\brotlidec.dll"
-  Delete "$MPdir.Base\brotlienc.dll"
+  Delete "$INSTDIR\MediaInfo.dll"
+  Delete "$INSTDIR\libcurl.dll"
+  Delete "$INSTDIR\libssh2.dll"
+  Delete "$INSTDIR\brotlicommon.dll"
+  Delete "$INSTDIR\brotlidec.dll"
+  Delete "$INSTDIR\brotlienc.dll"
   !if "${Architecture}" == "x64"
-    Delete "$MPdir.Base\libcrypto-3-x64.dll"
-    Delete "$MPdir.Base\libssl-3-x64.dll"
+    Delete "$INSTDIR\libcrypto-3-x64.dll"
+    Delete "$INSTDIR\libssl-3-x64.dll"
   !else
-    Delete "$MPdir.Base\libcrypto-3.dll"
-    Delete "$MPdir.Base\libssl-3.dll"
+    Delete "$INSTDIR\libcrypto-3.dll"
+    Delete "$INSTDIR\libssl-3.dll"
   !endif
   Delete "$INSTDIR\MediaInfo.Wrapper.dll"
 
