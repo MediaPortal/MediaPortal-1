@@ -586,7 +586,7 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   SetOutPath "$INSTDIR"
   !if "${Architecture}" == "x64"
   File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\MediaInfo.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\libcurl.dll"+
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\libcurl.dll"
   File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\libssh2.dll"
   File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\libcrypto-3-x64.dll"
   File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\libssl-3-x64.dll"
