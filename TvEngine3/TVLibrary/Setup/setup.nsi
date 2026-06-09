@@ -585,15 +585,23 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   ; MediaInfo
   SetOutPath "$INSTDIR"
   !if "${Architecture}" == "x64"
-    File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\MediaInfo.dll"
-    File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\libcrypto-3-x64.dll"
-    File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\libcurl.dll"
-    File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\libssl-3-x64.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\libcurl.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\libssh2.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\libcrypto-3-x64.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\libssl-3-x64.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\brotlicommon.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\brotlidec.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\brotlienc.dll"  
   !else
-    File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\MediaInfo.dll"
-    File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\libcrypto-3.dll"
-    File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\libcurl.dll"
-    File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\libssl-3.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\libcurl.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\libssh2.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\libcrypto-3.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\libssl-3.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\brotlicommon.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\brotlidec.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\brotlienc.dll"  
   !endif
   File "${git_ROOT}\Packages\MediaInfo.Wrapper.26.1.0\lib\net45\MediaInfo.Wrapper.dll"
   File "${git_ROOT}\Packages\System.ValueTuple.4.6.2\lib\net462\System.ValueTuple.dll"
@@ -835,12 +843,14 @@ ${MementoSectionEnd}
   ;Delete "$INSTDIR\Interop.SHDocVw.dll"
   Delete "$INSTDIR\ffmpeg.exe"
   Delete "$INSTDIR\TvThumbnails.dll"
+
+  ; MediaInfo
   Delete "$INSTDIR\MediaInfo.dll"
-  Delete "$INSTDIR\libcrypto-1_1.dll"
   Delete "$INSTDIR\libcurl.dll"
-  Delete "$INSTDIR\libssl-1_1.dll"
-  Delete "$INSTDIR\MediaInfo.Wrapper.dll"
-  
+  Delete "$INSTDIR\libssh2.dll"
+  Delete "$INSTDIR\brotlicommon.dll"
+  Delete "$INSTDIR\brotlidec.dll"
+  Delete "$INSTDIR\brotlienc.dll"
   !if "${Architecture}" == "x64"
     Delete "$INSTDIR\libcrypto-3-x64.dll"
     Delete "$INSTDIR\libssl-3-x64.dll"
@@ -848,6 +858,7 @@ ${MementoSectionEnd}
     Delete "$INSTDIR\libcrypto-3.dll"
     Delete "$INSTDIR\libssl-3.dll"
   !endif
+  Delete "$INSTDIR\MediaInfo.Wrapper.dll"
 
   ; Additional assemblies
   Delete "$INSTDIR\System.Threading.Tasks.Extensions.dll"
