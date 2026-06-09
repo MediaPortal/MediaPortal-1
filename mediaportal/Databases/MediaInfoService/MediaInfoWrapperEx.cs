@@ -257,7 +257,7 @@ namespace MediaPortal.MediaInfoService.Database
 
       Type t = typeof(MediaInfoWrapper);
       t.GetField("<HasExternalSubtitles>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance).SetValue(this,
-        t.GetMethod("CheckHasExternalSubtitles", BindingFlags.NonPublic | BindingFlags.Static).Invoke(this, new object[] { strMediaFullPath }));
+        t.GetMethod("CheckHasExternalSubtitles", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, new object[] { strMediaFullPath, logger }));
 
       if (strMediaFullPath.EndsWith(".ifo", StringComparison.OrdinalIgnoreCase))
         this.setProperty("IsDvd", true);
