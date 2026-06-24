@@ -1,4 +1,4 @@
-//css_reference System.Core;
+﻿//css_reference System.Core;
 
 //css_reference "core.dll";
 //css_reference "Databases.dll";
@@ -25,7 +25,7 @@ using System.Web;
 internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
 {
   const string strGrabber = "TI_MDB";
-  const string strGrabberVersion = "20250719.I";
+  const string strGrabberVersion = "20260324.I";
 
   public Grabber()
   {
@@ -95,7 +95,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
         {
           if (!string.IsNullOrEmpty(apers.Name))
           {
-            if (apers.As.Contains("Direct") && string.IsNullOrEmpty(sDirector))
+            if (apers.As == "Director" && string.IsNullOrEmpty(sDirector))
             {
               // Only one Director per Movie in MP
               // sDirector += (!string.IsNullOrEmpty(sDirector) ? " / " : string.Empty) + apers.Name; // + " (" + apers.As + ")";
@@ -296,7 +296,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
     if (GRABBER_ID_LOOKUP)
     {
       // Get IMDB ID from search string
-      Regex rximdbid = new Regex(@"(?:\s|\+|^)(?<imdbid>tt\d{7,8})\b");
+      Regex rximdbid = new Regex(@"(?:\s|\+|\[|^)(?<imdbid>tt\d{7,8})\b");
       Match matchimdbid = rximdbid.Match(searchStr);
       if (matchimdbid.Success)
       {
@@ -750,7 +750,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
           TMDBPerson aPerson = new TMDBPerson();
           aPerson.Id = crew.id.ToString();
           aPerson.Name = crew.name;
-          aPerson.As = crew.department; // crew.job;
+          aPerson.As = crew.job;
           tReturn.Add(aPerson);
         }
         movie.Crew = tReturn.ToArray();

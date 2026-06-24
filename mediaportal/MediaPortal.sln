@@ -1,6 +1,6 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30011.22
+# Visual Studio Version 18
+VisualStudioVersion = 18.4.11612.150 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{D214B2BD-4CA7-45CD-9EC5-CF7CC244C03A}"
 EndProject
@@ -145,6 +145,28 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPEUpdater", "MPE\MPEUpdater\MPEUpdater.csproj", "{23B79768-F683-401E-B19A-11B743F01FCC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUINotifier", "WindowPlugins\GUINotifier\GUINotifier.csproj", "{80188421-F9AD-4409-B0D8-6543305C487B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{BA50C892-49BD-4FEB-B77B-23AF9439D519}"
+	ProjectSection(SolutionItems) = preProject
+		MediaPortal.Base\scripts\InternalActorMoviesGrabber.csscript = MediaPortal.Base\scripts\InternalActorMoviesGrabber.csscript
+		MediaPortal.Base\scripts\InternalMovieImagesGrabber.csscript = MediaPortal.Base\scripts\InternalMovieImagesGrabber.csscript
+		MediaPortal.Base\scripts\VDBParserStrings.xml = MediaPortal.Base\scripts\VDBParserStrings.xml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MovieInfo", "MovieInfo", "{6D73DA4F-8BBB-45A1-8690-B8EC8E57FC35}"
+	ProjectSection(SolutionItems) = preProject
+		MediaPortal.Base\scripts\MovieInfo\Allocine_fr.csscript = MediaPortal.Base\scripts\MovieInfo\Allocine_fr.csscript
+		MediaPortal.Base\scripts\MovieInfo\APIFilmAffinityIMDbMP1.csscript = MediaPortal.Base\scripts\MovieInfo\APIFilmAffinityIMDbMP1.csscript
+		MediaPortal.Base\scripts\MovieInfo\FilmAffinity_es.csscript = MediaPortal.Base\scripts\MovieInfo\FilmAffinity_es.csscript
+		MediaPortal.Base\scripts\MovieInfo\IMDB.csscript = MediaPortal.Base\scripts\MovieInfo\IMDB.csscript
+		MediaPortal.Base\scripts\MovieInfo\imdb_de_ofdb_MP13x.csscript = MediaPortal.Base\scripts\MovieInfo\imdb_de_ofdb_MP13x.csscript
+		MediaPortal.Base\scripts\MovieInfo\IMDB_MP117x.csscript = MediaPortal.Base\scripts\MovieInfo\IMDB_MP117x.csscript
+		MediaPortal.Base\scripts\MovieInfo\IMDB_MP13x.csscript = MediaPortal.Base\scripts\MovieInfo\IMDB_MP13x.csscript
+		MediaPortal.Base\scripts\MovieInfo\TI_MDB.csscript = MediaPortal.Base\scripts\MovieInfo\TI_MDB.csscript
+		MediaPortal.Base\scripts\MovieInfo\TMDB.csscript = MediaPortal.Base\scripts\MovieInfo\TMDB.csscript
+		MediaPortal.Base\scripts\MovieInfo\TMDB_de.csscript = MediaPortal.Base\scripts\MovieInfo\TMDB_de.csscript
+		MediaPortal.Base\scripts\MovieInfo\TMDB_fr_MP13x.csscript = MediaPortal.Base\scripts\MovieInfo\TMDB_fr_MP13x.csscript
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -1302,6 +1324,8 @@ Global
 		{C430B2F0-CD3A-4BD5-B6C2-1DE2BDC68C86} = {06741964-B339-4FCF-B6E5-E0D32A434DA2}
 		{23B79768-F683-401E-B19A-11B743F01FCC} = {7E1AA929-F9B8-42E6-A6AD-6759CE43521F}
 		{80188421-F9AD-4409-B0D8-6543305C487B} = {40801059-099F-44C5-9802-3A926EF0FE87}
+		{BA50C892-49BD-4FEB-B77B-23AF9439D519} = {D46025CE-A2F6-401E-9E5A-95FF3D970F9B}
+		{6D73DA4F-8BBB-45A1-8690-B8EC8E57FC35} = {BA50C892-49BD-4FEB-B77B-23AF9439D519}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E93BA3D6-C1CC-458C-8F51-4E4B1D8856CB}
