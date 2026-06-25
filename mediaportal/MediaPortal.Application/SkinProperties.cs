@@ -58,12 +58,16 @@ namespace MediaPortal
     private void SetItem(string tag, string tagValue)
     {
       if (mirror.TryGetValue(tag, out var item))
+      {
         item.Value = tagValue;
+        filtered.ReSort();
+      }
       else
       {
         var nwItem = AddItem(tag, tagValue);
         if (isInFilter(nwItem))
           filtered.Add(nwItem);
+        filtered.ReSort();
       }
     }
 
