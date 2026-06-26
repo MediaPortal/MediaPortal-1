@@ -160,18 +160,15 @@ namespace MediaPortal
         if (_value == value) return;
         _value = value;
         UpdatedAt = DateTime.Now;
-        StackTrace = Environment.StackTrace;
 
         if (PropertyChanged != null)
         {
           PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
           PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(UpdatedAt)));
-          PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(StackTrace)));
         }
       }
     }
     public DateTime UpdatedAt { get; private set; }
-    public string StackTrace { get; private set; }
 
     public NameValueItem(string name, string value)
     {
