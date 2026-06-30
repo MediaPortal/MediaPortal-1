@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -2257,45 +2257,38 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="dbLevelR"></param>
     public void RMS(out double dbLevelL, out double dbLevelR)
     {
-      int peakL = 0;
-      int peakR = 0;
-      double dbLeft = 0.0;
-      double dbRight = 0.0;
-
-      // Find out with which stream to deal with
-      int level = 0;
+      float[] levels = new float[2];
+      dbLevelL = -144.0;
+      dbLevelR = -144.0;
 
       if (Config.MusicPlayer == AudioPlayer.Asio)
       {
         float fpeakL = BassAsio.BASS_ASIO_ChannelGetLevel(false, 0);
-        float fpeakR = (int)BassAsio.BASS_ASIO_ChannelGetLevel(false, 1);
-        dbLeft = 20.0 * Math.Log10(fpeakL);
-        dbRight = 20.0 * Math.Log10(fpeakR);
-      }
+        float fpeakR = BassAsio.BASS_ASIO_ChannelGetLevel(false, 1);
+        
+        dbLevelL = fpeakL > 0.00001f ? 20.0 * Math.Log10(fpeakL) : -144.0;
+        dbLevelR = fpeakR > 0.00001f ? 20.0 * Math.Log10(fpeakR) : -144.0;
+      } 
       else if (Config.MusicPlayer == AudioPlayer.WasApi)
       {
-        level = BassWasapi.BASS_WASAPI_GetLevel();
+        if (BassWasapi.BASS_WASAPI_GetLevelEx(levels, 0.05f, BASSLevel.BASS_LEVEL_STEREO | BASSLevel.BASS_LEVEL_RMS))
+        {
+          dbLevelL = levels[0] > 0.00001f ? 20.0 * Math.Log10(levels[0]) : -144.0;
+          dbLevelR = levels[1] > 0.00001f ? 20.0 * Math.Log10(levels[1]) : -144.0;
+        }
       }
       else
       {
         MusicStream stream = GetCurrentStream();
         if (stream != null)
         {
-          level = BassMix.BASS_Mixer_ChannelGetLevel(stream.BassStream);
+          if (BassMix.BASS_Mixer_ChannelGetLevelEx(stream.BassStream, levels, 0.05f, BASSLevel.BASS_LEVEL_STEREO | BASSLevel.BASS_LEVEL_RMS))
+          {
+            dbLevelL = levels[0] > 0.00001f ? 20.0 * Math.Log10(levels[0]) : -144.0;
+            dbLevelR = levels[1] > 0.00001f ? 20.0 * Math.Log10(levels[1]) : -144.0;
+          }
         }
       }
-
-      if (Config.MusicPlayer != AudioPlayer.Asio) // For Asio, we already got the peaklevel above
-      {
-        peakL = Un4seen.Bass.Utils.LowWord32(level); // the left level
-        peakR = Un4seen.Bass.Utils.HighWord32(level); // the right level
-
-        dbLeft = Un4seen.Bass.Utils.LevelToDB(peakL, 65535);
-        dbRight = Un4seen.Bass.Utils.LevelToDB(peakR, 65535);
-      }
-
-      dbLevelL = dbLeft;
-      dbLevelR = dbRight;
     }
 
     /// <summary>
