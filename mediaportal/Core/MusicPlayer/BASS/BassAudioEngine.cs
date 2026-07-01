@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -646,8 +646,6 @@ namespace MediaPortal.MusicPlayer.BASS
     { 
       lock (_syncRoot)
       {
-        _commandRegistered.Set();
-
         MusicStream stream = GetCurrentStream();
         try
         {
@@ -768,8 +766,11 @@ namespace MediaPortal.MusicPlayer.BASS
         {
           Log.Error("BASS: Stop command caused an exception - {0}. {1}", ex.Message, ex.StackTrace);
         }
-
-        NotifyPlaying = false;
+        finally
+        {
+          NotifyPlaying = false;
+          _commandRegistered.Set();
+        }
       }
     }
 
@@ -1529,6 +1530,12 @@ namespace MediaPortal.MusicPlayer.BASS
         return false;
       }
 
+      if (!_commandRegistered.IsSet)
+      {
+        Log.Debug("BASS: Previous stop command is still running, waiting for clean up...");
+        _commandRegistered.Wait(1000);
+      }
+
       MusicStream currentStream = GetCurrentStream();
 
       bool result = true;
@@ -1613,6 +1620,7 @@ namespace MediaPortal.MusicPlayer.BASS
           BassWasapi.BASS_WASAPI_Stop(true);
         }
 
+        Bass.BASS_Start();
         if (!PlayInternal(filePath))
         {
           return false;
