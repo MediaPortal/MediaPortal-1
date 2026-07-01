@@ -1620,6 +1620,7 @@ namespace MediaPortal.MusicPlayer.BASS
           BassWasapi.BASS_WASAPI_Stop(true);
         }
 
+        Bass.BASS_Start();
         if (!PlayInternal(filePath))
         {
           return false;
