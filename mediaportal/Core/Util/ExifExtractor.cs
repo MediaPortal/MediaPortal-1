@@ -548,6 +548,10 @@ namespace MediaPortal.GUI.Pictures
       catch (Exception ex)
       {
         Log.Error("ExifExtractor: GetExifMetadata for {0}: {1}", photoName, ex.Message);
+        if (ex is System.TypeInitializationException && ex.InnerException != null)
+        {
+          Log.Error("ExifExtractor: GetExifMetadata for {0}: {1}", photoName, ex.InnerException.ToString());
+        }
       }
       return MyMetadata;
     }
