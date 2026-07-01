@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -2257,37 +2257,33 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="dbLevelR"></param>
     public void RMS(out double dbLevelL, out double dbLevelR)
     {
-      float[] levels = new float[2];
       dbLevelL = -144.0;
       dbLevelR = -144.0;
 
+      float[] levels = null;
       if (Config.MusicPlayer == AudioPlayer.Asio)
       {
-        float fpeakL = BassAsio.BASS_ASIO_ChannelGetLevel(false, 0);
-        float fpeakR = BassAsio.BASS_ASIO_ChannelGetLevel(false, 1);
-        
-        dbLevelL = fpeakL > 0.00001f ? 20.0 * Math.Log10(fpeakL) : -144.0;
-        dbLevelR = fpeakR > 0.00001f ? 20.0 * Math.Log10(fpeakR) : -144.0;
+        levels = new float[2];
+        levels[0] = BassAsio.BASS_ASIO_ChannelGetLevel(false, 0);
+        levels[1] = BassAsio.BASS_ASIO_ChannelGetLevel(false, 1);
       } 
       else if (Config.MusicPlayer == AudioPlayer.WasApi)
       {
-        if (BassWasapi.BASS_WASAPI_GetLevelEx(levels, 0.05f, BASSLevel.BASS_LEVEL_STEREO | BASSLevel.BASS_LEVEL_RMS))
-        {
-          dbLevelL = levels[0] > 0.00001f ? 20.0 * Math.Log10(levels[0]) : -144.0;
-          dbLevelR = levels[1] > 0.00001f ? 20.0 * Math.Log10(levels[1]) : -144.0;
-        }
+        levels = BassWasapi.BASS_WASAPI_GetLevel(0.05f, BASSLevel.BASS_LEVEL_STEREO | BASSLevel.BASS_LEVEL_RMS);
       }
       else
       {
         MusicStream stream = GetCurrentStream();
         if (stream != null)
         {
-          if (BassMix.BASS_Mixer_ChannelGetLevelEx(stream.BassStream, levels, 0.05f, BASSLevel.BASS_LEVEL_STEREO | BASSLevel.BASS_LEVEL_RMS))
-          {
-            dbLevelL = levels[0] > 0.00001f ? 20.0 * Math.Log10(levels[0]) : -144.0;
-            dbLevelR = levels[1] > 0.00001f ? 20.0 * Math.Log10(levels[1]) : -144.0;
-          }
+          levels = BassMix.BASS_Mixer_ChannelGetLevel(stream.BassStream, 0.05f, BASSLevel.BASS_LEVEL_STEREO | BASSLevel.BASS_LEVEL_RMS);
         }
+      }
+
+      if (levels != null && levels.Length >= 2)
+      {
+        dbLevelL = levels[0] > 0.00001f ? 20.0 * Math.Log10(levels[0]) : dbLevelL;
+        dbLevelR = levels[1] > 0.00001f ? 20.0 * Math.Log10(levels[1]) : dbLevelR;
       }
     }
 
