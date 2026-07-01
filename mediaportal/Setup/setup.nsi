@@ -694,6 +694,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\System.Memory.4.6.3\lib\net462\System.Memory.dll"
   File "${git_ROOT}\Packages\System.Numerics.Vectors.4.6.1\lib\net462\System.Numerics.Vectors.dll"
   File "${git_ROOT}\Packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll"
+  File "${git_ROOT}\Packages\System.Text.Encoding.CodePages.10.0.5\lib\net462\System.Text.Encoding.CodePages.dll"
   ; NuGet binaries UnidecodeSharp
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\UnidecodeSharpFork.1.0.1\lib\UnidecodeSharpFork.dll"
