@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -2257,45 +2257,34 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="dbLevelR"></param>
     public void RMS(out double dbLevelL, out double dbLevelR)
     {
-      int peakL = 0;
-      int peakR = 0;
-      double dbLeft = 0.0;
-      double dbRight = 0.0;
+      dbLevelL = -144.0;
+      dbLevelR = -144.0;
 
-      // Find out with which stream to deal with
-      int level = 0;
-
+      float[] levels = null;
       if (Config.MusicPlayer == AudioPlayer.Asio)
       {
-        float fpeakL = BassAsio.BASS_ASIO_ChannelGetLevel(false, 0);
-        float fpeakR = (int)BassAsio.BASS_ASIO_ChannelGetLevel(false, 1);
-        dbLeft = 20.0 * Math.Log10(fpeakL);
-        dbRight = 20.0 * Math.Log10(fpeakR);
-      }
+        levels = new float[2];
+        levels[0] = BassAsio.BASS_ASIO_ChannelGetLevel(false, 0);
+        levels[1] = BassAsio.BASS_ASIO_ChannelGetLevel(false, 1);
+      } 
       else if (Config.MusicPlayer == AudioPlayer.WasApi)
       {
-        level = BassWasapi.BASS_WASAPI_GetLevel();
+        levels = BassWasapi.BASS_WASAPI_GetLevel(0.05f, BASSLevel.BASS_LEVEL_STEREO | BASSLevel.BASS_LEVEL_RMS);
       }
       else
       {
         MusicStream stream = GetCurrentStream();
         if (stream != null)
         {
-          level = BassMix.BASS_Mixer_ChannelGetLevel(stream.BassStream);
+          levels = BassMix.BASS_Mixer_ChannelGetLevel(stream.BassStream, 0.05f, BASSLevel.BASS_LEVEL_STEREO | BASSLevel.BASS_LEVEL_RMS);
         }
       }
 
-      if (Config.MusicPlayer != AudioPlayer.Asio) // For Asio, we already got the peaklevel above
+      if (levels != null && levels.Length >= 2)
       {
-        peakL = Un4seen.Bass.Utils.LowWord32(level); // the left level
-        peakR = Un4seen.Bass.Utils.HighWord32(level); // the right level
-
-        dbLeft = Un4seen.Bass.Utils.LevelToDB(peakL, 65535);
-        dbRight = Un4seen.Bass.Utils.LevelToDB(peakR, 65535);
+        dbLevelL = levels[0] > 0.00001f ? 20.0 * Math.Log10(levels[0]) : dbLevelL;
+        dbLevelR = levels[1] > 0.00001f ? 20.0 * Math.Log10(levels[1]) : dbLevelR;
       }
-
-      dbLevelL = dbLeft;
-      dbLevelR = dbRight;
     }
 
     /// <summary>
