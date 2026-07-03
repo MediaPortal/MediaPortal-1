@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2013 Team MediaPortal
+﻿#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2013 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -84,7 +84,14 @@ namespace MediaPortal.Configuration
         try
         {
           Log.Debug("PluginsNew: loadPlugins {0}", pluginFile);
-          pluginAssembly = Assembly.LoadFrom(pluginFile);
+          try
+          {
+            pluginAssembly = AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(pluginFile));
+          }
+          catch (Exception)
+          {
+            pluginAssembly = Assembly.LoadFrom(pluginFile);
+          }
         }
         catch (BadImageFormatException ex)
         {

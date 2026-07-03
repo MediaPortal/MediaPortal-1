@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2013 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -423,7 +423,16 @@ namespace MediaPortal.GUI.Library
     {
       try
       {
-        Assembly assem = Assembly.LoadFrom(strFile);
+        Assembly assem = null;
+        try
+        {
+          assem = AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(strFile));
+        }
+        catch (Exception)
+        {
+          assem = Assembly.LoadFrom(strFile);
+        }
+
         if (assem != null)
         {
           Type[] types = assem.GetExportedTypes();
@@ -477,7 +486,16 @@ namespace MediaPortal.GUI.Library
 
       try
       {
-        Assembly assem = Assembly.LoadFrom(strFile);
+        Assembly assem = null;
+        try
+        {
+          assem = AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(strFile));
+        }
+        catch (Exception)
+        {
+          assem = Assembly.LoadFrom(strFile);
+        }
+
         if (assem != null)
         {
           Log.Info("PluginManager: Plugin: '{0}' / Version: {1}", strFile, FileVersionInfo.GetVersionInfo(strFile).ProductVersion);
@@ -641,7 +659,16 @@ namespace MediaPortal.GUI.Library
 
       try
       {
-        Assembly assem = Assembly.LoadFrom(strFile);
+        Assembly assem = null;
+        try
+        {
+          assem = AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(strFile));
+        }
+        catch (Exception)
+        {
+          assem = Assembly.LoadFrom(strFile);
+        }
+
         if (assem != null)
         {
           Log.Info("PluginManager: '{0}' file version: {1}", strFile, FileVersionInfo.GetVersionInfo(strFile).ProductVersion);

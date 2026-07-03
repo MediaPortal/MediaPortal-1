@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -42,7 +42,17 @@ namespace MediaPortal.Configuration
       {
         try
         {
-          Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvControl.dll");
+          Assembly assem = null;
+          string strFile = Config.GetFolder(Config.Dir.Base) + "\\TvControl.dll";
+          try
+          {
+            assem = AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(strFile));
+          }
+          catch (Exception)
+          {
+            assem = Assembly.LoadFrom(strFile);
+          }
+
           if (assem != null)
           {
             Type[] types = assem.GetExportedTypes();
@@ -89,7 +99,17 @@ namespace MediaPortal.Configuration
       List<MpGenre> genres = new List<MpGenre>();
       try
       {
-        Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvControl.dll");
+        Assembly assem = null;
+        string strFile = Config.GetFolder(Config.Dir.Base) + "\\TvControl.dll";
+        try
+        {
+          assem = AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(strFile));
+        }
+        catch (Exception)
+        {
+          assem = Assembly.LoadFrom(strFile);
+        }
+
         if (assem != null)
         {
           Type[] types = assem.GetExportedTypes();
@@ -140,7 +160,17 @@ namespace MediaPortal.Configuration
       provider = null;
       try
       {
-        Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvControl.dll");
+        Assembly assem = null;
+        string strFile = Config.GetFolder(Config.Dir.Base) + "\\TvControl.dll";
+        try
+        {
+          assem = AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(strFile));
+        }
+        catch (Exception)
+        {
+          assem = Assembly.LoadFrom(strFile);
+        }
+
         if (assem != null)
         {
           Type[] types = assem.GetExportedTypes();
@@ -187,7 +217,17 @@ namespace MediaPortal.Configuration
       List<string> groupNames = new List<string>();
       try
       {
-        Assembly assem = Assembly.LoadFrom(Config.GetFolder(Config.Dir.Base) + "\\TvControl.dll");
+        Assembly assem = null;
+        string strFile = Config.GetFolder(Config.Dir.Base) + "\\TvControl.dll";
+        try
+        {
+          assem = AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(strFile));
+        }
+        catch (Exception)
+        {
+          assem = Assembly.LoadFrom(strFile);
+        }
+
         if (assem != null)
         {
           Type[] types = assem.GetExportedTypes();

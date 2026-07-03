@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -38,7 +38,16 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin
       }
       if (!AssemblyReferences.ContainsKey(AssemblyName))
       {
-        AssemblyReferences.Add(AssemblyName, assembly = Assembly.LoadFrom(AssemblyName));
+        Assembly assem = null;
+        try
+        {
+          assem = AppDomain.CurrentDomain.Load(System.Reflection.AssemblyName.GetAssemblyName(AssemblyName));
+        }
+        catch (Exception)
+        {
+          assem = Assembly.LoadFrom(AssemblyName);
+        }
+        AssemblyReferences.Add(AssemblyName, assembly = assem);
       }
       else
       {

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -203,10 +203,18 @@ namespace MediaPortal.ControlDevices
       foreach (string plugin in cioPlugins)
       {
         string pluginFileName = plugin.Substring(plugin.LastIndexOf(@"\") + 1);
-        Assembly assembly = null;
         try
         {
-          assembly = Assembly.LoadFrom(plugin);
+          Assembly assembly = null;
+          try
+          {
+            assembly = AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(plugin));
+          }
+          catch (Exception)
+          {
+            assembly = Assembly.LoadFrom(plugin);
+          }
+
           if (null != assembly)
           {
             Type[] types = assembly.GetExportedTypes();

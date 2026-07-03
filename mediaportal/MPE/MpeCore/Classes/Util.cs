@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -49,7 +49,15 @@ namespace MpeCore.Classes
       }
       try
       {
-        Assembly pluginAssembly = Assembly.LoadFrom(pluginFile);
+        Assembly pluginAssembly = null;
+        try
+        {
+          pluginAssembly = AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(pluginFile));
+        }
+        catch (Exception)
+        {
+          pluginAssembly = Assembly.LoadFrom(pluginFile);
+        }
 
         if (pluginAssembly != null)
         {
@@ -105,13 +113,28 @@ namespace MpeCore.Classes
       {
         int idx = args.Name.IndexOf(',');
         string pluginFullPath = Path.Combine(pluginDllLocation, (idx > 0 ? args.Name.Substring(0, idx) : args.Name) + ".dll");
-        return Assembly.LoadFrom(pluginFullPath);
+        try
+        {
+          pluginAssembly = AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(pluginFullPath));
+        }
+        catch (Exception)
+        {
+          pluginAssembly = Assembly.LoadFrom(pluginFullPath);
+        }
+        return pluginAssembly;
       });
 
       AppDomain.CurrentDomain.AssemblyResolve += handler;
       try
       {
-        pluginAssembly = Assembly.LoadFrom(pluginFile);
+        try
+        {
+          pluginAssembly = AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(pluginFile));
+        }
+        catch (Exception)
+        {
+          pluginAssembly = Assembly.LoadFrom(pluginFile);
+        }
       }
       catch (BadImageFormatException)
       {

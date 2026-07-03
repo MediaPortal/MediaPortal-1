@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -50,7 +50,14 @@ namespace MpeCore.Classes
       Assembly plugin = null;
       try
       {
-        plugin = Assembly.LoadFrom(asm);
+        try
+        {
+          plugin = AppDomain.CurrentDomain.Load(System.Reflection.AssemblyName.GetAssemblyName(asm));
+        }
+        catch (Exception)
+        {
+          plugin = Assembly.LoadFrom(asm);
+        }
       }
       catch {}
 
