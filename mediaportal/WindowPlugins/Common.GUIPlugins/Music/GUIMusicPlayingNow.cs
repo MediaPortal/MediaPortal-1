@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -720,10 +720,10 @@ namespace MediaPortal.GUI.Music
         BassMusicPlayer.Player.RMS(out dbLevelL, out dbLevelR);
 
         // Raise the level with factor 1.5 so that the VUMeter shows more activity
-        dbLevelL += Math.Abs(dbLevelL*0.5);
-        dbLevelR += Math.Abs(dbLevelR*0.5);
+        dbLevelL += Math.Abs(dbLevelL * 0.5);
+        dbLevelR += Math.Abs(dbLevelR * 0.5);
 
-        //Console.WriteLine("{0} {1}",(int)dbLevelL, (int)dbLevelR);
+        Log.Debug("OnVUMterTimerTickEvent: {0} - {1} | {2} - {3}", (int)dbLevelL, (int)dbLevelR, dbLevelL, dbLevelR);
 
         string file = "VU1.png";
         if ((int) dbLevelL < -15)
