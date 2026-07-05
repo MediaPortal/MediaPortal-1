@@ -713,146 +713,51 @@ namespace MediaPortal.GUI.Music
     /// <param name="e"></param>
     private void OnVUMterTimerTickEvent(object sender, ElapsedEventArgs e)
     {
-      double dbLevelL = 0.0;
-      double dbLevelR = 0.0;
       if (BassAudioEngine._initialized)
       {
-        BassMusicPlayer.Player.RMS(out dbLevelL, out dbLevelR);
+        BassMusicPlayer.Player.RMS(out double dbfsL, out double dbfsR);
 
-        // Raise the level with factor 1.5 so that the VUMeter shows more activity
-        dbLevelL += Math.Abs(dbLevelL * 0.5);
-        dbLevelR += Math.Abs(dbLevelR * 0.5);
+        // Calibration: Shift the digital scale so that -18 dBFS aligns with 0 VU reference point.
+        // Adjusted from 18.0 to 21.0 to compensate for the -3 dB attenuation introduced by the BASS core routing.
+        const double calibrationOffset = 21.0; 
+        double vuLevelL = dbfsL + calibrationOffset;
+        double vuLevelR = dbfsR + calibrationOffset;
 
-        Log.Debug("OnVUMterTimerTickEvent: {0} - {1} | {2} - {3}", (int)dbLevelL, (int)dbLevelR, dbLevelL, dbLevelR);
+        // Log.Debug("VU Meter Levels (VU Scale): L={0:F2} dB | R={1:F2} dB", vuLevelL, vuLevelR);
 
-        string file = "VU1.png";
-        if ((int) dbLevelL < -15)
-        {
-          file = "VU1.png";
-        }
-        else if ((int) dbLevelL < -10)
-        {
-          file = "VU2.png";
-        }
-        else if ((int) dbLevelL < -8)
-        {
-          file = "VU3.png";
-        }
-        else if ((int) dbLevelL < -7)
-        {
-          file = "VU4.png";
-        }
-        else if ((int) dbLevelL < -6)
-        {
-          file = "VU5.png";
-        }
-        else if ((int) dbLevelL < -5)
-        {
-          file = "VU6.png";
-        }
-        else if ((int) dbLevelL < -4)
-        {
-          file = "VU7.png";
-        }
-        else if ((int) dbLevelL < -3)
-        {
-          file = "VU8.png";
-        }
-        else if ((int) dbLevelL < -2)
-        {
-          file = "VU9.png";
-        }
-        else if ((int) dbLevelL < -1)
-        {
-          file = "VU10.png";
-        }
-        else if ((int) dbLevelL < 0)
-        {
-          file = "VU11.png";
-        }
-        else if ((int) dbLevelL < 1)
-        {
-          file = "VU12.png";
-        }
-        else if ((int) dbLevelL < 2)
-        {
-          file = "VU13.png";
-        }
-        else if ((int) dbLevelL < 3)
-        {
-          file = "VU14.png";
-        }
-        else
-        {
-          file = "VU15.png";
-        }
-        // GUIPropertyManager.SetProperty("#VUMeterL", Path.Combine(VUMeterLeft.ImagePath, file));
-        GUIPropertyManager.SetProperty("#VUMeterL", file);
+        // Resolve the texture names according to the calibrated VU scale
+        string fileL = GetVUTextureName(vuLevelL);
+        string fileR = GetVUTextureName(vuLevelR);
 
-        if ((int) dbLevelR < -15)
-        {
-          file = "VU1.png";
-        }
-        else if ((int) dbLevelR < -10)
-        {
-          file = "VU2.png";
-        }
-        else if ((int) dbLevelR < -8)
-        {
-          file = "VU3.png";
-        }
-        else if ((int) dbLevelR < -7)
-        {
-          file = "VU4.png";
-        }
-        else if ((int) dbLevelR < -6)
-        {
-          file = "VU5.png";
-        }
-        else if ((int) dbLevelR < -5)
-        {
-          file = "VU6.png";
-        }
-        else if ((int) dbLevelR < -4)
-        {
-          file = "VU7.png";
-        }
-        else if ((int) dbLevelR < -3)
-        {
-          file = "VU8.png";
-        }
-        else if ((int) dbLevelR < -2)
-        {
-          file = "VU9.png";
-        }
-        else if ((int) dbLevelR < -1)
-        {
-          file = "VU10.png";
-        }
-        else if ((int) dbLevelR < 0)
-        {
-          file = "VU11.png";
-        }
-        else if ((int) dbLevelR < 1)
-        {
-          file = "VU12.png";
-        }
-        else if ((int) dbLevelR < 2)
-        {
-          file = "VU13.png";
-        }
-        else if ((int) dbLevelR < 3)
-        {
-          file = "VU14.png";
-        }
-        else
-        {
-          file = "VU15.png";
-        }
-        // GUIPropertyManager.SetProperty("#VUMeterR", Path.Combine(VUMeterRight.ImagePath, file));
-        GUIPropertyManager.SetProperty("#VUMeterR", file);
+        GUIPropertyManager.SetProperty("#VUMeterL", fileL);
+        GUIPropertyManager.SetProperty("#VUMeterR", fileR);
       }
     }
+
+    /// <summary>
+    /// Maps calibrated VU decibel values directly to the non-linear analog meter texture slots.
+    /// </summary>
+    private string GetVUTextureName(double vuLevel)
+    {
+      // Exact mapping based on the visual layout of your 15-frame VU meter
+      if (vuLevel <= -15.0) return "VU1.png";  // -20 VU (Minimum resting point)
+      if (vuLevel <= -11.0) return "VU2.png";  // Approach to -10 VU
+      if (vuLevel <= -9.0) return "VU3.png";   // -10 VU
+      if (vuLevel <= -7.5) return "VU4.png";   // Between -10 and -7 VU
+      if (vuLevel <= -6.5) return "VU5.png";   // -8 VU
+      if (vuLevel <= -5.5) return "VU6.png";   // -7 VU
+      if (vuLevel <= -4.5) return "VU7.png";   // -5 VU
+      if (vuLevel <= -3.5) return "VU8.png";   // -4 VU
+      if (vuLevel <= -2.5) return "VU9.png";   // -3 VU
+      if (vuLevel <= -1.5) return "VU10.png";  // -2 VU
+      if (vuLevel <= -0.5) return "VU11.png";  // -1 VU
+      if (vuLevel <= 0.5) return "VU12.png";   //  0 VU (Reference Zero Point)
+      if (vuLevel <= 1.5) return "VU13.png";   // +1 VU
+      if (vuLevel <= 2.5) return "VU14.png";   // +2 VU
+
+      return "VU15.png";                       // +3 VU (Scale Maximum / Red Zone)
+    }
+
 
     private void UpdateImagePathContainer()
     {
