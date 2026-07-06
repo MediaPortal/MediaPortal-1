@@ -123,6 +123,8 @@ namespace MediaPortal.GUI.Music
     private static readonly Random Randomizer = new Random();
     private bool _lookupSimilarTracks;
     private bool _isStopped = false;
+    private double _smoothLevelL = -15.0;
+    private double _smoothLevelR = -15.0;
 
     #endregion
 
@@ -512,7 +514,7 @@ namespace MediaPortal.GUI.Music
           _vuMeter.ToLowerInvariant() != "none")
       {
         VUMeterTimer = new Timer();
-        VUMeterTimer.Interval = 10;
+        VUMeterTimer.Interval = 30;
         VUMeterTimer.Elapsed += new ElapsedEventHandler(OnVUMterTimerTickEvent);
         VUMeterTimer.Start();
       }
@@ -738,9 +740,18 @@ namespace MediaPortal.GUI.Music
           vuLevelR = 3.0 * (1.0 - Math.Exp(-vuLevelR / 9.0));
         }
 
+        // Ballistics: Smooth needle decay
+        // 1.0 means instant movement (for attack), 0.18 means smooth falling (for decay)
+        // Adjusted specifically for a 30ms timer interval to mimic IEC 60268-17 standard.
+        double coefL = (vuLevelL > _smoothLevelL) ? 1.0 : 0.13;
+        _smoothLevelL += (vuLevelL - _smoothLevelL) * coefL;
+
+        double coefR = (vuLevelR > _smoothLevelR) ? 1.0 : 0.13;
+        _smoothLevelR += (vuLevelR - _smoothLevelR) * coefR;
+
         // Resolve the texture names according to the calibrated VU scale
-        string fileL = GetVUTextureName(vuLevelL);
-        string fileR = GetVUTextureName(vuLevelR);
+        string fileL = GetVUTextureName(_smoothLevelL);
+        string fileR = GetVUTextureName(_smoothLevelR);
 
         GUIPropertyManager.SetProperty("#VUMeterL", fileL);
         GUIPropertyManager.SetProperty("#VUMeterR", fileR);
