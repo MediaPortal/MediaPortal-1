@@ -718,11 +718,25 @@ namespace MediaPortal.GUI.Music
         BassMusicPlayer.Player.RMS(out double dbfsL, out double dbfsR);
 
         // Calibration: Shift the digital scale so that -18 dBFS aligns with 0 VU reference point.
-        const double calibrationOffset = 18.0; 
+        // Additionally adds +3.01 dB (AES-17) to compensate for the Peak-to-RMS difference of a sine wave.
+        const double calibrationOffset = 21.01; 
         double vuLevelL = dbfsL + calibrationOffset;
         double vuLevelR = dbfsR + calibrationOffset;
 
         // Log.Debug("VU Meter Levels (VU Scale): L={0:F2} dB | R={1:F2} dB", vuLevelL, vuLevelR);
+
+        // Non-linear compression for the positive zone (+0VU to +3VU)
+        // If the signal goes above 0VU, we softly compress it so it fits within the +3VU maximum texture limit.
+        if (vuLevelL > 0.0)
+        {
+          // Math.Exp function flattens the curve. 
+          // Even at +16dBFS over-level, it smoothly scales down to +3VU
+          vuLevelL = 3.0 * (1.0 - Math.Exp(-vuLevelL / 9.0));
+        }
+        if (vuLevelR > 0.0)
+        {
+          vuLevelR = 3.0 * (1.0 - Math.Exp(-vuLevelR / 9.0));
+        }
 
         // Resolve the texture names according to the calibrated VU scale
         string fileL = GetVUTextureName(vuLevelL);
