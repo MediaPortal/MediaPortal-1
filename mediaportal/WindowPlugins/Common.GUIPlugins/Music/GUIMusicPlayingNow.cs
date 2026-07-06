@@ -730,7 +730,7 @@ namespace MediaPortal.GUI.Music
         if (vuLevelL > 0.0)
         {
           // Math.Exp function flattens the curve. 
-          // Even at +16dBFS over-level, it smoothly scales down to +3VU
+          // Even at +16VU over-level, it smoothly scales down to +3VU
           vuLevelL = 3.0 * (1.0 - Math.Exp(-vuLevelL / 9.0));
         }
         if (vuLevelR > 0.0)
