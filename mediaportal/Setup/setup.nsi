@@ -690,7 +690,7 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\MetadataExtractor.2.9.3\lib\netstandard2.0\MetadataExtractor.dll"
   File "${git_ROOT}\Packages\XmpCore.6.1.10.1\lib\net35\XmpCore.dll"
-  File "${git_ROOT}\Packages\System.Buffers.4.6.1\lib\net462.0\System.Buffers.dll"
+  File "${git_ROOT}\Packages\System.Buffers.4.6.1\lib\net462\System.Buffers.dll"
   File "${git_ROOT}\Packages\System.Memory.4.6.3\lib\net462\System.Memory.dll"
   File "${git_ROOT}\Packages\System.Numerics.Vectors.4.6.1\lib\net462\System.Numerics.Vectors.dll"
   File "${git_ROOT}\Packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll"
