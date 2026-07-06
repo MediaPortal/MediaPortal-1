@@ -718,8 +718,7 @@ namespace MediaPortal.GUI.Music
         BassMusicPlayer.Player.RMS(out double dbfsL, out double dbfsR);
 
         // Calibration: Shift the digital scale so that -18 dBFS aligns with 0 VU reference point.
-        // Adjusted from 18.0 to 21.0 to compensate for the -3 dB attenuation introduced by the BASS core routing.
-        const double calibrationOffset = 21.0; 
+        const double calibrationOffset = 18.0; 
         double vuLevelL = dbfsL + calibrationOffset;
         double vuLevelR = dbfsR + calibrationOffset;
 
