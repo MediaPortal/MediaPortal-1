@@ -727,17 +727,32 @@ namespace MediaPortal.GUI.Music
 
         // Log.Debug("VU Meter Levels (VU Scale): L={0:F2} dB | R={1:F2} dB", vuLevelL, vuLevelR);
 
-        // Non-linear compression for the positive zone (+0VU to +3VU)
-        // If the signal goes above 0VU, we softly compress it so it fits within the +3VU maximum texture limit.
+        // Left channel non-linear compression and expansion
         if (vuLevelL > 0.0)
         {
-          // Math.Exp function flattens the curve. 
-          // Even at +16VU over-level, it smoothly scales down to +3VU
+          // Positive zone (+0VU to +3VU): Softly flattens over-levels towards +3VU limit.
+          // The Math.Exp function flattens the curve, smoothly scaling down even a +16VU spike.
           vuLevelL = 3.0 * (1.0 - Math.Exp(-vuLevelL / 9.0));
         }
+        else
+        {
+          // Negative zone (-45VU up to 0VU): Non-linear expansion that safely lifts -45VU up to -20VU.
+          // 1.083 is the mathematically calculated denominator to ensure that an input of -45VU results exactly in -20VU.
+          if (vuLevelL < -45.0) vuLevelL = -45.0;
+          vuLevelL = -20.0 * (1.0 - Math.Exp(vuLevelL / 1.083)) / (1.0 - Math.Exp(-45.0 / 1.083));
+        }
+
+        // Right channel non-linear compression and expansion
         if (vuLevelR > 0.0)
         {
+          // Positive zone (+0VU to +3VU): Softly flattens over-levels towards +3VU limit.
           vuLevelR = 3.0 * (1.0 - Math.Exp(-vuLevelR / 9.0));
+        }
+        else
+        {
+          // Negative zone (-45VU up to 0VU): Non-linear expansion that safely lifts -45VU up to -20VU.
+          if (vuLevelR < -45.0) vuLevelR = -45.0;
+          vuLevelR = -20.0 * (1.0 - Math.Exp(vuLevelR / 1.083)) / (1.0 - Math.Exp(-45.0 / 1.083));
         }
 
         // Ballistics: Smooth needle decay
