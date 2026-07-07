@@ -2316,7 +2316,7 @@ namespace MediaPortal.MusicPlayer.BASS
       }
 
       int _result = -1;
-      float[] _fft = new float;
+      float[] _fft = new float[1024];
 
       try
       {
