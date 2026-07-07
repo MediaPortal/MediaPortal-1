@@ -2305,7 +2305,8 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         return false;
       }
-      if (lines < 0 || lines > 255)
+      // Prevent division by zero and invalid grid sizes (minimum 2 lines required)
+      if (lines < 2 || lines > 255)
       {
         return false;
       }
@@ -2315,7 +2316,7 @@ namespace MediaPortal.MusicPlayer.BASS
       }
 
       int _result = -1;
-      float[] _fft = new float[1024];
+      float[] _fft = new float;
 
       try
       {
@@ -2342,12 +2343,18 @@ namespace MediaPortal.MusicPlayer.BASS
       }
       if (_result < 0)
       {
-        return false ;
+        return false;
       }
 
       int x, y;
       int b0 = 0;
       bool _needRecalc = (_min != _max && _min != 0 && _max != 255);
+
+      // Calibration constants to align -18 dBFS with 0 VU reference point
+      const double calibrationOffset = 18.0;
+      const double minVU = -45.0; // Lower silence floor (-63 dBFS)
+      const double midVU = -21.0; // Mid-way transition point (-39 dBFS)
+      const double refVU = 0.0;   // Reference 0 VU point (-18 dBFS)
 
       // Computes the spectrum data, the code is taken from a bass_wasapi sample.
       for (x = 0; x < lines; x++)
@@ -2369,16 +2376,48 @@ namespace MediaPortal.MusicPlayer.BASS
             peak = _fft[1 + b0];
           }
         }
-        y = (int)(Math.Sqrt(peak) * 3 * 255 - 4);
 
-        if (y > 255) 
-        { 
-          y = 255;
-        }
-        if (y < 0)
+        // Convert linear FFT amplitude to dBFS scale.
+        // Add 1e-8 offset to prevent Math.Log10(0) returning NaN in complete silence.
+        double dbfs = 20 * Math.Log10(peak + 1e-8);
+
+        // Apply basic calibration (Aligns -18 dBFS to 0 VU / 0 dB)
+        double vuLevel = dbfs + calibrationOffset;
+
+        // Non-linear multi-zone compression
+        if (vuLevel > 0.0)
         {
-           y = 0;
+          // RED ZONE (vuLevel > 0 VU): 
+          // Re-calibrated so that a 0 dBFS input signal (vuLevel = +18.0) maps precisely to +5.0 VU.
+          double compressedVU = 5.0 * (1.0 - Math.Exp(-vuLevel / 5.43));
+          // Map +0 VU..+5 VU to the upper 25% height range (191..255)
+          double normUpper = compressedVU / 5.0;
+          y = 191 + (int)(normUpper * 64.0);
         }
+        else
+        {
+          // LOWER ZONE (vuLevel <= 0 VU):
+          // Dual-stage non-linear compression to lift -45 VU towards -21 VU,
+          // while expanding the -21 VU to 0 VU range for high resolution on musical mid-levels.
+          if (vuLevel < minVU) vuLevel = minVU;
+          double normLower;
+          if (vuLevel < midVU)
+          {
+            // Sub-stage A: Deep quiet elements (-45 VU to -21 VU) mapped to 0% - 30% of lower height
+            double segmentFactor = (vuLevel - minVU) / (midVU - minVU);
+            normLower = segmentFactor * 0.3;
+          }
+          else
+          {
+            // Sub-stage B: Active music dynamics (-21 VU to 0 VU) mapped to 30% - 100% of lower height
+            double segmentFactor = (vuLevel - midVU) / (refVU - midVU);
+            normLower = 0.3 + (segmentFactor * 0.7);
+          }
+          // Map the combined non-linear factor to the lower 75% height range (0..191)
+          y = (int)(normLower * 191.0);
+        }
+        y = Math.Max(0, Math.Min(y, 255));
+
         if (_needRecalc)
         {
           y = (int)( ( ( (float)y / 255.0 ) * ( (float)_max - (float)_min) ) + (float)_min );
