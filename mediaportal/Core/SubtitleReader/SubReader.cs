@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2026 Team MediaPortal
+#region Copyright (C) 2005-2011 Team MediaPortal
 
-// Copyright (C) 2005-2026 Team MediaPortal
+// Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -42,16 +42,7 @@ namespace MediaPortal.Subtitle
       {
         try
         {
-          Assembly assem = null;
-          try
-          {
-            assem = AppDomain.CurrentDomain.Load(AssemblyName.GetAssemblyName(strFile));
-          }
-          catch (Exception)
-          {
-            assem = Assembly.LoadFrom(strFile);
-          }
-
+          Assembly assem = Assembly.LoadFrom(strFile);
           if (assem != null)
           {
             Type[] types = assem.GetExportedTypes();
