@@ -2316,19 +2316,38 @@ namespace MediaPortal.MusicPlayer.BASS
       }
 
       int _result = -1;
-      float[] _fft = new float[1024];
+      float[] _fft = new float;
+      double sampleRate = 44100.0; // Fallback value
 
       try
       {
         if (Config.MusicPlayer == AudioPlayer.WasApi)
         {
           _result = GetDataFFT(_fft, (int)BASSData.BASS_DATA_FFT2048);
+          if (_result >= 0)
+          {
+            // Fetch info directly from the active WASAPI output device
+            BASS_WASAPI_INFO wasapiInfo = Un4seen.Bass.BassWasapi.BASS_WASAPI_GetInfo();
+            if (wasapiInfo != null)
+            {
+              sampleRate = wasapiInfo.freq; // Gets current WASAPI endpoint rate (e.g., 48000 Hz)
+            }
+          }
         }
         else
         {
           if (_streamcopy != null)
           {
             _result = GetChannelData(_streamcopy.ChannelHandle, _fft, (int)BASSData.BASS_DATA_FFT2048);
+            if (_result >= 0)
+            {
+              // Fetch info directly from the accessible stream copy handle
+              BASS_CHANNELINFO chinfo = Un4seen.Bass.Bass.BASS_ChannelGetInfo(_streamcopy.ChannelHandle);
+              if (chinfo != null)
+              {
+                sampleRate = chinfo.freq; // Automatically gets 44100, 48000, 96000, etc.
+              }
+            }
           }
           else
           {
@@ -2346,85 +2365,66 @@ namespace MediaPortal.MusicPlayer.BASS
         return false;
       }
 
-      int x, y;
-      int b0 = 0;
+      int maxFFTIndex = _fft.Length - 1; // 1023
       bool _needRecalc = (_min != _max && _min != 0 && _max != 255);
 
-      // Calibration constants to align -18 dBFS with 0 VU reference point
-      const double calibrationOffset = 18.0;
-      const double minVU = -45.0; // Lower silence floor (-63 dBFS)
-      const double midVU = -21.0; // Mid-way transition point (-39 dBFS)
-      const double refVU = 0.0;   // Reference 0 VU point (-18 dBFS)
+      // Frequency distribution settings (Standard human hearing range)
+      double minFreq = 20.0;
+      double maxFreq = 20000.0;
 
-      // Computes the spectrum data, the code is taken from a bass_wasapi sample.
-      for (x = 0; x < lines; x++)
+      for (int x = 0; x < lines; x++)
       {
+        // Logarithmic frequency bin distribution
+        double f0 = minFreq * Math.Pow(maxFreq / minFreq, (double)x / lines);
+        double f1 = minFreq * Math.Pow(maxFreq / minFreq, (double)(x + 1) / lines);
+
+        // Map frequencies to FFT array indices using the detected sample rate
+        int b0 = (int)Math.Floor(f0 * 1024.0 / sampleRate);
+        int b1 = (int)Math.Ceiling(f1 * 1024.0 / sampleRate);
+
+        // Ensure indices stay within valid array boundaries
+        b0 = Math.Max(1, Math.Min(b0, maxFFTIndex)); 
+        b1 = Math.Max(b0 + 1, Math.Min(b1, maxFFTIndex));
+
         float peak = 0;
-        int b1 = (int)Math.Pow(2, x * 10.0 / (lines - 1));
-        if (b1 > 1023) 
+        for (int i = b0; i < b1; i++)
         {
-          b1 = 1023;
-        }
-        if (b1 <= b0)
-        {
-          b1 = b0 + 1;
-        }
-        for (; b0 < b1; b0++)
-        {
-          if (peak < _fft[1 + b0]) 
+          if (_fft[i] > peak) 
           {
-            peak = _fft[1 + b0];
+            peak = _fft[i];
           }
         }
 
-        // Convert linear FFT amplitude to dBFS scale.
-        // Add 1e-8 offset to prevent Math.Log10(0) returning NaN in complete silence.
-        double dbfs = 20 * Math.Log10(peak + 1e-8);
+        // Convert linear FFT amplitude to dBFS scale
+        // 1e-5 offset prevents Math.Log10(0) and sets the hard noise floor to -100 dBFS
+        double dbfs = 20 * Math.Log10(peak + 1e-5); 
 
-        // Apply basic calibration (Aligns -18 dBFS to 0 VU / 0 dB)
-        double vuLevel = dbfs + calibrationOffset;
+        // Linear dynamic range scaling
+        // -60 dBFS represents silence (0% height), 0 dBFS represents maximum (100% height)
+        double minDB = -60.0; 
+        double maxDB = 0.0;
 
-        // Non-linear multi-zone compression
-        if (vuLevel > 0.0)
-        {
-          // RED ZONE (vuLevel > 0 VU): 
-          // Re-calibrated so that a 0 dBFS input signal (vuLevel = +18.0) maps precisely to +5.0 VU.
-          double compressedVU = 5.0 * (1.0 - Math.Exp(-vuLevel / 5.43));
-          // Map +0 VU..+5 VU to the upper 25% height range (191..255)
-          double normUpper = compressedVU / 5.0;
-          y = 191 + (int)(normUpper * 64.0);
-        }
-        else
-        {
-          // LOWER ZONE (vuLevel <= 0 VU):
-          // Dual-stage non-linear compression to lift -45 VU towards -21 VU,
-          // while expanding the -21 VU to 0 VU range for high resolution on musical mid-levels.
-          if (vuLevel < minVU) vuLevel = minVU;
-          double normLower;
-          if (vuLevel < midVU)
-          {
-            // Sub-stage A: Deep quiet elements (-45 VU to -21 VU) mapped to 0% - 30% of lower height
-            double segmentFactor = (vuLevel - minVU) / (midVU - minVU);
-            normLower = segmentFactor * 0.3;
-          }
-          else
-          {
-            // Sub-stage B: Active music dynamics (-21 VU to 0 VU) mapped to 30% - 100% of lower height
-            double segmentFactor = (vuLevel - midVU) / (refVU - midVU);
-            normLower = 0.3 + (segmentFactor * 0.7);
-          }
-          // Map the combined non-linear factor to the lower 75% height range (0..191)
-          y = (int)(normLower * 191.0);
-        }
-        y = Math.Max(0, Math.Min(y, 255));
+        if (dbfs < minDB) dbfs = minDB;
+        if (dbfs > maxDB) dbfs = maxDB;
 
+        // Normalize value to 0.0 - 1.0 range
+        double normalized = (dbfs - minDB) / (maxDB - minDB);
+
+        // Gamma correction: Adds beautiful organic bounce to bars and exposes rich mid-to-quiet details
+        normalized = Math.Sqrt(normalized);
+
+        // Map normalized value to base byte range
+        int y = (int)(normalized * 255.0);
+
+        // Recalculate grid mapping
         if (_needRecalc)
         {
-          y = (int)( ( ( (float)y / 255.0 ) * ( (float)_max - (float)_min) ) + (float)_min );
+          y = (int)((((float)y / 255.0f) * ((float)_max - (float)_min)) + (float)_min);
         }
 
-        spectrum[x] = y;
+        spectrum[x] = Math.Max(0, Math.Min(y, 255));
       }
+
       return true;
     }
 
