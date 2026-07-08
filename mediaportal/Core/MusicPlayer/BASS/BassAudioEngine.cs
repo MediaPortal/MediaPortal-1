@@ -2412,7 +2412,7 @@ namespace MediaPortal.MusicPlayer.BASS
         normalized = Math.Sqrt(normalized);
 
         // Map normalized value to base byte range
-        int y = (int)(normalized * 255.0);
+        int y = (int)Math.Round(normalized * 255.0);
 
         // Recalculate grid mapping
         if (_needRecalc)
