@@ -736,10 +736,12 @@ namespace MediaPortal.GUI.Music
         }
         else
         {
-          // Negative zone (-45VU up to 0VU): Non-linear expansion that safely lifts -45VU up to -20VU.
-          // 1.083 is the mathematically calculated denominator to ensure that an input of -45VU results exactly in -20VU.
+          // Negative zone (-45VU up to 0VU): Smoothly scales down towards -20VU.
           if (vuLevelL < -45.0) vuLevelL = -45.0;
-          vuLevelL = -20.0 * (1.0 - Math.Exp(vuLevelL / 1.083)) / (1.0 - Math.Exp(-45.0 / 1.083));
+          // Scale the dynamic range so that -45 VU of silence maps smoothly to your lowest texture (-20 VU).
+          // Using a tuning factor of 15.0 allows the needle to decay linearly and spend more time 
+          // in the active musical zones (-3 to -15 VU), rather than dropping like a stone.
+          vuLevelL = -20.0 * (1.0 - Math.Exp(vuLevelL / 15.0)) / (1.0 - Math.Exp(-45.0 / 15.0));          
         }
 
         // Right channel non-linear compression and expansion
@@ -750,9 +752,12 @@ namespace MediaPortal.GUI.Music
         }
         else
         {
-          // Negative zone (-45VU up to 0VU): Non-linear expansion that safely lifts -45VU up to -20VU.
+          // Negative zone (-45VU up to 0VU): Smoothly scales down towards -20VU.
           if (vuLevelR < -45.0) vuLevelR = -45.0;
-          vuLevelR = -20.0 * (1.0 - Math.Exp(vuLevelR / 1.083)) / (1.0 - Math.Exp(-45.0 / 1.083));
+          // Scale the dynamic range so that -45 VU of silence maps smoothly to your lowest texture (-20 VU).
+          // Using a tuning factor of 15.0 allows the needle to decay linearly and spend more time 
+          // in the active musical zones (-3 to -15 VU), rather than dropping like a stone.
+          vuLevelR = -20.0 * (1.0 - Math.Exp(vuLevelR / 15.0)) / (1.0 - Math.Exp(-45.0 / 15.0));          
         }
 
         // Ballistics: Smooth needle decay
