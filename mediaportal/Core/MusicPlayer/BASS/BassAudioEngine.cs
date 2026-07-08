@@ -2327,7 +2327,7 @@ namespace MediaPortal.MusicPlayer.BASS
           if (_result >= 0)
           {
             // Fetch info directly from the active WASAPI output device
-            BASS_WASAPI_INFO wasapiInfo = Un4seen.Bass.BassWasapi.BASS_WASAPI_GetInfo();
+            BASS_WASAPI_INFO wasapiInfo = BassWasapi.BASS_WASAPI_GetInfo();
             if (wasapiInfo != null)
             {
               sampleRate = wasapiInfo.freq; // Gets current WASAPI endpoint rate (e.g., 48000 Hz)
@@ -2342,7 +2342,7 @@ namespace MediaPortal.MusicPlayer.BASS
             if (_result >= 0)
             {
               // Fetch info directly from the accessible stream copy handle
-              BASS_CHANNELINFO chinfo = Un4seen.Bass.Bass.BASS_ChannelGetInfo(_streamcopy.ChannelHandle);
+              BASS_CHANNELINFO chinfo = Bass.BASS_ChannelGetInfo(_streamcopy.ChannelHandle);
               if (chinfo != null)
               {
                 sampleRate = chinfo.freq; // Automatically gets 44100, 48000, 96000, etc.
@@ -2365,8 +2365,7 @@ namespace MediaPortal.MusicPlayer.BASS
         return false;
       }
 
-      int maxFFTIndex = _fft.Length - 1; // 1023
-      bool _needRecalc = (_min != _max && _min != 0 && _max != 255);
+      bool _needRecalc = !(_min == 0 && _max == 255) && (_max != _min);
 
       // Frequency distribution settings (Standard human hearing range)
       double minFreq = 20.0;
@@ -2382,9 +2381,8 @@ namespace MediaPortal.MusicPlayer.BASS
         int b0 = (int)Math.Floor(f0 * 1024.0 / sampleRate);
         int b1 = (int)Math.Ceiling(f1 * 1024.0 / sampleRate);
 
-        // Ensure indices stay within valid array boundaries
-        b0 = Math.Max(1, Math.Min(b0, maxFFTIndex)); 
-        b1 = Math.Max(b0 + 1, Math.Min(b1, maxFFTIndex));
+        b0 = Math.Max(1, Math.Min(b0, _fft.Length - 1)); 
+        b1 = Math.Max(b0 + 1, Math.Min(b1, _fft.Length));
 
         float peak = 0;
         for (int i = b0; i < b1; i++)
@@ -2396,8 +2394,8 @@ namespace MediaPortal.MusicPlayer.BASS
         }
 
         // Convert linear FFT amplitude to dBFS scale
-        // 1e-5 offset prevents Math.Log10(0) and sets the hard noise floor to -100 dBFS
-        double dbfs = 20 * Math.Log10(peak + 1e-5); 
+        // 1e-8 offset prevents Math.Log10(0) and sets the hard noise floor to -160 dBFS
+        double dbfs = 20 * Math.Log10(peak + 1e-8); 
 
         // Linear dynamic range scaling
         // -60 dBFS represents silence (0% height), 0 dBFS represents maximum (100% height)
