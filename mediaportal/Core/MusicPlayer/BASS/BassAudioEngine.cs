@@ -2399,8 +2399,8 @@ namespace MediaPortal.MusicPlayer.BASS
 
         // Linear dynamic range scaling
         // -60 dBFS represents silence (0% height), 0 dBFS represents maximum (100% height)
-        double minDB = -60.0; 
-        double maxDB = 0.0;
+        double minDB = -60.0;
+        double maxDB = -0.5; // Shifted slightly from 0.0 to compensate for spectral leakage
 
         if (dbfs < minDB) dbfs = minDB;
         if (dbfs > maxDB) dbfs = maxDB;
@@ -2411,16 +2411,17 @@ namespace MediaPortal.MusicPlayer.BASS
         // Gamma correction: Adds beautiful organic bounce to bars and exposes rich mid-to-quiet details
         normalized = Math.Sqrt(normalized);
 
-        // Map normalized value to base byte range
-        int y = (int)Math.Round(normalized * 255.0);
+        // Map normalized value to the active canvas coordinate grid
+        float rawHeight = _needRecalc ? ((float)normalized * (_max - _min)) + _min : (float)normalized * 255.0f;
 
-        // Recalculate grid mapping
-        if (_needRecalc)
-        {
-          y = (int)((((float)y / 255.0f) * ((float)_max - (float)_min)) + (float)_min);
-        }
+        // Apply a single atomic round operation to avoid precision loss on peak levels
+        int barHeight = (int)Math.Round(rawHeight);
 
-        spectrum[x] = Math.Max(0, Math.Min(y, 255));
+        // Clamp the final value safely within the resolved grid boundaries
+        int clampMin = _needRecalc ? Math.Min(_min, _max) : 0;
+        int clampMax = _needRecalc ? Math.Max(_min, _max) : 255;
+
+        spectrum[x] = Math.Max(clampMin, Math.Min(barHeight, clampMax));
       }
 
       return true;
