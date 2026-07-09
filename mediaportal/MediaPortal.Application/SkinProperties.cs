@@ -60,16 +60,23 @@ namespace MediaPortal
       if (mirror.TryGetValue(tag, out var item))
       {
         item.Value = tagValue;
-        filtered.ReSort();
       }
       else
       {
         var nwItem = AddItem(tag, tagValue);
         if (isInFilter(nwItem))
           filtered.Add(nwItem);
-        filtered.ReSort();
       }
+      ReSort();
     }
+
+    private void ReSort()
+    {
+      int firstRow = dataGridView1.FirstDisplayedScrollingRowIndex;
+      filtered.ReSort();
+      dataGridView1.FirstDisplayedScrollingRowIndex = firstRow;
+    }
+
 
     private void GUIPropertyManager_OnPropertyChanged(string tag, string tagValue)
     {
@@ -110,7 +117,7 @@ namespace MediaPortal
         filtered.Add(item);
       }
       filtered.RaiseListChangedEvents = true;
-      filtered.ReSort();
+      ReSort();
       filtered.ResetBindings();
     }
 
