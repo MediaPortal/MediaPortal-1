@@ -462,18 +462,7 @@ namespace MediaPortal.ServiceImplementations
             //Extract width
             if (job.ImageSize == Size.Empty)
             {
-              IReadOnlyList<Directory> dirs = null;
-              try
-              {
-                dirs = System.Threading.Tasks.Task.Run(() => ImageMetadataReader.ReadMetadata(job.FilePath)).Result;
-              }
-              catch (Exception ex)
-              {
-                Exception realEx = (ex is AggregateException agEx) ? agEx.Flatten().InnerException : ex;
-                _Logger.Error("[ImageLoadService][buildThumb] Metadata initialization failed safely: {0} {1}", realEx.Message, realEx.StackTrace);
-                dirs = new List<Directory>().AsReadOnly();
-              }
-
+              IReadOnlyList<Directory> dirs = ImageMetadataReader.ReadMetadata(job.FilePath);
               for (int i = 0; i < dirs.Count; i++)
               {
                 Directory directory = dirs[i];
