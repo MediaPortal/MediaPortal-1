@@ -573,14 +573,14 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\tevii.dll"
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
 
-  ; Additional assemblies
-  File "${TVSERVER.BASE}\System.Threading.Tasks.Extensions.dll"
-  File "${TVSERVER.BASE}\System.Runtime.CompilerServices.Unsafe.dll"
-
   ; WatchDogService
   File "${git_Common_MP_TVE3}\WatchDogService.Interface\bin\${BUILD_TYPE}\WatchDogService.Interface.dll"
   File "${git_TVServer}\WatchDogService\bin\${BUILD_TYPE}\WatchDogService.exe"
 
+  ; Additional assemblies
+  SetOutPath "$INSTDIR"
+  File "${git_ROOT}\Packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll"
+  File "${git_ROOT}\Packages\System.Threading.Tasks.Extensions.4.6.3\lib\net462\System.Threading.Tasks.Extensions.dll"
 
   ; MediaInfo
   SetOutPath "$INSTDIR"
@@ -861,8 +861,8 @@ ${MementoSectionEnd}
   Delete "$INSTDIR\MediaInfo.Wrapper.dll"
 
   ; Additional assemblies
-  Delete "$INSTDIR\System.Threading.Tasks.Extensions.dll"
   Delete "$INSTDIR\System.Runtime.CompilerServices.Unsafe.dll"
+  Delete "$INSTDIR\System.Threading.Tasks.Extensions.dll"
   Delete "$INSTDIR\System.ValueTuple.dll"
 
   ; protocol implementations for MPIPTVSource.ax
@@ -922,8 +922,11 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File /oname=System.Data.SQLite.dll "${git_TVServer}\TVDatabase\references\System.Data.SQLite_${Architecture}.dll"
   File "${git_TVServer}\TVDatabase\references\log4net.dll"
   File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
-  File "${git_TVServer}\TVServer.Base\System.Threading.Tasks.Extensions.dll"
-  File "${git_TVServer}\TVServer.Base\System.Runtime.CompilerServices.Unsafe.dll"
+
+  ; Additional assemblies
+  SetOutPath "$MPdir.Base"
+  File "${git_ROOT}\Packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll"
+  File "${git_ROOT}\Packages\System.Threading.Tasks.Extensions.4.6.3\lib\net462\System.Threading.Tasks.Extensions.dll"
 
   ;Gentle.Config
   SetOutPath "$MPdir.Config"
@@ -985,8 +988,8 @@ ${MementoSectionEnd}
   Delete "$MPdir.Base\TvBusinessLayer.dll"
   Delete "$MPdir.Base\TvControl.dll"
   Delete "$MPdir.Base\TvLibrary.Interfaces.dll"
-  Delete "$MPdir.Base\System.Threading.Tasks.Extensions.dll"
   Delete "$MPdir.Base\System.Runtime.CompilerServices.Unsafe.dll"
+  Delete "$MPdir.Base\System.Threading.Tasks.Extensions.dll"
 !macroend
 
 ${MementoSectionDone}
