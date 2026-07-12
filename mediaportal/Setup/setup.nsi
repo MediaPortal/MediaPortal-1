@@ -1328,13 +1328,13 @@ Section -Post
   ${If} $noDesktopSC != 1
     !if "${Architecture}" == "x64"
     CreateShortCut "$DESKTOP\MediaPortal.lnk"               "$MPdir.Base\MediaPortal.exe"      "" "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal (x64)"
-    CreateShortCut "$DESKTOP\MediaPortal SkinProperties.lnk" "$MPdir.Base\MediaPortal.exe"    "/SkinProperties" "$MPdir.Base\SkinProperties.ico"   0 "" "" "MediaPortal SkinProperties"
+    CreateShortCut "$DESKTOP\MediaPortal SkinProperties.lnk" "$MPdir.Base\MediaPortal.exe"    "/SkinProperties /windowed" "$MPdir.Base\SkinProperties.ico"   0 "" "" "MediaPortal SkinProperties"
     CreateShortCut "$DESKTOP\MediaPortal Configuration.lnk" "$MPdir.Base\Configuration.exe"    "" "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration (x64)"
     CreateShortCut "$DESKTOP\MediaPortal WatchDog.lnk"      "$MPdir.Base\WatchDog.exe"         "" "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog (x64)"
     ; CreateShortCut "$DESKTOP\MediaPortal x86Proxy.lnk"      "$MPdir.Base\MPx86Proxy.exe"       "-h" "$MPdir.Base\MPx86Proxy.exe"  0 "" "" "MediaPortal x86 Proxy"
     !else
     CreateShortCut "$DESKTOP\MediaPortal.lnk"               "$MPdir.Base\MediaPortal.exe"      "" "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
-    CreateShortCut "$DESKTOP\MediaPortal SkinProperties.lnk"  "$MPdir.Base\MediaPortal.exe"    "/SkinProperties" "$MPdir.Base\SkinProperties.ico"   0 "" "" "MediaPortal SkinProperties"
+    CreateShortCut "$DESKTOP\MediaPortal SkinProperties.lnk"  "$MPdir.Base\MediaPortal.exe"    "/SkinProperties /windowed" "$MPdir.Base\SkinProperties.ico"   0 "" "" "MediaPortal SkinProperties"
     CreateShortCut "$DESKTOP\MediaPortal Configuration.lnk" "$MPdir.Base\Configuration.exe"    "" "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
     CreateShortCut "$DESKTOP\MediaPortal WatchDog.lnk"      "$MPdir.Base\WatchDog.exe"         "" "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog"
     !endif
@@ -1355,7 +1355,7 @@ Section -Post
       CreateDirectory "${STARTMENU_GROUP}"
       !if "${Architecture}" == "x64"
           CreateShortCut "${STARTMENU_GROUP}\MediaPortal (x64).lnk"                      "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal (x64)"
-          CreateShortCut "${STARTMENU_GROUP}\MediaPortal SkinProperties (x64).lnk"       "$MPdir.Base\MediaPortal.exe"   "/SkinProperties" "$MPdir.Base\SkinProperties.ico"   0 "" "" "MediaPortal SkinProperties"
+          CreateShortCut "${STARTMENU_GROUP}\MediaPortal SkinProperties (x64).lnk"       "$MPdir.Base\MediaPortal.exe"   "/SkinProperties /windowed" "$MPdir.Base\SkinProperties.ico"   0 "" "" "MediaPortal SkinProperties"
           CreateShortCut "${STARTMENU_GROUP}\MediaPortal Configuration (x64).lnk"        "$MPdir.Base\Configuration.exe" ""      "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration (x64)"
           CreateShortCut "${STARTMENU_GROUP}\MediaPortal WatchDog (x64).lnk"             "$MPdir.Base\WatchDog.exe"      ""      "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog (x64)"
           CreateShortCut "${STARTMENU_GROUP}\MediaPortal x86Proxy.lnk"                   "$MPdir.Base\MPx86Proxy.exe"    "-h"    "$MPdir.Base\MPx86Proxy.exe"    0 "" "" "MediaPortal x86 Proxy"
@@ -1369,7 +1369,7 @@ Section -Post
           Delete "${STARTMENU_GROUP}\uninstall MediaPortal.lnk"
       !else
           CreateShortCut "${STARTMENU_GROUP}\MediaPortal.lnk"                            "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
-          CreateShortCut "${STARTMENU_GROUP}\MediaPortal SkinProperties.lnk"             "$MPdir.Base\MediaPortal.exe"   "/SkinProperties" "$MPdir.Base\SkinProperties.ico"   0 "" "" "MediaPortal SkinProperties"
+          CreateShortCut "${STARTMENU_GROUP}\MediaPortal SkinProperties.lnk"             "$MPdir.Base\MediaPortal.exe"   "/SkinProperties /windowed" "$MPdir.Base\SkinProperties.ico"   0 "" "" "MediaPortal SkinProperties"
           CreateShortCut "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"              "$MPdir.Base\Configuration.exe" ""      "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
           CreateShortCut "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"                   "$MPdir.Base\WatchDog.exe"      ""      "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog"
           CreateShortCut "${STARTMENU_GROUP}\Uninstall MediaPortal.lnk"                  "$MPdir.Base\uninstall-mp.exe"  ""      "$MPdir.Base\uninstall-mp.exe"  0 "" "" "Uninstall MediaPortal"
