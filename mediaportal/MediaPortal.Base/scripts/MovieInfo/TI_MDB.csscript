@@ -28,7 +28,7 @@ using System.Web;
 internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
 {
   const string strGrabber = "TI_MDB";
-  const string strGrabberVersion = "20260405.V";
+  const string strGrabberVersion = "20260721.V";
 
   public Grabber()
   {
@@ -286,20 +286,24 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
   public const string IMDB_Awards = IMDB_BaseUrl + "awards/";
   public const string IMDB_Parents = IMDB_BaseUrl + "parentalguide/";
   // public const string IMDB_Trivia = IMDB_BaseUrl + "trivia/";
-  public const string IMDB_Trivia = "https://web.archive.org/web/2/" + IMDB_BaseUrl + "trivia/";
+  // public const string IMDB_Trivia = "https://web.archive.org/web/2/" + IMDB_BaseUrl + "trivia/";
+  public const string IMDB_Trivia = "https://archive.org/wayback/available?url=" + IMDB_BaseUrl + "trivia/";
   // public const string IMDB_Review = IMDB_BaseUrl + "reviews/?sort=totalVotes&dir=desc&ratingFilter=0";
-  public const string IMDB_Review = "https://web.archive.org/web/2/" + IMDB_BaseUrl + "reviews/";
+  // public const string IMDB_Review = "https://web.archive.org/web/2/" + IMDB_BaseUrl + "reviews/";
+  public const string IMDB_Review = "https://archive.org/wayback/available?url=" + IMDB_BaseUrl + "reviews/";
   public const string IMDB_Ratings = IMDB_BaseUrl + "ratings/";
   // public const string IMDB_Taglines = IMDB_BaseUrl + "taglines/";
-  public const string IMDB_Taglines = "https://web.archive.org/web/2/" + IMDB_BaseUrl + "taglines/";
+  // public const string IMDB_Taglines = "https://web.archive.org/web/2/" + IMDB_BaseUrl + "taglines/";
+  public const string IMDB_Taglines = "https://archive.org/wayback/available?url=" + IMDB_BaseUrl + "taglines/";
   // public const string IMDB_Tech = IMDB_BaseUrl + "technical/";
-  public const string IMDB_Tech = "https://web.archive.org/web/2/" + IMDB_BaseUrl + "technical/";
+  // public const string IMDB_Tech = "https://web.archive.org/web/2/" + IMDB_BaseUrl + "technical/";
+  public const string IMDB_Tech = "https://archive.org/wayback/available?url=" + IMDB_BaseUrl + "technical/";
 
   #endregion IMDB Const
 
   #region IMDB API Parameters
 
-  private const string IMDBAPI_BaseUrl = "https://api.imdbapi.dev/titles/{0}";
+  private const string IMDBAPI_BaseUrl = "https://api.tiffara.com/titles/{0}";
 
   #endregion IMDB API Parameters
 
@@ -2039,6 +2043,31 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
       req = null;
     }
 
+    // Wayback archive
+    if (!string.IsNullOrEmpty(strBody) && strUrl.Contains("archive.org/wayback"))
+    {
+      try
+      {
+        var json = Newtonsoft.Json.Linq.JObject.Parse(strBody);
+        var urlToken = json.SelectToken("archived_snapshots.closest.url");
+        if (urlToken != null)
+        {
+            string archivedUrl = urlToken.ToString();
+            if (archivedUrl.Contains("http://"))
+            {
+              archivedUrl = archivedUrl.Replace("http://", "https://");
+            }
+            Log.Debug("{0} GetPage: Wayback API successfully returned a snapshot URL. Redirecting to: {1}", strGrabber, archivedUrl);
+            return GetPage(archivedUrl, strEncode, cache, retryCount + 1);
+        }
+        Log.Warn("{0} GetPage: Wayback API returned a valid response, but no successful (200 OK) snapshots were found.", strGrabber);
+      }
+      catch (Exception ex)
+      {
+        Log.Error("{0} GetPage: Failed to parse Wayback API JSON response: {1}", strGrabber, ex.Message);
+      }
+    }
+
     if (string.IsNullOrEmpty(strBody))
     {
       Log.Debug("{0} GetPage: Empty response for: {1}", strGrabber, HideAPIKey(strUrl));
@@ -2442,7 +2471,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
   }
 
   // Names
-  // https://api.imdbapi.dev/names/nm0000116
+  // https://api.tiffara.com/names/nm0000116
   public class IMDBActorDetails
   {
     public string id { get; set; }
@@ -2462,7 +2491,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
   }
 
   // Titles
-  // https://api.imdbapi.dev/titles/tt1532503
+  // https://api.tiffara.com/titles/tt1532503
   public class IMDBMovieDetails
   {
     public string id { get; set; }
@@ -2487,7 +2516,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
   }
 
   // Awards
-  // https://api.imdbapi.dev/titles/tt0499549/awardNominations
+  // https://api.tiffara.com/titles/tt0499549/awardNominations
   public class IMDBAwardNomination
   {
     [JsonProperty("event")]
@@ -2529,7 +2558,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
   }
 
   // Certificates
-  // https://api.imdbapi.dev/titles/tt0499549/certificates
+  // https://api.tiffara.com/titles/tt0499549/certificates
   public class IMDBCertificate
   {
     public string rating { get; set; }
@@ -2544,7 +2573,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
   }
 
   // Parents Guide
-  // https://api.imdbapi.dev/titles/tt1532503/parentsGuide
+  // https://api.tiffara.com/titles/tt1532503/parentsGuide
   public class IMDBParentsGuide
   {
     public string category { get; set; }
@@ -2570,7 +2599,7 @@ internal class Grabber : MarshalByRefObject, IIMDBScriptGrabber
   }
 
   // Company
-  // https://api.imdbapi.dev/titles/tt0499549/companyCredits
+  // https://api.tiffara.com/titles/tt0499549/companyCredits
   public class IMDBCompany
   {
     public string id { get; set; }

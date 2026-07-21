@@ -27,7 +27,7 @@ using Newtonsoft.Json.Linq;
 
 internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
 {
-  const string strGrabberVersion = "20260405.V";
+  const string strGrabberVersion = "20260721.V";
 
   private TMDBMovie tmdbMovie;
   private TMDBMovie imdbMovie;
@@ -55,7 +55,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     string thumb = string.Empty;
 
     string uri;
-    string strUrl = String.Format("https://api.imdbapi.dev/titles/{0}", imdbId);
+    string strUrl = String.Format("https://api.tiffara.com/titles/{0}", imdbId);
     string json = GetPage(strUrl, "utf-8", out uri);
 
     if (string.IsNullOrEmpty(json))
@@ -468,7 +468,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
         // Get IMDBID
         actor.IMDBActorID = matchimdbid.Groups["imdbid"].Value;
         Log.Debug("InternalActorsGrabber - GetActorDetails - IMDBID Found {0}", actor.IMDBActorID);
-        url.URL = string.Format("https://api.imdbapi.dev/names/{0}", actor.IMDBActorID);
+        url.URL = string.Format("https://api.tiffara.com/names/{0}", actor.IMDBActorID);
       }
       else
       {
@@ -647,7 +647,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
   private void GetActorMovies(IMDBActor imdbActor)
   {
     string uri;
-    string actorUrl = string.Format("https://api.imdbapi.dev/names/{0}/filmography?pageSize=50", imdbActor.IMDBActorID);
+    string actorUrl = string.Format("https://api.tiffara.com/names/{0}/filmography?pageSize=50", imdbActor.IMDBActorID);
     string json = GetPages(actorUrl, "utf-8", out uri);
     if (string.IsNullOrEmpty(json))
     {
@@ -887,7 +887,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     ArrayList actorList = new ArrayList();
 
     string uri;
-    string strUrl = String.Format("https://api.imdbapi.dev/titles/{0}/credits?pageSize=50", imdbMovieID);
+    string strUrl = String.Format("https://api.tiffara.com/titles/{0}/credits?pageSize=50", imdbMovieID);
     string json = GetPages(strUrl, "utf-8", out uri);
     if (string.IsNullOrEmpty(json))
     {
@@ -1030,7 +1030,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     TMDBMovie oReturn = new TMDBMovie();
 
     string uri;
-    string strUrl = String.Format("https://api.imdbapi.dev/titles/{0}", imdbID);
+    string strUrl = String.Format("https://api.tiffara.com/titles/{0}", imdbID);
     string json = GetPage(strUrl, "utf-8", out uri);
 
     if (string.IsNullOrEmpty(json))
@@ -1097,7 +1097,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
       Log.Debug("GetIMDBDetails IMDB = {0}, Exception {1}, JSON changed!?.", imdbID, ex.Message);
     }
 
-    strUrl = String.Format("https://api.imdbapi.dev/titles/{0}/credits?pageSize=50", imdbID);
+    strUrl = String.Format("https://api.tiffara.com/titles/{0}/credits?pageSize=50", imdbID);
     json = GetPages(strUrl, "utf-8", out uri);
 
     if (string.IsNullOrEmpty(json))
@@ -1188,7 +1188,8 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     try
     {
       string absoluteUri;
-      string _awardsURL = string.Format("https://web.archive.org/web/2/https://www.imdb.com/name/{0}/awards/", IMDBID);
+      // string _awardsURL = string.Format("https://web.archive.org/web/2/https://www.imdb.com/name/{0}/awards/", IMDBID);
+      string _awardsURL = string.Format("https://archive.org/wayback/available?url=https://www.imdb.com/name/{0}/awards/", IMDBID);
       string _awardsPage = GetPage(_awardsURL, "utf-8", out absoluteUri);
       if (string.IsNullOrEmpty(_awardsPage))
       {
@@ -1367,7 +1368,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
   }
 
   // Names
-  // https://api.imdbapi.dev/names/nm0000116
+  // https://api.tiffara.com/names/nm0000116
   public class IMDBActorDetails
   {
     public string id { get; set; }
@@ -1387,7 +1388,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
   }
 
   // Titles
-  // https://api.imdbapi.dev/titles/tt1532503
+  // https://api.tiffara.com/titles/tt1532503
   public class IMDBMovieDetails
   {
     public string id { get; set; }
@@ -1412,7 +1413,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
   }
 
   // Title Credits
-  // https://api.imdbapi.dev/titles/tt1532503/credits
+  // https://api.tiffara.com/titles/tt1532503/credits
   public class IMDBActors
   {
     public IMDBActorDetails name { get; set; }
@@ -1428,7 +1429,7 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
   }
 
   // Name Filmography
-  // https://api.imdbapi.dev/names/nm0000116/filmography?categories=self
+  // https://api.tiffara.com/names/nm0000116/filmography?categories=self
   public class IMDBMovies
   {
     public IMDBMovieDetails title { get; set; }
@@ -2467,6 +2468,31 @@ internal class InternalActorsGrabber : IIMDBInternalActorsScriptGrabber
     finally
     {
       req = null;
+    }
+
+    // Wayback archive
+    if (!string.IsNullOrEmpty(strBody) && strUrl.Contains("archive.org/wayback"))
+    {
+      try
+      {
+        var json = Newtonsoft.Json.Linq.JObject.Parse(strBody);
+        var urlToken = json.SelectToken("archived_snapshots.closest.url");
+        if (urlToken != null)
+        {
+            string archivedUrl = urlToken.ToString();
+            if (archivedUrl.Contains("http://"))
+            {
+              archivedUrl = archivedUrl.Replace("http://", "https://");
+            }
+            Log.Debug("InternalActorsScriptGrabber - GetPage: Wayback API successfully returned a snapshot URL. Redirecting to: {0}", archivedUrl);
+            return GetPage(archivedUrl, strEncode, out absoluteUri, cache, retryCount);
+        }
+        Log.Warn("InternalActorsScriptGrabber - GetPage: Wayback API returned a valid response, but no successful (200 OK) snapshots were found.");
+      }
+      catch (Exception ex)
+      {
+        Log.Error("InternalActorsScriptGrabber - GetPage: Failed to parse Wayback API JSON response: {0}", ex.Message);
+      }
     }
 
     if (string.IsNullOrEmpty(strBody))
