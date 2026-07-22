@@ -27,7 +27,8 @@ __MediaPortal__ is quite simply a revolution in media control, it allows you to 
 Just view our Features pages , visit our [Skins Gallery](https://www.team-mediaportal.com/extensions/skins) or check out all the plugins and see for yourself.
 __MediaPortal__ is for free but  we would be thankful if you support our team with a donation.
 
-> MediaPortal - Everything else is just a Media Center...
+> [!TIP]
+> **MediaPortal** - Everything else is just a Media Center...
 
 ## Links & Resources
 

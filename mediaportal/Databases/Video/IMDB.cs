@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2023 Team MediaPortal
+﻿#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -242,7 +242,7 @@ namespace MediaPortal.Video.Database
         try
         {
           Environment.CurrentDirectory = Config.GetFolder(Config.Dir.Base);
-          _asmHelper = new AsmHelper(CSScript.Load(scriptFileName, null, false));
+          _asmHelper = new AsmHelper(CSScript.LoadFile(scriptFileName, null, false));
           _grabber = (IIMDBScriptGrabber)_asmHelper.CreateObject("Grabber");
         }
         catch (Exception ex)
@@ -307,7 +307,7 @@ namespace MediaPortal.Video.Database
         try
         {
           Environment.CurrentDirectory = Config.GetFolder(Config.Dir.Base);
-          _asmHelper = new AsmHelper(CSScript.Load(scriptFileName, null, false));
+          _asmHelper = new AsmHelper(CSScript.LoadFile(scriptFileName, null, false));
           InternalActorsGrabber = (IIMDBInternalActorsScriptGrabber) _asmHelper.CreateObject("InternalActorsGrabber");
         }
         catch (Exception ex)

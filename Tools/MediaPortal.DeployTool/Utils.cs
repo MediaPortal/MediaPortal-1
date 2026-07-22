@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2025 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2025 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -582,36 +582,53 @@ namespace MediaPortal.DeployTool
 
     #region NotifyReboot
 
-    public static bool AutoRunApplication(string action)
+    public static bool AutoRunApplication()
     {
-      const string desc = "MediaPortal Installation";
-      RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-      if (key != null)
+      const string desc = "*MediaPortal Installation";
+      const string keyPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce";
+
+      try
       {
-        if (action == "set")
+        RegistryView view = Environment.Is64BitOperatingSystem ? RegistryView.Registry64 : RegistryView.Default;
+        using (RegistryKey baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, view))
         {
-          key.SetValue(desc, Application.ExecutablePath);
-        }
-        else
-        {
-          try
+          using (RegistryKey key = baseKey.OpenSubKey(keyPath, true))
           {
-            key.DeleteValue(desc, true);
-          }
-          catch
-          {
-            return false;
+            if (key == null)
+            {
+              return false;
+            }
+            string cmd = string.Format("\"{0}\" /continue", Application.ExecutablePath);
+            key.SetValue(desc, cmd);
           }
         }
-        key.Close();
+        return true;
       }
-      return true;
+      catch (Exception ex)
+      {
+        MessageBox.Show("Please run the installer as an Administrator.",
+                        Application.StartupPath,
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Stop);
+        // Close DeployTool
+        Environment.Exit(-3);
+      }
+      return false;
     }
 
-    public static void NotifyReboot(string DisplayName)
+    public static void NotifyReboot(string DisplayName, int action = 0)
     {
+      // action 0 - no reboot
+      //        1 - exit and reboot
+      //        2 - ask (not realized)
+      if (action == 0)
+      {
+        InstallationProperties.Instance.Set("Reboot_Required", "yes");
+        return;
+      }
+
       // Write Run registry key
-      Utils.AutoRunApplication("set");
+      Utils.AutoRunApplication();
 
       // Notify about the needed reboot
       MessageBox.Show(Localizer.GetBestTranslation("Reboot_Required"), 
@@ -619,7 +636,7 @@ namespace MediaPortal.DeployTool
                       MessageBoxButtons.OK,
                       MessageBoxIcon.Exclamation);
 
-      //Close DeployTool
+      // Close DeployTool
       Environment.Exit(-3);
     }
 
@@ -782,7 +799,7 @@ namespace MediaPortal.DeployTool
         case "max":
           major = 1;
           minor = 38;
-          revision = 2;
+          revision = 3;
           break;
       }
       Version ver = new Version(major, minor, revision);
@@ -802,8 +819,8 @@ namespace MediaPortal.DeployTool
     public static Version GetCurrentPackageVersion()
     {
       int major = 1;
-      int minor = 38;
-      int revision = 003;
+      int minor = 39;
+      int revision = 000;
 
       Version ver = new Version(major, minor, revision);
       return ver;
@@ -853,7 +870,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.38.3 Tatiana & Leo";
+      return "1.39 Endurance";
     }
 
     /// <summary>

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2024 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2024 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -32,7 +32,6 @@ namespace MediaPortal.DeployTool.InstallationChecks
 
     private string _fileName = Application.StartupPath + "\\deploy\\" + Utils.GetDownloadString(prg, "FILE");
 
-    private static bool dotNet35 = false;
     private static bool dotNet40 = false;
 
     public string GetDisplayName()
@@ -55,22 +54,6 @@ namespace MediaPortal.DeployTool.InstallationChecks
     {
       bool result = false;
 
-      // .Net 3.5
-      if (!dotNet35)
-      {
-        int exitCode = Utils.RunCommandWait("DISM.EXE", "/Online /Enable-Feature /FeatureName:NetFx3 /All /Quiet /NoRestart");
-        // Return codes:
-        // 0               = success, no reboot required
-        // 3010            = success, reboot required
-        // any other value = failure
-
-        if (exitCode == 3010 || File.Exists("c:\\deploy_force_reboot"))
-        {
-          Utils.NotifyReboot(GetDisplayName());
-        }
-        result = result || (exitCode == 0);
-      }
-
       // .Net 4.0
       if (!dotNet40)
       {
@@ -84,6 +67,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         if (exitCode == 3010 || File.Exists("c:\\deploy_force_reboot"))
         {
           Utils.NotifyReboot(GetDisplayName());
+          exitCode = 0;  // Reboot after the installation is complete.
         }
         result = result || (exitCode == 0 || exitCode == 1638);
       }
@@ -109,25 +93,6 @@ namespace MediaPortal.DeployTool.InstallationChecks
       {
         result.state = result.needsDownload == false ? CheckState.DOWNLOADED : CheckState.NOT_DOWNLOADED;
         return result;
-      }
-
-      try
-      {
-        RegistryKey key = Utils.LMOpenSubKey("SOFTWARE\\Microsoft\\NET Framework Setup\\NDP\\v3.5");
-        using (key)
-        {
-          if (key != null)
-          {
-            key.Close();
-            dotNet35 = true;
-          }
-        }
-      }
-      catch (Exception)
-      {
-        MessageBox.Show("Failed to check the .Net Framework 3.5 installation status", "Error", 
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error);
       }
 
       try
@@ -170,7 +135,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         }
       }
 
-      if (dotNet35 && dotNet40)
+      if (dotNet40)
       {
         result.state = CheckState.INSTALLED;
       }

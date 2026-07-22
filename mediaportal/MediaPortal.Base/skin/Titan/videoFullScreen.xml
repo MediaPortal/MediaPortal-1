@@ -344,67 +344,67 @@
     <control>
       <description>2x image</description>
       <type>image</type>
-      <id>17</id>
+      <id>1</id>
       <posX>898</posX>
       <posY>978</posY>
       <width>111</width>
       <height>26</height>
-      <visible>no</visible>
+      <visible>player.forwarding2x</visible>
       <texture>video+2x.png</texture>
     </control>
 
     <control>
       <description>4x image</description>
       <type>image</type>
-      <id>18</id>
+      <id>1</id>
       <posX>898</posX>
       <posY>978</posY>
       <width>111</width>
       <height>26</height>
-      <visible>no</visible>
+      <visible>player.forwarding4x</visible>
       <texture>video+4x.png</texture>
     </control>
 
     <control>
       <description>8x image</description>
       <type>image</type>
-      <id>19</id>
+      <id>1</id>
       <posX>898</posX>
       <posY>978</posY>
       <width>111</width>
       <height>26</height>
-      <visible>no</visible>
+      <visible>player.forwarding8x</visible>
       <texture>video+8x.png</texture>
     </control>
 
     <control>
       <description>16x image</description>
       <type>image</type>
-      <id>20</id>
+      <id>1</id>
       <posX>898</posX>
       <posY>978</posY>
       <width>111</width>
       <height>26</height>
-      <visible>no</visible>
+      <visible>player.forwarding16x</visible>
       <texture>video+16x.png</texture>
     </control>
 
     <control>
       <description>32x image</description>
       <type>image</type>
-      <id>21</id>
+      <id>1</id>
       <posX>898</posX>
       <posY>978</posY>
       <width>111</width>
       <height>26</height>
-      <visible>no</visible>
+      <visible>player.forwarding32x</visible>
       <texture>video+32x.png</texture>
     </control>
 
     <control>
       <description>- 2x image</description>
       <type>image</type>
-      <id>23</id>
+      <id>1</id>
       <posX>898</posX>
       <posY>978</posY>
       <width>111</width>
@@ -416,7 +416,7 @@
     <control>
       <description>- 4x image</description>
       <type>image</type>
-      <id>24</id>
+      <id>1</id>
       <posX>898</posX>
       <posY>978</posY>
       <width>111</width>
@@ -440,7 +440,7 @@
     <control>
       <description>- 16x image</description>
       <type>image</type>
-      <id>26</id>
+      <id>1</id>
       <posX>898</posX>
       <posY>978</posY>
       <width>111</width>
@@ -452,7 +452,7 @@
     <control>
       <description>- 32x image</description>
       <type>image</type>
-      <id>27</id>
+      <id>1</id>
       <posX>898</posX>
       <posY>978</posY>
       <width>111</width>

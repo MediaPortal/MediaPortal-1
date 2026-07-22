@@ -1,15 +1,17 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mp-repository", "mp-repository.csproj", "{9296A8DE-9BB3-4A1F-8F8D-89E37849B12C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPRepository", "MPRepository\MPRepository.csproj", "{BD2396F5-57EA-4545-A284-C08A861796E3}"
-EndProject
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.35706.149
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{096CBFDD-722A-463F-9384-9D4965929B00}"
 	ProjectSection(SolutionItems) = preProject
 		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
 		mp-repository.vsmdi = mp-repository.vsmdi
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mp-repository", "mp-repository.csproj", "{9296A8DE-9BB3-4A1F-8F8D-89E37849B12C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPRepository", "MPRepository\MPRepository.csproj", "{BD2396F5-57EA-4545-A284-C08A861796E3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MPRepository.Tests", "MPRepository.Tests\MPRepository.Tests.csproj", "{54858953-5A19-4040-903E-C80677CB1253}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -38,5 +40,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8E724926-CC41-4571-814D-5EFFBAA180A6}
 	EndGlobalSection
 EndGlobal

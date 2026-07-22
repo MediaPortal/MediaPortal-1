@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -1131,8 +1131,10 @@ namespace MediaPortal.Util
     /// <returns>true: paths are equal, false: paths do not match</returns>
     public static bool AreEqual(string dir1, string dir2)
     {
-      if (dir1 == string.Empty | dir2 == string.Empty)
+      if (string.IsNullOrEmpty(dir1) || string.IsNullOrEmpty(dir2))
+      {
         return false;
+      }
 
       try
       {
