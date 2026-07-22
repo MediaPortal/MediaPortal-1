@@ -677,6 +677,7 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\brotlidec.dll"
   File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\brotlienc.dll"  
   !endif
+  File "${git_MP}\MediaPortal.Application\SkinProperties\SkinProperties.ico"
   File "${git_ROOT}\Packages\MediaInfo.Wrapper.26.1.0\lib\net45\MediaInfo.Wrapper.dll"
   File "${git_ROOT}\Packages\System.ValueTuple.4.6.2\lib\net462\System.ValueTuple.dll"
   ; NuGet binaries Sqlite
@@ -1327,11 +1328,13 @@ Section -Post
   ${If} $noDesktopSC != 1
     !if "${Architecture}" == "x64"
     CreateShortCut "$DESKTOP\MediaPortal.lnk"               "$MPdir.Base\MediaPortal.exe"      "" "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal (x64)"
+    CreateShortCut "$DESKTOP\MediaPortal SkinProperties.lnk" "$MPdir.Base\MediaPortal.exe"    "/SkinProperties /windowed" "$MPdir.Base\SkinProperties.ico"   0 "" "" "MediaPortal SkinProperties"
     CreateShortCut "$DESKTOP\MediaPortal Configuration.lnk" "$MPdir.Base\Configuration.exe"    "" "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration (x64)"
     CreateShortCut "$DESKTOP\MediaPortal WatchDog.lnk"      "$MPdir.Base\WatchDog.exe"         "" "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog (x64)"
     ; CreateShortCut "$DESKTOP\MediaPortal x86Proxy.lnk"      "$MPdir.Base\MPx86Proxy.exe"       "-h" "$MPdir.Base\MPx86Proxy.exe"  0 "" "" "MediaPortal x86 Proxy"
     !else
     CreateShortCut "$DESKTOP\MediaPortal.lnk"               "$MPdir.Base\MediaPortal.exe"      "" "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
+    CreateShortCut "$DESKTOP\MediaPortal SkinProperties.lnk"  "$MPdir.Base\MediaPortal.exe"    "/SkinProperties /windowed" "$MPdir.Base\SkinProperties.ico"   0 "" "" "MediaPortal SkinProperties"
     CreateShortCut "$DESKTOP\MediaPortal Configuration.lnk" "$MPdir.Base\Configuration.exe"    "" "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
     CreateShortCut "$DESKTOP\MediaPortal WatchDog.lnk"      "$MPdir.Base\WatchDog.exe"         "" "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog"
     !endif
@@ -1352,6 +1355,7 @@ Section -Post
       CreateDirectory "${STARTMENU_GROUP}"
       !if "${Architecture}" == "x64"
           CreateShortCut "${STARTMENU_GROUP}\MediaPortal (x64).lnk"                      "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal (x64)"
+          CreateShortCut "${STARTMENU_GROUP}\MediaPortal SkinProperties (x64).lnk"       "$MPdir.Base\MediaPortal.exe"   "/SkinProperties /windowed" "$MPdir.Base\SkinProperties.ico"   0 "" "" "MediaPortal SkinProperties"
           CreateShortCut "${STARTMENU_GROUP}\MediaPortal Configuration (x64).lnk"        "$MPdir.Base\Configuration.exe" ""      "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration (x64)"
           CreateShortCut "${STARTMENU_GROUP}\MediaPortal WatchDog (x64).lnk"             "$MPdir.Base\WatchDog.exe"      ""      "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog (x64)"
           CreateShortCut "${STARTMENU_GROUP}\MediaPortal x86Proxy.lnk"                   "$MPdir.Base\MPx86Proxy.exe"    "-h"    "$MPdir.Base\MPx86Proxy.exe"    0 "" "" "MediaPortal x86 Proxy"
@@ -1359,11 +1363,13 @@ Section -Post
           
           ; Delete shortcuts with old x64 naming
           Delete "${STARTMENU_GROUP}\MediaPortal.lnk"
+          Delete "${STARTMENU_GROUP}\MediaPortal SkinProperties.lnk"
           Delete "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"
           Delete "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"
           Delete "${STARTMENU_GROUP}\uninstall MediaPortal.lnk"
       !else
           CreateShortCut "${STARTMENU_GROUP}\MediaPortal.lnk"                            "$MPdir.Base\MediaPortal.exe"   ""      "$MPdir.Base\MediaPortal.exe"   0 "" "" "MediaPortal"
+          CreateShortCut "${STARTMENU_GROUP}\MediaPortal SkinProperties.lnk"             "$MPdir.Base\MediaPortal.exe"   "/SkinProperties /windowed" "$MPdir.Base\SkinProperties.ico"   0 "" "" "MediaPortal SkinProperties"
           CreateShortCut "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"              "$MPdir.Base\Configuration.exe" ""      "$MPdir.Base\Configuration.exe" 0 "" "" "MediaPortal Configuration"
           CreateShortCut "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"                   "$MPdir.Base\WatchDog.exe"      ""      "$MPdir.Base\WatchDog.exe"      0 "" "" "MediaPortal WatchDog"
           CreateShortCut "${STARTMENU_GROUP}\Uninstall MediaPortal.lnk"                  "$MPdir.Base\uninstall-mp.exe"  ""      "$MPdir.Base\uninstall-mp.exe"  0 "" "" "Uninstall MediaPortal"
@@ -1426,12 +1432,14 @@ Section Uninstall
   
   !if "${Architecture}" == "x64"
     Delete "${STARTMENU_GROUP}\MediaPortal (x64).lnk"
+    Delete "${STARTMENU_GROUP}\MediaPortal SkinProperties (x64).lnk"
     Delete "${STARTMENU_GROUP}\MediaPortal Configuration (x64).lnk"
     Delete "${STARTMENU_GROUP}\MediaPortal WatchDog (x64).lnk"
     Delete "${STARTMENU_GROUP}\Uninstall MediaPortal (x64).lnk"
     Delete "${STARTMENU_GROUP}\MediaPortal x86Proxy.lnk"
   !else
     Delete "${STARTMENU_GROUP}\MediaPortal.lnk"
+    Delete "${STARTMENU_GROUP}\MediaPortal SkinProperties.lnk"
     Delete "${STARTMENU_GROUP}\MediaPortal Configuration.lnk"
     Delete "${STARTMENU_GROUP}\MediaPortal Debug-Mode.lnk"
     Delete "${STARTMENU_GROUP}\MediaPortal WatchDog.lnk"
@@ -1456,6 +1464,7 @@ Section Uninstall
 
   ; remove Desktop shortcuts
   Delete "$DESKTOP\MediaPortal.lnk"
+  Delete "$DESKTOP\MediaPortal SkinProperties.lnk"
   Delete "$DESKTOP\MediaPortal Configuration.lnk"
   Delete "$DESKTOP\MediaPortal WatchDog.lnk"
   ; !if "${Architecture}" == "x64"
