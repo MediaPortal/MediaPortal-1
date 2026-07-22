@@ -24,7 +24,7 @@ using Newtonsoft.Json.Linq;
 
 internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInternalMovieImagesGrabber
 {
-  const string strGrabberVersion = "20260405.V";
+  const string strGrabberVersion = "20260721.V";
 
   public ArrayList GetIMDBImages(string imdbID, bool defaultOnly)
   {
@@ -34,7 +34,7 @@ internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInter
 
     // First lets take default IMDB cover because maybe it is not in the IMDB Product thumbs group
     string uri;
-    string URL = String.Format("https://api.imdbapi.dev/titles/{0}", imdbID);
+    string URL = String.Format("https://api.tiffara.com/titles/{0}", imdbID);
     string json = GetPage(URL, "utf-8", out uri);
     if (!string.IsNullOrEmpty(json))
     {
@@ -69,7 +69,7 @@ internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInter
     }
 
     // Then get all we can from IMDB Product thumbs group for movie
-    URL = String.Format("https://api.imdbapi.dev/titles/{0}/images?types=poster", imdbID);
+    URL = String.Format("https://api.tiffara.com/titles/{0}/images?types=poster", imdbID);
     json = GetPage(URL, "utf-8", out uri);
     if (string.IsNullOrEmpty(json))
     {
@@ -189,7 +189,7 @@ internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInter
   }
 
   // Titles
-  // https://api.imdbapi.dev/titles/tt1532503
+  // https://api.tiffara.com/titles/tt1532503
   public class IMDBMovieDetails
   {
     public string id { get; set; }
@@ -201,7 +201,7 @@ internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInter
   }
 
   // Images
-  // https://api.imdbapi.dev/titles/tt0499549/images?types=poster
+  // https://api.tiffara.com/titles/tt0499549/images?types=poster
   public class IMDBMovieImages
   {
     public List<IMDBPrimaryImage> images { get; set; }
