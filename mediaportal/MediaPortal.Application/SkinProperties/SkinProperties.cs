@@ -74,7 +74,8 @@ namespace MediaPortal
     {
       int firstRow = dataGridView1.FirstDisplayedScrollingRowIndex;
       filtered.ReSort();
-      dataGridView1.FirstDisplayedScrollingRowIndex = firstRow;
+      if (firstRow >= 0 && firstRow<dataGridView1.RowCount)
+        dataGridView1.FirstDisplayedScrollingRowIndex = firstRow;
     }
 
 
