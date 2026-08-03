@@ -167,6 +167,7 @@ namespace MediaPortal.GUI.Library
     private static bool _started;
     private static bool _windowPluginsLoaded;
     private static bool _nonWindowPluginsLoaded;
+    public static bool DisableSpectrumAnalyzer = false;
 
     static PluginManager() { }
 
@@ -788,6 +789,11 @@ namespace MediaPortal.GUI.Library
       strDllname = strDllname.Substring(strDllname.LastIndexOf(@"\", StringComparison.Ordinal) + 1);
       // If a white list is applicable check if the plugin name is in the white list
       if (_whiteList != null && !_whiteList.Contains(strDllname))
+      {
+        return false;
+      }
+
+      if (DisableSpectrumAnalyzer && "SpectrumAnalyzer.dll".Equals(strDllname, StringComparison.OrdinalIgnoreCase))
       {
         return false;
       }

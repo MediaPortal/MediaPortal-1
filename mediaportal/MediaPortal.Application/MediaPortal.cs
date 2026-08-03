@@ -625,6 +625,7 @@ public class MediaPortalApp : D3D, IRender
           AlwaysOnTopOverride = true;
           WindowedOverride = true;
           HIDOverride.SuppressHID = true;
+          PluginManager.DisableSpectrumAnalyzer = true;
         }
 
         #if !DEBUG
