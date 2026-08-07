@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Skin translation file -->
-<!-- Dutch (nl) -->
+<!-- Dutch -->
 <strings>
+  <string Field="Design">Ontwerp</string>
   <string Field="LastWatched">Laatst gezien</string>
   <string Field="Awards">Onderscheidingen</string>
   <string Field="EPGRows">Lijnen in TV/Radio EPG's</string>

@@ -4,6 +4,10 @@
   <defaultcontrol>4</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <rememberLastFocusedControl>no</rememberLastFocusedControl>
+  <!--define property="true" evaluateNow="true">#VUmeterClassic:true</define>
+  <define property="true" evaluateNow="true">#SpectrumAnalyzeronly:true</define>
+  <define property="true" evaluateNow="true">#SpectrumAnalyzerVUmeter:true</define>
+  <define property="true" evaluateNow="true">#SpectrumAnalyzerVUmeterwithpeakdisplay:true</define-->
   <controls>
     <import>common.settings.xml</import>
     <import>common.time.xml</import>
@@ -156,13 +160,105 @@
         <description>VUMeter button</description>
         <type>button</type>
         <id>6</id>
-        <label>#vumeter</label>
+        <label>Option: #vumeter</label> 
         <posX>686</posX>
         <posY>546</posY>
-        <width>850</width><textureFocus>setting_button_long.png</textureFocus>
+        <width>850</width>
+		<textureFocus>setting_button_long.png</textureFocus>
+        <onleft>9999</onleft>
+        <ondown>8</ondown>
+      </control>
+	  
+	  <control>
+          <description>Select LED Design</description>
+          <type>menubutton</type>
+          <id>8</id>
+          <posX>686</posX>
+          <posY>606</posY>
+          <width>850</width>
+		  <textureFocus>setting_button_long.png</textureFocus>
+          <mode>dialoglist</mode>
+          <dialogTitle>#(L(424)) LED #SkinTranslation.Translations.Design.Label</dialogTitle>
+          <valueTextInButton>yes</valueTextInButton>
+          <valuePrefixText>#SkinTranslation.Translations.Design.Label: </valuePrefixText> 
+          <onclick>#(skin.setstring('#LED.Design',#selectedlabel8))</onclick>
+          <binding>#LED.Design</binding>
+          <subitems>
+            <subitem>Classic</subitem>
+            <subitem>Modern</subitem>
+          </subitems>
+          <ondown>9</ondown>
+          <onleft>9999</onleft>
+		  <visible>string.equals(#vumeter,Led)</visible>
+        </control>
+	  
+	  <control>
+        <description>LED VU Meter</description>
+        <type>checkbutton</type>
+        <id>9</id>
+        <label>VUMeter</label>
+        <selected>#(skin.hassetting('#ClassicVUmeter'))</selected>
+        <onclick>#(skin.togglesetting('#ClassicVUmeter'))</onclick>
+        <posX>686</posX>
+        <posY>666</posY>
+        <width>850</width>
+		<textureFocus>setting_button_long.png</textureFocus>
+        <onleft>9999</onleft>
+        <ondown>10</ondown>
+        <visible>string.equals(#vumeter,Led)</visible>
+      </control>
+      
+      <control>
+        <description>SpectrumAnalyzer Classic button</description>
+        <type>checkbutton</type>
+        <id>10</id>
+        <label>SpectrumAnalyzer Classic</label>
+        <selected>#(skin.hassetting('#SpectrumAnalyzeronly'))</selected>
+        <onclick>#(skin.togglesetting('#SpectrumAnalyzeronly'))</onclick>
+        <posX>686</posX>
+        <posY>726</posY>
+        <width>850</width>
+		<textureFocus>setting_button_long.png</textureFocus>
+        <onleft>9999</onleft>
+        <ondown>11</ondown>
+        <visible>string.equals(#vumeter,Led)</visible>
+      </control>
+      
+      <control>
+        <description>SpectrumAnalyzer VUMeter button</description>
+        <type>checkbutton</type>
+        <id>11</id>
+        <label>SpectrumAnalyzer VUMeter</label>
+        <selected>#(skin.hassetting('#SpectrumAnalyzerVUmeter'))</selected>
+        <onclick>#(skin.togglesetting('#SpectrumAnalyzerVUmeter'))</onclick>
+        <posX>686</posX>
+        <posY>786</posY>
+        <width>850</width>
+		<textureFocus>setting_button_long.png</textureFocus>
+        <onleft>9999</onleft>
+        <ondown>12</ondown>
+        <visible>string.equals(#vumeter,Led)</visible>
+      </control>
+      
+      <control>
+        <description>SpectrumAnalyzer VUMeter button</description>
+        <type>checkbutton</type>
+        <id>12</id>
+        <label>SpectrumAnalyzer VUMeter #(L(939))</label>  
+        <selected>#(skin.hassetting('#SpectrumAnalyzerVUmeter2'))</selected>
+        <onclick>#(skin.togglesetting('#SpectrumAnalyzerVUmeter2'))</onclick>
+        <posX>686</posX>
+        <posY>846</posY>
+        <width>850</width>
+		<textureFocus>setting_button_long.png</textureFocus>
         <onleft>9999</onleft>
         <ondown>4</ondown>
+        <visible>string.equals(#vumeter,Led)</visible>
       </control>
+      
+      
+      
+      
     </control>
   </controls>
 </window>
