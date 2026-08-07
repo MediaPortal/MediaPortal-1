@@ -344,10 +344,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SkinProperties.cs">
+    <Compile Include="SkinProperties\SkinProperties.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SkinProperties.Designer.cs">
+    <Compile Include="SkinProperties\SkinProperties.Designer.cs">
       <DependentUpon>SkinProperties.cs</DependentUpon>
     </Compile>
     <Compile Include="SplashScreen.cs" />
@@ -367,7 +367,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="SkinProperties.resx">
+    <EmbeddedResource Include="SkinProperties\SkinProperties.resx">
       <DependentUpon>SkinProperties.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SplashScreen.resx">

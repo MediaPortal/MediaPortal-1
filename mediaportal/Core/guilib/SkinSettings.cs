@@ -578,7 +578,7 @@ namespace MediaPortal.GUI.Library
 
     private static void SaveStringSettings(Settings xmlWriter)
     {
-      foreach (var strSetting in _skinBoolSettings.Values)
+      foreach (var strSetting in _skinStringSettings.Values)
       {
         if (strSetting.Kind == Kind.PERSISTENT)
         {

@@ -58,14 +58,26 @@ namespace MediaPortal
     private void SetItem(string tag, string tagValue)
     {
       if (mirror.TryGetValue(tag, out var item))
+      {
         item.Value = tagValue;
+      }
       else
       {
         var nwItem = AddItem(tag, tagValue);
         if (isInFilter(nwItem))
           filtered.Add(nwItem);
       }
+      ReSort();
     }
+
+    private void ReSort()
+    {
+      int firstRow = dataGridView1.FirstDisplayedScrollingRowIndex;
+      filtered.ReSort();
+      if (firstRow >= 0 && firstRow<dataGridView1.RowCount)
+        dataGridView1.FirstDisplayedScrollingRowIndex = firstRow;
+    }
+
 
     private void GUIPropertyManager_OnPropertyChanged(string tag, string tagValue)
     {
@@ -106,7 +118,7 @@ namespace MediaPortal
         filtered.Add(item);
       }
       filtered.RaiseListChangedEvents = true;
-      filtered.ReSort();
+      ReSort();
       filtered.ResetBindings();
     }
 
@@ -156,18 +168,15 @@ namespace MediaPortal
         if (_value == value) return;
         _value = value;
         UpdatedAt = DateTime.Now;
-        StackTrace = Environment.StackTrace;
 
         if (PropertyChanged != null)
         {
           PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(Value)));
           PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(UpdatedAt)));
-          PropertyChanged.Invoke(this, new PropertyChangedEventArgs(nameof(StackTrace)));
         }
       }
     }
     public DateTime UpdatedAt { get; private set; }
-    public string StackTrace { get; private set; }
 
     public NameValueItem(string name, string value)
     {
