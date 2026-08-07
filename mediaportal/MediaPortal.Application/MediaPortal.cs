@@ -619,13 +619,12 @@ public class MediaPortalApp : D3D, IRender
           Log.SetLogLevel(Level.Debug);
         }
 
-        if (arg == "/SkinProperties" || arg == "/SkinPropertiesWithSpectrumAnalyzer")
+        if (arg == "/SkinProperties")
         {
           ShowSkinProperties = true;
           AlwaysOnTopOverride = true;
           WindowedOverride = true;
           HIDOverride.SuppressHID = true;
-          PluginManager.DisableSpectrumAnalyzer = arg == "/SkinProperties";
         }
 
         #if !DEBUG
