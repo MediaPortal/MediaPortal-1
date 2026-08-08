@@ -921,8 +921,12 @@ namespace TvPlugin
 
     private GUIListItem BuildItemFromRecording(Recording aRecording)
     {
-      string strDefaultUnseenIcon = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultVideoBig.png");
-      string strDefaultSeenIcon = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultVideoSeenBig.png");
+      string strDefaultUnseenIcon = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultAudioBig.png");
+      string strDefaultSeenIcon = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultAudioSeenBig.png");
+      if (!File.Exists(strDefaultSeenIcon))
+      {
+        strDefaultSeenIcon = strDefaultUnseenIcon;
+      }
       GUIListItem item = null;
       string strChannelName = GUILocalizeStrings.Get(2014); // unknown
       string strGenre = GUILocalizeStrings.Get(2014); // unknown
@@ -1527,7 +1531,7 @@ namespace TvPlugin
         }
         else
         {
-          GUIPropertyManager.SetProperty("#Radio.Recorded.thumb", "defaultVideoBig.png");
+          GUIPropertyManager.SetProperty("#Radio.Recorded.thumb", "defaultAudioBig.png");
         }
       }
       catch (Exception ex)
