@@ -46,7 +46,7 @@ namespace TvPlugin
       LABEL_PROGRAMTIME = 14,
       LABEL_PROGRAMDESCRIPTION = 15,
       LABEL_PROGRAMGENRE = 17,
-    } ;
+    };
 
     private enum SortMethod
     {
@@ -106,7 +106,7 @@ namespace TvPlugin
       {
         currentLayout = (Layout)xmlreader.GetValueAsInt(SerializeName, "layout", (int)Layout.List);
         m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
-        
+
         string strTmp = xmlreader.GetValueAsString("radiorecorded", "sort", "channel");
         _watchedPercentage = xmlreader.GetValueAsInt("movies", "playedpercentagewatched", 95);
 
@@ -146,7 +146,7 @@ namespace TvPlugin
       {
         xmlwriter.SetValue(SerializeName, "layout", (int)currentLayout);
         xmlwriter.SetValueAsBool(SerializeName, "sortasc", m_bSortAscending);
-        
+
         switch (_currentSortMethod)
         {
           case SortMethod.Channel:
@@ -595,7 +595,7 @@ namespace TvPlugin
         Log.Warn("RadioRecorded: Error updating button states - {0}", ex.ToString());
       }
     }
-    
+
     #endregion
 
     #region Public methods
@@ -977,18 +977,18 @@ namespace TvPlugin
 
         // Get the channel logo for the small icons
         string StationLogo = Utils.GetCoverArt(Thumbs.Radio, strChannelName);
-        if (!string.IsNullOrEmpty(StationLogo))            
+        if (!string.IsNullOrEmpty(StationLogo))
         {
           SmallThumb = StationLogo;
         }
 
         item.IconImage = item.ThumbnailImage = item.IconImageBig = SmallThumb;
         // Display previews only if the option to create them is active
-        if (string.IsNullOrEmpty(PreviewThumb))                              
+        if (string.IsNullOrEmpty(PreviewThumb))
         {
           item.ThumbnailImage = String.Empty;
         }
-        
+
         //Mark the recording with a "rec. symbol" if it is an active recording.
         if (IsRecordingActual(aRecording))
         {
@@ -1096,7 +1096,7 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", pItem.Label);
       GUIPropertyManager.SetProperty("#Play.Current.Album", pItem.Label);
       GUIPropertyManager.SetProperty("#Play.Current.Thumb", pItem.ThumbnailImage);
-      
+
       Recording rec = (Recording)pItem.TVTag;
       IList<Recording> itemlist = Recording.ListAll();
 
@@ -1165,7 +1165,7 @@ namespace TvPlugin
           return;
         }
       }
-      
+
       _iSelectedItem = GetSelectedItemNo();
       GUIListItem pItem = GetItem(iItem);
       if (pItem == null)
@@ -1525,7 +1525,7 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#Radio.Recorded.Channel", GetRecordingDisplayName(rec));
         strLogo = Utils.GetCoverArt(Thumbs.Radio, GetRecordingDisplayName(rec));
 
-        if (!string.IsNullOrEmpty(strLogo))                                                
+        if (!string.IsNullOrEmpty(strLogo))
         {
           GUIPropertyManager.SetProperty("#Radio.Recorded.thumb", strLogo);
         }
@@ -1928,7 +1928,7 @@ namespace TvPlugin
         }
       }
 
-        UpdateProperties();
+      UpdateProperties();
 
       //@int movieid = VideoDatabase.GetMovieId(filename);
       //@if (movieid < 0) return;
