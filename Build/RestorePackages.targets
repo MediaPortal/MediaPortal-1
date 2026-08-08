@@ -1,10 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <!--
   This file contains MSBuild code to download all the NuGet packages for the repository before
   actual opening and compiling a *.csproj file.
-  -DisableParallel as nuget option to restore step by step package. 
-  Nota : priority on myget feed, using second line only restore package from official nuget feed instead of your own due to latency connection client -> server
+  Package source routing is configured via packageSourceMapping in NuGet.Config.
   -->
   <Import Project="$(MSBuildThisFileDirectory)Build.props" />
   <Import Project="$(MSBuildThisFileDirectory)Build.tasks" />
@@ -16,10 +15,8 @@
   <Target Name="CustomRestorePackages">
     <DownloadFile DownloadAddress="https://dist.nuget.org/win-x86-commandline/latest/nuget.exe" OutputFilename="$(NuGetExePath)" Condition="!Exists('$(NuGetExePath)')" />
 
-    <Message Text="Found the following 'packages.config'-files: @(PackagesConfigs->'%(FullPath)')"/>
+	<Message Text="Found the following 'packages.config'-files: @(PackagesConfigs->'%(FullPath)')"/>
 
-	<Exec Command='"$(NuGetExePath)" install "%(PackagesConfigs.FullPath)" -Source "https://www.myget.org/F/mediaportal/"'/>
-	<!-- <Exec Command='"$(NuGetExePath)" install "%(PackagesConfigs.FullPath)" -Source "https://www.myget.org/F/mediaportal/" -DisableParallel'/>  -->
-    <Exec Command='"$(NuGetExePath)" install "%(PackagesConfigs.FullPath)"'/>
+	<Exec Command='"$(NuGetExePath)" install "%(PackagesConfigs.FullPath)"'/>
   </Target>
 </Project>

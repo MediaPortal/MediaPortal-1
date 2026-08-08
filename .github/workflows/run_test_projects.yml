@@ -1,0 +1,50 @@
+﻿name: Workflow / MediaPortal Tests
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run MediaPortal.Tests
+    runs-on: windows-latest
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v6
+
+      # MSBuild is required because this is a legacy (non-SDK) .NET Framework 4.7.2 project; dotnet build does not support it.
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      # nuget.exe restore is required because this project uses legacy packages.config, not PackageReference; dotnet restore does not support it.
+      - name: Restore NuGet Packages
+        run: |
+          Build\NuGet.exe restore mediaportal\MediaPortal.sln
+        shell: cmd
+
+      # Explicit build step is required because vstest.console.exe only runs pre-compiled assemblies; unlike dotnet test, it cannot build and test in one step.
+      - name: Build MediaPortal.Tests
+        run: |
+          msbuild mediaportal\MediaPortal.Tests\MediaPortal.Tests.csproj /p:Configuration=Debug /p:Platform=AnyCPU /t:Build
+        shell: cmd
+
+      # vstest.console.exe is required because this is a legacy (non-SDK) .NET Framework 4.7.2 project; dotnet test does not support it.
+      - name: Run Tests
+        run: |
+          vstest.console.exe mediaportal\MediaPortal.Tests\bin\Debug\MediaPortal.Tests.dll --logger:trx --ResultsDirectory:TestResults
+        shell: cmd
+
+      # The following code is intended to reproduce the `dotnet test` functionality `--report-trx`, allowing test results to be published to the GitHub Actions UI.
+      - name: Publish Test Results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Test Results
+          path: TestResults/*.trx
+          reporter: dotnet-trx
