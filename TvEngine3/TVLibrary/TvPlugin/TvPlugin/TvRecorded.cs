@@ -954,10 +954,25 @@ namespace TvPlugin
       return aRecording.IsRecording;
     }
 
+    public string GetIcon(Recording aRecording, bool big)
+    {
+      string fileName = (big, aRecording.TimesWatched > 0) switch
+      {
+        (true, true) => "defaultVideoSeenBigTVrecordings.png",
+        (true, false) => "defaultVideoBigTVrecordings.png",
+        (false, true) => "defaultVideoSeen.png",
+        (false, false) => "defaultVideo.png",
+      };
+      fileName = GUIGraphicsContext.GetThemedSkinFile(@"\Media\" + fileName);
+      if (File.Exists(fileName))
+      {
+        return fileName;
+      }
+      return GUIGraphicsContext.GetThemedSkinFile(@"\Media\" + (aRecording.TimesWatched > 0 ? "defaultVideoSeenBig.png" : "defaultVideoBig.png"));
+    }
+
     private GUIListItem BuildItemFromRecording(Recording aRecording, Channel refCh)
     {
-      string strDefaultUnseenIcon = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultVideoBig.png");
-      string strDefaultSeenIcon = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultVideoSeenBig.png");
       GUIListItem item = null;
 
       try
@@ -985,14 +1000,11 @@ namespace TvPlugin
             break;
         }
 
-        // Set a default logo indicating the watched status
-        string SmallThumb = aRecording.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
-
         // Get the channel logo for the small icons
         string StationLogo = Utils.GetCoverArt(Thumbs.TVChannel, strChannelName);
-        if (Utils.FileExistsInCache(StationLogo))
+        if (String.IsNullOrEmpty(StationLogo) || !Utils.FileExistsInCache(StationLogo))
         {
-          SmallThumb = StationLogo;
+          StationLogo = null;
         }
 
         string PreviewThumb = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded, Path.ChangeExtension(Utils.SplitFilename(aRecording.FileName), null), Utils.GetThumbExtension());
@@ -1010,11 +1022,11 @@ namespace TvPlugin
         else
         {
           // Fallback to Logo/Default icon
-          item.IconImageBig = SmallThumb;
+          item.IconImageBig = StationLogo ?? GetIcon(aRecording, true);
           item.ThumbnailImage = String.Empty;
           item.IsRemote = true;  // -> will load thumbnail image later
         }
-        item.IconImage = SmallThumb;
+        item.IconImage = StationLogo ?? GetIcon(aRecording, false);
       }
       catch (Exception singleex)
       {
@@ -1660,7 +1672,7 @@ namespace TvPlugin
         }
         else
         {
-          GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", "defaultVideoBig.png");
+          GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", GetIcon(rec, true));
         }
       }
       catch (Exception ex)

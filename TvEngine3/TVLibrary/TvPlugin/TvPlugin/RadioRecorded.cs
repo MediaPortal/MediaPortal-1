@@ -918,15 +918,25 @@ namespace TvPlugin
     {
       return aRecording.IsRecording;
     }
+    public string GetIcon(Recording aRecording, bool big)
+    {
+      string fileName = (big, aRecording.TimesWatched > 0) switch
+      {
+        (true, true) => "defaultAudioListenedBig.png",
+        (true, false) => "defaultAudioBig.png",
+        (false, true) => "defaultAudioListened.png",
+        (false, false) => "defaultAudio.png",
+      };
+      fileName = GUIGraphicsContext.GetThemedSkinFile(@"\Media\" + fileName);
+      if (File.Exists(fileName))
+      {
+        return fileName;
+      }
+      return GUIGraphicsContext.GetThemedSkinFile(@"\Media\" + (big ? "defaultAudioBig.png" : "defaultAudio.png"));
+    }
 
     private GUIListItem BuildItemFromRecording(Recording aRecording)
     {
-      string strDefaultUnseenIcon = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultAudioBig.png");
-      string strDefaultSeenIcon = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultAudioSeenBig.png");
-      if (!File.Exists(strDefaultSeenIcon))
-      {
-        strDefaultSeenIcon = strDefaultUnseenIcon;
-      }
       GUIListItem item = null;
       string strChannelName = GUILocalizeStrings.Get(2014); // unknown
       string strGenre = GUILocalizeStrings.Get(2014); // unknown
@@ -969,20 +979,19 @@ namespace TvPlugin
 
         item.TVTag = aRecording;
 
-        // Set a default logo indicating the watched status
-        string SmallThumb = aRecording.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
         string PreviewThumb = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded,
                                             Path.ChangeExtension(Utils.SplitFilename(aRecording.FileName), null),
                                             Utils.GetThumbExtension());
 
         // Get the channel logo for the small icons
         string StationLogo = Utils.GetCoverArt(Thumbs.Radio, strChannelName);
-        if (!string.IsNullOrEmpty(StationLogo))
+        if (String.IsNullOrEmpty(StationLogo))
         {
-          SmallThumb = StationLogo;
+          StationLogo = null;
         }
 
-        item.IconImage = item.ThumbnailImage = item.IconImageBig = SmallThumb;
+        item.IconImage = StationLogo ?? GetIcon(aRecording, false);
+        item.IconImageBig = item.ThumbnailImage = StationLogo ?? GetIcon(aRecording, true);
         // Display previews only if the option to create them is active
         if (string.IsNullOrEmpty(PreviewThumb))
         {
@@ -1531,7 +1540,7 @@ namespace TvPlugin
         }
         else
         {
-          GUIPropertyManager.SetProperty("#Radio.Recorded.thumb", "defaultAudioBig.png");
+          GUIPropertyManager.SetProperty("#Radio.Recorded.thumb", GetIcon(rec, true));
         }
       }
       catch (Exception ex)
