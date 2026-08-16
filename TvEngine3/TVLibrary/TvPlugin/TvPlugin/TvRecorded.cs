@@ -48,7 +48,7 @@ namespace TvPlugin
       LABEL_PROGRAMTIME = 14,
       LABEL_PROGRAMDESCRIPTION = 15,
       LABEL_PROGRAMGENRE = 17,
-    } ;
+    };
 
     private enum SortMethod
     {
@@ -85,7 +85,7 @@ namespace TvPlugin
     protected GUIButtonControl btnCleanup = null;
     [SkinControl(7)]
     protected GUIButtonControl btnCompress = null;
-    
+
 
     #endregion
 
@@ -107,7 +107,7 @@ namespace TvPlugin
       {
         currentLayout = (Layout)xmlreader.GetValueAsInt(SerializeName, "layout", (int)Layout.List);
         m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
-        
+
         string strTmp = xmlreader.GetValueAsString("tvrecorded", "sort", "channel");
         _watchedPercentage = xmlreader.GetValueAsInt("movies", "playedpercentagewatched", 95);
 
@@ -147,7 +147,7 @@ namespace TvPlugin
       {
         xmlwriter.SetValue(SerializeName, "layout", (int)currentLayout);
         xmlwriter.SetValueAsBool(SerializeName, "sortasc", m_bSortAscending);
-        
+
         switch (_currentSortMethod)
         {
           case SortMethod.Channel:
@@ -372,7 +372,7 @@ namespace TvPlugin
       dlg.AddLocalizedString(669); // genre
       dlg.AddLocalizedString(671); // watched
       dlg.AddLocalizedString(1017); // duration
-      
+
 
       // set the focus to currently used sort method
       dlg.SelectedLabel = (int)_currentSortMethod;
@@ -542,7 +542,8 @@ namespace TvPlugin
 
     protected override void SetView(int selectedViewId)
     {
-      try {
+      try
+      {
         switch (selectedViewId)
         {
           case 0:
@@ -850,8 +851,8 @@ namespace TvPlugin
             Utils.SetDefaultIcons(item);
             item.ThumbnailImage = item.IconImageBig;
             facadeLayout.Add(item);
-            
-            if (string.IsNullOrEmpty(item.Label)) 	
+
+            if (string.IsNullOrEmpty(item.Label))
             {
               item.Label = GUILocalizeStrings.Get(2014); //unknown
             }
@@ -862,7 +863,7 @@ namespace TvPlugin
           #region Showing a folders content
 
           // add parent item
-          var item = new GUIListItem("..") {IsFolder = true};
+          var item = new GUIListItem("..") { IsFolder = true };
           Utils.SetDefaultIcons(item);
           facadeLayout.Add(item);
 
@@ -919,7 +920,7 @@ namespace TvPlugin
       Log.Debug("LoadDirectory() - finished sorting facade after '{0}' ms.", watch.ElapsedMilliseconds);
 
       UpdateProperties();
-      UpdateThumbnails(); 
+      UpdateThumbnails();
     }
 
     public static string GetRecordingDisplayName(Recording rec)
@@ -1276,7 +1277,7 @@ namespace TvPlugin
           return;
         }
       }
-      
+
       _iSelectedItem = GetSelectedItemNo();
       GUIListItem pItem = GetItem(iItem);
       if (pItem == null)
@@ -1397,7 +1398,7 @@ namespace TvPlugin
     {
       _oldStateSMSsearch = facadeLayout.EnableSMSsearch;
       facadeLayout.EnableSMSsearch = false;
-      
+
       TryDeleteRecordingAndNotifyUser(rec);
 
       UpdateGUI();
@@ -1537,7 +1538,7 @@ namespace TvPlugin
 
     private void UpdateThumbnails()
     {
-      new Thread(delegate()
+      new Thread(delegate ()
       {
         {
           try
@@ -1562,7 +1563,8 @@ namespace TvPlugin
           }
         }
         GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => 0, 0, 0, null);
-      }) { Name = "UpdateThumbnails", IsBackground = true, Priority = ThreadPriority.BelowNormal }.Start();
+      })
+      { Name = "UpdateThumbnails", IsBackground = true, Priority = ThreadPriority.BelowNormal }.Start();
     }
 
     private void UpdateProperties()
