@@ -1540,7 +1540,12 @@ namespace TvPlugin
         }
         else
         {
-          GUIPropertyManager.SetProperty("#Radio.Recorded.thumb", GetIcon(rec, true));
+          var thumbName = GUIGraphicsContext.GetThemedSkinFile(@"\Media\DefaultMyradioBig.png");
+          if (!File.Exists(thumbName))
+          {
+            thumbName = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultAudioBig.png");
+          }
+          GUIPropertyManager.SetProperty("#Radio.Recorded.thumb", thumbName);
         }
       }
       catch (Exception ex)

@@ -1674,7 +1674,12 @@ namespace TvPlugin
         }
         else
         {
-          GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", GetIcon(rec, true));
+          var thumbName = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultTVLogo.png");
+          if (!File.Exists(thumbName))
+          {
+            thumbName = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultTVBig.png");
+          }
+          GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", thumbName);
         }
       }
       catch (Exception ex)
