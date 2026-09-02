@@ -2,6 +2,8 @@
 <!-- Skin translation file -->
 <!-- French -->
 <strings>
+  <string Field="NoRecordingsFound">Aucun enregistrement trouvé</string>
+  <string Field="Listened">Écouté</string>
   <string Field="Design">Conception</string>
   <string Field="LastWatched">Vu en dernier</string> 
   <string Field="Awards">Récompenses</string>

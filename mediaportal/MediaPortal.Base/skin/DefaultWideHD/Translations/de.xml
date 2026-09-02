@@ -2,6 +2,8 @@
 <!-- Skin translation file -->
 <!-- German -->
 <strings>
+  <string Field="NoRecordingsFound">Keine Aufnahmen gefunden</string>
+  <string Field="Listened">Gehört</string>
   <string Field="Design">Design</string>
   <string Field="Awards">Auszeichnungen</string>
   <string Field="EPGRows">Zeilen in TV/Radio EPGs</string>

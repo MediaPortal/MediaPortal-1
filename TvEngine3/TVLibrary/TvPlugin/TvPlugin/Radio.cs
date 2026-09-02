@@ -981,6 +981,9 @@ namespace TvPlugin
       {
         g_Player.PlayAudioStream(GetPlayPath(CurrentChannel));
         GUIPropertyManager.SetProperty("#Play.Current.Title", CurrentChannel.DisplayName);
+        GUIPropertyManager.SetProperty("#Play.Current.Genre", CurrentChannel.CurrentProgram.Genre);
+        GUIPropertyManager.SetProperty("#Play.Next.Title", CurrentChannel.NextProgram.Title);
+
         GUIPropertyManager.SetProperty("#Radio.Listen.Title", CurrentChannel.DisplayName);
       }
       else

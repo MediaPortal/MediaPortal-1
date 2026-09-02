@@ -770,6 +770,10 @@ namespace MediaPortal.Util
               filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackRadio.png");
               filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackBigRadio.png");
               break;
+            case (int)GUIWindow.Window.WINDOW_RECORDEDTV:
+              filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackBigTVrecordings.png");
+              filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackBigTVrecordings.png");
+              break;
           }
 
           if (File.Exists(filename) && File.Exists(filenameBig))
@@ -940,6 +944,10 @@ namespace MediaPortal.Util
                 case (int)GUIWindow.Window.WINDOW_RADIO:
                   filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderRadio.png");
                   filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBigRadio.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_RECORDEDTV:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\DefaultFolderBigTVrecordings.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\DefaultFolderBigTVrecordings.png");
                   break;
               }
 

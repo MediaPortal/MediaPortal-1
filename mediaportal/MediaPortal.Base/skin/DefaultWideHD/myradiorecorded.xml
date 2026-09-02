@@ -28,16 +28,17 @@
       <texture>general_overlay.png</texture>
     </control>
     <control>
+	  <description>Radio recorded thumb on the right side</description>
       <id>500</id>
-      <type>image</type>
+      <type>image</type>  
       <posX>1485</posX>
       <posY>270</posY>
       <width>207</width>
       <height>207</height>
-      <texture mask="musicfanart_mask.png">#selectedthumb</texture>
+      <texture mask="cdthumbmask.png">#selectedthumb</texture>
       <visible>[facadeview.list|facadeview.album]</visible>
     </control>
-    <control>
+	<control>
       <description>General Overlay</description>
       <id>0</id>
       <type>image</type>
@@ -152,9 +153,11 @@
       <height>1</height>
       <texture>hbar1white.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
-      <visible>control.hasthumb(500)</visible>
+      <visible>control.hasthumb(500)+![facadeview.smallicons|facadeview.largeicons]</visible>
     </control>
     <control>
+	  <description>Radio recorded thumb on the left side</description>
+	  <id>0</id>
       <type>image</type>
       <posX>120</posX>
       <posY>660</posY>
@@ -163,11 +166,11 @@
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <zoom>no</zoom>
-      <texture>#Radio.Recorded.thumb</texture>
-      <visible>control.hasthumb(500)</visible>
+      <texture mask="cdthumbmask.png">#Radio.Recorded.thumb</texture>
+      <visible>control.hasthumb(500)+![facadeview.smallicons|facadeview.largeicons]</visible>
     </control>
-    <control>
-      <description>channel</description>
+	<control>
+      <description>Recorded Channel, Time, Genre </description>
       <id>0</id>
       <type>fadelabel</type>
       <posX>240</posX>
@@ -176,7 +179,7 @@
       <textcolor>ff00bfff</textcolor>
       <label>#Radio.Recorded.Channel  |  #Radio.Recorded.Time  |  #Radio.Recorded.Genre</label>
       <font>font12</font>
-      <visible>control.hasthumb(500)</visible>
+      <visible>control.hasthumb(500)+!string.contains(#selectedthumb,defaultFolderBackBig.png)+![facadeview.smallicons|facadeview.largeicons]</visible>   
     </control>
     <control>
       <description>Program Title</description>
@@ -189,7 +192,7 @@
       <align>left</align>
       <font>font14</font>
       <textcolor>lightgray</textcolor>
-      <visible>control.hasthumb(500)</visible>
+      <visible>control.hasthumb(500)+![facadeview.smallicons|facadeview.largeicons]</visible>
     </control>
     <control>
       <description>Current program Genre</description>
@@ -201,10 +204,10 @@
       <label>#Radio.Recorded.Genre</label>
       <font>font10</font>
       <textcolor>ff00bfff</textcolor>
-      <visible>!string.equals(#Radio.Recorded.Genre,-)</visible>
+      <visible>!string.equals(#Radio.Recorded.Genre,-)+![facadeview.smallicons|facadeview.largeicons]</visible>
     </control>
     <control>
-      <description>Description1</description>
+      <description>Description radio recorded</description>
       <type>textboxscrollup</type>
       <id>15</id>
       <posX>240</posX>
@@ -214,21 +217,35 @@
       <label>#Radio.Recorded.Description</label>
       <font>font10</font>
       <textcolor>FFFFFFFF</textcolor>
-      <visible>control.hasthumb(500)</visible>
+      <visible>control.hasthumb(500)+![facadeview.smallicons|facadeview.largeicons]</visible>
     </control>
     <import>common.facade.recordings.xml</import>
     <control>
-      <description>Video Watched Count Label</description>
+      <description>Radio Listened Count Label</description>
       <type>label</type>
       <id>1</id>
       <posX>1520</posX>
       <posY>590</posY>
       <width>400</width>
-      <label>#watchedcountx #(L(527)) #scroll.wrap #(L(143))#watchedpercent%</label>
+      <label>#watchedcountx #SkinTranslation.Translations.Listened.Label #scroll.wrap #(L(143)) #watchedpercent%</label> 
       <font>font10</font>
       <align>left</align>
       <textcolor>ff00bfff</textcolor>
-      <visible>facadeview.list+!string.equals(#watchedcount, -1)</visible>
+      <visible>[facadeview.list|facadeview.album]+!string.equals(#watchedcount, -1)+!string.equals(#itemcount,0)+!string.contains(#selectedthumb,defaultFolderBackBig.png)+!string.contains(#selectedthumb,defaultFolderBig.png)+![facadeview.smallicons|facadeview.largeicons]</visible> 
+    </control>
+	 <control>
+      <description>Itemcount CurrentModule</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1869</posX>
+      <posY>16</posY>
+      <label>#selectedindex/#itemcount #currentmodule</label>
+      <align>right</align>
+      <font>RSS</font>
+      <textcolor>lightgray</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
     </control>
     <!--control>
       <description>BG for watched count/watched percent</description>
@@ -275,10 +292,10 @@
       <posY>500</posY>
       <width>1920</width>
       <textcolor>ff00bfff</textcolor>
-      <label>769</label>
-      <font>font20</font>
+      <label>#SkinTranslation.Translations.NoRecordingsFound.Label</label>
+      <font>font13</font> 
       <align>center</align>
-      <visible>!control.hasthumb(500)</visible>
+      <visible>string.equals(#itemcount,0)+[facadeview.list|facadeview.album|facadeview.smallicons|facadeview.largeicons]</visible>
     </control>
     
     
