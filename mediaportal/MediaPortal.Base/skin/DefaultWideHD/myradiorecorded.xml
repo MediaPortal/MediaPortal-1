@@ -153,7 +153,7 @@
       <height>1</height>
       <texture>hbar1white.png</texture>
       <colordiffuse>60ffffff</colordiffuse>
-      <visible>control.hasthumb(500)+![facadeview.smallicons|facadeview.largeicons]</visible>
+      <visible>control.hasthumb(500)</visible>
     </control>
     <control>
 	  <description>Radio recorded thumb on the left side</description>
@@ -167,7 +167,7 @@
       <centered>yes</centered>
       <zoom>no</zoom>
       <texture mask="cdthumbmask.png">#Radio.Recorded.thumb</texture>
-      <visible>control.hasthumb(500)+![facadeview.smallicons|facadeview.largeicons]</visible>
+      <visible>control.hasthumb(500)</visible>
     </control>
 	<control>
       <description>Recorded Channel, Time, Genre </description>
@@ -179,7 +179,7 @@
       <textcolor>ff00bfff</textcolor>
       <label>#Radio.Recorded.Channel  |  #Radio.Recorded.Time  |  #Radio.Recorded.Genre</label>
       <font>font12</font>
-      <visible>control.hasthumb(500)+!string.contains(#selectedthumb,defaultFolderBackBig.png)+![facadeview.smallicons|facadeview.largeicons]</visible>   
+      <visible>control.hasthumb(500)+!string.contains(#selectedthumb,defaultFolderBackBig.png)</visible>   
     </control>
     <control>
       <description>Program Title</description>
@@ -192,7 +192,7 @@
       <align>left</align>
       <font>font14</font>
       <textcolor>lightgray</textcolor>
-      <visible>control.hasthumb(500)+![facadeview.smallicons|facadeview.largeicons]</visible>
+      <visible>control.hasthumb(500)</visible>
     </control>
     <control>
       <description>Current program Genre</description>
@@ -204,7 +204,7 @@
       <label>#Radio.Recorded.Genre</label>
       <font>font10</font>
       <textcolor>ff00bfff</textcolor>
-      <visible>!string.equals(#Radio.Recorded.Genre,-)+![facadeview.smallicons|facadeview.largeicons]</visible>
+      <visible>!string.equals(#Radio.Recorded.Genre,-)</visible>
     </control>
     <control>
       <description>Description radio recorded</description>
@@ -217,7 +217,7 @@
       <label>#Radio.Recorded.Description</label>
       <font>font10</font>
       <textcolor>FFFFFFFF</textcolor>
-      <visible>control.hasthumb(500)+![facadeview.smallicons|facadeview.largeicons]</visible>
+      <visible>control.hasthumb(500)</visible>
     </control>
     <import>common.facade.recordings.xml</import>
     <control>
@@ -231,7 +231,7 @@
       <font>font10</font>
       <align>left</align>
       <textcolor>ff00bfff</textcolor>
-      <visible>[facadeview.list|facadeview.album]+!string.equals(#watchedcount, -1)+!string.equals(#itemcount,0)+!string.contains(#selectedthumb,defaultFolderBackBig.png)+!string.contains(#selectedthumb,defaultFolderBig.png)+![facadeview.smallicons|facadeview.largeicons]</visible> 
+      <visible>[facadeview.list|facadeview.album]+!string.equals(#watchedcount, -1)+!string.equals(#itemcount,0)+!string.contains(#selectedthumb,defaultFolderBackBig.png)+!string.contains(#selectedthumb,defaultFolderBig.png)</visible> 
     </control>
 	 <control>
       <description>Itemcount CurrentModule</description>

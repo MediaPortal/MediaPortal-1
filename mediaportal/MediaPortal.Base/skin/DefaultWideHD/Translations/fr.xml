@@ -66,13 +66,13 @@
   <!-- ***************************************************************************************-->
   <!-- ****************************   Skin translation for Logo Manager **********************-->
   <!-- ***************************************************************************************-->
-  <string Field="Package">Paquet</string>.
-  <string Field="Group">Groupe</string>.
+  <string Field="Package">Paquet</string>
+  <string Field="Group">Groupe</string>
   <string Field="GrabNow">Générer</string>
-  <string Field="CancelGrab">Annuler la génération</string>.
-  <string Field="Multiple">Plusieurs</string>.
-  <string Field="SelectPackage">Sélectionnez le package source</string>.
-  <string Field="SelectChannelGroup">Sélectionnez le groupe de chaines</string>.
+  <string Field="CancelGrab">Annuler la génération</string>
+  <string Field="Multiple">Plusieurs</string>
+  <string Field="SelectPackage">Sélectionnez le package source</string>
+  <string Field="SelectChannelGroup">Sélectionnez le groupe de chaines</string>
   <string Field="SelectLayerDesign">Sélectionnez le design</string>
 
   <!-- ***************************************************************************************-->

@@ -4,7 +4,13 @@
   <id>2004</id>
   <defaultcontrol>2</defaultcontrol>
   <controls>
-  <control>
+  <!-- ******************************************************************************************* -->
+    <!-- ******************************* INFOS ON BASIC HOME NOW PLAYING AUDIO ********************* -->
+    <!-- ******************************************************************************************* -->
+    <!-- ******************************************************************************************* -->
+    <!-- *********************** MUSIC AREA WITH LOGOS VISIBLE IN ALL CASES ************************ -->
+    <!-- ******************************************************************************************* -->
+    <control>
       <description>music area</description>
       <type>image</type>
       <id>1</id>
@@ -13,7 +19,8 @@
       <width>2200</width>
       <height>77</height>
       <texture>black.png</texture>
-      <colordiffuse>80ffffff</colordiffuse>
+      <colordiffuse>aaffffff</colordiffuse>
+      <visible>!string.contains(#highlightedbutton,WEATHER)+player.hasaudio+!player.hasvideo</visible>
     </control>
     <control>
       <description>divider horizontal</description>
@@ -22,9 +29,10 @@
       <posX>-20</posX>
       <posY>972</posY>
       <width>1995</width>
-      <height>1</height>
+      <height>2</height>
       <texture>horizontalbar.png</texture>
       <colordiffuse>dodgerblue</colordiffuse>
+      <visible>!string.contains(#highlightedbutton,WEATHER)+player.hasaudio+!player.hasvideo</visible>
     </control>
     <control>
       <description>divider horizontal</description>
@@ -33,441 +41,459 @@
       <posX>-20</posX>
       <posY>1049</posY>
       <width>1995</width>
-      <height>1</height>
+      <height>2</height>
       <texture>horizontalbar.png</texture>
       <colordiffuse>dodgerblue</colordiffuse>
+      <visible>!string.contains(#highlightedbutton,WEATHER)+player.hasaudio+!player.hasvideo</visible>
     </control>
     <control>
-      <description>music logo when no thumb</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>905</posX>
-      <posY>955</posY>
-      <width>109</width>
-      <height>109</height>
-      <centered>no</centered>
-      <keepaspectratio>no</keepaspectratio>
-      <texture mask="cdcase_mask.png">white.png</texture>
-      <colordiffuse>dodgerblue</colordiffuse>
-      <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)" reversible="false">conditional</animation>
-      <visible>!string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
-    </control>
-    <control>
-      <description>music logo when no thumb</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>907</posX>
-      <posY>957</posY>
-      <width>105</width>
-      <height>105</height>
-      <texture mask="cdcase_mask.png">black.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
-      <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)" reversible="false">conditional</animation>
-      <visible>!string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
-    </control>
-    <!--control>
-      <description>music logo when no thumb</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>907</posX>
-      <posY>957</posY>
-      <width>105</width>
-      <height>105</height>
-      <centered>no</centered>
-      <keepaspectratio>no</keepaspectratio>
-      <visible>!control.hasthumb(12345)</visible>
-      <texture mask="cdcase_mask.png">defaultArtistBig.png</texture>
-      <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)" reversible="false">conditional</animation>
-    </control-->
-    <control>
-      <description>music logo</description>
-      <type>image</type>
-      <id>12345</id>
-      <posX>907</posX>
-      <posY>957</posY>
-      <width>105</width>
-      <height>105</height>
-      <centered>yes</centered>
-      <keepaspectratio>no</keepaspectratio>
-      <texture mask="cdcase_mask.png">#Play.Current.Thumb</texture>
-      <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)" reversible="false">conditional</animation>
-      <visible>!string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
-    </control>
-    <control>
-      <description>dummy label for changing Artist Thumb every 15 secs</description>
-      <type>label</type>
-      <id>66900</id>
-      <label />
-      <animation effect="fade" delay="15000" time="0">hidden</animation>
-      <visible>!control.isvisible(66901)</visible>
-    </control>
-    <control>
-      <description>dummy label for changing Artist Thumb every 15 secs</description>
-      <type>label</type>
-      <id>66901</id>
-      <label />
-      <animation effect="fade" delay="15000" time="0">hidden</animation>
-      <visible>control.isvisible(66900)</visible>
-    </control>
-    <control>
-      <description>music logo</description>
-      <type>image</type>
-      <id>77</id>
-      <posX>907</posX>
-      <posY>957</posY>
-      <width>105</width>
-      <height>105</height>
-      <centered>no</centered>
-      <keepaspectratio>no</keepaspectratio>
-      <texture mask="cdcase_mask.png">..\..\..\Thumbs\Music\Artists\#Play.Current.ArtistL.jpg</texture>
-      <visible>string.equals(#currentplaytime,0:15)|string.equals(#currentplaytime,0:16)|string.equals(#currentplaytime,0:17)|string.equals(#currentplaytime,0:18)|string.equals(#currentplaytime,0:19)|string.equals(#currentplaytime,0:20)|string.equals(#currentplaytime,0:21)|string.equals(#currentplaytime,0:22)|string.equals(#currentplaytime,0:23)|string.equals(#currentplaytime,0:24)|string.equals(#currentplaytime,0:25)|string.equals(#currentplaytime,0:26)|string.equals(#currentplaytime,0:27)|string.equals(#currentplaytime,0:28)|string.equals(#currentplaytime,0:29)|string.equals(#currentplaytime,0:30)|string.equals(#currentplaytime,0:45)|string.equals(#currentplaytime,0:46)|string.equals(#currentplaytime,0:47)|string.equals(#currentplaytime,0:48)|string.equals(#currentplaytime,0:49)|string.equals(#currentplaytime,0:50)|string.equals(#currentplaytime,0:51)|string.equals(#currentplaytime,0:52)|string.equals(#currentplaytime,0:53)|string.equals(#currentplaytime,0:54)|string.equals(#currentplaytime,0:55)|string.equals(#currentplaytime,0:56)|string.equals(#currentplaytime,0:57)|string.equals(#currentplaytime,0:58)|string.equals(#currentplaytime,0:59)|string.equals(#currentplaytime,1:00)|string.equals(#currentplaytime,1:15)|string.equals(#currentplaytime,1:16)|string.equals(#currentplaytime,1:17)|string.equals(#currentplaytime,1:18)|string.equals(#currentplaytime,1:19)|string.equals(#currentplaytime,1:20)|string.equals(#currentplaytime,1:21)|string.equals(#currentplaytime,1:22)|string.equals(#currentplaytime,1:23)|string.equals(#currentplaytime,1:24)|string.equals(#currentplaytime,1:25)|string.equals(#currentplaytime,1:26)|string.equals(#currentplaytime,1:27)|string.equals(#currentplaytime,1:28)|string.equals(#currentplaytime,1:29)|string.equals(#currentplaytime,1:30)|string.equals(#currentplaytime,1:45)|string.equals(#currentplaytime,1:46)|string.equals(#currentplaytime,1:47)|string.equals(#currentplaytime,1:48)|string.equals(#currentplaytime,1:49)|string.equals(#currentplaytime,1:50)|string.equals(#currentplaytime,1:51)|string.equals(#currentplaytime,1:52)|string.equals(#currentplaytime,1:53)|string.equals(#currentplaytime,1:54)|string.equals(#currentplaytime,1:55)|string.equals(#currentplaytime,1:56)|string.equals(#currentplaytime,1:57)|string.equals(#currentplaytime,1:58)|string.equals(#currentplaytime,1:59)|string.equals(#currentplaytime,2:00)|string.equals(#currentplaytime,2:15)|string.equals(#currentplaytime,2:16)|string.equals(#currentplaytime,2:17)|string.equals(#currentplaytime,2:18)|string.equals(#currentplaytime,2:19)|string.equals(#currentplaytime,2:20)|string.equals(#currentplaytime,2:21)|string.equals(#currentplaytime,2:22)|string.equals(#currentplaytime,2:23)|string.equals(#currentplaytime,2:24)|string.equals(#currentplaytime,2:25)|string.equals(#currentplaytime,2:26)|string.equals(#currentplaytime,2:27)|string.equals(#currentplaytime,2:28)|string.equals(#currentplaytime,2:29)|string.equals(#currentplaytime,2:30)|string.equals(#currentplaytime,2:45)|string.equals(#currentplaytime,2:46)|string.equals(#currentplaytime,2:47)|string.equals(#currentplaytime,2:48)|string.equals(#currentplaytime,2:49)|string.equals(#currentplaytime,2:50)|string.equals(#currentplaytime,2:51)|string.equals(#currentplaytime,2:52)|string.equals(#currentplaytime,2:53)|string.equals(#currentplaytime,2:54)|string.equals(#currentplaytime,2:55)|string.equals(#currentplaytime,2:56)|string.equals(#currentplaytime,2:57)|string.equals(#currentplaytime,2:58)|string.equals(#currentplaytime,2:59)|string.equals(#currentplaytime,3:00)|string.equals(#currentplaytime,3:15)|string.equals(#currentplaytime,3:16)|string.equals(#currentplaytime,3:17)|string.equals(#currentplaytime,3:18)|string.equals(#currentplaytime,3:19)|string.equals(#currentplaytime,3:20)|string.equals(#currentplaytime,3:21)|string.equals(#currentplaytime,3:22)|string.equals(#currentplaytime,3:23)|string.equals(#currentplaytime,3:24)|string.equals(#currentplaytime,3:25)|string.equals(#currentplaytime,3:26)|string.equals(#currentplaytime,3:27)|string.equals(#currentplaytime,3:28)|string.equals(#currentplaytime,3:29)|string.equals(#currentplaytime,3:30)|string.equals(#currentplaytime,3:45)|string.equals(#currentplaytime,3:46)|string.equals(#currentplaytime,3:47)|string.equals(#currentplaytime,3:48)|string.equals(#currentplaytime,3:49)|string.equals(#currentplaytime,3:50)|string.equals(#currentplaytime,3:51)|string.equals(#currentplaytime,3:52)|string.equals(#currentplaytime,3:53)|string.equals(#currentplaytime,3:54)|string.equals(#currentplaytime,3:55)|string.equals(#currentplaytime,3:56)|string.equals(#currentplaytime,3:57)|string.equals(#currentplaytime,3:58)|string.equals(#currentplaytime,3:59)|string.equals(#currentplaytime,4:00)|string.equals(#currentplaytime,4:15)|string.equals(#currentplaytime,4:16)|string.equals(#currentplaytime,4:17)|string.equals(#currentplaytime,4:18)|string.equals(#currentplaytime,4:19)|string.equals(#currentplaytime,4:20)|string.equals(#currentplaytime,4:21)|string.equals(#currentplaytime,4:22)|string.equals(#currentplaytime,4:23)|string.equals(#currentplaytime,4:24)|string.equals(#currentplaytime,4:25)|string.equals(#currentplaytime,4:26)|string.equals(#currentplaytime,4:27)|string.equals(#currentplaytime,4:28)|string.equals(#currentplaytime,4:29)|string.equals(#currentplaytime,4:30)|string.equals(#currentplaytime,4:45)|string.equals(#currentplaytime,4:46)|string.equals(#currentplaytime,4:47)|string.equals(#currentplaytime,4:48)|string.equals(#currentplaytime,4:49)|string.equals(#currentplaytime,4:50)|string.equals(#currentplaytime,4:51)|string.equals(#currentplaytime,4:52)|string.equals(#currentplaytime,4:53)|string.equals(#currentplaytime,4:54)|string.equals(#currentplaytime,4:55)|string.equals(#currentplaytime,4:56)|string.equals(#currentplaytime,4:57)|string.equals(#currentplaytime,4:58)|string.equals(#currentplaytime,4:59)|string.equals(#currentplaytime,5:00)|string.equals(#currentplaytime,5:15)|string.equals(#currentplaytime,5:16)|string.equals(#currentplaytime,5:17)|string.equals(#currentplaytime,5:18)|string.equals(#currentplaytime,5:19)|string.equals(#currentplaytime,5:20)|string.equals(#currentplaytime,5:21)|string.equals(#currentplaytime,5:22)|string.equals(#currentplaytime,5:23)|string.equals(#currentplaytime,5:24)|string.equals(#currentplaytime,5:25)|string.equals(#currentplaytime,5:26)|string.equals(#currentplaytime,5:27)|string.equals(#currentplaytime,5:28)|string.equals(#currentplaytime,5:29)|string.equals(#currentplaytime,5:30)</visible>
-      <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="[string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)]+control.isvisible(66900)" reversible="false">conditional</animation>
-      <animation effect="fade" time="1000" reversible="true">visiblechange</animation>
-      <visible>!string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
-    </control>
-    <control>
-      <description>Track - Title</description>
-      <type>group</type>
-      <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>10</posX>
-      <posY>979</posY>
-      <width>850</width>
-      <align>right</align>
-      <height>38</height>
-      <visible>!string.equals(#Play.Current.Album,#Radio.Listen.Channel)+player.hasaudio</visible>
-      <control>
-        <type>fadelabel</type>
-        <description>Track</description>
+        <description>music logo when no thumb</description>
+        <type>image</type>
         <id>0</id>
-        <label>#(L(268)): </label>
-        <width>10</width>
-        <maxWidth>100</maxWidth>
-        <textcolor>ff00aaff</textcolor>
-        <align>right</align>
-        <font>font10</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
+        <posX>905</posX>
+        <posY>955</posY>
+        <width>109</width>
+        <height>109</height>
+        <centered>no</centered>
+        <keepaspectratio>no</keepaspectratio>
+        <texture mask="cdcase_mask.png">white.png</texture>
+        <colordiffuse>dodgerblue</colordiffuse>
+        <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)" reversible="false">conditional</animation>
+        <visible>!string.contains(#highlightedbutton,WEATHER)+player.hasaudio+!player.hasvideo</visible>
+      </control>
+      <!-- ******************************************************************************************* -->
+    <!-- *************************** MUSIC DATA WHEN PLAYING MUSIC SONGS *************************** -->
+    <!-- ******************************************************************************************* -->
+    <control>
+      <type>group</type>
+      <description>group element</description>   
+      <visible>[!string.contains(#highlightedbutton,WEATHER)|string.equals(#editor.mode,Carousel)]+player.hasaudio+!player.hasvideo+string.equals(#Play.Current.Type,Music)+!string.equals(#RadioTime.Play.Station)</visible>
+    <control>
+        <description>music logo when no thumb</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>907</posX>
+        <posY>957</posY>
+        <width>105</width>
+        <height>105</height>
+        <centered>no</centered>
+        <keepaspectratio>no</keepaspectratio>
+        <visible>!control.hasthumb(12345)</visible>
+        <texture mask="cdcase_mask.png">defaultArtistBig.png</texture>
+        <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)" reversible="false">conditional</animation>
       </control>
       <control>
-        <type>fadelabel</type>
-        <description>Title</description>
-        <id>0</id>
-        <label>#Play.Current.Title</label>
-        <width>10</width>
-        <maxWidth>800</maxWidth>
+        <description>music logo</description>
+        <type>image</type>
+        <id>12345</id>
+        <posX>907</posX>
+        <posY>957</posY>
+        <width>105</width>
+        <height>105</height>            
+        <centered>yes</centered>
+        <keepaspectratio>no</keepaspectratio>
+        <texture mask="cdcase_mask.png">#Play.Current.Thumb</texture>
+        <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)" reversible="false">conditional</animation>
+      </control>
+      <control>
+        <description>music logo</description>
+        <type>image</type>
+        <id>77</id>
+        <posX>907</posX>
+        <posY>957</posY>
+        <width>105</width>
+        <height>105</height>
+        <centered>no</centered>
+        <keepaspectratio>no</keepaspectratio>
+        <texture mask="cdcase_mask.png">..\..\..\Thumbs\Music\Artists\#Play.Current.ArtistL.jpg</texture>
+        <!--visible>control.isvisible(66900)+string.equals(#Play.Current.Type,Music)+!string.equals(#Play.Current.Artist,)</visible-->
+        <visible>[string.equals(#currentplaytime,0:15)|string.equals(#currentplaytime,0:16)|string.equals(#currentplaytime,0:17)|string.equals(#currentplaytime,0:18)|string.equals(#currentplaytime,0:19)|string.equals(#currentplaytime,0:20)|string.equals(#currentplaytime,0:21)|string.equals(#currentplaytime,0:22)|string.equals(#currentplaytime,0:23)|string.equals(#currentplaytime,0:24)|string.equals(#currentplaytime,0:25)|string.equals(#currentplaytime,0:26)|string.equals(#currentplaytime,0:27)|string.equals(#currentplaytime,0:28)|string.equals(#currentplaytime,0:29)|string.equals(#currentplaytime,0:30)|string.equals(#currentplaytime,0:45)|string.equals(#currentplaytime,0:46)|string.equals(#currentplaytime,0:47)|string.equals(#currentplaytime,0:48)|string.equals(#currentplaytime,0:49)|string.equals(#currentplaytime,0:50)|string.equals(#currentplaytime,0:51)|string.equals(#currentplaytime,0:52)|string.equals(#currentplaytime,0:53)|string.equals(#currentplaytime,0:54)|string.equals(#currentplaytime,0:55)|string.equals(#currentplaytime,0:56)|string.equals(#currentplaytime,0:57)|string.equals(#currentplaytime,0:58)|string.equals(#currentplaytime,0:59)|string.equals(#currentplaytime,1:00)|string.equals(#currentplaytime,1:15)|string.equals(#currentplaytime,1:16)|string.equals(#currentplaytime,1:17)|string.equals(#currentplaytime,1:18)|string.equals(#currentplaytime,1:19)|string.equals(#currentplaytime,1:20)|string.equals(#currentplaytime,1:21)|string.equals(#currentplaytime,1:22)|string.equals(#currentplaytime,1:23)|string.equals(#currentplaytime,1:24)|string.equals(#currentplaytime,1:25)|string.equals(#currentplaytime,1:26)|string.equals(#currentplaytime,1:27)|string.equals(#currentplaytime,1:28)|string.equals(#currentplaytime,1:29)|string.equals(#currentplaytime,1:30)|string.equals(#currentplaytime,1:45)|string.equals(#currentplaytime,1:46)|string.equals(#currentplaytime,1:47)|string.equals(#currentplaytime,1:48)|string.equals(#currentplaytime,1:49)|string.equals(#currentplaytime,1:50)|string.equals(#currentplaytime,1:51)|string.equals(#currentplaytime,1:52)|string.equals(#currentplaytime,1:53)|string.equals(#currentplaytime,1:54)|string.equals(#currentplaytime,1:55)|string.equals(#currentplaytime,1:56)|string.equals(#currentplaytime,1:57)|string.equals(#currentplaytime,1:58)|string.equals(#currentplaytime,1:59)|string.equals(#currentplaytime,2:00)|string.equals(#currentplaytime,2:15)|string.equals(#currentplaytime,2:16)|string.equals(#currentplaytime,2:17)|string.equals(#currentplaytime,2:18)|string.equals(#currentplaytime,2:19)|string.equals(#currentplaytime,2:20)|string.equals(#currentplaytime,2:21)|string.equals(#currentplaytime,2:22)|string.equals(#currentplaytime,2:23)|string.equals(#currentplaytime,2:24)|string.equals(#currentplaytime,2:25)|string.equals(#currentplaytime,2:26)|string.equals(#currentplaytime,2:27)|string.equals(#currentplaytime,2:28)|string.equals(#currentplaytime,2:29)|string.equals(#currentplaytime,2:30)|string.equals(#currentplaytime,2:45)|string.equals(#currentplaytime,2:46)|string.equals(#currentplaytime,2:47)|string.equals(#currentplaytime,2:48)|string.equals(#currentplaytime,2:49)|string.equals(#currentplaytime,2:50)|string.equals(#currentplaytime,2:51)|string.equals(#currentplaytime,2:52)|string.equals(#currentplaytime,2:53)|string.equals(#currentplaytime,2:54)|string.equals(#currentplaytime,2:55)|string.equals(#currentplaytime,2:56)|string.equals(#currentplaytime,2:57)|string.equals(#currentplaytime,2:58)|string.equals(#currentplaytime,2:59)|string.equals(#currentplaytime,3:00)|string.equals(#currentplaytime,3:15)|string.equals(#currentplaytime,3:16)|string.equals(#currentplaytime,3:17)|string.equals(#currentplaytime,3:18)|string.equals(#currentplaytime,3:19)|string.equals(#currentplaytime,3:20)|string.equals(#currentplaytime,3:21)|string.equals(#currentplaytime,3:22)|string.equals(#currentplaytime,3:23)|string.equals(#currentplaytime,3:24)|string.equals(#currentplaytime,3:25)|string.equals(#currentplaytime,3:26)|string.equals(#currentplaytime,3:27)|string.equals(#currentplaytime,3:28)|string.equals(#currentplaytime,3:29)|string.equals(#currentplaytime,3:30)|string.equals(#currentplaytime,3:45)|string.equals(#currentplaytime,3:46)|string.equals(#currentplaytime,3:47)|string.equals(#currentplaytime,3:48)|string.equals(#currentplaytime,3:49)|string.equals(#currentplaytime,3:50)|string.equals(#currentplaytime,3:51)|string.equals(#currentplaytime,3:52)|string.equals(#currentplaytime,3:53)|string.equals(#currentplaytime,3:54)|string.equals(#currentplaytime,3:55)|string.equals(#currentplaytime,3:56)|string.equals(#currentplaytime,3:57)|string.equals(#currentplaytime,3:58)|string.equals(#currentplaytime,3:59)|string.equals(#currentplaytime,4:00)|string.equals(#currentplaytime,4:15)|string.equals(#currentplaytime,4:16)|string.equals(#currentplaytime,4:17)|string.equals(#currentplaytime,4:18)|string.equals(#currentplaytime,4:19)|string.equals(#currentplaytime,4:20)|string.equals(#currentplaytime,4:21)|string.equals(#currentplaytime,4:22)|string.equals(#currentplaytime,4:23)|string.equals(#currentplaytime,4:24)|string.equals(#currentplaytime,4:25)|string.equals(#currentplaytime,4:26)|string.equals(#currentplaytime,4:27)|string.equals(#currentplaytime,4:28)|string.equals(#currentplaytime,4:29)|string.equals(#currentplaytime,4:30)|string.equals(#currentplaytime,4:45)|string.equals(#currentplaytime,4:46)|string.equals(#currentplaytime,4:47)|string.equals(#currentplaytime,4:48)|string.equals(#currentplaytime,4:49)|string.equals(#currentplaytime,4:50)|string.equals(#currentplaytime,4:51)|string.equals(#currentplaytime,4:52)|string.equals(#currentplaytime,4:53)|string.equals(#currentplaytime,4:54)|string.equals(#currentplaytime,4:55)|string.equals(#currentplaytime,4:56)|string.equals(#currentplaytime,4:57)|string.equals(#currentplaytime,4:58)|string.equals(#currentplaytime,4:59)|string.equals(#currentplaytime,5:00)|string.equals(#currentplaytime,5:15)|string.equals(#currentplaytime,5:16)|string.equals(#currentplaytime,5:17)|string.equals(#currentplaytime,5:18)|string.equals(#currentplaytime,5:19)|string.equals(#currentplaytime,5:20)|string.equals(#currentplaytime,5:21)|string.equals(#currentplaytime,5:22)|string.equals(#currentplaytime,5:23)|string.equals(#currentplaytime,5:24)|string.equals(#currentplaytime,5:25)|string.equals(#currentplaytime,5:26)|string.equals(#currentplaytime,5:27)|string.equals(#currentplaytime,5:28)|string.equals(#currentplaytime,5:29)|string.equals(#currentplaytime,5:30)]+string.equals(#Play.Current.Type,Music)+!string.equals(#Play.Current.Artist,)</visible>
+        <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="[string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)]+control.isvisible(66900)" reversible="false">conditional</animation>
+        <animation effect="fade" time="1000" reversible="true">visiblechange</animation>
+      </control>
+    
+      <control>
+        <description>Track - Title</description>
+        <type>group</type>
+        <layout>StackLayout(7, Horizontal, true)</layout>
+        <posX>0</posX>
+        <posY>979</posY>
+        <width>885</width>
         <align>right</align>
+        <height>38</height>
+        <control>
+          <type>fadelabel</type>
+          <description>Track</description>
+          <id>0</id>
+          <label>#(L(268)): </label>
+          <width>10</width>
+          <maxWidth>200</maxWidth>
+          <textcolor>ff00aaff</textcolor>
+          <align>right</align>
+          <font>font10</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+        <control>
+          <type>fadelabel</type>
+          <description>Title</description>
+          <id>0</id>
+          <label>#Play.Current.Title</label>
+          <width>10</width>
+          <maxWidth>840</maxWidth>
+          <align>right</align>
+          <font>font10</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+      </control>
+      <control>
+        <description>Track - Title</description>
+        <type>group</type>
+        <layout>StackLayout(7, Horizontal, true)</layout>
+        <posX>0</posX>
+        <posY>1010</posY>
+        <width>885</width>
+        <align>right</align>
+        <height>38</height>
+        <control>
+          <type>fadelabel</type>
+          <description>Track</description>
+          <id>0</id>
+          <label>#(L(171))</label>
+          <width>10</width>
+          <maxWidth>200</maxWidth>
+          <textcolor>ff00aaff</textcolor>
+          <align>right</align>
+          <font>font10</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+        <control>
+          <type>fadelabel</type>
+          <description>Title</description>
+          <id>0</id>
+          <label>#(iif(eq(#Play.Current.Artist,''),'n/a ','#Play.Current.Artist'))</label>
+          <width>10</width>
+          <maxWidth>840</maxWidth>
+          <align>right</align>
+          <font>font10</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+      </control>
+      <control>
+        <description>Track - Title</description>
+        <type>group</type>
+        <layout>StackLayout(7, Horizontal, true)</layout>
+        <posX>1042</posX>
+        <posY>979</posY>
+        <width>885</width>
+        <align>left</align>
+        <height>38</height>
+        <visible>string.equals(#duration)</visible>
+        <control>
+          <type>fadelabel</type>
+          <description>Track</description>
+          <id>0</id>
+          <label>#(L(170))</label>
+          <width>10</width>
+          <maxWidth>200</maxWidth>
+          <textcolor>ff00aaff</textcolor>
+          <align>left</align>
+          <font>font10</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+        <control>
+          <type>fadelabel</type>
+          <description>Title</description>
+          <id>0</id>
+          <label>#Play.Current.Album</label>
+          <width>10</width>
+          <maxWidth>840</maxWidth>
+          <align>left</align>
+          <font>font10</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+      </control>
+      <control>
+        <description>Title Track Duration</description>
+        <type>group</type>
+        <layout>StackLayout(7, Horizontal, true)</layout>
+        <posX>1042</posX>
+        <posY>1010</posY>
+        <align>left</align>
+        <width>885</width>
+        <height>38</height>
+        <visible>string.equals(#duration)</visible>
+        <control>
+          <type>fadelabel</type>
+          <description>Titlenumber Label</description>
+          <id>0</id>
+          <label>#(L(435))</label>
+          <width>10</width>
+          <maxWidth>290</maxWidth>
+          <align>left</align>
+          <textcolor>ff00aaff</textcolor>
+          <font>font10</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+        <control>
+          <type>fadelabel</type>
+          <description>Titlenumber</description>
+          <id>0</id>
+          <label>#Play.Current.Track</label>
+          <width>10</width>
+          <maxWidth>1250</maxWidth>
+          <align>left</align>
+          <font>font10</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+        <control>
+          <type>fadelabel</type>
+          <description>Year Label</description>
+          <id>0</id>
+          <label>#scroll.wrap #(L(436))</label>
+          <width>10</width>
+          <maxWidth>290</maxWidth>
+          <align>left</align>
+          <textcolor>ff00aaff</textcolor>
+          <font>font10</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+        <control>
+          <type>fadelabel</type>
+          <description>Year</description>
+          <id>0</id>
+          <label>#(iif(eq(#Play.Current.Year,''),'n/a ','#Play.Current.Year'))</label>
+          <width>10</width>
+          <maxWidth>1250</maxWidth>
+          <align>left</align>
+          <font>font10</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+        <control>
+          <type>fadelabel</type>
+          <description>Playtime Label</description>
+          <id>0</id>
+          <label></label>
+          <width>10</width>
+          <maxWidth>350</maxWidth>
+          <align>left</align>
+          <textcolor>ff00aaff</textcolor>
+          <font>font10</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+      </control>
+      <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>1450</posX>
+        <posY>1015</posY>
+        <width>113</width>
+        <height>23</height>
+        <texture>osd_progress_background.png</texture>
+        <visible>string.equals(#duration)</visible>
+      </control>
+      <control>
+        <description>Progress Bar</description>
+        <type>progress</type>
+        <id>0</id>
+        <posX>1438</posX>
+        <posY>1015</posY> 129
+        <width>141</width>
+        <height>23</height>
+        <label>#percentage</label>
+        <texturebg>-</texturebg>
+        <onlymidtexture>no</onlymidtexture>
+        <midwidth>286</midwidth>
+        <midheight>23</midheight>
+        <midoffsetX>0</midoffsetX>
+        <midoffsetY>0</midoffsetY>
+        <lefttexture>osd_progress_left_small.png</lefttexture>
+        <midtexture>osd_progress_mid_small.png</midtexture>
+        <righttexture>osd_progress_right_small.png</righttexture>
+        <visible>string.equals(#duration)</visible>
+      </control>
+      <control>
+        <description>play time label</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1439</posX>
+        <posY>1011</posY>
+        <label>#currentplaytime</label>
         <font>font10</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
+        <align>right</align>
+        <textcolor>fff5deb3</textcolor>
+        <visible>string.equals(#duration)</visible>
+      </control>
+      <control>
+        <type>label</type>
+        <description>track duration label</description>
+        <id>0</id>
+        <posX>1573</posX>
+        <posY>1011</posY>
+        <label>#currentremaining</label>
+        <align>left</align>
+        <font>font10</font>
+        <textcolor>fff5deb3</textcolor>
+        <visible>string.equals(#duration)</visible>
       </control>
     </control>
+    <!-- ******************************************************************************************* -->
+    <!-- *****************************  Properies Radiotime (TuneIn)  ****************************** -->
+    <!-- ******************************************************************************************* -->
     <control>
-      <description>Track - Title</description>
+      <type>group</type>
+      <description>group element</description>
+      <visible>[!string.contains(#highlightedbutton,WEATHER)|string.equals(#editor.mode,Carousel)]+player.hasaudio+!player.hasvideo+string.equals(#Play.Current.Type,Radio)+string.equals(#RadioTime.Play.Station)</visible>
+      
+      <control>
+        <description>Track - Title</description>
+        <type>group</type>
+        <layout>StackLayout(7, Horizontal, true)</layout>
+        <posX>0</posX>
+        <posY>979</posY>
+        <width>885</width>
+        <align>right</align>
+        <height>38</height>
+        <control>
+          <type>fadelabel</type>
+          <description>Track</description>
+          <id>0</id>
+          <label>#(L(268)): </label>
+          <width>10</width>
+          <maxWidth>200</maxWidth>
+          <textcolor>ff00aaff</textcolor>
+          <align>right</align>
+          <font>font10</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+        <control>
+          <type>fadelabel</type>
+          <description>Title</description>
+          <id>0</id>
+          <label>#(iif(eq(#Play.Current.Title,#Radio.Recorded.Title),'n/a','#Play.Current.Title'))</label>
+          <width>10</width>
+          <maxWidth>840</maxWidth>
+          <align>right</align>
+          <font>font10</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+      </control>
+      
+      <control>
+        <description>Artist</description>
+        <type>group</type>
+        <layout>StackLayout(7, Horizontal, true)</layout>
+        <posX>0</posX>
+        <posY>1010</posY>
+        <width>885</width>
+        <align>right</align>
+        <height>38</height>
+        <control>
+          <type>fadelabel</type>
+          <description>Artist</description>
+          <id>0</id>
+          <label>#(L(171))</label>
+          <width>10</width>
+          <maxWidth>200</maxWidth>
+          <textcolor>ff00aaff</textcolor>
+          <align>right</align>
+          <font>font10</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+        <control>
+          <type>fadelabel</type>
+          <description>Artist</description>
+          <id>0</id>
+          <label>#Play.Current.Artist</label>
+          <width>10</width>
+          <maxWidth>840</maxWidth>
+          <align>right</align>
+          <font>font10</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+      </control>
+      
+      <control>
+        <description>Station</description>
+        <type>group</type>
+        <layout>StackLayout(7, Horizontal, true)</layout>
+        <posX>1042</posX>
+        <posY>979</posY>
+        <width>885</width>
+        <align>left</align>
+        <height>38</height>
+        <visible>string.equals(#RadioTime.Play.Station)</visible>
+        <control>
+          <type>fadelabel</type>
+          <description>Station</description>
+          <id>0</id>
+          <label>#(L(812)): </label>
+          <width>10</width>
+          <maxWidth>200</maxWidth>
+          <textcolor>ff00aaff</textcolor>
+          <align>left</align>
+          <font>font10</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+        </control>
+        <control>
+          <type>fadelabel</type>
+          <description>Station</description>
+          <id>0</id>
+          <label>#RadioTime.Play.Station #RadioTime.Play.Location</label>
+          <width>10</width>
+          <maxWidth>840</maxWidth>
+          <align>left</align>
+          <font>font10</font>
+          <shadowAngle>45</shadowAngle>
+          <shadowDistance>4</shadowDistance>
+          <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    
+    <control>
+      <description>Playtime</description>
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>10</posX>
+      <posX>1042</posX>
       <posY>1010</posY>
-      <width>850</width>
-      <align>right</align>
-      <height>38</height>
-      <visible>!string.equals(#Play.Current.Album,#Radio.Listen.Channel)+player.hasaudio</visible>
-      <control>
-        <type>fadelabel</type>
-        <description>Track</description>
-        <id>0</id>
-        <label>#(L(171))</label>
-        <width>10</width>
-        <maxWidth>200</maxWidth>
-        <textcolor>ff00aaff</textcolor>
-        <align>right</align>
-        <font>font10</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
-      </control>
-      <control>
-        <type>fadelabel</type>
-        <description>Title</description>
-        <id>0</id>
-        <label>#(iif(eq(#Play.Current.Artist,''),'n/a','#Play.Current.Artist'))</label>
-        <width>10</width>
-        <maxWidth>800</maxWidth>
-        <align>right</align>
-        <font>font10</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
-      </control>
-    </control>
-    <control>
-      <description>Track - Title</description>
-      <type>group</type>
-      <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>1042</posX>
-      <posY>979</posY>
       <width>885</width>
       <align>left</align>
       <height>38</height>
-      <visible>!string.equals(#Play.Current.Album,#Radio.Listen.Channel)+player.hasaudio+string.equals(#duration)</visible>
+      <visible>string.equals(#RadioTime.Play.Station)</visible>
       <control>
         <type>fadelabel</type>
-        <description>Track</description>
-        <id>0</id>
-        <label>#(L(170))</label>
-        <width>10</width>
-        <maxWidth>200</maxWidth>
-        <textcolor>ff00aaff</textcolor>
-        <align>left</align>
-        <font>font10</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
-      </control>
-      <control>
-        <type>fadelabel</type>
-        <description>Title</description>
-        <id>0</id>
-        <label>#Play.Current.Album</label>
-        <width>10</width>
-        <maxWidth>840</maxWidth>
-        <align>left</align>
-        <font>font10</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
-      </control>
-    </control>
-    <control>
-      <description>Track - Title</description>
-      <type>group</type>
-      <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>1042</posX>
-      <posY>979</posY>
-      <width>885</width>
-      <align>left</align>
-      <height>38</height>
-      <visible>!string.equals(#Play.Current.Album,#Radio.Listen.Channel)+player.hasaudio+!string.equals(#duration)+plugin.isenabled(TuneIn)</visible>
-      <control>
-        <type>fadelabel</type>
-        <description>Track</description>
-        <id>0</id>
-        <label>#(L(602)): </label>
-        <width>10</width>
-        <maxWidth>200</maxWidth>
-        <textcolor>ff00aaff</textcolor>
-        <align>left</align>
-        <font>font10</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
-      </control>
-      <control>
-        <type>fadelabel</type>
-        <description>Title</description>
-        <id>0</id>
-        <label>#(iif(eq(#RadioTime.Play.Station,' '),'#Play.Current.Album','#RadioTime.Play.Station #RadioTime.Play.Location'))</label>
-        <width>10</width>
-        <maxWidth>840</maxWidth>
-        <align>left</align>
-        <font>font10</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
-      </control>
-    </control>
-    
-    
-    <control>
-      <description>Track - Title</description>
-      <type>group</type>
-      <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>1042</posX>
-      <posY>979</posY>
-      <width>885</width>
-      <align>left</align>
-      <height>38</height>
-      <visible>!string.equals(#Play.Current.Album,#Radio.Listen.Channel)+player.hasaudio+!string.equals(#duration)+!plugin.isenabled(TuneIn)</visible>
-      <control>
-        <type>fadelabel</type>
-        <description>Track</description>
-        <id>0</id>
-        <label>#(L(602)): </label>
-        <width>10</width>
-        <maxWidth>200</maxWidth>
-        <textcolor>ff00aaff</textcolor>
-        <align>left</align>
-        <font>font10</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
-      </control>
-      <control>
-        <type>fadelabel</type>
-        <description>Title</description>
-        <id>0</id>
-        <label>#Play.Current.Album</label>
-        <width>10</width>
-        <maxWidth>840</maxWidth>
-        <align>left</align>
-        <font>font10</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
-      </control>
-    </control>
-    
-    
-    
-    <control>
-      <description>Title Track Duration</description>
-      <type>group</type>
-      <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>1042</posX>
-      <posY>1010</posY>
-      <align>left</align>
-      <width>885</width>
-      <height>38</height>
-      <visible>!string.equals(#Play.Current.Album,#Radio.Listen.Channel)+player.hasaudio+string.equals(#duration)</visible>
-      <control>
-        <type>fadelabel</type>
-        <description>Titlenumber Label</description>
-        <id>0</id>
-        <label>#(L(435))</label>
-        <width>10</width>
-        <maxWidth>290</maxWidth>
-        <align>left</align>
-        <textcolor>ff00aaff</textcolor>
-        <font>font10</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
-      </control>
-      <control>
-        <type>fadelabel</type>
-        <description>Titlenumber</description>
-        <id>0</id>
-        <label>#Play.Current.Track</label>
-        <width>10</width>
-        <maxWidth>1250</maxWidth>
-        <align>left</align>
-        <font>font10</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
-      </control>
-      <control>
-        <type>fadelabel</type>
-        <description>Year Label</description>
-        <id>0</id>
-        <label>#scroll.wrap #(L(436))</label>
-        <width>10</width>
-        <maxWidth>290</maxWidth>
-        <align>left</align>
-        <textcolor>ff00aaff</textcolor>
-        <font>font10</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
-        <visible>Player.HasMedia</visible>
-      </control>
-      <control>
-        <type>fadelabel</type>
-        <description>Year</description>
-        <id>0</id>
-        <label>#(iif(eq(#Play.Current.Year,''),'n/a ','#Play.Current.Year'))</label>
-        <width>10</width>
-        <maxWidth>1250</maxWidth>
-        <align>left</align>
-        <font>font10</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
-      </control>
-      <control>
-        <type>fadelabel</type>
-        <description>Playtime Label</description>
-        <id>0</id>
-        <label> </label>
-        <width>10</width>
-        <maxWidth>350</maxWidth>
-        <align>left</align>
-        <textcolor>ff00aaff</textcolor>
-        <font>font10</font>
-        <shadowAngle>45</shadowAngle>
-        <shadowDistance>4</shadowDistance>
-        <shadowColor>ff000000</shadowColor>
-        <visible>Player.HasMedia</visible>
-      </control>
-      </control>
-      <control>
-      <type>image</type>
-      <id>0</id>
-      <posX>1450</posX>
-      <posY>1019</posY>
-      <width>113</width>
-      <height>23</height>
-      <texture>horizontal_bar2.png</texture>
-      <visible>!string.equals(#Play.Current.Album,#Radio.Listen.Channel)+player.hasaudio+string.equals(#duration)</visible>
-    </control>
-    <control>
-      <description>Progress Bar</description>
-      <type>progress</type>
-      <id>0</id>
-      <posX>1438</posX>
-      <posY>1019</posY>
-      <width>141</width>
-      <height>23</height>
-      <label>#percentage</label>
-      <texturebg>-</texturebg>
-      <onlymidtexture>no</onlymidtexture>
-      <midwidth>286</midwidth>
-      <midheight>23</midheight>
-      <midoffsetX>0</midoffsetX>
-      <midoffsetY>0</midoffsetY>
-      <lefttexture>osd_progress_mid_tv2.png</lefttexture>
-      <midtexture>osd_progress_mid_tv2.png</midtexture>
-      <righttexture>osd_progress_right2.png</righttexture>
-      <visible>!string.equals(#Play.Current.Album,#Radio.Listen.Channel)+player.hasaudio+string.equals(#duration)</visible>
-    </control>
-    <control>
-      <description>play time label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>1439</posX>
-      <posY>1011</posY>
-      <label>#currentplaytime</label>
-      <font>font10</font>
-      <align>right</align>
-      <textcolor>fff5deb3</textcolor>
-      <visible>!string.equals(#Play.Current.Album,#Radio.Listen.Channel)+player.hasaudio+string.equals(#duration)</visible>
-    </control>
-    <control>
-      <type>label</type>
-      <description>track duration label</description>
-      <id>0</id>
-      <posX>1573</posX>
-      <posY>1011</posY>
-      <label>#currentremaining</label>
-      <align>left</align>
-      <font>font10</font>
-      <textcolor>fff5deb3</textcolor>
-      <visible>!string.equals(#Play.Current.Album,#Radio.Listen.Channel)+player.hasaudio+string.equals(#duration)</visible>
-    </control>
-    <control>
-      <description>Track - Title</description>
-      <type>group</type>
-      <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>1042</posX>
-      <posY>1010</posY>
-      <width>885</width>
-      <align>left</align>
-      <height>38</height>
-      <visible>!string.equals(#Play.Current.Album,#Radio.Listen.Channel)+player.hasaudio+!string.equals(#duration)</visible>
-      <control>
-        <type>fadelabel</type>
-        <description>Track</description>
+        <description>Playtime</description>
         <id>0</id>
         <label>#(L(34020))</label>
         <width>10</width>
@@ -481,7 +507,7 @@
       </control>
       <control>
         <type>fadelabel</type>
-        <description>Title</description>
+        <description>Playtime</description>
         <id>0</id>
         <label>#currentplaytime #(L(1656))</label>
         <width>10</width>
@@ -494,111 +520,67 @@
       </control>
     </control>
     
+    <control>
+        <description>music logo when no thumb</description>
+        <type>image</type>
+        <id>0</id>
+        <posX>907</posX>
+        <posY>957</posY>
+        <width>105</width>
+        <height>105</height>
+        <centered>no</centered>
+        <keepaspectratio>no</keepaspectratio>
+        <visible>!control.hasthumb(12346)</visible>
+        <texture mask="cdcase_mask.png">DefaultMyradioBigBlue.png</texture>
+        <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)" reversible="false">conditional</animation>
+      </control>
+      <control>
+        <description>music logo</description>
+        <type>image</type>
+        <id>12346</id>
+        <posX>907</posX>
+        <posY>957</posY>
+        <width>105</width>
+        <height>105</height>            
+        <centered>yes</centered>
+        <keepaspectratio>no</keepaspectratio>
+        <texture mask="cdcase_mask.png">#RadioTime.Play.Image</texture>
+        <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)" reversible="false">conditional</animation>
+      </control>
+      <control>
+        <description>music logo</description>
+        <type>image</type>
+        <id>77</id>
+        <posX>907</posX>
+        <posY>957</posY>
+        <width>105</width>
+        <height>105</height>
+        <centered>no</centered>
+        <keepaspectratio>no</keepaspectratio>
+        <texture mask="cdcase_mask.png">..\..\..\Thumbs\Music\Artists\#Play.Current.ArtistL.jpg</texture>
+        <!--visible>control.isvisible(66902)+!string.equals(#Play.Current.Artist,)</visible-->
+        <visible>[string.equals(#currentplaytime,0:15)|string.equals(#currentplaytime,0:16)|string.equals(#currentplaytime,0:17)|string.equals(#currentplaytime,0:18)|string.equals(#currentplaytime,0:19)|string.equals(#currentplaytime,0:20)|string.equals(#currentplaytime,0:21)|string.equals(#currentplaytime,0:22)|string.equals(#currentplaytime,0:23)|string.equals(#currentplaytime,0:24)|string.equals(#currentplaytime,0:25)|string.equals(#currentplaytime,0:26)|string.equals(#currentplaytime,0:27)|string.equals(#currentplaytime,0:28)|string.equals(#currentplaytime,0:29)|string.equals(#currentplaytime,0:30)|string.equals(#currentplaytime,0:45)|string.equals(#currentplaytime,0:46)|string.equals(#currentplaytime,0:47)|string.equals(#currentplaytime,0:48)|string.equals(#currentplaytime,0:49)|string.equals(#currentplaytime,0:50)|string.equals(#currentplaytime,0:51)|string.equals(#currentplaytime,0:52)|string.equals(#currentplaytime,0:53)|string.equals(#currentplaytime,0:54)|string.equals(#currentplaytime,0:55)|string.equals(#currentplaytime,0:56)|string.equals(#currentplaytime,0:57)|string.equals(#currentplaytime,0:58)|string.equals(#currentplaytime,0:59)|string.equals(#currentplaytime,1:00)|string.equals(#currentplaytime,1:15)|string.equals(#currentplaytime,1:16)|string.equals(#currentplaytime,1:17)|string.equals(#currentplaytime,1:18)|string.equals(#currentplaytime,1:19)|string.equals(#currentplaytime,1:20)|string.equals(#currentplaytime,1:21)|string.equals(#currentplaytime,1:22)|string.equals(#currentplaytime,1:23)|string.equals(#currentplaytime,1:24)|string.equals(#currentplaytime,1:25)|string.equals(#currentplaytime,1:26)|string.equals(#currentplaytime,1:27)|string.equals(#currentplaytime,1:28)|string.equals(#currentplaytime,1:29)|string.equals(#currentplaytime,1:30)|string.equals(#currentplaytime,1:45)|string.equals(#currentplaytime,1:46)|string.equals(#currentplaytime,1:47)|string.equals(#currentplaytime,1:48)|string.equals(#currentplaytime,1:49)|string.equals(#currentplaytime,1:50)|string.equals(#currentplaytime,1:51)|string.equals(#currentplaytime,1:52)|string.equals(#currentplaytime,1:53)|string.equals(#currentplaytime,1:54)|string.equals(#currentplaytime,1:55)|string.equals(#currentplaytime,1:56)|string.equals(#currentplaytime,1:57)|string.equals(#currentplaytime,1:58)|string.equals(#currentplaytime,1:59)|string.equals(#currentplaytime,2:00)|string.equals(#currentplaytime,2:15)|string.equals(#currentplaytime,2:16)|string.equals(#currentplaytime,2:17)|string.equals(#currentplaytime,2:18)|string.equals(#currentplaytime,2:19)|string.equals(#currentplaytime,2:20)|string.equals(#currentplaytime,2:21)|string.equals(#currentplaytime,2:22)|string.equals(#currentplaytime,2:23)|string.equals(#currentplaytime,2:24)|string.equals(#currentplaytime,2:25)|string.equals(#currentplaytime,2:26)|string.equals(#currentplaytime,2:27)|string.equals(#currentplaytime,2:28)|string.equals(#currentplaytime,2:29)|string.equals(#currentplaytime,2:30)|string.equals(#currentplaytime,2:45)|string.equals(#currentplaytime,2:46)|string.equals(#currentplaytime,2:47)|string.equals(#currentplaytime,2:48)|string.equals(#currentplaytime,2:49)|string.equals(#currentplaytime,2:50)|string.equals(#currentplaytime,2:51)|string.equals(#currentplaytime,2:52)|string.equals(#currentplaytime,2:53)|string.equals(#currentplaytime,2:54)|string.equals(#currentplaytime,2:55)|string.equals(#currentplaytime,2:56)|string.equals(#currentplaytime,2:57)|string.equals(#currentplaytime,2:58)|string.equals(#currentplaytime,2:59)|string.equals(#currentplaytime,3:00)|string.equals(#currentplaytime,3:15)|string.equals(#currentplaytime,3:16)|string.equals(#currentplaytime,3:17)|string.equals(#currentplaytime,3:18)|string.equals(#currentplaytime,3:19)|string.equals(#currentplaytime,3:20)|string.equals(#currentplaytime,3:21)|string.equals(#currentplaytime,3:22)|string.equals(#currentplaytime,3:23)|string.equals(#currentplaytime,3:24)|string.equals(#currentplaytime,3:25)|string.equals(#currentplaytime,3:26)|string.equals(#currentplaytime,3:27)|string.equals(#currentplaytime,3:28)|string.equals(#currentplaytime,3:29)|string.equals(#currentplaytime,3:30)|string.equals(#currentplaytime,3:45)|string.equals(#currentplaytime,3:46)|string.equals(#currentplaytime,3:47)|string.equals(#currentplaytime,3:48)|string.equals(#currentplaytime,3:49)|string.equals(#currentplaytime,3:50)|string.equals(#currentplaytime,3:51)|string.equals(#currentplaytime,3:52)|string.equals(#currentplaytime,3:53)|string.equals(#currentplaytime,3:54)|string.equals(#currentplaytime,3:55)|string.equals(#currentplaytime,3:56)|string.equals(#currentplaytime,3:57)|string.equals(#currentplaytime,3:58)|string.equals(#currentplaytime,3:59)|string.equals(#currentplaytime,4:00)|string.equals(#currentplaytime,4:15)|string.equals(#currentplaytime,4:16)|string.equals(#currentplaytime,4:17)|string.equals(#currentplaytime,4:18)|string.equals(#currentplaytime,4:19)|string.equals(#currentplaytime,4:20)|string.equals(#currentplaytime,4:21)|string.equals(#currentplaytime,4:22)|string.equals(#currentplaytime,4:23)|string.equals(#currentplaytime,4:24)|string.equals(#currentplaytime,4:25)|string.equals(#currentplaytime,4:26)|string.equals(#currentplaytime,4:27)|string.equals(#currentplaytime,4:28)|string.equals(#currentplaytime,4:29)|string.equals(#currentplaytime,4:30)|string.equals(#currentplaytime,4:45)|string.equals(#currentplaytime,4:46)|string.equals(#currentplaytime,4:47)|string.equals(#currentplaytime,4:48)|string.equals(#currentplaytime,4:49)|string.equals(#currentplaytime,4:50)|string.equals(#currentplaytime,4:51)|string.equals(#currentplaytime,4:52)|string.equals(#currentplaytime,4:53)|string.equals(#currentplaytime,4:54)|string.equals(#currentplaytime,4:55)|string.equals(#currentplaytime,4:56)|string.equals(#currentplaytime,4:57)|string.equals(#currentplaytime,4:58)|string.equals(#currentplaytime,4:59)|string.equals(#currentplaytime,5:00)|string.equals(#currentplaytime,5:15)|string.equals(#currentplaytime,5:16)|string.equals(#currentplaytime,5:17)|string.equals(#currentplaytime,5:18)|string.equals(#currentplaytime,5:19)|string.equals(#currentplaytime,5:20)|string.equals(#currentplaytime,5:21)|string.equals(#currentplaytime,5:22)|string.equals(#currentplaytime,5:23)|string.equals(#currentplaytime,5:24)|string.equals(#currentplaytime,5:25)|string.equals(#currentplaytime,5:26)|string.equals(#currentplaytime,5:27)|string.equals(#currentplaytime,5:28)|string.equals(#currentplaytime,5:29)|string.equals(#currentplaytime,5:30)]+!string.equals(#Play.Current.Artist,)</visible>
+        <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="[string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)]+control.isvisible(66900)" reversible="false">conditional</animation>
+        <animation effect="fade" time="500" reversible="true">visiblechange</animation>
+      </control>
+    
+   </control>
   <!-- ******************************************************************************************* -->
   <!-- *****************************  Properies DVB Radio  *************************************** -->
   <!-- ******************************************************************************************* -->
   <control>
     <type>group</type>
     <description>group element</description>
-    <visible>[!string.contains(#highlightedbutton,WEATHER)|string.equals(#editor.mode,Carousel)]+player.hasaudio+!player.hasvideo</visible>
+    <visible>!string.contains(#highlightedbutton,WEATHER)+player.hasaudio+!player.hasvideo+string.equals(#Play.Current.Type,Radio)+!string.equals(#RadioTime.Play.Station)</visible>
     <control>
-      <description>music logo when no thumb</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>905</posX>
-      <posY>955</posY>
-      <width>109</width>
-      <height>109</height>
-      <centered>no</centered>
-      <keepaspectratio>no</keepaspectratio>
-      <texture mask="cdcase_mask.png">white.png</texture>
-      <colordiffuse>dodgerblue</colordiffuse>
-      <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)" reversible="false">conditional</animation>
-      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
-    </control>
-    <control>
-      <description>music logo when no thumb</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>905</posX>
-      <posY>955</posY>
-      <width>109</width>
-      <height>109</height>
-      <texture mask="cdcase_mask.png">black.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
-      <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)" reversible="false">conditional</animation>
-      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
-    </control>
-    <control>
-      <description>music logo when no thumb</description>
-      <type>image</type>
-      <id>0</id>
-      <posX>905</posX>
-      <posY>955</posY>
-      <width>109</width>
-      <height>109</height>
-      <centered>no</centered>
-      <keepaspectratio>no</keepaspectratio>
-      <visible>!control.hasthumb(12345)</visible>
-      <texture mask="cdcase_mask.png">defaultRadioBig.png</texture>
-      <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)" reversible="false">conditional</animation>
-      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
-    </control>
-    <control>
-      <description>music logo</description>
-      <type>image</type>
-      <id>12345</id>
-      <posX>905</posX>
-      <posY>955</posY>
-      <width>109</width>
-      <height>109</height>
-      <centered>yes</centered>
-      <keepaspectratio>no</keepaspectratio>
-      <texture mask="cdcase_mask.png">#Radio.Listen.Thumb</texture>
-      <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)" reversible="false">conditional</animation>
-      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
-    </control>
-    <control>
-      <description>dummy label for changing Artist Thumb every 15 secs</description>
-      <type>label</type>
-      <id>66900</id>
-      <label />
-      <animation effect="fade" delay="15000" time="0">hidden</animation>
-      <visible>!control.isvisible(66901)+string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
-    </control>
-    <control>
-      <description>dummy label for changing Artist Thumb every 15 secs</description>
-      <type>label</type>
-      <id>66901</id>
-      <label />
-      <animation effect="fade" delay="15000" time="0">hidden</animation>
-      <visible>control.isvisible(66900)+string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
-    </control>
-    <control>
-      <description>music logo</description>
-      <type>image</type>
-      <id>77</id>
-      <posX>905</posX>
-      <posY>955</posY>
-      <width>109</width>
-      <height>109</height>
-      <centered>no</centered>
-      <keepaspectratio>no</keepaspectratio>
-      <texture mask="cdcase_mask.png">#Radio.Listen.Thumb</texture>
-      <visible>control.isvisible(66900)+string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
-      <animation effect="rotatey" time="2000" center="962,0" start="0" end="360" condition="[string.equals(#currentplaytime,0:00)|string.equals(#currentplaytime,0:01)]+control.isvisible(66900)" reversible="false">conditional</animation>
-      <animation effect="fade" time="1000" reversible="true">visiblechange</animation>
-    </control>
-    <control>
-      <description>Track - Title</description>
+      <description>Title</description>
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>10</posX>
+      <posX>0</posX>
       <posY>979</posY>
-      <width>850</width>
+      <width>885</width>
       <align>right</align>
       <height>38</height>
-      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
       <control>
         <type>fadelabel</type>
         <description>Track</description>
@@ -617,7 +599,8 @@
         <type>fadelabel</type>
         <description>Title</description>
         <id>0</id>
-        <label>#(iif(eq(#Play.Current.Title,''),'#Radio.Listen.Title','#Play.Current.Title'))</label>
+        <!--label>#(iif(eq(#Play.Current.Title,''),'#Radio.Listen.Title','#Play.Current.Title'))</label-->
+        <label>#Radio.Listen.Title</label>
         <width>10</width>
         <maxWidth>840</maxWidth>
         <align>right</align>
@@ -631,12 +614,12 @@
       <description>Track - Title</description>
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>10</posX>
+      <posX>0</posX>
       <posY>1010</posY>
-      <width>850</width>
+      <width>885</width>
       <align>right</align>
       <height>38</height>
-      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
+      <visible>string.equals(#Play.Current.Type,Radio)</visible>
       <control>
         <type>fadelabel</type>
         <description>Track</description>
@@ -674,12 +657,11 @@
       <width>885</width>
       <align>left</align>
       <height>38</height>
-      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
       <control>
         <type>fadelabel</type>
         <description>Track</description>
         <id>0</id>
-        <label>#(L(602)): </label>
+        <label>#(L(812)): </label>
         <width>10</width>
         <maxWidth>200</maxWidth>
         <textcolor>ff00aaff</textcolor>
@@ -712,7 +694,6 @@
       <width>885</width>
       <align>left</align>
       <height>38</height>
-      <visible>string.equals(#Play.Current.Album,#Radio.Listen.Channel)</visible>
       <control>
         <type>fadelabel</type>
         <description>Track</description>
@@ -741,9 +722,297 @@
         <shadowColor>ff000000</shadowColor>
       </control>
     </control>
-  </control>
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>1042</posX>
+      <posY>1010</posY>
+      <width>885</width>
+      <align>left</align>
+      <height>38</height>
+      <visible>!string.equals(#duration)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(34020))</label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#currentplaytime #(L(1656))</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
     
+    <control>
+        <description>music logo when no thumb</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>907</posX>
+        <posY>957</posY>
+        <width>105</width>
+        <height>105</height>
+        <centered>no</centered>
+        <keepaspectratio>no</keepaspectratio>
+        <texture mask="cdcase_mask.png">DefaultMyradioBigBlue.png</texture>
+      </control>
+      <control>
+        <description>music logo</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>907</posX>
+        <posY>957</posY>
+        <width>105</width>
+        <height>105</height>            
+        <centered>yes</centered>
+        <keepaspectratio>no</keepaspectratio>
+        <texture mask="cdcase_mask.png">#Radio.Listen.Thumb</texture>
+       </control>
+      
+  </control>
   
+  <!-- ******************************************************************************************* -->
+  <!-- *****************************  Properies Radio Recordings ********************************* -->
+  <!-- ******************************************************************************************* -->
+  <control>
+    <type>group</type>
+    <description>group element</description>
+    <visible>[!string.contains(#highlightedbutton,WEATHER)|string.equals(#editor.mode,Carousel)]+player.hasaudio+!string.equals(#Play.Current.Type,Radio)+!string.equals(#Play.Current.Type,Music)</visible>
+    <control>
+      <description>Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>0</posX>
+      <posY>979</posY>
+      <width>885</width>
+      <align>right</align>
+      <height>38</height>
+      
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(268)): </label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Radio.Recorded.Title</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>0</posX>
+      <posY>1010</posY>
+      <width>885</width>
+      <align>right</align>
+      <height>38</height>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(811)) #(L(102010)): </label>
+        <width>10</width>
+        <maxWidth>800</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Radio.Recorded.Time</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>1042</posX>
+      <posY>979</posY>
+      <width>885</width>
+      <align>left</align>
+      <height>38</height>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(812)): </label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Radio.Recorded.Channel (#Radio.Listen.Group)</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>1042</posX>
+      <posY>1010</posY>
+      <width>885</width>
+      <align>left</align>
+      <height>38</height>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(34020))</label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#currentplaytime #(L(1656))</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>1042</posX>
+      <posY>1010</posY>
+      <width>885</width>
+      <align>left</align>
+      <height>38</height>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(34020))</label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#currentplaytime #(L(1656))</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    
+    <control>
+        <description>music logo when no thumb</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>907</posX>
+        <posY>957</posY>
+        <width>105</width>
+        <height>105</height>
+        <centered>no</centered>
+        <keepaspectratio>no</keepaspectratio>
+        <texture mask="cdcase_mask.png">white.png</texture>
+        <colordiffuse>dodgerblue</colordiffuse>
+      </control>
+      <control>
+        <description>music logo</description>
+        <type>image</type>
+        <id>1</id>
+        <posX>907</posX>
+        <posY>957</posY>
+        <width>105</width>
+        <height>105</height>            
+        <centered>yes</centered>
+        <keepaspectratio>no</keepaspectratio>
+        <texture mask="cdcase_mask.png">#Play.Current.Thumb</texture>
+       </control>
+    </control>
+    
     <!--     *******************************************************************************************  -->
     <!--     ******************    !!!  THESE CONTROLS ARE FOR COMPATIBILITY ONLY  !!!  ****************  -->
     <!--     *******************************************************************************************  -->
