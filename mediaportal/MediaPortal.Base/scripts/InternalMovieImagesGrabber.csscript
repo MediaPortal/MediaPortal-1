@@ -10,6 +10,7 @@ using System.Text;
 using System.IO;
 using System.Net;
 using System.Web;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -19,10 +20,11 @@ using MediaPortal.GUI.Library;
 using MediaPortal.Util;
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInternalMovieImagesGrabber
 {
-  const string strGrabberVersion = "20230425.I";
+  const string strGrabberVersion = "20260721.V";
 
   public ArrayList GetIMDBImages(string imdbID, bool defaultOnly)
   {
@@ -31,32 +33,44 @@ internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInter
     ArrayList imdbImages = new ArrayList();
 
     // First lets take default IMDB cover because maybe it is not in the IMDB Product thumbs group
-    // Get Main Movie page and find default poster link
-    string defaultPosterPageLinkURL = string.Format("https://www.imdb.com/title/{0}/", imdbID);
-    string strBodyPicDefault = GetPage(defaultPosterPageLinkURL, "utf-8");
-
-    Match jpgDefault = Regex.Match(strBodyPicDefault, @"ld\+json[^}]+?image.:.(?<image>.+?)\.jpg", RegexOptions.Singleline);
-
-    if (jpgDefault.Success)
+    string uri;
+    string URL = String.Format("https://api.tiffara.com/titles/{0}", imdbID);
+    string json = GetPage(URL, "utf-8", out uri);
+    if (!string.IsNullOrEmpty(json))
     {
-      string posterUrl = HttpUtility.HtmlDecode(jpgDefault.Groups["image"].Value);
-      
-      if (!string.IsNullOrEmpty(posterUrl))
+      try
       {
-        imdbImages.Add(posterUrl + "UX" + Convert.ToString((int)Thumbs.ThumbLargeResolution) + "_.jpg");
+        IMDBMovieDetails Movie = JsonConvert.DeserializeObject<IMDBMovieDetails>(json);
+        if (Movie != null)
+        {
+          if (Movie.primaryImage != null && Movie.primaryImage.url != null && !string.IsNullOrEmpty(Movie.primaryImage.url))
+          {
+            // Get Main Movie page and find default poster link
+            imdbImages.Add(Movie.primaryImage.url.Replace("_V1_","_V1_UX" + Convert.ToString((int)Thumbs.ThumbLargeResolution)));
+          }
+        }
+        else
+        {
+          Log.Debug("GetIMDBImages IMDB = {0}, Default JSON changed!?.", imdbID);
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Debug("GetIMDBImages IMDB = {0}, Exception {1}, Default JSON changed!?.", imdbID, ex.Message);
       }
     }
-
+    else
+    {
+      Log.Debug("GetIMDBImages v{0} IMDB = {1}, Default JSON not found.", strGrabberVersion, imdbID);
+    }
     if (defaultOnly)
     {
       return imdbImages;
     }
 
     // Then get all we can from IMDB Product thumbs group for movie
-    string posterPageLinkURL = string.Format("https://www.imdb.com/title/{0}/mediaindex/", imdbID);
-    string strBodyThumbs = GetPage(posterPageLinkURL, "utf-8");
-    string regex = @"type=.application\/ld\+json.>(?<json>{.+?})<";
-    string json = Regex.Match(strBodyThumbs, regex, RegexOptions.Singleline | RegexOptions.IgnoreCase).Groups["json"].Value;
+    URL = String.Format("https://api.tiffara.com/titles/{0}/images?types=poster", imdbID);
+    json = GetPage(URL, "utf-8", out uri);
     if (string.IsNullOrEmpty(json))
     {
       Log.Debug("GetIMDBImages v{0} IMDB = {1}, JSON not found.", strGrabberVersion, imdbID);
@@ -65,30 +79,27 @@ internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInter
 
     try
     {
-      JsonIMDBImages Images = JsonConvert.DeserializeObject<JsonIMDBImages>(json);
-      if (Images == null || Images.image == null)
+      IMDBMovieImages Images = JsonConvert.DeserializeObject<IMDBMovieImages>(json);
+      if (Images == null || Images.images == null)
       {
         Log.Debug("GetIMDBImages v{0} IMDB = {1}, JSON changed!?.", strGrabberVersion, imdbID);
         return imdbImages;
       }
-      if (Images.image.Count == 0)
+      if (Images.images.Count == 0)
       {
         return imdbImages;
       }
 
-      foreach (JsonIMDBImage image in Images.image)
+      foreach (IMDBPrimaryImage image in Images.images)
       {
-        if (!string.IsNullOrEmpty(image.width) && !string.IsNullOrEmpty(image.height))
+        if ((float)image.height / (float)image.width > 1.0)
         {
-          if ((float)Int32.Parse(image.height) / (float)Int32.Parse(image.width) > 1.0)
+          if (!string.IsNullOrEmpty(image.url))
           {
-            if (!string.IsNullOrEmpty(image.url))
+            image.url = image.url.Replace("_V1_","_V1_UX" + Convert.ToString((int)Thumbs.ThumbLargeResolution));
+            if (!imdbImages.Contains(image.url))
             {
-              image.url = image.url.Replace("_V1_","_V1_UX" + Convert.ToString((int)Thumbs.ThumbLargeResolution) + "_");
-              if (!imdbImages.Contains(image.url))
-              {
-                imdbImages.Add(image.url);
-              }
+              imdbImages.Add(image.url);
             }
           }
         }
@@ -105,116 +116,99 @@ internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInter
   {
     Log.Debug("GetIMPAwardsImages v{0} IMDB = {1}/{2}", strGrabberVersion, imdbMovieID, movieName);
     ArrayList impAwardsImages = new ArrayList();
-
-    movieName = movieName.Replace(" ", "+");
-    string resultGoogle = string.Empty;
-    string resultImpAw = string.Empty;
-    string url = string.Format("https://www.google.com/search?as_q={0}+poster+site:www.impawards.com&tbm=isch", movieName);
     IMPAwardsSearch x = new IMPAwardsSearch();
-    WebClient wc = new WebClient();
 
-    try
+    string uri;
+    string url = string.Format("http://www.impawards.com/search.php?search_data={0}", movieName.Replace(" ", "+"));
+    string page = GetPage(url, "utf-8", out uri);
+    if (string.IsNullOrEmpty(page))
     {
-      wc.Proxy.Credentials = CredentialCache.DefaultCredentials;
-      byte[] buffer = wc.DownloadData(url);
-      resultGoogle = Encoding.UTF8.GetString(buffer);
-    }
-    catch (Exception)
-    {
+      Log.Debug("GetIMPAwardsImages v{0} IMDB = {1}/{2}, empty page.", strGrabberVersion, imdbMovieID, movieName);
       return impAwardsImages;
     }
-    finally
-    {
-      wc.Dispose();
-    }
 
-    MatchCollection mGoogle = Regex.Matches(resultGoogle, @"www.impawards.com.(?<year>\d{4}/).*?html");
-    for (int i = 0; i < mGoogle.Count; i++)
+    string baseImpAw = "http://www.impawards.com";
+    string resultImpAw = string.Empty;
+    MatchCollection mIMP = Regex.Matches(page, @"\s\/(?<year>\d{4})\/[^\/]+?html");
+    foreach (Match mImpAwList in mIMP)
     {
-      
-      Match mImpAw = mGoogle[i];
       // Check if /year/ is in link, if no that is no cover
-      string year = mImpAw.Groups["year"].Value.Replace("/", string.Empty);
+      string year = mImpAwList.Groups["year"].Value;
       if (!string.IsNullOrEmpty(year))
       {
-        string url2 = mImpAw.Value;
-        url2 = "http://" + url2;
-        try
-        {
-          byte[] buffer = wc.DownloadData(url2);
-          resultImpAw = Encoding.UTF8.GetString(buffer);
-        }
-        catch (Exception)
-        {
-          return impAwardsImages;
-        }
-        finally
-        {
-          wc.Dispose();
-        }
+        url = baseImpAw + mImpAwList.Value.Trim();
+        resultImpAw = GetPage(url, "utf-8", out uri);
 
         // Check if IMDB number on poster page is equal to  IMDB ttnumber, if not-> next link
         Match ttcheck = Regex.Match(resultImpAw, @"tt\d{7,8}");
-
         if (ttcheck.Value != imdbMovieID)
         {
           continue;
         }
 
-        Match urlImpAw = Regex.Match(url2, @".*?\d{4}./*?");
-        // get main poster displayed on html-page
-        mImpAw = Regex.Match(resultImpAw, "posters/.*?.jpg");
+        string urlImpAw = baseImpAw + "/" + year + "/";
 
+        // Get main poster displayed on html-page
+        Match mImpAw = Regex.Match(resultImpAw, "posters/.*?.jpg");
         if (mImpAw.Success)
         {
-          // Check duplicate entries because Google page links can point to
+          // Check duplicate entries because page links can point to
           // same cover more than once so we don't need them
-          int check = 0;
+          if (impAwardsImages.Contains(urlImpAw + mImpAw.Value))
+          {
+            break;
+          }
+          impAwardsImages.Add(urlImpAw + mImpAw.Value);
 
-          foreach (string text in impAwardsImages)
-          {
-            if (text == urlImpAw + mImpAw.Value)
-            {
-              check = 1;
-              break;
-            }
-          }
-          // No duplicates (check=0)
-          if (check == 0)
-          {
-            impAwardsImages.Add(urlImpAw + mImpAw.Value);
-          }
-          // get other posters displayed on this html-page as thumbs
+          // Get other posters displayed on this html-page as thumbs
           MatchCollection mcImpAw = Regex.Matches(resultImpAw, "thumbs/imp_(?<poster>.*?.jpg)");
-
           foreach (Match m1 in mcImpAw)
           {
-            // Check duplicate entries because Google page links can point to
+            // Check duplicate entries because page links can point to
             // same cover more than once so we don't need them
-            check = 0;
-
-            foreach (string text in impAwardsImages)
+            if (impAwardsImages.Contains(urlImpAw + "posters/" + m1.Groups["poster"]))
             {
-              if (text == urlImpAw + "posters/" + m1.Groups["poster"])
-              {
-                check = 1;
-                break;
-              }
+              continue;
             }
-
-            if (check == 0)
-            {
-              impAwardsImages.Add(urlImpAw + "posters/" + m1.Groups["poster"].Value);
-            }
+            impAwardsImages.Add(urlImpAw + "posters/" + m1.Groups["poster"].Value);
           }
         }
       }
-
-      //mGoogle = mGoogle.NextMatch();
     }
-
     return impAwardsImages;
   }
+
+  #region IMDB API
+
+  public class IMDBPrimaryImage
+  {
+    public string url { get; set; }
+    public int width { get; set; }
+    public int height { get; set; }
+    public string type { get; set; }
+  }
+
+  // Titles
+  // https://api.tiffara.com/titles/tt1532503
+  public class IMDBMovieDetails
+  {
+    public string id { get; set; }
+    public string type { get; set; }
+    public bool isAdult { get; set; }
+    public string primaryTitle { get; set; }
+    public string originalTitle { get; set; }
+    public IMDBPrimaryImage primaryImage { get; set; }
+  }
+
+  // Images
+  // https://api.tiffara.com/titles/tt0499549/images?types=poster
+  public class IMDBMovieImages
+  {
+    public List<IMDBPrimaryImage> images { get; set; }
+    public int totalCount { get; set; }
+  }
+
+  #endregion
 
   #region TMDB
 
@@ -231,6 +225,7 @@ internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInter
   public const string API_SearchMovie = API_BaseUrl + "search/movie";
   public const string API_SearchPerson = API_BaseUrl + "search/person";
   public const string API_MovieImages = API_BaseUrl + "movie/{0}/images";
+  public const string API_SearchPersonID = API_BaseUrl + "find/{0}";
 
   private static string MakeTMDBUrl(string url, string what, string query = null, string lang = "en", int year = 0)
   {
@@ -288,8 +283,8 @@ internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInter
       }
 
       // Download fanart xml 
-      string tmdbJSON = string.Empty;
-      if (!GetTmdbPage(tmdbUrl, "utf-8", out strAbsUrl, ref tmdbJSON))
+      string tmdbJSON = GetPage(tmdbUrl, "utf-8", out strAbsUrl);
+      if (string.IsNullOrEmpty(tmdbJSON))
       {
         Log.Debug("GetTmdbFanartByApi v{0}: TMDB returns no API result for: {1} ({2})", strGrabberVersion, title, tmdbUrl);
         return fanartList;
@@ -421,7 +416,7 @@ internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInter
       if (API_LANG != "en")
       {
         string localPosterPageLinkUrl = MakeTMDBUrl(API_MovieImages, imdbMovieID, string.Empty, API_LANG);
-        GetTmdbPage(localPosterPageLinkUrl, "utf-8", out uri, ref strBodyTmdb);
+        strBodyTmdb = GetPage(localPosterPageLinkUrl, "utf-8", out uri);
         string localPosterBlock = Regex.Match(strBodyTmdb, @"""posters"":\[.*?\]", RegexOptions.IgnoreCase | RegexOptions.Singleline).Value;
         // Get all cover links and put it in the "cover" group
         MatchCollection localCovers = Regex.Matches(localPosterBlock, @"""file_path"":""/(?<cover>.*?jpg)""");
@@ -435,7 +430,7 @@ internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInter
       }
 
       string defaultPosterPageLinkUrl = MakeTMDBUrl(API_MovieImages, imdbMovieID);
-      GetTmdbPage(defaultPosterPageLinkUrl, "utf-8", out uri, ref strBodyTmdb);
+      strBodyTmdb = GetPage(defaultPosterPageLinkUrl, "utf-8", out uri);
       string posterBlock = Regex.Match(strBodyTmdb, @"""posters"":\[.*?\]", RegexOptions.IgnoreCase | RegexOptions.Singleline).Value;
       // Get all cover links and put it in the "cover" group
       MatchCollection covers = Regex.Matches(posterBlock, @"""file_path"":""/(?<cover>.*?jpg)""");
@@ -455,7 +450,7 @@ internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInter
       if (API_LANG != "en")
       {
         string localPosterPageLinkUrl = MakeTMDBUrl(API_SearchMovie, string.Empty, movieTitle, API_LANG);
-        GetTmdbPage(localPosterPageLinkUrl, "utf-8", out uri, ref strBodyTmdb);
+        strBodyTmdb = GetPage(localPosterPageLinkUrl, "utf-8", out uri);
 
         // Get all cover links and put it in the "cover" group
         MatchCollection localCovers = Regex.Matches(strBodyTmdb, @"""poster_path"":""/(?<cover>.*?jpg)""");
@@ -469,7 +464,7 @@ internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInter
       }
 
       string defaultPosterPageLinkUrl = MakeTMDBUrl(API_SearchMovie, string.Empty, movieTitle);
-      GetTmdbPage(defaultPosterPageLinkUrl, "utf-8", out uri, ref strBodyTmdb);
+      strBodyTmdb = GetPage(defaultPosterPageLinkUrl, "utf-8", out uri);
 
       // Get all cover links and put it in the "cover" group
       MatchCollection covers = Regex.Matches(strBodyTmdb, @"""poster_path"":""/(?<cover>.*?jpg)""");
@@ -493,7 +488,13 @@ internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInter
     ArrayList actorThumbs = new ArrayList();
 
     string defaultPosterPageLinkUrl = MakeTMDBUrl(API_SearchPerson, string.Empty, actorName);
-    GetTmdbPage(defaultPosterPageLinkUrl, "utf-8", out uri, ref strXml);
+    Regex rximdbid = new Regex(@"(?<imdbid>nm\d{7,8})");
+    Match matchimdbid = rximdbid.Match(actorName);
+    if (matchimdbid.Success)
+    {
+      defaultPosterPageLinkUrl = MakeTMDBUrl(API_SearchPersonID, actorName) + "&external_source=imdb_id";
+    }
+    strXml = GetPage(defaultPosterPageLinkUrl, "utf-8", out uri);
 
     MatchCollection actorImages = Regex.Matches(strXml, @"""profile_path"":""/(?<cover>.*?jpg)""");
 
@@ -517,162 +518,168 @@ internal class MovieImagesGrabber : InternalCSScriptGrabbersLoader.Movies.IInter
     return url.Replace(API_KEY, "<APIKEY>");
   }
 
-  // Get HTML Page
-  private string GetPage(string strURL, string strEncode)
-  {
-    Log.Debug("InternalMovieImagesGrabber v{0} GetPage: {1}", strGrabberVersion, HideAPIKey(strURL));
-    string strBody = "";
+  private static Hashtable IMDBPageCache;
 
-    Stream receiveStream = null;
-    StreamReader sr = null;
-    WebResponse result = null;
+  private static void ClearPageCache()
+  {
+    IMDBPageCache = new Hashtable();
+  }
+
+  // Get HTML Page
+  private string GetPage(string strUrl, string strEncode, out string absoluteUri, bool cache = false, int retryCount = 0)
+  {
+    Log.Debug("InternalMovieImagesGrabber - GetPage: {0} (Attempt: {1})", HideAPIKey(strUrl), retryCount + 1);
+
+    string strBody = string.Empty;
+    absoluteUri = string.Empty;
+
+    if (cache)
+    {
+      if (IMDBPageCache == null)
+      {
+        IMDBPageCache = new Hashtable();
+      }
+
+      if (IMDBPageCache.Contains(strUrl))
+      {
+        Log.Debug("InternalMovieImagesGrabber - GetPage: From Cache: {0}", HideAPIKey(strUrl));
+        return (string)IMDBPageCache[strUrl];
+      }
+    }
+
+    HttpWebRequest req = null;
     try
     {
       // Make the Webrequest
-      //Log.Info("IMDB: get page:{0}", strURL);
-      HttpWebRequest req = (HttpWebRequest) WebRequest.Create(strURL);
-      req.Headers.Add("Accept-Language", "en-US");
+      req = (HttpWebRequest)WebRequest.Create(strUrl);
+    
+      // Set Headers
+      req.UserAgent  = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36";
+      req.Headers.Add("Accept-Language", "en-US,en;q=0.5");
+      req.Accept = "application/json";
+  
+      // Proxy 
+      req.Proxy.Credentials = CredentialCache.DefaultCredentials;
+  
+      // Cookie
+      req.CookieContainer = new CookieContainer();
+  
+      // Timeout
       req.Timeout = 20000;
       req.ReadWriteTimeout = 20000;
-      result = req.GetResponse();
-      receiveStream = result.GetResponseStream();
-
-      // Encoding: depends on selected page
-      Encoding encode = Encoding.GetEncoding(strEncode);
-            
-      using (sr = new StreamReader(receiveStream, encode))
+  
+      // Response
+      using (HttpWebResponse response = (HttpWebResponse)req.GetResponse())
       {
-        strBody = sr.ReadToEnd();
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+          Log.Debug("InternalMovieImagesGrabber - GetPage: Response code {0}/{1}", (int)response.StatusCode, response.StatusCode);
+        }
+  
+        // URI
+        absoluteUri = response.ResponseUri.AbsoluteUri;
+  
+        // Encoding: depends on selected page
+        Encoding encode = Encoding.GetEncoding(strEncode);
+  
+        // Get Page
+        using (Stream receiveStream = response.GetResponseStream())
+        {
+          using (StreamReader sr = new StreamReader(receiveStream, encode))
+          {
+            strBody = sr.ReadToEnd().Trim();
+          }
+        }
       }
     }
-    catch (Exception)
+    catch (WebException webEx)
     {
-      Log.Info("InternalMovieImagesGrabber v{0} GetPage: {0} Unavailable.", HideAPIKey(strURL));
+      var response = webEx.Response as HttpWebResponse;
+      if (response != null && (int)response.StatusCode == 429 && retryCount < 3)
+      {
+          int sleepMs = (retryCount + 1) * 5000;
+          string retryAfter = response.Headers["Retry-After"];
+          int seconds = 0;
+          if (!string.IsNullOrEmpty(retryAfter) && int.TryParse(retryAfter, out seconds))
+          {
+            if (seconds > 0)
+            {
+              sleepMs = seconds * 1000;
+            }
+          }
+          Log.Debug("InternalMovieImagesGrabber - 429 Too Many Requests. Attempt: {0}. Wait {1}ms...", retryCount + 1, sleepMs);
+          System.Threading.Thread.Sleep(sleepMs);
+          
+          return GetPage(strUrl, strEncode, out absoluteUri, cache, retryCount + 1);
+      }
+      Log.Error("InternalMovieImagesGrabber - GetPage: WebException: {0} err:{1}", HideAPIKey(strUrl), webEx.Message);
     }
-
+    catch (Exception ex)
+    {
+      Log.Error("InternalMovieImagesGrabber - GetPage: Exception for WebPage: {0}/{1} err:{2}", HideAPIKey(strUrl), HideAPIKey(absoluteUri), ex.Message);
+    }
     finally
     {
-      if (sr != null)
-      {
-        try
-        {
-          sr.Close();
-        }
-        catch (Exception) { }
-      }
-      if (receiveStream != null)
-      {
-        try
-        {
-          receiveStream.Close();
-        }
-        catch (Exception) { }
-      }
-      if (result != null)
-      {
-        try
-        {
-          result.Close();
-        }
-        catch (Exception) { }
-      }
+      req = null;
+    }
+
+    if (string.IsNullOrEmpty(strBody))
+    {
+      Log.Debug("InternalMovieImagesGrabber - GetPage empty response for: {0}", HideAPIKey(strUrl));
+    }
+
+    if (cache && !string.IsNullOrEmpty(strBody))
+    {
+      Log.Debug("InternalMovieImagesGrabber - GetPage: Page to Cache: {0}", HideAPIKey(strUrl));
+      IMDBPageCache.Add(strUrl, strBody);
     }
     return strBody;
   }
 
-  // Get TMDB web
-  private bool GetTmdbPage(string strUrl, string strEncode, out string absoluteUri, ref string strBody)
+  public string GetPages(string strUrl, string strEncode, out string absoluteUri, bool cache = true)
   {
-    Log.Debug("InternalMovieImagesGrabber v{0} GetTmdbPage: {1}", strGrabberVersion, HideAPIKey(strUrl));
+    JObject mainResult = null;
+    string currentPage = strUrl;
 
-    bool sucess = true;
-    absoluteUri = String.Empty;
-    Stream receiveStream = null;
-    StreamReader sr = null;
-    WebResponse result = null;
-    try
+    while (true)
     {
-      // Make the Webrequest
-      HttpWebRequest req = (HttpWebRequest) WebRequest.Create(strUrl);
-      req.Method = WebRequestMethods.Http.Get;
-      req.Accept = "application/json";
-      req.Timeout = 20000;
-      req.ReadWriteTimeout = 20000;
-
-      result = req.GetResponse();
-      receiveStream = result.GetResponseStream();
-
-      // Encoding: depends on selected page
-      Encoding encode = Encoding.GetEncoding(strEncode);
-            
-      using (sr = new StreamReader(receiveStream, encode))
+      string json = GetPage(currentPage, strEncode, out absoluteUri, cache);
+      if (string.IsNullOrWhiteSpace(json))
       {
-        strBody = sr.ReadToEnd();
+        break;
       }
 
-      absoluteUri = result.ResponseUri.AbsoluteUri;
+      JObject pageData = JObject.Parse(json);
+      if (mainResult == null)
+      {
+        mainResult = pageData;
+      }
+      else
+      {
+        var arrayProperty = pageData.Properties().FirstOrDefault(p => p.Value.Type == JTokenType.Array);
+        if (arrayProperty != null)
+        {
+          var mainArray = mainResult[arrayProperty.Name] as JArray;
+          if (mainArray != null)
+          {
+            mainArray.Merge(arrayProperty.Value);
+          }
+        }
+      }
+      var token = pageData["nextPageToken"];
+      if (token == null || string.IsNullOrEmpty(token.ToString()))
+      {
+        break;
+      }
+
+      string separator = strUrl.Contains("?") ? "&" : "?";
+      currentPage = string.Format("{0}{1}pageToken={2}", strUrl, separator, token.ToString());
     }
-    catch (Exception)
+
+    if (mainResult != null)
     {
-      // Log.Debug("InternalMovieImagesGrabber v{0} GetTmdbPage: Error: {1}", strGrabberVersion, HideAPIKey(strURL));
-      sucess = false;
+      return mainResult.ToString();
     }
-    finally
-    {
-      if (sr != null)
-      {
-        try
-        {
-          sr.Close();
-        }
-        catch (Exception) { }
-      }
-      if (receiveStream != null)
-      {
-        try
-        {
-          receiveStream.Close();
-        }
-        catch (Exception) { }
-      }
-      if (result != null)
-      {
-        try
-        {
-          result.Close();
-        }
-        catch (Exception) { }
-      }
-    }
-    return sucess;
+    return string.Empty;
   }
-
-  #region IMDB Json
-
-  public class JsonIMDBBase
-  {
-    [JsonProperty("@type")]
-    public string type { get; set; }
-  }
-
-  public class JsonIMDBImage : JsonIMDBBase
-  {
-    public string width { get; set; }
-    public string height { get; set; }
-    public string url { get; set; }
-    public string mainEntityOfPage { get; set; }
-    public string contentUrl { get; set; }
-    public string caption { get; set; }
-  }
-
-  public class JsonIMDBImages : JsonIMDBBase
-  {
-    [JsonProperty("@context")]
-    public string context { get; set; }
-
-    public string url { get; set; }
-    public List<JsonIMDBImage> image { get; set; }
-  }
-
-  #endregion IMDB Json
 }

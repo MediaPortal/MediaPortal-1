@@ -13,7 +13,7 @@
       <control>
         <type>image</type>
         <posX>1300</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>420</width>
         <height>420</height>
         <texture>cdcase_shadow2.png</texture>
@@ -22,7 +22,7 @@
       <control>
         <type>image</type>
         <posX>900</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>420</width>
         <height>420</height>
         <texture>cdcase_shadow2.png</texture>
@@ -33,7 +33,7 @@
       <control>
         <type>image</type>
         <posX>900</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>420</width>
         <height>420</height>
         <texture>cdcase_shadow2.png</texture>
@@ -42,7 +42,7 @@
       <control>
         <type>image</type>
         <posX>900</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>420</width>
         <height>420</height>
         <texture>cdcase_shadow2.png</texture>
@@ -54,7 +54,7 @@
       <control>
         <type>image</type>
         <posX>900</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>800</width>
         <height>400</height>
         <zoom>true</zoom>
@@ -65,7 +65,7 @@
       <control>
         <type>image</type>
         <posX>900</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>800</width>
         <height>400</height>
         <zoom>true</zoom>
@@ -76,7 +76,7 @@
       <control>
         <type>image</type>
         <posX>900</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>800</width>
         <height>400</height>
         <zoom>true</zoom>
@@ -87,7 +87,7 @@
       <control>
         <type>image</type>
         <posX>900</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>800</width>
         <height>400</height>
         <zoom>true</zoom>
@@ -100,7 +100,7 @@
       <control>
         <type>image</type>
         <posX>1504</posX>
-        <posY>244</posY>
+        <posY>184</posY>
         <width>408</width>
         <height>408</height>
         <texture>cd_shadow.png</texture>
@@ -110,7 +110,7 @@
       <control>
         <type>image</type>
         <posX>1504</posX>
-        <posY>244</posY>
+        <posY>184</posY>
         <width>389</width>
         <height>389</height>
         <colordiffuse>FFE0E0E0</colordiffuse>
@@ -123,7 +123,7 @@
         <id>10000</id>
         <type>image</type>
         <posX>1504</posX>
-        <posY>244</posY>
+        <posY>184</posY>
         <width>389</width>
         <height>389</height>
         <colordiffuse>FFE0E0E0</colordiffuse>
@@ -136,7 +136,7 @@
         <id>0</id>
         <type>image</type>
         <posX>1504</posX>
-        <posY>244</posY>
+        <posY>184</posY>
         <width>389</width>
         <height>389</height>
         <colordiffuse>FFE0E0E0</colordiffuse>
@@ -150,7 +150,7 @@
       <id>10001</id>
         <type>image</type>
         <posX>1304</posX>
-        <posY>244</posY>
+        <posY>184</posY>
         <width>389</width>
         <height>389</height>
         <colordiffuse>FFE0E0E0</colordiffuse>
@@ -160,7 +160,7 @@
       <control>
         <type>image</type>
         <posX>1304</posX>
-        <posY>244</posY>
+        <posY>184</posY>
         <width>389</width>
         <height>389</height>
         <colordiffuse>FFE0E0E0</colordiffuse>
@@ -171,7 +171,7 @@
       <control>
         <type>image</type>
         <posX>1304</posX>
-        <posY>244</posY>
+        <posY>184</posY>
         <width>408</width>
         <height>408</height>
         <texture>cd_shadow.png</texture>
@@ -181,7 +181,7 @@
       <control>
         <type>image</type>
         <posX>1304</posX>
-        <posY>244</posY>
+        <posY>184</posY>
         <width>389</width>
         <height>389</height>
         <colordiffuse>FFE0E0E0</colordiffuse>
@@ -194,7 +194,7 @@
       <id>10002</id>
         <type>image</type>
         <posX>1304</posX>
-        <posY>244</posY>
+        <posY>184</posY>
         <width>389</width>
         <height>389</height>
         <colordiffuse>FFE0E0E0</colordiffuse>
@@ -206,7 +206,7 @@
       <control>
         <type>image</type>
         <posX>1304</posX>
-        <posY>244</posY>
+        <posY>184</posY>
         <width>389</width>
         <height>389</height>
         <colordiffuse>FFE0E0E0</colordiffuse>
@@ -218,7 +218,7 @@
       <control>
         <type>image</type>
         <posX>1300</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>400</width>
         <height>400</height>
         <texture>case-shadow-front2.png</texture>
@@ -228,7 +228,7 @@
       <control>
         <type>image</type>
         <posX>1300</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>420</width>
         <height>420</height>
         <texture>cdcase_shadow2.png</texture>
@@ -238,7 +238,7 @@
         <id>112</id>
         <type>image</type>
         <posX>1302</posX>
-        <posY>242</posY>
+        <posY>182</posY>
         <width>394</width>
         <height>394</height>
         <texture mask="cdcase_mask10.png">#Play.Current.Thumb</texture>
@@ -248,7 +248,7 @@
       <control>
         <type>image</type>
         <posX>900</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>800</width>
         <height>400</height>
         <zoom>true</zoom>
@@ -259,7 +259,7 @@
       <control>
         <type>image</type>
         <posX>900</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>800</width>
         <height>400</height>
         <zoom>true</zoom>
@@ -270,7 +270,7 @@
       <control>
         <type>image</type>
         <posX>900</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>800</width>
         <height>400</height>
         <zoom>true</zoom>
@@ -281,7 +281,7 @@
       <control>
         <type>image</type>
         <posX>900</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>800</width>
         <height>400</height>
         <zoom>true</zoom>
@@ -294,7 +294,7 @@
       <control>
         <type>image</type>
         <posX>1300</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>400</width>
         <height>400</height>
         <texture>#Play.Current.Thumb</texture>
@@ -306,7 +306,7 @@
       <control>
         <type>image</type>
         <posX>900</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>800</width>
         <height>400</height>
         <zoom>true</zoom>
@@ -319,7 +319,7 @@
       <control>
         <type>image</type>
         <posX>900</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>800</width>
         <height>400</height>
         <zoom>true</zoom>
@@ -332,7 +332,7 @@
       <control>
         <type>image</type>
         <posX>900</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>800</width>
         <height>400</height>
         <zoom>true</zoom>
@@ -345,7 +345,7 @@
       <control>
         <type>image</type>
         <posX>900</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>800</width>
         <height>400</height>
         <zoom>true</zoom>
@@ -360,7 +360,7 @@
       <control>
         <type>image</type>
         <posX>900</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>800</width>
         <height>400</height>
         <zoom>true</zoom>
@@ -373,7 +373,7 @@
       <control>
         <type>image</type>
         <posX>900</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>800</width>
         <height>400</height>
         <zoom>true</zoom>
@@ -386,7 +386,7 @@
       <control>
         <type>image</type>
         <posX>900</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>800</width>
         <height>400</height>
         <zoom>true</zoom>
@@ -399,7 +399,7 @@
       <control>
         <type>image</type>
         <posX>900</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>800</width>
         <height>400</height>
         <zoom>true</zoom>
@@ -413,7 +413,7 @@
       <control>
         <type>image</type>
         <posX>908</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>400</width>
         <height>400</height>
         <texture>case-shadow-left.png</texture>
@@ -424,7 +424,7 @@
       <control>
         <type>image</type>
         <posX>1302</posX>
-        <posY>242</posY>
+        <posY>182</posY>
         <width>394</width>
         <height>394</height>
         <texture mask="cdcase_mask10.png">#Play.Current.Thumb</texture>
@@ -436,7 +436,7 @@
       <control>
         <type>image</type>
         <posX>1300</posX>
-        <posY>240</posY>
+        <posY>180</posY>
         <width>420</width>
         <height>420</height>
         <texture>cdcase_shadow2.png</texture>
@@ -446,7 +446,7 @@
       <control>
         <type>image</type>
         <posX>1302</posX>
-        <posY>242</posY>
+        <posY>182</posY>
         <width>394</width>
         <height>394</height>
         <texture mask="cdcase_mask10.png">#Play.Current.Thumb</texture>
@@ -457,7 +457,7 @@
       <control>
         <type>image</type>
         <posX>1302</posX>
-        <posY>242</posY>
+        <posY>182</posY>
         <width>394</width>
         <height>394</height>
         <texture mask="cdcase_mask10.png">..\..\..\Thumbs\Music\Artists\#Play.Current.ArtistL.jpg</texture>
@@ -469,7 +469,7 @@
       <control>
         <type>image</type>
         <posX>1302</posX>
-        <posY>242</posY>
+        <posY>182</posY>
         <width>394</width>
         <height>394</height>
         <texture mask="cdcase_mask10.png">#Play.Current.Thumb</texture>
@@ -481,7 +481,7 @@
       <control>
         <type>label</type>
         <posX>920</posX>
-        <posY>260</posY>
+        <posY>200</posY>
         <width>760</width>
         <font>font11</font>
         <align>left</align>
@@ -496,7 +496,7 @@
       <control>
         <type>label</type>
         <posX>920</posX>
-        <posY>290</posY>
+        <posY>230</posY>
         <width>760</width>
         <font>font11</font>
         <align>left</align>
@@ -511,7 +511,7 @@
       <control>
         <type>label</type>
         <posX>920</posX>
-        <posY>350</posY>
+        <posY>290</posY>
         <width>760</width>
         <font>font9</font>
         <align>left</align>
@@ -526,7 +526,7 @@
       <control>
         <type>label</type>
         <posX>920</posX>
-        <posY>380</posY>
+        <posY>320</posY>
         <width>760</width>
         <font>font9</font>
         <align>left</align>
@@ -542,7 +542,7 @@
       <control>
         <type>label</type>
         <posX>920</posX>
-        <posY>260</posY>
+        <posY>200</posY>
         <width>760</width>
         <font>font11</font>
         <align>left</align>
@@ -558,7 +558,7 @@
       <control>
         <type>label</type>
         <posX>920</posX>
-        <posY>290</posY>
+        <posY>230</posY>
         <width>760</width>
         <font>font11</font>
         <align>left</align>
@@ -574,7 +574,7 @@
       <control>
         <type>label</type>
         <posX>920</posX>
-        <posY>350</posY>
+        <posY>290</posY>
         <width>760</width>
         <font>font9</font>
         <align>left</align>
@@ -590,7 +590,7 @@
       <control>
         <type>label</type>
         <posX>920</posX>
-        <posY>380</posY>
+        <posY>320</posY>
         <width>760</width>
         <font>font9</font>
         <align>left</align>

@@ -46,7 +46,7 @@ namespace TvPlugin
       LABEL_PROGRAMTIME = 14,
       LABEL_PROGRAMDESCRIPTION = 15,
       LABEL_PROGRAMGENRE = 17,
-    } ;
+    };
 
     private enum SortMethod
     {
@@ -106,7 +106,7 @@ namespace TvPlugin
       {
         currentLayout = (Layout)xmlreader.GetValueAsInt(SerializeName, "layout", (int)Layout.List);
         m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
-        
+
         string strTmp = xmlreader.GetValueAsString("radiorecorded", "sort", "channel");
         _watchedPercentage = xmlreader.GetValueAsInt("movies", "playedpercentagewatched", 95);
 
@@ -146,7 +146,7 @@ namespace TvPlugin
       {
         xmlwriter.SetValue(SerializeName, "layout", (int)currentLayout);
         xmlwriter.SetValueAsBool(SerializeName, "sortasc", m_bSortAscending);
-        
+
         switch (_currentSortMethod)
         {
           case SortMethod.Channel:
@@ -595,7 +595,7 @@ namespace TvPlugin
         Log.Warn("RadioRecorded: Error updating button states - {0}", ex.ToString());
       }
     }
-    
+
     #endregion
 
     #region Public methods
@@ -918,11 +918,25 @@ namespace TvPlugin
     {
       return aRecording.IsRecording;
     }
+    public string GetIcon(Recording aRecording, bool big)
+    {
+      string fileName = (big, aRecording.TimesWatched > 0) switch
+      {
+        (true, true) => "defaultAudioListenedBig.png",
+        (true, false) => "defaultAudioBig.png",
+        (false, true) => "defaultAudioListened.png",
+        (false, false) => "defaultAudio.png",
+      };
+      fileName = GUIGraphicsContext.GetThemedSkinFile(@"\Media\" + fileName);
+      if (File.Exists(fileName))
+      {
+        return fileName;
+      }
+      return GUIGraphicsContext.GetThemedSkinFile(@"\Media\" + (big ? "defaultAudioBig.png" : "defaultAudio.png"));
+    }
 
     private GUIListItem BuildItemFromRecording(Recording aRecording)
     {
-      string strDefaultUnseenIcon = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultVideoBig.png");
-      string strDefaultSeenIcon = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultVideoSeenBig.png");
       GUIListItem item = null;
       string strChannelName = GUILocalizeStrings.Get(2014); // unknown
       string strGenre = GUILocalizeStrings.Get(2014); // unknown
@@ -965,26 +979,25 @@ namespace TvPlugin
 
         item.TVTag = aRecording;
 
-        // Set a default logo indicating the watched status
-        string SmallThumb = aRecording.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
         string PreviewThumb = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded,
                                             Path.ChangeExtension(Utils.SplitFilename(aRecording.FileName), null),
                                             Utils.GetThumbExtension());
 
         // Get the channel logo for the small icons
         string StationLogo = Utils.GetCoverArt(Thumbs.Radio, strChannelName);
-        if (!string.IsNullOrEmpty(StationLogo))            
+        if (String.IsNullOrEmpty(StationLogo))
         {
-          SmallThumb = StationLogo;
+          StationLogo = null;
         }
 
-        item.IconImage = item.ThumbnailImage = item.IconImageBig = SmallThumb;
+        item.IconImage = StationLogo ?? GetIcon(aRecording, false);
+        item.IconImageBig = item.ThumbnailImage = StationLogo ?? GetIcon(aRecording, true);
         // Display previews only if the option to create them is active
-        if (string.IsNullOrEmpty(PreviewThumb))                              
+        if (string.IsNullOrEmpty(PreviewThumb))
         {
           item.ThumbnailImage = String.Empty;
         }
-        
+
         //Mark the recording with a "rec. symbol" if it is an active recording.
         if (IsRecordingActual(aRecording))
         {
@@ -1092,7 +1105,7 @@ namespace TvPlugin
       GUIPropertyManager.SetProperty("#Play.Current.ArtistThumb", pItem.Label);
       GUIPropertyManager.SetProperty("#Play.Current.Album", pItem.Label);
       GUIPropertyManager.SetProperty("#Play.Current.Thumb", pItem.ThumbnailImage);
-      
+
       Recording rec = (Recording)pItem.TVTag;
       IList<Recording> itemlist = Recording.ListAll();
 
@@ -1161,7 +1174,7 @@ namespace TvPlugin
           return;
         }
       }
-      
+
       _iSelectedItem = GetSelectedItemNo();
       GUIListItem pItem = GetItem(iItem);
       if (pItem == null)
@@ -1521,13 +1534,18 @@ namespace TvPlugin
         GUIPropertyManager.SetProperty("#Radio.Recorded.Channel", GetRecordingDisplayName(rec));
         strLogo = Utils.GetCoverArt(Thumbs.Radio, GetRecordingDisplayName(rec));
 
-        if (!string.IsNullOrEmpty(strLogo))                                                
+        if (!string.IsNullOrEmpty(strLogo))
         {
           GUIPropertyManager.SetProperty("#Radio.Recorded.thumb", strLogo);
         }
         else
         {
-          GUIPropertyManager.SetProperty("#Radio.Recorded.thumb", "defaultVideoBig.png");
+          var thumbName = GUIGraphicsContext.GetThemedSkinFile(@"\Media\DefaultMyradioBig.png");
+          if (!File.Exists(thumbName))
+          {
+            thumbName = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultAudioBig.png");
+          }
+          GUIPropertyManager.SetProperty("#Radio.Recorded.thumb", thumbName);
         }
       }
       catch (Exception ex)
@@ -1865,11 +1883,17 @@ namespace TvPlugin
 
       try
       {
-        _iSelectedItem = GetSelectedItemNo();
-        LoadDirectory();
-        GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _iSelectedItem);
+        if (facadeLayout != null && GUIWindowManager.ActiveWindow == GetID)
+        {
+          _iSelectedItem = GetSelectedItemNo();
+          LoadDirectory();
+          GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _iSelectedItem);
+        }
       }
-      catch (Exception) { }
+      catch (Exception ex)
+      {
+        Log.Error("RadioRecorded: Error in doOnPlayBackStoppedOrChanged - {0}", ex.ToString());
+      }
 
       /*
             if (GUIGraphicsContext.IsTvWindow(GUIWindowManager.ActiveWindow))
@@ -1918,7 +1942,7 @@ namespace TvPlugin
         }
       }
 
-        UpdateProperties();
+      UpdateProperties();
 
       //@int movieid = VideoDatabase.GetMovieId(filename);
       //@if (movieid < 0) return;

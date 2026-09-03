@@ -39,7 +39,6 @@
       <textureFocus>-</textureFocus>
       <textureNoFocus>Action_nofocus.png</textureNoFocus>
       <dimColor>00ffffff</dimColor>
-      <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
       <visible>!Control.HasFocus(50)</visible>
       <control>
         <type>image</type>
@@ -57,6 +56,7 @@
         <height>886</height>
         <texture>Backslide.png</texture>
         <colorDiffuse>fffffffff</colorDiffuse>
+		<animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
       </control>
       <control>
         <description>group element</description>
@@ -171,7 +171,7 @@
     <control>
       <id>1</id>
       <type>image</type>
-      <posX>1485</posX>
+      <posX>1455</posX> 
       <posY>270</posY>
       <width>390</width>
       <height>390</height>
@@ -182,7 +182,7 @@
     <control>
       <id>500</id>
       <type>image</type>
-      <posX>1485</posX>
+      <posX>1455</posX> 
       <posY>270</posY>
       <width>390</width>
       <height>390</height>
@@ -190,7 +190,7 @@
       <visible>[facadeview.playlist|facadeview.album]+[Control.HasFocus(50)]</visible>
       <animation effect="fade" time="70" reversible="false">visible</animation>
     </control>
-    <control>
+   <!-- <control>
       <type>image</type>
       <id>1</id>
       <posX>1485</posX>
@@ -200,12 +200,12 @@
       <texture>cdthumbframe.png</texture>
       <visible>[facadeview.playlist|facadeview.album]+[Control.HasFocus(50)]</visible>
       <animation effect="fade" time="70" reversible="false">visible</animation>
-    </control>
+    </control>-->
     <control>
       <description>ClearArt image</description>
       <type>image</type>
       <id>0</id>
-      <posX>1480</posX>
+      <posX>1450</posX> 
       <posY>700</posY>
       <width>400</width>
       <height>155</height>

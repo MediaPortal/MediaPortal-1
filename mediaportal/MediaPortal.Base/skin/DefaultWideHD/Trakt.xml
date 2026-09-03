@@ -46,6 +46,17 @@
         <height>540</height>
         <texture>Backslide.png</texture>
         <colorDiffuse>ffffffff</colorDiffuse>
+        <visible>!control.isvisible(99)</visible>
+      </control>
+      <control>
+        <type>image</type>
+        <posX>37</posX>
+        <posY>250</posY>
+        <width>339</width>
+        <height>600</height>
+        <texture>Backslide.png</texture>
+        <colorDiffuse>ffffffff</colorDiffuse>
+        <visible>control.isvisible(99)</visible>
       </control>
     <control>
       <type>group</type>
@@ -144,8 +155,8 @@
       <description>Update Indicator</description>
       <type>image</type>
       <id>0</id>
-      <posX>280</posX>
-      <posY>495</posY>
+      <posX>300</posX>
+      <posY>790</posY>
       <width>28</width>
       <height>28</height>
       <texture>isupdate.png</texture>

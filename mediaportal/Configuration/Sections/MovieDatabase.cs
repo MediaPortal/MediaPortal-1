@@ -2765,7 +2765,7 @@ namespace MediaPortal.Configuration.Sections
           {
             CSScript.GlobalSettings.AddSearchDir(AppDomain.CurrentDomain.BaseDirectory);
             
-            using(AsmHelper script = new AsmHelper(CSScript.Compile(f.FullName), "Temp", true))
+            using(AsmHelper script = new AsmHelper(CSScript.CompileFile(f.FullName), "Temp", true))
             {
               script.ProbingDirs = CSScript.GlobalSettings.SearchDirs.Split(';');
               IIMDBScriptGrabber grabber = (IIMDBScriptGrabber)script.CreateObject("Grabber");

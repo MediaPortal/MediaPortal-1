@@ -1128,6 +1128,21 @@ namespace TvDatabase
     }
 
     /// <summary>
+    /// Calculates the percentage of current program
+    /// this is probably only working if not paused
+    /// </summary>
+    /// <returns>The percentage</returns>
+    public double GetPercentage()
+    {
+      double totalSecs = (EndTime - StartTime).TotalSeconds;
+      double curSecs = (DateTime.Now - StartTime).TotalSeconds;
+      if (totalSecs == 0)
+        return 0;
+      else
+        return 100.0d * curSecs / totalSecs;
+    }
+
+    /// <summary>
     /// Checks if the program is running at the specified date/time
     /// </summary>
     /// <param name="tCurTime">date and time</param>

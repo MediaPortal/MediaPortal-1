@@ -1076,7 +1076,7 @@ namespace MediaPortal.Player
 
     public static void AdaptRefreshRateFromVideoDecoder(string strFile)
     {
-      if (_workerFps == 0 && g_Player.Player is VideoPlayerVMR9)
+      if (_workerFps == 0 && g_Player.Player is VideoPlayerVMR9 && VMR9Util.g_vmr9 != null) //Nullcheck for audiofiles played from video folder
       {
         Log.Info("[AdaptRefreshRateFromVideoDecoder] Try detect fps from Video Decoder Pin");
 

@@ -115,6 +115,7 @@ namespace MediaPortal
     protected internal static int ScreenNumberOverride;     // 0 or higher means it is set
     protected internal static bool FullscreenOverride;       // full screen mode overridden by command line argument?
     protected internal static bool WindowedOverride;         // window mode overridden by command line argument?
+    protected internal static bool AlwaysOnTopOverride;  // if true then Mediaportal should never be alwaysontop
     protected static string SkinOverride;             // skin overridden by command line argument
     protected string FrameStatsLine1;          // 1st string to hold frame stats
     protected string FrameStatsLine2;          // 2nd string to hold frame stats
@@ -262,7 +263,7 @@ namespace MediaPortal
         UseMadVideoRenderer = xmlreader.GetValueAsBool("general", "useMadVideoRenderer", false);
         _disableMouseEvents = xmlreader.GetValueAsBool("remote", "CentareaJoystickMap", false);
         AutoHideTaskbar = xmlreader.GetValueAsBool("general", "hidetaskbar", true);
-        _alwaysOnTop = xmlreader.GetValueAsBool("general", "alwaysontop", false);
+        _alwaysOnTop = !AlwaysOnTopOverride && xmlreader.GetValueAsBool("general", "alwaysontop", false);
         _reduceFrameRate = xmlreader.GetValueAsBool("gui", "reduceframerate", false);
         _doNotWaitForVSync = xmlreader.GetValueAsBool("debug", "donotwaitforvsync", false);
         _useFcuBlackScreenFix = xmlreader.GetValueAsBool("general", "usefcublackscreenfix", false);
@@ -2346,7 +2347,7 @@ namespace MediaPortal
           Menu = _menuStripMain;
           using (Settings xmlreader = new MPSettings())
           {
-            _alwaysOnTop = xmlreader.GetValueAsBool("general", "alwaysontop", false);
+            _alwaysOnTop = !AlwaysOnTopOverride && xmlreader.GetValueAsBool("general", "alwaysontop", false);
           }
           size = CalcMaxClientArea();
         }

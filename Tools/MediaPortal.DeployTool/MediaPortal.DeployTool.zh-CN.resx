@@ -509,4 +509,7 @@
     <value>一个Mcirosoft组件要求重启电脑。
 在继续MediaPortal安装以前请重启电脑。</value>
   </data>
+  <data name="Need_Reboot" xml:space="preserve">
+    <value>在使用 MediaPortal 之前，请务必重新启动计算机。</value>
+  </data>
 </root>

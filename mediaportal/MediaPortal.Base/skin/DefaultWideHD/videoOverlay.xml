@@ -4,16 +4,17 @@
   <id>3000</id>
   <defaultcontrol>2</defaultcontrol>
   <controls>
-    <control>
+    
+      <control>
       <description>music area</description>
       <type>image</type>
       <id>0</id>
-      <posX>-20</posX>
-      <posY>955</posY>
-      <width>2025</width>
-      <height>90</height>
-      <texture>black.png</texture>
-      <colordiffuse>90ffffff</colordiffuse>
+      <posX>-100</posX>
+        <posY>972</posY>
+        <width>2200</width>
+        <height>77</height>
+        <texture>black.png</texture>
+        <colordiffuse>aaffffff</colordiffuse>
       <visible>Player.HasVideo</visible>
     </control>
     
@@ -21,24 +22,24 @@
       <description>music area</description>
       <type>image</type>
       <id>0</id>
-      <posX>-30</posX>
-      <posY>955</posY>
-      <width>2040</width>
-      <height>1</height>
-      <texture>horizontalbar.png</texture>
-      <colordiffuse>dodgerblue</colordiffuse>
+      <posX>-20</posX>
+        <posY>972</posY>
+        <width>1995</width>
+        <height>2</height>
+        <texture>horizontalbar.png</texture>
+        <colordiffuse>dodgerblue</colordiffuse>
       <visible>Player.HasVideo</visible>
     </control>
     <control>
       <description>music area</description>
       <type>image</type>
       <id>0</id>
-      <posX>-30</posX>
-      <posY>1045</posY>
-      <width>2040</width>
-      <height>1</height>
-      <texture>horizontalbar.png</texture>
-      <colordiffuse>dodgerblue</colordiffuse>
+      <posX>-20</posX>
+        <posY>1049</posY>
+        <width>1995</width>
+        <height>2</height>
+        <texture>horizontalbar.png</texture>
+        <colordiffuse>dodgerblue</colordiffuse>
       <visible>Player.HasVideo</visible>
     </control>
     <control>
@@ -46,9 +47,9 @@
       <type>image</type>
       <id>0</id>
       <posX>871</posX>
-      <posY>947</posY>
-      <width>175</width>
-      <height>105</height>
+        <posY>953</posY>
+        <width>175</width>
+        <height>105</height>
       <texture>LCD.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>Player.HasVideo</visible>
@@ -57,27 +58,28 @@
       <description>video preview window</description>
       <type>videowindow</type>
       <id>99</id>
-      <posX>879</posX>
-      <posY>955</posY>
-      <width>160</width>
-      <height>90</height>
+      <posX>876</posX>
+        <posY>958</posY>
+        <width>166</width>
+        <height>96</height>
       <visible>player.HasVideo</visible>
       <action>18</action>
       <textureFocus>tv_green_border.png</textureFocus>
     </control>
+      
     <!--     *******************************************************************************************  -->
     <!--     *******************************    NOW PLAYING VIDEO  *************************************  -->
     <!--     *******************************************************************************************  -->
-      <control>
+    <control>
       <description>Track - Title</description>
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
       <posX>10</posX>
-      <posY>965</posY>
+      <posY>979</posY>
       <width>850</width>
       <align>right</align>
       <height>38</height>
-      <visible>!string.contains(#Play.Current.File,tsbuffer)+!string.equals(#Play.Current.Title,#TV.RecordedTV.Title)</visible>
+      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#highlightedbutton,WEATHER)+!string.equals(#Play.Current.Director, )</visible>
       <control>
         <type>fadelabel</type>
         <description>Track</description>
@@ -111,12 +113,12 @@
       <description>Track - Genre</description>
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
-      <posX>0</posX>
-      <posY>1001</posY>
+      <posX>10</posX>
+      <posY>1010</posY>
       <width>855</width>
       <align>right</align>
       <height>38</height>
-      <visible>!string.contains(#Play.Current.File,tsbuffer)+!string.equals(#Play.Current.Title,#TV.RecordedTV.Title)</visible>
+      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#highlightedbutton,WEATHER)+!string.equals(#Play.Current.Director, )</visible>
       <control>
         <type>fadelabel</type>
         <description>Track</description>
@@ -135,7 +137,7 @@
         <type>fadelabel</type>
         <description>Title</description>
         <id>0</id>
-        <label>#Play.Current.Genre</label>
+        <label>#(iif(eq(#Play.Current.Genre,''),'n/a','#Play.Current.Genre'))</label>
         <width>10</width>
         <maxWidth>840</maxWidth>
         <align>right</align>
@@ -144,17 +146,21 @@
         <shadowDistance>4</shadowDistance>
         <shadowColor>ff000000</shadowColor>
       </control>
-    </control>  
+    </control> 
+    
+    <!--     *******************************************************************************************  -->
+    <!--     ***********************  VEAR, RUNTIME, PROGRESS VIDEOS  **********************************  -->
+    <!--     *******************************************************************************************  -->
     <control>
       <description>Track - Year</description>
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
       <posX>1072</posX>
-      <posY>965</posY>
+      <posY>979</posY>
       <width>855</width>
       <align>left</align>
       <height>38</height>
-      <visible>!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#Play.Current.Year,)+!string.equals(#Play.Current.Title,#TV.RecordedTV.Title)</visible>
+      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#highlightedbutton,WEATHER)+!string.equals(#Play.Current.Director, )</visible>
       <control>
         <type>fadelabel</type>
         <description>Track</description>
@@ -173,7 +179,7 @@
         <type>fadelabel</type>
         <description>Title</description>
         <id>0</id>
-        <label>#Play.Current.Year</label>
+        <label>#Play.Current.Year  #scroll.wrap </label>
         <width>10</width>
         <maxWidth>840</maxWidth>
         <align>left</align>
@@ -182,17 +188,46 @@
         <shadowDistance>4</shadowDistance>
         <shadowColor>ff000000</shadowColor>
       </control>
+      <control>
+        <description>play time label</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1349</posX>
+        <posY>979</posY>
+        <label>#(L(299))</label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <font>font10</font>
+        <textcolor>ff00aaff</textcolor>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#duration</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
     </control>
+    
     <control>
       <description>Track - Director</description>
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
       <posX>1072</posX>
-      <posY>1001</posY>
+      <posY>1010</posY>
       <width>855</width>
       <align>left</align>
       <height>38</height>
-      <visible>!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#Play.Current.Director,)+!string.equals(#Play.Current.Title,#TV.RecordedTV.Title)</visible>
+      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#highlightedbutton,WEATHER)+!string.equals(#Play.Current.Director, )</visible>
       <control>
         <type>fadelabel</type>
         <description>Track</description>
@@ -220,7 +255,578 @@
         <shadowDistance>4</shadowDistance>
         <shadowColor>ff000000</shadowColor>
       </control>
+    </control> 
+    
+    <!--     *******************************************************************************************  -->
+    <!--     ***********************  VEAR, RUNTIME, PROGRESS TVSERIES  **********************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <description>Track - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>10</posX>
+      <posY>979</posY>
+      <width>850</width>
+      <align>right</align>
+      <height>38</height>
+      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#highlightedbutton,WEATHER)+!string.equals(#Play.Current.Title,#TV.RecordedTV.Title)+string.equals(#Play.Current.Director, )+string.equals(#TVSeries.Series.InfoPanelLine3Value)+string.equals(#TVSeries.Series.InfoPanelLine2Value)+string.equals(#Play.Current.Genre)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(268)): </label>
+        <width>10</width>
+        <maxWidth>100</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Play.Current.Title</label>
+        <width>10</width>
+        <maxWidth>800</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
     </control>
+      
+    <control>
+      <description>Track - Genre</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>10</posX>
+      <posY>1010</posY>
+      <width>855</width>
+      <align>right</align>
+      <height>38</height>
+      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#highlightedbutton,WEATHER)+!string.equals(#Play.Current.Title,#TV.RecordedTV.Title)+string.equals(#Play.Current.Director, )+string.equals(#TVSeries.Series.InfoPanelLine3Value)+string.equals(#TVSeries.Series.InfoPanelLine2Value)+string.equals(#Play.Current.Genre)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(135)): </label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#(iif(eq(#Play.Current.Genre,''),'n/a','#Play.Current.Genre'))</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    <control>
+      <description>Track - Year</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>1072</posX>
+      <posY>979</posY>
+      <width>855</width>
+      <align>left</align>
+      <height>38</height>
+      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#highlightedbutton,WEATHER)+!string.equals(#Play.Current.Title,#TV.RecordedTV.Title)+string.equals(#Play.Current.Director, )+string.equals(#TVSeries.Series.InfoPanelLine3Value)+string.equals(#TVSeries.Series.InfoPanelLine2Value)+string.equals(#Play.Current.Genre)</visible>
+      <control>
+        <description>play time label</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1349</posX>
+        <posY>979</posY>
+        <label>#(L(299))</label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <font>font10</font>
+        <textcolor>ff00aaff</textcolor>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#TVSeries.Series.InfoPanelLine3Value</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+     
+    <control>
+      <description>Track - First Aired</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>1072</posX>
+      <posY>1010</posY>
+      <width>855</width>
+      <align>left</align>
+      <height>38</height>
+      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#highlightedbutton,WEATHER)+!string.equals(#Play.Current.Title,#TV.RecordedTV.Title)+string.equals(#Play.Current.Director, )+string.equals(#TVSeries.Series.InfoPanelLine3Value)+string.equals(#TVSeries.Series.InfoPanelLine2Value)+string.equals(#Play.Current.Genre)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#TVSeries.Translation.FirstAired.Label: </label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#TVSeries.Series.InfoPanelLine2Value</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    
+    <!--     *******************************************************************************************  -->
+    <!--     ***********************  VEAR, RUNTIME, PROGRESS mvCentral  **********************************  -->
+    <!--     *******************************************************************************************  -->
+    
+    <control>
+      <description>mvCentral - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>10</posX>
+      <posY>979</posY>
+      <width>850</width>
+      <align>right</align>
+      <height>38</height>
+      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#highlightedbutton,WEATHER)+!string.equals(#Play.Current.Title,#TV.RecordedTV.Title)+string.equals(#Play.Current.Director, )+!string.equals(#Play.Current.Genre)+[!string.equals(#currentremaining,0:00)+string.equals(#duration,#mvCentral.Duration)]</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(268)): </label>
+        <width>10</width>
+        <maxWidth>100</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Play.Current.Title</label>
+        <width>10</width>
+        <maxWidth>800</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+      
+    <control>
+      <description>mvCentral - Genre</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>10</posX>
+      <posY>1010</posY>
+      <width>855</width>
+      <align>right</align>
+      <height>38</height>
+      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#highlightedbutton,WEATHER)+!string.equals(#Play.Current.Title,#TV.RecordedTV.Title)+string.equals(#Play.Current.Director, )+!string.equals(#Play.Current.Genre)+[!string.equals(#currentremaining,0:00)+string.equals(#duration,#mvCentral.Duration)]</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(135)): </label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#mvCentral.ArtistTags</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control> 
+      
+    <control>
+      <description>mvCentral - Artisz
+      t</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>1072</posX>
+      <posY>979</posY>
+      <width>855</width>
+      <align>left</align>
+      <height>38</height>
+      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#highlightedbutton,WEATHER)+!string.equals(#Play.Current.Title,#TV.RecordedTV.Title)+string.equals(#Play.Current.Director, )+!string.equals(#Play.Current.Genre)+[!string.equals(#currentremaining,0:00)+string.equals(#duration,#mvCentral.Duration)]</visible>
+      <control>
+        <description>play time label</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1349</posX>
+        <posY>979</posY>
+        <label>#(L(171))</label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <font>font10</font>
+        <textcolor>ff00aaff</textcolor>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#mvCentral.ArtistName</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    
+    <control>
+      <description>mvCentral - duration</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>1072</posX>
+      <posY>1010</posY>
+      <width>855</width>
+      <align>left</align>
+      <height>38</height>
+      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#highlightedbutton,WEATHER)+!string.equals(#Play.Current.Title,#TV.RecordedTV.Title)+string.equals(#Play.Current.Director, )+!string.equals(#Play.Current.Genre)+[!string.equals(#currentremaining,0:00)+string.equals(#duration,#mvCentral.Duration)]</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(299))</label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#mvCentral.Duration</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>left</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    
+    <!--     *******************************************************************************************  -->
+    <!--     ***********************  VEAR, RUNTIME, PROGRESS OnlineVideos  **********************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <description>OnlineVideos - Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>10</posX>
+      <posY>979</posY>
+      <width>850</width>
+      <align>right</align>
+      <height>38</height>
+      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#highlightedbutton,WEATHER)+!string.equals(#Play.Current.Title,#TV.RecordedTV.Title)+string.equals(#Play.Current.Director, )+!string.equals(#Play.Current.Genre)+string.equals(#currentremaining,0:00)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(268)): </label>
+        <width>10</width>
+        <maxWidth>100</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>OnlineVideos Stream</label>
+        <width>10</width>
+        <maxWidth>800</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+      
+    <control>
+      <description>OnlineVideos - Genre</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>10</posX>
+      <posY>1010</posY>
+      <width>855</width>
+      <align>right</align>
+      <height>38</height>
+      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#highlightedbutton,WEATHER)+!string.equals(#Play.Current.Title,#TV.RecordedTV.Title)+string.equals(#Play.Current.Director, )+!string.equals(#Play.Current.Genre)+string.equals(#currentremaining,0:00)</visible>
+      <control>
+        <type>fadelabel</type>
+        <description>Track</description>
+        <id>0</id>
+        <label>#(L(602)):</label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Play.Current.Title</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control> 
+      
+    <control>
+      <description>OnlineVideos - Artisz
+      t</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>1072</posX>
+      <posY>979</posY>
+      <width>855</width>
+      <align>left</align>
+      <height>38</height>
+      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#highlightedbutton,WEATHER)+!string.equals(#Play.Current.Title,#TV.RecordedTV.Title)+string.equals(#Play.Current.Director, )+!string.equals(#Play.Current.Genre)+string.equals(#currentremaining,0:00)</visible>
+      <control>
+        <description>play time label</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1349</posX>
+        <posY>979</posY>
+        <label>#(L(34020))</label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <font>font10</font>
+        <textcolor>ff00aaff</textcolor>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#currentplaytime #(L(1656))</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    
+    <!--     *******************************************************************************************  -->
+    <!--     **********************************  NOW PLAYING TRAILES  **********************************  -->
+    <!--     *******************************************************************************************  -->
+    <control>
+      <type>group</type>
+      <description>group element</description>
+      <visible>Player.HasVideo+!string.contains(#Play.Current.File,tsbuffer)+!string.contains(#highlightedbutton,WEATHER)+!string.equals(#Play.Current.Title,#TV.RecordedTV.Title)+string.equals(#Play.Current.Director, )+!string.equals(#Play.Current.Genre)+!string.equals(#currentremaining,0:00)+!string.equals(#duration,#mvCentral.Duration)</visible>
+    <control>
+      <description>Title</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>10</posX>
+      <posY>979</posY>
+      <width>840</width>
+      <align>right</align>
+      <height>38</height>
+      <control>
+        <type>fadelabel</type>
+        <description>Title label</description>
+        <id>0</id>
+        <!--label>#mvCentral.isPlaying</label-->
+        <label></label>
+        <width>10</width>
+        <maxWidth>100</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#scroll.wrap Trailer #scroll.wrap</label>
+        <width>10</width>
+        <maxWidth>800</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <textcolor>ff00aaff</textcolor>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+      
+    <control>
+      <description>Channel</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>10</posX>
+      <posY>1010</posY>
+      <width>840</width>
+      <align>right</align>
+      <height>38</height>
+      <control>
+        <type>fadelabel</type>
+        <description>Channel label</description>
+        <id>0</id>
+        <label>#(L(268)): </label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <textcolor>ff00aaff</textcolor>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>Title</description>
+        <id>0</id>
+        <label>#Play.Current.Title</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <align>right</align>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control> 
+    
+    <control>
+      <description>Playtime</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>1072</posX>
+      <posY>979</posY>
+      <width>840</width>
+      <align>left</align>
+      <height>38</height>
+      <control>
+        <description>playtime label</description>
+        <type>label</type>
+        <id>0</id>
+        <posX>1349</posX>
+        <posY>89</posY>
+        <label>#(L(299))</label>
+        <width>10</width>
+        <maxWidth>200</maxWidth>
+        <font>font10</font>
+        <textcolor>ff00aaff</textcolor>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+      <control>
+        <type>fadelabel</type>
+        <description>playtime</description>
+        <id>0</id>
+        <label>#duration</label>
+        <width>10</width>
+        <maxWidth>840</maxWidth>
+        <font>font10</font>
+        <shadowAngle>45</shadowAngle>
+        <shadowDistance>4</shadowDistance>
+        <shadowColor>ff000000</shadowColor>
+      </control>
+    </control>
+    
+    
+    </control>
+    
     <!--     *******************************************************************************************  -->
     <!--     *******************************    NOW PLAYING TV  ****************************************  -->
     <!--     *******************************************************************************************  -->
@@ -229,7 +835,7 @@
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
       <posX>0</posX>
-      <posY>965</posY>
+      <posY>979</posY>
       <width>855</width>
       <align>right</align>
       <height>38</height>
@@ -268,7 +874,7 @@
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
       <posX>0</posX>
-      <posY>1001</posY>
+      <posY>1010</posY>
       <width>855</width>
       <align>right</align>
       <height>38</height>
@@ -291,7 +897,7 @@
         <type>fadelabel</type>
         <description>Title</description>
         <id>0</id>
-        <label>#TV.View.genre</label>
+        <label>#(iif(eq(#TV.View.genre,''),'n/a','#TV.View.genre'))</label>
         <width>10</width>
         <maxWidth>840</maxWidth>
         <align>right</align>
@@ -306,7 +912,7 @@
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
       <posX>1072</posX>
-      <posY>965</posY>
+      <posY>979</posY>
       <width>855</width>
       <align>left</align>
       <height>38</height>
@@ -345,7 +951,7 @@
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
       <posX>1072</posX>
-      <posY>1001</posY>
+      <posY>1010</posY>
       <width>855</width>
       <align>left</align>
       <height>38</height>
@@ -354,7 +960,7 @@
         <type>fadelabel</type>
         <description>Track</description>
         <id>0</id>
-        <label>#(L(602)): </label>
+        <label>#(L(605))-#(L(602)): </label>
         <width>10</width>
         <maxWidth>200</maxWidth>
         <textcolor>ff00aaff</textcolor>
@@ -378,15 +984,17 @@
         <shadowColor>ff000000</shadowColor>
       </control>
     </control>
+    
     <!--     *******************************************************************************************  -->
       <!--     *******************************    NOW PLAYING TV RECORDING  ******************************  -->
       <!--     *******************************************************************************************  -->
+      
       <control>
       <description>Track - Title</description>
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
       <posX>10</posX>
-      <posY>965</posY>
+      <posY>979</posY>
       <width>850</width>
       <align>right</align>
       <height>38</height>
@@ -425,7 +1033,7 @@
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
       <posX>0</posX>
-      <posY>1001</posY>
+      <posY>1010</posY>
       <width>855</width>
       <align>right</align>
       <height>38</height>
@@ -448,7 +1056,7 @@
         <type>fadelabel</type>
         <description>Genre</description>
         <id>0</id>
-        <label>#TV.RecordedTV.Genre</label>
+        <label>#(iif(eq(#TV.RecordedTV.Genre,''),'n/a','#TV.RecordedTV.Genre'))</label>
         <width>10</width>
         <maxWidth>840</maxWidth>
         <align>right</align>
@@ -463,7 +1071,7 @@
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
       <posX>1072</posX>
-      <posY>965</posY>
+      <posY>979</posY>
       <width>855</width>
       <align>left</align>
       <height>38</height>
@@ -472,7 +1080,7 @@
         <type>fadelabel</type>
         <description>Track</description>
         <id>0</id>
-        <label>#(L(602)): </label>
+        <label>#(L(605))-#(L(602)): </label>
         <width>10</width>
         <maxWidth>200</maxWidth>
         <textcolor>ff00aaff</textcolor>
@@ -501,7 +1109,7 @@
       <type>group</type>
       <layout>StackLayout(7, Horizontal, true)</layout>
       <posX>1072</posX>
-      <posY>1001</posY>
+      <posY>1010</posY>
       <width>855</width>
       <align>left</align>
       <height>38</height>
@@ -534,10 +1142,7 @@
         <shadowColor>ff000000</shadowColor>
       </control>
     </control>
-    
-    
-    
-    
+  
     <!--     *******************************************************************************************  -->
     <!--     ******************    !!!  THESE CONTROLS ARE FOR COMPATIBILITY ONLY  !!!  ****************  -->
     <!--     *******************************************************************************************  -->

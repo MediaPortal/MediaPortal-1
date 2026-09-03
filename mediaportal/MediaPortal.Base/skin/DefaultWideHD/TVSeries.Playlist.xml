@@ -42,10 +42,13 @@
       <id>1</id>
       <posX>1869</posX>
       <posY>16</posY>
-      <label>#selectedindex/#TVSeries.Playlist.Count</label>
-      <align>left</align>
+      <label>#selectedindex/#TVSeries.Playlist.Count #TVSeries.Translation.Episodes.Label</label>
+      <align>right</align>
       <textcolor>lightgray</textcolor>
-      <font>font10</font>
+	  <font>RSS</font>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
       <visible>string.equals(#selectedindex)+string.equals(#TVSeries.Playlist.Count)</visible>
     </control>
     <control>
@@ -65,7 +68,7 @@
       <defaultcontrol>2</defaultcontrol>
       <onexit>50</onexit>
       <buttonX>0</buttonX>
-      <buttonY>-130</buttonY>
+      <buttonY>0</buttonY>
       <buttonwidth>159</buttonwidth>
       <buttonheight>1080</buttonheight>
       <textureFocus>-</textureFocus>
@@ -218,21 +221,45 @@
           <description>playlist listcontrol</description>
           <type>playlistcontrol</type>
           <id>50</id>
-          <posX>105</posX>
-          <posY>285</posY>
-          <width>963</width>
-          <height>675</height>
-          <upBtnXOffset>765</upBtnXOffset>
-          <downBtnXOffset>825</downBtnXOffset>
-          <deleteBtnXOffset>885</deleteBtnXOffset>
+		  <posX>100</posX>
+          <posY>247</posY>
+		  <width>875</width> 
+		  <height>770</height>
+		  <textXOff>15</textXOff>
+		  <textYOff>7</textYOff>
+          <upBtnXOffset>721</upBtnXOffset> 
+          <downBtnXOffset>775</downBtnXOffset>
+          <deleteBtnXOffset>830</deleteBtnXOffset> 
           <onleft>2</onleft>
           <onright>2</onright>
-          <scrollOffset>2</scrollOffset>
-          <itemWidth>30</itemWidth>
-          <itemHeight>30</itemHeight>
-          <IconXOff>13</IconXOff>
-          <IconYOff>12</IconYOff>
+		  <selectedColor3>ff00ff00</selectedColor3> 
+          <selectedColor2>ff00ff00</selectedColor2>
+          <selectedColor>ff00ff00</selectedColor>
+		  <scrollOffset>2</scrollOffset>
+          <unfocusedAlpha>160</unfocusedAlpha>
+          <scrollbarHeight>400</scrollbarHeight>
+          <scrollbarbg>bar_vert.png</scrollbarbg>
+          <scrollbartop>mouse_left_horizontal.png</scrollbartop>
+          <scrollbarbottom>mouse_right_horizontal.png</scrollbarbottom>
+          <scrollbarXOff>32</scrollbarXOff> 
+          <scrollbarYOff>0</scrollbarYOff>
+          <showScrollbar>yes</showScrollbar>
+          <scrollbarwidth>20</scrollbarwidth>
+          <itemWidth>48</itemWidth>
+          <itemHeight>48</itemHeight>
+          <IconXOff>10</IconXOff> 
+          <IconYOff>2</IconYOff>
           <keepaspectratio>yes</keepaspectratio>
+		  <upBtnWidth>52</upBtnWidth>
+          <downBtnWidth>52</downBtnWidth>
+          <deleteBtnWidth>48</deleteBtnWidth>
+          <upBtnHeight>52</upBtnHeight>
+          <downBtnHeight>52</downBtnHeight>
+          <deleteBtnHeight>48</deleteBtnHeight>
+		  <upBtnYOffset>0</upBtnYOffset>
+          <downBtnYOffset>-4</downBtnYOffset>
+          <deleteBtnYOffset>1</deleteBtnYOffset>
+		  
         </control>
       </control>
     </control>

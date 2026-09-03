@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <window>
   <controls>
-    <control>
+    <!--control>
       <description>group element</description>
       <type>group</type>
-      <dimColor>FFFFFFFF</dimColor>
+      <dimColor>FFFFFFFF</dimColor-->
       <control>
       <type>label</type>
       <id>1</id>
@@ -93,7 +93,7 @@
           <thumbPosX>0</thumbPosX>
           <thumbPosY>0</thumbPosY>
           <frame>videothumbframe.png</frame>
-          <frameFocus>videothumbframe.png</frameFocus>
+          <frameFocus>dvdcase-focus.png</frameFocus>
           <showFrame>yes</showFrame>
           <showFolder>no</showFolder>
           <showBackGround>no</showBackGround>
@@ -356,7 +356,7 @@
           <thumbPosX>0</thumbPosX>
           <thumbPosY>0</thumbPosY>
           <frame>videothumbframe.png</frame>
-          <frameFocus>videothumbframe.png</frameFocus>
+          <frameFocus>dvdcase-focus.png</frameFocus>
           <showFrame>yes</showFrame>
           <showFolder>no</showFolder>
           <showBackGround>no</showBackGround>
@@ -595,6 +595,6 @@
         <Duration>0:0:01.5</Duration>
         <keepaspectratio>yes</keepaspectratio>
       </control>
-    </control>
+    <!--/control-->
   </controls>
 </window>
