@@ -4,9 +4,7 @@
   <defaultcontrol>4</defaultcontrol>
   <allowoverlay>no</allowoverlay>
   <controls>
-    <control>
-      <type>group</type>
-      <description>group element</description>
+      <!--  One-line info background image  -->
       <control>
         <type>image</type>
         <id>0</id>
@@ -16,6 +14,7 @@
         <height>94</height>
         <texture>osdbg5.png</texture>
         <colordiffuse>ff00446d</colordiffuse>
+		<visible>!window.isvisible(757278)</visible>
       </control>
       <control>
         <type>image</type>
@@ -26,8 +25,22 @@
         <height>90</height>
         <texture>osdbg5.png</texture>
         <colordiffuse>ff00061c</colordiffuse>
+		<visible>!window.isvisible(757278)</visible>
       </control>
+	  <!--  Two-line info background image  -->
+	  <control>
+        <type>image</type>
+        <id>0</id>
+        <posX>0</posX>
+        <posY>-2</posY>
+        <width>1920</width>
+        <height>134</height>
+        <texture>osdbg8.png</texture>
+        <visible>window.isvisible(757278)</visible>
+      </control>
+      
       <control>
+	    <description>Info button</description>
         <type>image</type>
         <id>0</id>
         <posX>20</posX>
@@ -48,7 +61,7 @@
         <textcolor>dodgerblue</textcolor>
       </control>
       <control>
-        <description>OK button</description>
+        <description>Exit button</description>
         <type>button</type>
         <id>4</id>
         <posX>1868</posX>
@@ -63,37 +76,25 @@
         <onup>4</onup>
         <ondown>4</ondown>
       </control>
-      <!--control>
-        <description>standard logo</description>
-        <type>image</type>
-        <id>0</id>
-        <posX>105</posX>
-        <posY>20</posY>
-        <width>63</width>
-        <height>63</height>
-        <texture>MediaPortal_Icon.png</texture>
-       <keepaspectratio>yes</keepaspectratio>
-       <visible>!control.hasthumb(5)</visible>
-      </control-->
       <control>
-        <description>logo</description>
+        <description>logo, e.g., TV program logo </description>
         <type>image</type>
         <id>5</id>
-        <posX>3105</posX>
+        <posX>3100</posX>
         <posY>20</posY>
         <width>63</width>
         <height>63</height>
         <texture>#thumb</texture>
        <keepaspectratio>yes</keepaspectratio>
       </control>
-      <control>
-        <description>textarea</description>
+	  <control>
+        <description>textarea two-line info</description>
         <type>textbox</type>
         <id>6</id>
         <posX>122</posX>
         <posY>43</posY>
         <width>1770</width>
-        <height>70</height>
+        <height>100</height>
         <spinPosX>2546</spinPosX>
         <spinPosY>961</spinPosY>
         <onleft>4</onleft>
@@ -103,6 +104,6 @@
         <label>-</label>
         <font>font11</font>
       </control>
-    </control>
+   
   </controls>
 </window>

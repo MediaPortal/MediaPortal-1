@@ -62,6 +62,17 @@
   <string Field="CategoryBG">Plugin-Poster BasicHome</string>
   <string Field="EnlargeImage">Enlarge Image</string>
   <!-- ***************************************************************************************-->
+  <!-- ****************************   Skin translation for Logo Manager **********************-->
+  <!-- ***************************************************************************************-->
+  <string Field="Package">Package</string>
+  <string Field="Group">Group</string>
+  <string Field="GrabNow">Grab now</string>
+  <string Field="CancelGrab">Cancel grab</string>
+  <string Field="Multiple">Multiple</string>
+  <string Field="SelectPackage">Select package</string>
+  <string Field="SelectChannelGroup">Select channel group</string>
+  <string Field="SelectLayerDesign">Select layer design</string>
+  <!-- ***************************************************************************************-->
   <!-- ****************************   Skin translation for Tetris ****************************-->
   <!-- ***************************************************************************************-->
   <string Field="ShowHighscore">Highscore Animation</string>
