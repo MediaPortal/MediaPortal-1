@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2025 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 /*
-// Copyright (C) 2005-2025 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -255,7 +255,7 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName       "${PRODUCT_PUBLISHER}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite    "${PRODUCT_WEB_SITE}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion       "${VERSION}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   "${PRODUCT_NAME} installation ${VERSION_DISP}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright © 2005-2025 ${PRODUCT_PUBLISHER}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright © 2005-2026 ${PRODUCT_PUBLISHER}"
 ShowUninstDetails show
 
 #---------------------------------------------------------------------------
@@ -659,29 +659,42 @@ Section "MediaPortal core files (required)" SecCore
   ; NuGet binaries MediaInfo
   SetOutPath "$MPdir.Base\"
   !if "${Architecture}" == "x64"
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\MediaInfo.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\libcrypto-3-x64.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\libcurl.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\libssl-3-x64.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\libcurl.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\libssh2.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\libcrypto-3-x64.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\libssl-3-x64.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\brotlicommon.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\brotlidec.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\brotlienc.dll"  
   !else
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\MediaInfo.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libcrypto-3.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libcurl.dll"
-  File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libssl-3.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\libcurl.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\libssh2.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\libcrypto-3.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\libssl-3.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\brotlicommon.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\brotlidec.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\brotlienc.dll"  
   !endif
-  File "${git_ROOT}\Packages\MediaInfo.Wrapper.21.9.3\lib\net40\MediaInfo.Wrapper.dll"
-  File "${git_ROOT}\Packages\System.ValueTuple.4.5.0\lib\portable-net40+sl4+win8+wp8\System.ValueTuple.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Wrapper.26.1.0\lib\net45\MediaInfo.Wrapper.dll"
+  File "${git_ROOT}\Packages\System.ValueTuple.4.6.2\lib\net462\System.ValueTuple.dll"
   ; NuGet binaries Sqlite
   SetOutPath "$MPdir.Base\"
   !if "${Architecture}" == "x64"
-  File "${git_ROOT}\Packages\Sqlite.3.50.2\sqlite\x64\sqlite.dll"
+  File "${git_ROOT}\Packages\Sqlite.3.53.3\sqlite\x64\sqlite.dll"
   !else
-  File "${git_ROOT}\Packages\Sqlite.3.50.2\sqlite\x86\sqlite.dll"
+  File "${git_ROOT}\Packages\Sqlite.3.53.3\sqlite\x86\sqlite.dll"
   !endif
   ; NuGet binaries EXIF
   SetOutPath "$MPdir.Base\"
-  File "${git_ROOT}\Packages\MetadataExtractor.2.8.0\lib\net35\MetadataExtractor.dll"
-  File "${git_ROOT}\Packages\XmpCore.6.1.10.1\lib\net35\XmpCore.dll"
+  File "${git_ROOT}\Packages\MetadataExtractor.2.9.3\lib\netstandard2.0\MetadataExtractor.dll"
+  File "${git_ROOT}\Packages\XmpCore.6.1.10.1\lib\netstandard2.0\XmpCore.dll"
+  File "${git_ROOT}\Packages\System.Buffers.4.6.1\lib\net462\System.Buffers.dll"
+  File "${git_ROOT}\Packages\System.Memory.4.6.3\lib\net462\System.Memory.dll"
+  File "${git_ROOT}\Packages\System.Numerics.Vectors.4.6.1\lib\net462\System.Numerics.Vectors.dll"
+  File "${git_ROOT}\Packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll"
+  File "${git_ROOT}\Packages\System.Text.Encoding.CodePages.10.0.5\lib\net462\System.Text.Encoding.CodePages.dll"
   ; NuGet binaries UnidecodeSharp
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\UnidecodeSharpFork.1.0.1\lib\UnidecodeSharpFork.dll"
@@ -690,40 +703,40 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_MP}\core\bin\${BUILD_TYPE}\Bass.Net.dll"
   File "${git_MP}\core\bin\${BUILD_TYPE}\\BassRegistration.dll"
   !if "${Architecture}" == "x64"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bass.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x64\bass.dll"
   !else
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\bass.dll"
   !endif
   File "${git_ROOT}\Packages\System.Management.Automation.6.1.7601.17515\lib\net40\System.Management.Automation.dll"
   ; Bass Addons
   SetOutPath "$MPdir.Base\"
   !if "${Architecture}" == "x64"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bassasio.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bass_fx.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bassmix.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bass_vst.dll"
-  ; File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass_wadsp.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\basswasapi.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\bassenc.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\basscd.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\Plugins\OptimFROG.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x64\bassasio.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x64\bass_fx.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x64\bassmix.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x64\bass_vst.dll"
+  ; File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\bass_wadsp.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x64\basswasapi.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x64\bassenc.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x64\basscd.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x64\Plugins\OptimFROG.dll"
   !else
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bassasio.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass_fx.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bassmix.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass_vst.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bass_wadsp.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\basswasapi.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\bassenc.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\basscd.dll"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\Plugins\OptimFROG.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\bassasio.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\bass_fx.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\bassmix.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\bass_vst.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\bass_wadsp.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\basswasapi.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\bassenc.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\basscd.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\Plugins\OptimFROG.dll"
   !endif
   ; Bass AudioDecoders
   SetOutPath "$MPdir.Base\MusicPlayer\plugins\audio decoders"
   !if "${Architecture}" == "x64"
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x64\plugins\bass*.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x64\plugins\bass*.dll"
   !else
-  File "${git_ROOT}\Packages\BASSCombined.2.4.15\content\x86\plugins\bass*.dll"
+  File "${git_ROOT}\Packages\BASSCombined.2.4.17\content\x86\plugins\bass*.dll"
   !endif
   ; taglib-sharp
   SetOutPath "$MPdir.Base\"
@@ -738,7 +751,7 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Base\"
   File "${git_ROOT}\Packages\SharpLibDisplay.0.3.4\lib\net40\SharpLibDisplay.dll"
   ; Naudio
-  File "${git_ROOT}\Packages\NAudio.1.10.0\lib\net35\NAudio.dll" 
+  File "${git_ROOT}\Packages\NAudio.1.10.0\lib\netstandard2.0\NAudio.dll" 
   ; CSCore
   File "${git_ROOT}\Packages\CSCore.1.2.1.2\lib\net35-client\CSCore.dll"
   ; SharpDX
@@ -1077,6 +1090,10 @@ SectionEnd
   ; NuGet binaries EXIF
   Delete "$MPdir.Base\MetadataExtractor.dll"
   Delete "$MPdir.Base\XmpCore.dll"
+  Delete "$MPdir.Base\System.Buffers.dll"
+  Delete "$MPdir.Base\System.Memory.dll"
+  Delete "$MPdir.Base\System.Numerics.Vectors.dll"
+  Delete "$MPdir.Base\System.Runtime.CompilerServices.Unsafe.dll"
   
   ; NuGet binaries UnidecodeSharp
   Delete "$MPdir.Base\UnidecodeSharpFork.dll"
@@ -1103,6 +1120,10 @@ SectionEnd
   ; NuGet binaries MediaInfo
   Delete "$MPdir.Base\MediaInfo.dll"
   Delete "$MPdir.Base\libcurl.dll"
+  Delete "$MPdir.Base\libssh2.dll"
+  Delete "$MPdir.Base\brotlicommon.dll"
+  Delete "$MPdir.Base\brotlidec.dll"
+  Delete "$MPdir.Base\brotlienc.dll"
   !if "${Architecture}" == "x64"
     Delete "$MPdir.Base\libcrypto-3-x64.dll"
     Delete "$MPdir.Base\libssl-3-x64.dll"
@@ -1529,7 +1550,6 @@ Function .onInit
     SetRegView 32
   !endif
 
-  !insertmacro MediaPortalNetFrameworkCheck
   !insertmacro MediaPortalNet4FrameworkCheck
 
   StrCpy $MPTray_Running 0

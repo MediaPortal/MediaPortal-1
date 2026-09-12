@@ -11,7 +11,7 @@
       <width>1920</width>
       <height>1080</height>
       <texture>white.png</texture>
-        <colordiffuse>50005eef</colordiffuse>
+      <colordiffuse>50005eef</colordiffuse>
       <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
     </control>
     <control>
@@ -22,7 +22,7 @@
       <width>1900</width>
       <height>1040</height>
       <texture>listbg3.png</texture>
-      <colordiffuse>bbffffff</colordiffuse>
+      <colordiffuse>80ffffff</colordiffuse> 
       <visible>window.isvisible(602)|window.isvisible(2005)</visible>
     </control>
     <control>
@@ -45,35 +45,35 @@
       <height>1000</height>
       <width>1746</width>
       <textureHeight>66</textureHeight>
-      <itemWidth>61</itemWidth>
-      <itemHeight>61</itemHeight>
+      <itemWidth>59</itemWidth> 
+      <itemHeight>59</itemHeight> 
       <textXOff>250</textXOff>
-      <textYOff>28</textYOff>
+      <textYOff>30</textYOff> 
       <textXOff2>1745</textXOff2>
-      <textYOff2>28</textYOff2>
-      <textXOff3>320</textXOff3>
-      <textYOff3>-2</textYOff3>
+      <textYOff2>30</textYOff2> 
+      <textXOff3>320</textXOff3> 
+      <textYOff3>1</textYOff3> 
       <font>font10</font>
       <font2>font10</font2>
-      <font3>font11bold</font3>
-      <IconXOff>14</IconXOff>
-      <IconYOff>3</IconYOff>
-      <PinIconXOff>83</PinIconXOff>
-      <PinIconYOff>5</PinIconYOff>
-      <PinIconWidth>60</PinIconWidth>
-      <PinIconHeight>60</PinIconHeight>
+      <font3>font11bold</font3> 
+      <IconXOff>14</IconXOff> 
+      <IconYOff>3</IconYOff> 
+      <PinIconXOff>84</PinIconXOff> 
+      <PinIconYOff>5</PinIconYOff> 
+      <PinIconWidth>55</PinIconWidth> 
+      <PinIconHeight>55</PinIconHeight> 
       <spaceBetweenItems>1</spaceBetweenItems>
       <spinPosX>3945</spinPosX>
       <spinPosY>1005</spinPosY>
-      <textureFocus>listfocus.png</textureFocus>
-      <textureNoFocus>listnofocus.png</textureNoFocus>
+      <textureFocus>list_focus.long.png</textureFocus> 
+      <textureNoFocus>list_miniguide_nofocus.png</textureNoFocus> 
       <keepaspectratio>no</keepaspectratio>
-      <textcolor>ffffffff</textcolor>
-      <textcolor2>ffffffff</textcolor2>
-      <textcolor3>ff00bfff</textcolor3>
-      <remoteColor>ff00ff00</remoteColor>
-      <remoteColor2>ff00ff00</remoteColor2>
-      <remoteColor3>ff00ff00</remoteColor3>
+      <textcolor>ffffffff</textcolor> 
+      <textcolor2>ffffffff</textcolor2> 
+      <textcolor3>ff00bfff</textcolor3> 
+      <remoteColor>ff00ff00</remoteColor> 
+      <remoteColor2>ff00ff00</remoteColor2> 
+      <remoteColor3>ff00ff00</remoteColor3> 
       <scrollOffset>2</scrollOffset>
       <!-- used for selected channel -->
       <onleft>36</onleft>
@@ -86,14 +86,14 @@
       <scrollbarYOff>0</scrollbarYOff>
       <showScrollbar>yes</showScrollbar>
       <scrollbarwidth>20</scrollbarwidth>
-      <texturebg>miniguide_progress_background.png</texturebg>
-      <lefttexture>miniguide_progress_bar.png</lefttexture>
-      <midtexture>miniguide_progress_bar.png</midtexture>
-      <righttexture>miniguide_progress_bar.png</righttexture>
+      <texturebg>miniguide_progress_background_new.png</texturebg>  
+      <lefttexture>miniguide_progress_bar_new.png</lefttexture>  
+      <midtexture>miniguide_progress_bar_new.png</midtexture>
+      <righttexture>miniguide_progress_bar_new.png</righttexture>
       <ProgressBarWidth>150</ProgressBarWidth>
-      <ProgressBarHeight>80</ProgressBarHeight>
-      <ProgressBarXOffset>140</ProgressBarXOffset>
-      <ProgressBarYOffset>-7</ProgressBarYOffset>
+      <ProgressBarHeight>80</ProgressBarHeight> 
+      <ProgressBarXOffset>140</ProgressBarXOffset> 
+      <ProgressBarYOffset>-7</ProgressBarYOffset> 
       <unfocusedAlpha applyToAll="true">200</unfocusedAlpha>
       <dimColor>ffffffff</dimColor>
     </control>
@@ -106,35 +106,35 @@
       <height>1000</height>
       <width>1746</width>
       <textureHeight>66</textureHeight>
-      <itemWidth>61</itemWidth>
-      <itemHeight>61</itemHeight>
+      <itemWidth>59</itemWidth> 
+      <itemHeight>59</itemHeight> 
       <textXOff>250</textXOff>
-      <textYOff>28</textYOff>
+      <textYOff>30</textYOff> 
       <textXOff2>1745</textXOff2>
-      <textYOff2>28</textYOff2>
-      <textXOff3>320</textXOff3>
-      <textYOff3>-2</textYOff3>
+      <textYOff2>30</textYOff2> 
+      <textXOff3>320</textXOff3> 
+      <textYOff3>1</textYOff3> 
       <font>font10</font>
       <font2>font10</font2>
       <font3>font11bold</font3>
-      <IconXOff>14</IconXOff>
-      <IconYOff>3</IconYOff>
-      <PinIconXOff>83</PinIconXOff>
-      <PinIconYOff>5</PinIconYOff>
-      <PinIconWidth>60</PinIconWidth>
-      <PinIconHeight>60</PinIconHeight>
+      <IconXOff>14</IconXOff> 
+      <IconYOff>3</IconYOff> 
+      <PinIconXOff>84</PinIconXOff> 
+      <PinIconYOff>5</PinIconYOff> 
+      <PinIconWidth>55</PinIconWidth> 
+      <PinIconHeight>55</PinIconHeight> 
       <spaceBetweenItems>1</spaceBetweenItems>
       <spinPosX>3945</spinPosX>
       <spinPosY>1005</spinPosY>
-      <textureFocus>listfocus.png</textureFocus>
-      <textureNoFocus>listnofocus.png</textureNoFocus>
+      <textureFocus>list_focus.long.png</textureFocus> 
+      <textureNoFocus>list_miniguide_nofocus.png</textureNoFocus> 
       <keepaspectratio>no</keepaspectratio>
-      <textcolor>ffffffff</textcolor>
-      <textcolor2>ffffffff</textcolor2>
-      <textcolor3>ff00bfff</textcolor3>
-      <remoteColor>ff00ff00</remoteColor>
-      <remoteColor2>ff00ff00</remoteColor2>
-      <remoteColor3>ff00ff00</remoteColor3>
+      <textcolor>ffffffff</textcolor> 
+      <textcolor2>ffffffff</textcolor2> 
+      <textcolor3>ff00bfff</textcolor3> 
+      <remoteColor>ff00ff00</remoteColor> 
+      <remoteColor2>ff00ff00</remoteColor2> 
+      <remoteColor3>ff00ff00</remoteColor3> 
       <scrollOffset>2</scrollOffset>
       <!-- used for selected channel -->
       <onleft>36</onleft>
@@ -147,14 +147,14 @@
       <scrollbarYOff>0</scrollbarYOff>
       <showScrollbar>yes</showScrollbar>
       <scrollbarwidth>20</scrollbarwidth>
-      <texturebg>miniguide_progress_background.png</texturebg>
-      <lefttexture>miniguide_progress_bar.png</lefttexture>
-      <midtexture>miniguide_progress_bar.png</midtexture>
-      <righttexture>miniguide_progress_bar.png</righttexture>
+      <texturebg>miniguide_progress_background_new.png</texturebg>  
+      <lefttexture>miniguide_progress_bar_new.png</lefttexture> 
+      <midtexture>miniguide_progress_bar_new.png</midtexture>
+      <righttexture>miniguide_progress_bar_new.png</righttexture>
       <ProgressBarWidth>150</ProgressBarWidth>
-      <ProgressBarHeight>80</ProgressBarHeight>
-      <ProgressBarXOffset>140</ProgressBarXOffset>
-      <ProgressBarYOffset>-7</ProgressBarYOffset>
+      <ProgressBarHeight>80</ProgressBarHeight> 
+      <ProgressBarXOffset>140</ProgressBarXOffset> 
+      <ProgressBarYOffset>-7</ProgressBarYOffset> 
       <unfocusedAlpha applyToAll="true">200</unfocusedAlpha>
       <dimColor>ffffffff</dimColor>
     </control>
@@ -162,11 +162,11 @@
       <description>groups spin control</description>
       <type>spincontrol</type>
       <id>36</id>
-      <posX>800</posX>
+      <posX>800</posX> 800
       <posY>57</posY> 
-      <showrange>no</showrange>
-      <orientation>horizontal</orientation>
-      <align>left</align>
+	  <showrange>no</showrange>
+      <orientation>horizontal</orientation> 
+      <align>left</align> left
       <textureUp>scroll-right.png</textureUp>
       <textureDown>scroll-left.png</textureDown>
       <textureUpFocus>scroll-right-focus.png</textureUpFocus>

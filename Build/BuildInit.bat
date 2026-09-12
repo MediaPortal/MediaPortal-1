@@ -1,3 +1,9 @@
+@ECHO OFF
+
+ECHO.
+ECHO Building Tools...
+CALL BuildTools.cmd
+
 REM detect if BUILD_TYPE should be release or debug
 if not %1!==Debug! goto RELEASE
 :DEBUG
@@ -6,7 +12,6 @@ goto START
 :RELEASE
 set BUILD_TYPE=Release
 goto START
-
 
 :START
 REM Select program path based on current machine environment

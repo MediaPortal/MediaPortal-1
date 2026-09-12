@@ -106,12 +106,12 @@ namespace MPRepository.Tests
      
       IList<MPUser> users = MPRController.RetrieveEquals<MPUser>(session, "Handle", handle);
 
-      Assert.That(users.Count, Is.EqualTo(1));
+      Assert.AreEqual(users.Count, 1);
 
       MPUser user = users[0];
       System.Console.WriteLine("User {0}:\n{1}\n{2}\n{3} permissions", user.Handle, user.Name, user.EMail, user.Permissions.Count);
 
-      Assert.That(user.Permissions.Count, Is.EqualTo(4));
+      Assert.AreEqual(user.Permissions.Count, 4);
 
       MPRController.EndSession(session, true);
 

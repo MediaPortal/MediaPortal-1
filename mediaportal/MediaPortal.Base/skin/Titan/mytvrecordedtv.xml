@@ -72,6 +72,9 @@
 			<posY>457</posY>
 			<width>90</width>
 			<height>90</height>
+			<keepaspectratio>yes</keepaspectratio>
+			<centered>yes</centered>
+            <zoom>no</zoom>
 			<texture>#TV.RecordedTV.thumb</texture>
 			<visible>facadeview.list</visible>
       <animation effect="fade" time="250">WindowOpen</animation>

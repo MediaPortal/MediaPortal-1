@@ -1,6 +1,6 @@
-﻿#region Copyright (C) 2005-2020 Team MediaPortal
+﻿#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -221,7 +221,7 @@ namespace MediaPortal.Util
             value = metadata.ResolutionAsString();
             break;
           case nameof(ExifMetadata.Metadata.Location):
-            if (metadata.Location != null)
+            if (!metadata.Location.IsZero)
             {
               string latitude = metadata.Location.Latitude.ToLatitudeString() ?? string.Empty;
               string longitude = metadata.Location.Longitude.ToLongitudeString() ?? string.Empty;
@@ -232,7 +232,7 @@ namespace MediaPortal.Util
             }
             break;
           case nameof(ExifMetadata.Metadata.Altitude):
-            if (metadata.Location != null)
+            if (!metadata.Location.IsZero)
             {
               value = metadata.Altitude.ToAltitudeString();
             }
@@ -280,7 +280,7 @@ namespace MediaPortal.Util
           case nameof(ExifMetadata.Metadata.Location):
             GUIPropertyManager.SetProperty("#pictures.exif.location.latitude", string.Empty);
             GUIPropertyManager.SetProperty("#pictures.exif.location.longitude", string.Empty);
-            if (metadata.Location != null)
+            if (!metadata.Location.IsZero)
             {
               string latitude = metadata.Location.Latitude.ToLatitudeString() ?? string.Empty;
               string longitude = metadata.Location.Longitude.ToLongitudeString() ?? string.Empty;
@@ -293,7 +293,7 @@ namespace MediaPortal.Util
             }
             break;
           case nameof(ExifMetadata.Metadata.Altitude):
-            if (metadata.Location != null)
+            if (!metadata.Location.IsZero)
             {
               value = metadata.Altitude.ToAltitudeString();
             }
@@ -434,7 +434,7 @@ namespace MediaPortal.Util
         }
       }
 
-      if (metadata.Location != null)
+      if (!metadata.Location.IsZero)
       {
         string latitude = string.Empty;
         string longitude = string.Empty;

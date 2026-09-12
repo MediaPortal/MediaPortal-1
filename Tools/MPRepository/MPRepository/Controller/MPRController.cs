@@ -196,7 +196,7 @@ namespace MPRepository.Controller
     }
 
 
-    public static ISet<MPTag> GetTags(MPRSession session, string tagNameList)
+    public static Iesi.Collections.Generic.ISet<MPTag> GetTags(MPRSession session, string tagNameList)
     {
       string[] tagNames = tagNameList.Split(',');
       IList<MPTag> tags = session.Session.CreateCriteria(typeof(MPTag))
@@ -207,7 +207,7 @@ namespace MPRepository.Controller
       {
         tagNamesExisting.Add(tag.Name);
       }
-      ISet<MPTag> results = new HashedSet<MPTag>(tags);
+      Iesi.Collections.Generic.ISet<MPTag> results = new HashedSet<MPTag>(tags);
       foreach (string tagName in (new HashedSet<string>(tagNames)).Minus(tagNamesExisting))
       {
         MPTag tag = new MPTag { Name = tagName };

@@ -42,8 +42,8 @@
       <width>520</width>
       <texture>backslide_settings.png</texture>
       <colordiffuse>70ffffff</colordiffuse>
-      <animation effect="slide" time="400" start="-300,0">WindowOpen</animation>
-      <animation effect="slide" time="400" end="0,-300">WindowClose</animation>
+      <animation effect="slide" time="400" start="-600,0">WindowOpen</animation> 
+      <animation effect="slide" time="400" end="0,-600">WindowClose</animation>
       <animation effect="fade" time="500">WindowClose</animation>
       <animation effect="fade" time="250">WindowOpen</animation>
     </control>

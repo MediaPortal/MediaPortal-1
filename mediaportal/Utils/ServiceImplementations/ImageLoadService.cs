@@ -1,4 +1,24 @@
-﻿using System;
+﻿#region Copyright (C) 2005-2026 Team MediaPortal
+
+// Copyright (C) 2005-2026 Team MediaPortal
+// http://www.team-mediaportal.com
+// 
+// MediaPortal is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+// 
+// MediaPortal is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+// 
+// You should have received a copy of the GNU General Public License
+// along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -442,7 +462,7 @@ namespace MediaPortal.ServiceImplementations
             //Extract width
             if (job.ImageSize == Size.Empty)
             {
-              IList<Directory> dirs = ImageMetadataReader.ReadMetadata(job.FilePath);
+              IReadOnlyList<Directory> dirs = ImageMetadataReader.ReadMetadata(job.FilePath);
               for (int i = 0; i < dirs.Count; i++)
               {
                 Directory directory = dirs[i];
@@ -454,16 +474,16 @@ namespace MediaPortal.ServiceImplementations
                     )
                 {
                   strFormat = directory.Name;
-                  int iWidth = -1, iHeigth = -1;
+                  int iWidth = -1, iHeight = -1;
                   Tag mTag = directory.Tags.Where((x) => x.Name == "Image Width").FirstOrDefault();
                   if (mTag != null)
                   {
                     iWidth = directory.GetInt32(mTag.Type);
                     mTag = directory.Tags.Where((x) => x.Name == "Image Height").FirstOrDefault();
                     if (mTag != null)
-                      iHeigth = directory.GetInt32(mTag.Type);
+                      iHeight = directory.GetInt32(mTag.Type);
                   }
-                  job.ImageSize = new Size(iWidth, iHeigth);
+                  job.ImageSize = new Size(iWidth, iHeight);
                   break;
                 }
               }

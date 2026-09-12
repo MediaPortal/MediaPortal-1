@@ -551,6 +551,8 @@ public class MediaPortalApp : D3D, IRender
     WindowedOverride     = false;
     FullscreenOverride   = false;
     ScreenNumberOverride = -1;
+    AlwaysOnTopOverride = false;
+    var ShowSkinProperties = false;
 
     if (args.Length > 0)
     {
@@ -615,6 +617,14 @@ public class MediaPortalApp : D3D, IRender
         if (arg == "/Debug")
         {
           Log.SetLogLevel(Level.Debug);
+        }
+
+        if (arg == "/SkinProperties")
+        {
+          ShowSkinProperties = true;
+          AlwaysOnTopOverride = true;
+          WindowedOverride = true;
+          HIDOverride.SuppressHID = true;
         }
 
         #if !DEBUG
@@ -1030,6 +1040,12 @@ public class MediaPortalApp : D3D, IRender
           Log.Debug("Main: Initializing DirectX");
 
           var app = new MediaPortalApp();
+          if (ShowSkinProperties)
+          {
+            app._hidKeyboard = false;
+            app.Shown += (s,e) => { new SkinProperties().Show(); };
+          }
+
           if (app.Init())
           {
             try
@@ -4299,7 +4315,8 @@ public class MediaPortalApp : D3D, IRender
               // As long as we're e.g. listening to music on "Playing Now" screen
               // we might not want to slow things down here.
               // This feature is mainly intended to save energy on idle 24/7 rigs.
-              if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
+              if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW &&
+                  GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_RADIO_PLAYING_NOW)
               {
                 if (!GUIGraphicsContext.SaveRenderCycles)
                 {
@@ -4403,7 +4420,10 @@ public class MediaPortalApp : D3D, IRender
         case Action.ActionType.ACTION_PREV_CHANNEL:
           if (!GUIWindowManager.IsRouted)
           {
-            window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
+            if (g_Player.Playing && g_Player.IsRadio)
+              window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_RADIO);
+            else
+              window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
             window.OnAction(action);
             return;
           }
@@ -4413,7 +4433,10 @@ public class MediaPortalApp : D3D, IRender
         case Action.ActionType.ACTION_NEXT_CHANNEL:
           if (!GUIWindowManager.IsRouted)
           {
-            window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
+            if (g_Player.Playing && g_Player.IsRadio)
+              window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_RADIO);
+            else
+              window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
             window.OnAction(action);
             return;
           }
@@ -4824,10 +4847,21 @@ public class MediaPortalApp : D3D, IRender
               if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
               {
                 GUIWindowManager.ShowPreviousWindow();
-            }
+              }
               else
               {
                 GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW);
+              }
+            }
+            if (g_Player.IsRadio && GUIWindowManager.CanLoad((int)GUIWindow.Window.WINDOW_RADIO_PLAYING_NOW))
+            {
+              if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_RADIO_PLAYING_NOW)
+              {
+                GUIWindowManager.ShowPreviousWindow();
+              }
+              else
+              {
+                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_RADIO_PLAYING_NOW);
               }
             }
             break;
