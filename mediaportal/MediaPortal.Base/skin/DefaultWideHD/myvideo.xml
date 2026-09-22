@@ -507,7 +507,20 @@
       <label>#(iif(eq(#fanarthandler.movie.awards.selected.text,''),'#plot','#plot &#xA;&#xA; **** #fanarthandler.movie.awards.selected.text ****'))</label>
       <font>font10</font>
       <textcolor>lightgray</textcolor>
-      <visible>facadeview.list+string.equals(#hideinfo, False)</visible>
+      <visible>facadeview.list+string.equals(#hideinfo, False)+plugin.isenabled(Fanart Handler)</visible>
+    </control>
+	<control Style="NoShadow">
+      <description>Plot value</description>
+      <type>textboxscrollup</type>
+      <id>1</id>
+      <posX>1095</posX>
+      <posY>705</posY>
+      <width>780</width>
+      <height>150</height>
+      <label>#plot</label>
+      <font>font10</font>
+      <textcolor>lightgray</textcolor>
+      <visible>facadeview.list+string.equals(#hideinfo, False)+!plugin.isenabled(Fanart Handler)</visible>
     </control>
     <control>
       <description>Separator Line</description>
