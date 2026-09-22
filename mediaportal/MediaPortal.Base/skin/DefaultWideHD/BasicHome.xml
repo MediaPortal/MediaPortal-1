@@ -327,7 +327,7 @@
     <control>
       <type>group</type>
       <description>group element</description>
-      <visible>player.hasaudio+!player.hasvideo</visible>
+      <visible>player.hasaudio+!player.hasvideo+!string.contains(#highlightedbutton,WEATHER)</visible>
       <control>
       <description>music area</description>
       <type>image</type>
@@ -394,7 +394,7 @@
     <control>
       <type>group</type>
       <description>group element</description>   
-      <visible>player.hasaudio+!player.hasvideo+!string.equals(#Play.Current.Type,RadioRecording)+!string.equals(#Play.Current.Type,Radio)+!string.equals(#RadioTime.Play.Station)</visible>
+      <visible>player.hasaudio+!player.hasvideo+!string.equals(#Play.Current.Type,RadioRecording)+!string.equals(#Play.Current.Type,Radio)+!string.equals(#RadioTime.Play.Station)+!string.contains(#highlightedbutton,WEATHER)</visible>
     <control>
         <description>music logo when no thumb</description>
         <type>image</type>
