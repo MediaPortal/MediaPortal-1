@@ -1037,6 +1037,7 @@
         <maxWidth>730</maxWidth>
         <align>left</align>
         <font>font10</font>
+		<textcolor>fffea282</textcolor>
         <shadowAngle>45</shadowAngle>
         <shadowDistance>4</shadowDistance>
         <shadowColor>ff000000</shadowColor>
