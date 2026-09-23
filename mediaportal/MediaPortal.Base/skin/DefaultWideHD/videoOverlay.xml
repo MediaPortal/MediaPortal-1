@@ -4,8 +4,8 @@
   <id>3000</id>
   <defaultcontrol>2</defaultcontrol>
   <controls>
-    
-    <!--  ********************************************************************************************  -->
+			
+	<!--  ********************************************************************************************  -->
     <!--  ****************************INFOS IN PLUGINS NOW PLAYING VIDEO  ****************************  -->
     <!--  ********************************************************************************************  -->
 	<!--  ********************************************************************************************  -->
@@ -890,7 +890,7 @@
       <width>840</width>
       <align>right</align>
       <height>38</height>
-	  <visible>string.equals(#currentremaining,0:00)</visible>
+	  <visible>string.equals(#currentremaining,0:00)+[string.equals(#Play.Current.OnlineVideos.SiteName,ARD Mediathek)|string.equals(#Play.Current.OnlineVideos.SiteName,ZDF Mediathek)]</visible>
       <control>
         <type>fadelabel</type>
         <description>Title</description>
@@ -917,7 +917,7 @@
       <width>840</width>
       <align>right</align>
       <height>38</height>
-	  <visible>!string.equals(#currentremaining,0:00)</visible>
+	 <visible>!string.equals(#currentremaining,0:00)</visible>
       <control>
         <type>fadelabel</type>
         <description>Title label</description>
@@ -955,7 +955,7 @@
       <width>840</width>
       <align>right</align>
       <height>38</height>
-	  <visible>string.equals(#currentremaining,0:00)</visible>
+	  <visible>string.equals(#currentremaining,0:00)+[string.equals(#Play.Current.OnlineVideos.SiteName,ARD Mediathek)|string.equals(#Play.Current.OnlineVideos.SiteName,ZDF Mediathek)]</visible>
       <control>
         <type>fadelabel</type>
         <description>Channel label</description>
@@ -1033,7 +1033,7 @@
       <width>840</width>
       <align>left</align>
       <height>38</height>
-	  <visible>string.equals(#currentremaining,0:00)</visible>
+	  <visible>string.equals(#currentremaining,0:00)+[string.equals(#Play.Current.OnlineVideos.SiteName,ARD Mediathek)|string.equals(#Play.Current.OnlineVideos.SiteName,ZDF Mediathek)]</visible>
       <control>
         <description>playtime label</description>
         <type>label</type>

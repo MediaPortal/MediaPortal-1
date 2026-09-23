@@ -991,11 +991,11 @@
         <shadowDistance>4</shadowDistance>
         <shadowColor>ff000000</shadowColor>
       </control>
-      <control>
+       <control>
         <type>fadelabel</type>
         <description>Channel/Group</description>
         <id>0</id>
-        <label>#Radio.Listen.Channel (#Radio.Listen.Group)</label>
+        <label>#Radio.Listen.Channel (#Radio.Listen.Group)</label> 
         <width>10</width>
         <maxWidth>730</maxWidth>
         <align>left</align>
@@ -1003,7 +1003,7 @@
         <shadowAngle>45</shadowAngle>
         <shadowDistance>4</shadowDistance>
         <shadowColor>ff000000</shadowColor>
-      </control>
+	  </control>
     </control>
     <control>
       <description>Playtime</description>
@@ -1162,7 +1162,7 @@
         <type>fadelabel</type>
         <description>Title label</description>
         <id>0</id>
-       <label>#(L(811)): </label>
+        <label>#(L(811)): </label>
         <width>10</width>
         <maxWidth>200</maxWidth>
         <textcolor>ff00aaff</textcolor>
@@ -1943,7 +1943,7 @@
     <control>
         <type>image</type>
         <id>0</id>
-        <posX>1370</posX> 1320
+        <posX>1370</posX> 
         <posY>125</posY> 
         <width>113</width>
         <height>23</height>
@@ -2232,7 +2232,7 @@
       <width>840</width>
       <align>right</align>
       <height>38</height>
-	  <visible>string.equals(#currentremaining,0:00)</visible>
+	  <visible>string.equals(#currentremaining,0:00)+[string.equals(#Play.Current.OnlineVideos.SiteName,ARD Mediathek)|string.equals(#Play.Current.OnlineVideos.SiteName,ZDF Mediathek)]</visible>
       <control>
         <type>fadelabel</type>
         <description>Title</description>
@@ -2259,7 +2259,7 @@
       <width>840</width>
       <align>right</align>
       <height>38</height>
-	  <visible>!string.equals(#currentremaining,0:00)</visible>
+	 <visible>!string.equals(#currentremaining,0:00)</visible>
       <control>
         <type>fadelabel</type>
         <description>Title label</description>
@@ -2297,7 +2297,7 @@
       <width>840</width>
       <align>right</align>
       <height>38</height>
-	  <visible>string.equals(#currentremaining,0:00)</visible>
+	  <visible>string.equals(#currentremaining,0:00)+[string.equals(#Play.Current.OnlineVideos.SiteName,ARD Mediathek)|string.equals(#Play.Current.OnlineVideos.SiteName,ZDF Mediathek)]</visible>
       <control>
         <type>fadelabel</type>
         <description>Channel label</description>
@@ -2375,7 +2375,7 @@
       <width>840</width>
       <align>left</align>
       <height>38</height>
-	  <visible>string.equals(#currentremaining,0:00)</visible>
+	  <visible>string.equals(#currentremaining,0:00)+[string.equals(#Play.Current.OnlineVideos.SiteName,ARD Mediathek)|string.equals(#Play.Current.OnlineVideos.SiteName,ZDF Mediathek)]</visible>
       <control>
         <description>playtime label</description>
         <type>label</type>
@@ -2507,7 +2507,7 @@
         <type>fadelabel</type>
         <description>Current playtime</description>
         <id>0</id>
-        <label>#(L(34020))</label>
+        <label>#(L(34020)) </label>
         <width>10</width>
         <maxWidth>200</maxWidth>
         <textcolor>ff00aaff</textcolor>
