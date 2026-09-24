@@ -2,7 +2,7 @@
 <!--version="1.0" encoding="utf-8" standalone="yes"-->
 <window>
   <id>2</id>
-  <defaultcontrol>2</defaultcontrol>
+  <defaultcontrol>50</defaultcontrol>
   <allowoverlay>yes</allowoverlay>
   <controls>
     <control>
@@ -14,7 +14,52 @@
       <height>1080</height>
       <colordiffuse>90ffffff</colordiffuse>
     </control>
-    <import>common.window.xml</import>
+    <control>
+      <description>Title background image all screens except all games</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>0</posX>
+      <posY>0</posY>
+      <width>1920</width>
+      <height>379</height>
+      <texture>overlay_top.png</texture>
+      <colordiffuse>ddffffff</colordiffuse>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>e.g. Setup TV</description>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <label>#currentmodule #scroll.wrap #pictures.folder</label>
+      <width>1802</width>
+      <align>left</align>
+      <font>Label</font>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>lightgray</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>!string.equals(#selectedindex)+string.equals(#itemcount)</visible>
+    </control>
+    <control>
+      <type>fadelabel</type>
+      <description>e.g. Setup TV</description>
+      <id>0</id>
+      <posX>45</posX>
+      <posY>54</posY>
+      <label>#currentmodule #scroll.wrap #pictures.folder #scroll.wrap #selecteditem</label>
+      <width>1802</width>
+      <align>left</align>
+      <font>Label</font>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>3</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <textcolor>lightgray</textcolor>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
+    </control>
+    <!--import>common.window.xml</import-->
     <import>common.time.xml</import>
     <control>
       <description>General Overlay</description>
@@ -26,39 +71,84 @@
       <height>1080</height>
       <texture>general_overlay.png</texture>
     </control>
+    
+    <control>
+      <description>Itemcount CurrentModule</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1869</posX>
+      <posY>16</posY>
+      <label>#selectedindex/#itemcount #currentmodule</label>
+      <align>right</align>
+      <font>RSS</font>
+      <textcolor>lightgray</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <visible>string.equals(#selectedindex)+string.equals(#itemcount)</visible>
+    </control>
+    
     <!-- ************************************* New Picture Rating/Watched Count **************** -->
     <control>
+      <description>Rating/Watched count</description>
+      <type>group</type>
+      <layout>StackLayout(7, Horizontal, true)</layout>
+      <posX>45</posX>
+      <posY>100</posY>
+      <width>1000</width>
+      <align>left</align>
+      <visible>!string.equals(#selecteditem,..)+!string.equals(#pictures.Rating, )</visible>
+	<control>
+      <description>Watched label</description>
+	  <type>fadelabel</type>
+      <id>0</id>
+      <label>#(L(527)):</label>
+      <width>10</width>
+      <maxWidth>200</maxWidth>
+      <textcolor>ff00bfff</textcolor>
+      <align>left</align>
+      <font>Label</font>
+    </control>
+    <control>
+      <description>Watched Value</description>
+	  <type>fadelabel</type>
+      <id>0</id>
+      <label>#pictures.Viewsx #scroll.wrap</label>  
+      <width>10</width>
+      <maxWidth>200</maxWidth>
+      <align>left</align>
+      <font>Label</font>
+      <textcolor>lightgray</textcolor>
+    </control>
+	<control>
+	  <description>Rating label</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <label>#(L(204))</label>
+      <width>10</width>
+      <maxWidth>1190</maxWidth>
+      <textcolor>ff00bfff</textcolor>
+      <align>left</align>
+      <font>Label</font>
+    </control>
+    <control>
+      <description>Rating value</description>
       <type>imagelist</type>
       <id>1</id>
-      <posX>45</posX>
-      <posY>104</posY>
-      <width>453</width>
-      <height>55</height>
-      <textureWidth>35</textureWidth>
-      <textureHeight>35</textureHeight>
+      <width>337</width>
+      <textureWidth>31</textureWidth>
+      <textureHeight>39</textureHeight>
       <subitems>
-        <subitem>starbad.png</subitem>
-        <subitem>star.png</subitem>
+          <subitem>starbad_music.png</subitem>
+          <subitem>star_music.png</subitem>
       </subitems>
       <orientation>horizontal</orientation>
       <align>left</align>
+      <valign>bottom</valign>
       <imagesToDraw>10</imagesToDraw>
       <percentage>#pictures.Rating</percentage>
-      <visible>!string.equals(#selecteditem,..)+!string.equals(#pictures.Rating, )</visible>
     </control>
-    
-    <control>
-      <description>Text Rating/Votes Value</description>
-      <type>label</type>
-      <id>1</id>
-      <posX>418</posX>
-      <posY>100</posY>
-      <label>(#(L(527)): #pictures.Viewsx)</label>
-      <font>Label</font>
-      <align>left</align>
-      <textcolor>lightgray</textcolor>
-      <visible>!string.equals(#selecteditem,..)+!string.equals(#pictures.Rating, )</visible>
-    </control>
+	</control>
     
     <control>
       <type>actiongroup</type>
@@ -199,17 +289,104 @@
       </control>
     </control>
     <import>common.facade.pictures.xml</import>
+	<!-- *************************************  Large Metadata logos with camera viewfinder frame  ************************************* -->
+	<control>
+      <id>1</id>
+      <type>image</type>
+      <posX>1430</posX> 
+      <posY>327</posY> 
+      <width>450</width>
+      <height>450</height>  
+      <texture>#(switch(
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\address.png'),'Logos\exif\thumbs_with_finder\address_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\altitude.png'),'Logos\exif\thumbs_with_finder\altitude_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\author.png'),'Logos\exif\thumbs_with_finder\author_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\byline.png'),'Logos\exif\thumbs_with_finder\byline_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\cameramodel.png'),'Logos\exif\thumbs_with_finder\cameramodel_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\city.png'),'Logos\exif\thumbs_with_finder\city_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\comment.png'),'Logos\exif\thumbs_with_finder\comment_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\copyright.png'),'Logos\exif\thumbs_with_finder\copyright_finder.png',
+		eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\copyrightnotice.png'),'Logos\exif\thumbs_with_finder\copyrightnotice_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\countrycode.png'),'Logos\exif\thumbs_with_finder\countrycode_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\countryname.png'),'Logos\exif\thumbs_with_finder\countryname_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\datepicturetaken.png'),'Logos\exif\thumbs_with_finder\datepicturetaken_finder.png',
+		eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\exposurecompensation.png'),'Logos\exif\thumbs_with_finder\exposurecompensation_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\equipmentmake.png'),'Logos\exif\thumbs_with_finder\equipmentmake_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\exposuremode.png'),'Logos\exif\thumbs_with_finder\exposuremode_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\exposureprogram.png'),'Logos\exif\thumbs_with_finder\exposureprogram_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\exposuretime.png'),'Logos\exif\thumbs_with_finder\exposuretime_finder.png',
+		eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\file.png'),'Logos\exif\thumbs_with_finder\file_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\flash.png'),'Logos\exif\thumbs_with_finder\flash_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\focallength.png'),'Logos\exif\thumbs_with_finder\focallength_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\focallength35mm.png'),'Logos\exif\thumbs_with_finder\focallength35mm_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\fstop.png'),'Logos\exif\thumbs_with_finder\fstop_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\hdr.png'),'Logos\exif\thumbs_with_finder\hdr_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\histogram.png'),'Logos\exif\thumbs_with_finder\histogram_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\imagedimensions.png'),'Logos\exif\thumbs_with_finder\imagedimensions_finder.png',
+		eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\iso.png'),'Logos\exif\thumbs_with_finder\iso_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\keywords.png'),'Logos\exif\thumbs_with_finder\keywords_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\lens.png'),'Logos\exif\thumbs_with_finder\lens_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\location.png'),'Logos\exif\thumbs_with_finder\location_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\meteringmode.png'),'Logos\exif\thumbs_with_finder\meteringmode_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\orientation.png'),'Logos\exif\thumbs_with_finder\orientation_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\provinceorstate.png'),'Logos\exif\thumbs_with_finder\provinceorstate_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\resolution.png'),'Logos\exif\thumbs_with_finder\resolution_finder.png',
+		eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\scenecapturetype.png'),'Logos\exif\thumbs_with_finder\scenecapturetype_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\scenetype.png'),'Logos\exif\thumbs_with_finder\scenetype_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\sensingmethod.png'),'Logos\exif\thumbs_with_finder\sensingmethod_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\shutterspeed.png'),'Logos\exif\thumbs_with_finder\shutterspeed_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\sublocation.png'),'Logos\exif\thumbs_with_finder\sublocation_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\viewercomments.png'),'Logos\exif\thumbs_with_finder\viewercomments_finder.png',
+        eq(#selectedthumb,'C:\ProgramData\Team MediaPortal\MediaPortal\Thumbs\Pictures\exif\data\whitebalance.png'),'Logos\exif\thumbs_with_finder\whitebalance_finder.png',
+		eq(1,1),''))</texture>
+      <!--<shouldCache>true</shouldCache>-->
+      <visible>facadeview.list+Control.HasFocus(50)</visible> 
+	</control>
+	
+	<control>
+	  <description>DefaultFolderBack</description>
+      <id>1</id>
+      <type>image</type>
+      <posX>1485</posX>
+      <posY>307</posY>
+      <width>390</width>
+      <height>390</height>
+      <texture mask="cdthumbmask.png">#selectedthumb</texture>
+      <visible>facadeview.list+Control.HasFocus(50)+string.contains(#selecteditem,..)</visible>
+    </control>
+	
+	<control>
+      <description>group element</description>
+      <type>group</type>
+      <posX>1400</posX>
+      <posY>260</posY>
+      <layout>StackLayout(15, Vertical, true)</layout>
+	<control>
+      <description>EXIF Logo</description>
+      <type>image</type>
+      <id>0</id>
+      <width>500</width>
+      <height>30</height>
+      <keepaspectratio>yes</keepaspectratio>
+	    <centered>yes</centered>
+      <colordiffuse>ccffffff</colordiffuse>
+      <texture>#pictures.exif.images.horizontal</texture>
+      <visible>facadeview.list+Control.HasFocus(50)</visible>
+    </control>
     <control>
       <id>500</id>
-      <type>image</type>
-      <posX>1410</posX>
+	    <posX>1410</posX>
       <posY>260</posY>
+      <type>image</type>
       <width>500</width>
-      <height>650</height>
+      <height>600</height>  650
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <texture>#(iif(eq(#selecteditem,'..'),'','#selectedthumb'))</texture>
-      <visible>facadeview.playlist|facadeview.list+Control.HasFocus(50)</visible>
+	  <colordiffuse>ffffffff</colordiffuse>
+      <visible>facadeview.list+Control.HasFocus(50)+!string.contains(#selectedthumb,address.png)+!string.contains(#selectedthumb,altitude.png)+!string.contains(#selectedthumb,author.png)+!string.contains(#selectedthumb,byline.png)+!string.contains(#selectedthumb,cameramodel.png)+!string.contains(#selectedthumb,city.png)+!string.contains(#selectedthumb,comment.png)+!string.contains(#selectedthumb,copyright.png)+!string.contains(#selectedthumb,copyrightnotice.png)+!string.contains(#selectedthumb,countrycode.png)+!string.contains(#selectedthumb,countryname.png)+!string.contains(#selectedthumb,datepicturetaken.png)+!string.contains(#selectedthumb,equipmentmake.png)+!string.contains(#selectedthumb,exposurecompensation.png)+!string.contains(#selectedthumb,exposuremode.png)+!string.contains(#selectedthumb,exposureprogram.png)+!string.contains(#selectedthumb,exposuretime.png)+!string.contains(#selectedthumb,file.png)+!string.contains(#selectedthumb,flash.png)+!string.contains(#selectedthumb,focallength.png)+!string.contains(#selectedthumb,focallength35mm.png)+!string.contains(#selectedthumb,fstop.png)+!string.contains(#selectedthumb,hdr.png)+!string.contains(#selectedthumb,histogram.png)+!string.contains(#selectedthumb,imagedimensions.png)+!string.contains(#selectedthumb,iso.png)+!string.contains(#selectedthumb,keywords.png)+!string.contains(#selectedthumb,lens.png)+!string.contains(#selectedthumb,location.png)+!string.contains(#selectedthumb,meteringmode.png)+!string.contains(#selectedthumb,orientation.png)+!string.contains(#selectedthumb,provinceorstate.png)+!string.contains(#selectedthumb,resolution.png)+!string.contains(#selectedthumb,scenecapturetype.png)+!string.contains(#selectedthumb,scenetype.png)+!string.contains(#selectedthumb,sensingmethod.png)+!string.contains(#selectedthumb,shutterspeed.png)+!string.contains(#selectedthumb,sublocation.png)+!string.contains(#selectedthumb,viewercomments.png)+!string.contains(#selectedthumb,whitebalance.png)</visible>
     </control>
+    </control>
+    
   </controls>
 </window>

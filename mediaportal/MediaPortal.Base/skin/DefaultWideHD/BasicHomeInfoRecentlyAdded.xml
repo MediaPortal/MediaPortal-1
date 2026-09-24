@@ -998,7 +998,9 @@
       <control>
         <type>group</type>
         <description>group element</description>
-        <visible>plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,TV4)+!string.equals(#latestMediaHandler.tvrecordings.scheduled1.title,)+!plugin.isenabled(DriveFreeSpace)</visible>
+		<animation effect="fade" start="0" end="100" time="200" condition="string.equals(#ClickfinderPG.Movie1.Title,)+plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,TV4)+!string.equals(#latestMediaHandler.tvrecordings.scheduled1.title,)+!plugin.isenabled(DriveFreeSpace)">conditional</animation>
+        <animation effect="fade" start="100" end="0" time="200" delay="20000" condition="string.equals(#ClickfinderPG.Movie1.Title,)+plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,TV4)+!string.equals(#latestMediaHandler.tvrecordings.scheduled1.title,)+!plugin.isenabled(DriveFreeSpace)">conditional</animation>
+        <visible>string.equals(#ClickfinderPG.Movie1.Title,)+plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,TV4)+!string.equals(#latestMediaHandler.tvrecordings.scheduled1.title,)+!plugin.isenabled(DriveFreeSpace)</visible>
         <control>
           <description>background for recently added files</description>
           <type>image</type>
@@ -1132,10 +1134,10 @@
       <!-- ******************************************************************************************* -->
       <!-- ************************* RECENTLY ADDED - ACTIVE RECORDINGS ****************************** -->
       <!-- ******************************************************************************************* -->
-      <control>
+     <!-- <control>
         <type>group</type>
         <description>group element</description>
-        <visible>plugin.isenabled(Latest Media Handler)+[string.contains(#highlightedbutton,TV2)|string.contains(#highlightedbutton,TV1)]+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+!plugin.isenabled(DriveFreeSpace)</visible>
+        <visible>string.equals(#ClickfinderPG.Movie1.Title,)+plugin.isenabled(Latest Media Handler)+[string.contains(#highlightedbutton,TV2)|string.contains(#highlightedbutton,TV1)]+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+!plugin.isenabled(DriveFreeSpace)</visible>
         <control>
           <description>background for recently added files</description>
           <type>image</type>
@@ -1265,14 +1267,16 @@
           <textcolor>lightgray</textcolor>
           <visible>!string.equals(#latestMediaHandler.tvrecordings.active4.title,)</visible>
         </control>        
-      </control>
+      </control>-->
       <!-- ******************************************************************************************* -->
       <!-- ***************** RECENTLY ADDED - SCHEDULED RECORDINGS DRIVEFREESPACE  ******************* -->
       <!-- ******************************************************************************************* -->
       <control>
         <type>group</type>
         <description>group element</description>
-        <visible>plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,TV4)+!string.equals(#latestMediaHandler.tvrecordings.scheduled1.title,)+plugin.isenabled(DriveFreeSpace)</visible>
+		<animation effect="fade" start="0" end="100" time="200" condition="string.equals(#ClickfinderPG.Movie1.Title,)+plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,TV4)+!string.equals(#latestMediaHandler.tvrecordings.scheduled1.title,)+plugin.isenabled(DriveFreeSpace)">conditional</animation>
+        <animation effect="fade" start="100" end="0" time="200" delay="20000" condition="string.equals(#ClickfinderPG.Movie1.Title,)+plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,TV4)+!string.equals(#latestMediaHandler.tvrecordings.scheduled1.title,)+plugin.isenabled(DriveFreeSpace)">conditional</animation>
+        <visible>string.equals(#ClickfinderPG.Movie1.Title,)+plugin.isenabled(Latest Media Handler)+string.contains(#highlightedbutton,TV4)+!string.equals(#latestMediaHandler.tvrecordings.scheduled1.title,)+plugin.isenabled(DriveFreeSpace)</visible>
         <control>
           <description>background for recently added files</description>
           <type>image</type>
@@ -1295,7 +1299,7 @@
             <height>180</height>
             <texture>verticalbar.png</texture>
             <colordiffuse>90ffffff</colordiffuse>
-            <animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>
+            <!--<animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>-->
           </control>
           <control>
             <description>Drive Free Space Label</description>
@@ -1306,7 +1310,7 @@
             <label>#(L(158)): #DriveFreeSpace.AvailableSpace.Percentage%</label>
             <font>font11</font>
             <textcolor>dodgerblue</textcolor>
-            <animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>
+            <!--<animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>-->
           </control>
           <control>
             <description>Drive Free Space BG</description>
@@ -1349,7 +1353,7 @@
             <width>407</width>
             <height>28</height>
             <texture>osd_progress_background_medium_green.png</texture>
-            <animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>
+            <!--<animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>-->
           </control>
           <control>
             <description>Progress Bar</description>
@@ -1369,7 +1373,7 @@
             <lefttexture>osd_progress_left_red.png</lefttexture>
             <midtexture>osd_progress_mid_red.png</midtexture>
             <righttexture>osd_progress_right_red.png</righttexture>
-            <animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>
+            <!--<animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>-->
           </control>
           <control>
             <description>DriveFreeSpace label</description>
@@ -1525,7 +1529,9 @@
       <control>
         <type>group</type>
         <description>group element</description>
-        <visible>plugin.isenabled(Latest Media Handler)+[string.contains(#highlightedbutton,TV2)|string.contains(#highlightedbutton,TV1)]+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+!plugin.isenabled(DriveFreeSpace)</visible>
+		<animation effect="fade" start="0" end="100" time="200" condition="string.equals(#ClickfinderPG.Movie1.Title,)+plugin.isenabled(Latest Media Handler)+[string.contains(#highlightedbutton,TV2)|string.contains(#highlightedbutton,TV1)]+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+!plugin.isenabled(DriveFreeSpace)">conditional</animation>
+        <animation effect="fade" start="100" end="0" time="200" delay="20000" condition="string.equals(#ClickfinderPG.Movie1.Title,)+plugin.isenabled(Latest Media Handler)+[string.contains(#highlightedbutton,TV2)|string.contains(#highlightedbutton,TV1)]+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+!plugin.isenabled(DriveFreeSpace)">conditional</animation>
+        <visible>string.equals(#ClickfinderPG.Movie1.Title,)+plugin.isenabled(Latest Media Handler)+[string.contains(#highlightedbutton,TV2)|string.contains(#highlightedbutton,TV1)]+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+!plugin.isenabled(DriveFreeSpace)</visible>
         <control>
           <description>background for recently added files</description>
           <type>image</type>
@@ -1662,7 +1668,9 @@
       <control>
         <type>group</type>
         <description>group element</description>
-        <visible>plugin.isenabled(Latest Media Handler)+[string.contains(#highlightedbutton,TV2)|string.contains(#highlightedbutton,TV1)]+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+plugin.isenabled(DriveFreeSpace)</visible>
+		<animation effect="fade" start="0" end="100" time="200" condition="string.equals(#ClickfinderPG.Movie1.Title,)+plugin.isenabled(Latest Media Handler)+[string.contains(#highlightedbutton,TV2)|string.contains(#highlightedbutton,TV1)]+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+plugin.isenabled(DriveFreeSpace)">conditional</animation>
+        <animation effect="fade" start="100" end="0" time="200" delay="20000" condition="string.equals(#ClickfinderPG.Movie1.Title,)+plugin.isenabled(Latest Media Handler)+[string.contains(#highlightedbutton,TV2)|string.contains(#highlightedbutton,TV1)]+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+plugin.isenabled(DriveFreeSpace)">conditional</animation>
+        <visible>string.equals(#ClickfinderPG.Movie1.Title,)+plugin.isenabled(Latest Media Handler)+[string.contains(#highlightedbutton,TV2)|string.contains(#highlightedbutton,TV1)]+!string.equals(#latestMediaHandler.tvrecordings.active1.title,)+plugin.isenabled(DriveFreeSpace)</visible>
         <control>
           <description>background for recently added files</description>
           <type>image</type>
@@ -1685,7 +1693,7 @@
             <height>180</height>
             <texture>verticalbar.png</texture>
             <colordiffuse>90ffffff</colordiffuse>
-            <animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>
+            <!--<animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>-->
           </control>
           <control>
             <description>Drive Free Space Label</description>
@@ -1696,7 +1704,7 @@
             <label>#(L(158)): #DriveFreeSpace.AvailableSpace.Percentage%</label>
             <font>font11</font>
             <textcolor>dodgerblue</textcolor>
-            <animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>
+            <!--<animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>-->
           </control>
           <control>
             <description>Drive Free Space BG</description>
@@ -1739,7 +1747,7 @@
             <width>407</width>
             <height>28</height>
             <texture>osd_progress_background_medium_green.png</texture>
-            <animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>
+            <!--<animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>-->
           </control>
           <control>
             <description>Progress Bar</description>
@@ -1759,7 +1767,7 @@
             <lefttexture>osd_progress_left_red.png</lefttexture>
             <midtexture>osd_progress_mid_red.png</midtexture>
             <righttexture>osd_progress_right_red.png</righttexture>
-            <animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>
+           <!-- <animation effect="fade" start="0" end="100" time="550" delay="350" reversible="false">visible</animation>-->
           </control>
           <control>
             <description>DriveFreeSpace label</description>

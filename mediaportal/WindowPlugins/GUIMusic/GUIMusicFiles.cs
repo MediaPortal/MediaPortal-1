@@ -1986,6 +1986,7 @@ namespace MediaPortal.GUI.Music
 
     protected override void SelectCurrentItem()
     {
+      _selectedItem = facadeLayout.SelectedListItemIndex;
       if (_selectedItem >= 0)
       {
         GUIControl.SelectItemControl(GetID, facadeLayout.GetID, _selectedItem);

@@ -8,23 +8,13 @@
       <description>bar image</description>
       <type>image</type>
       <id>1</id>
-      <posX>-80</posX>
-      <posY>909</posY>
-      <width>2210</width>
-      <height>151</height>
-      <texture>osd-bar.png</texture>
+      <posX>220</posX> 
+      <posY>849</posY> 
+      <width>1500</width>
+      <height>210</height>
+      <texture>Pictures_Tab_OSD.png</texture>   
       <colordiffuse>aaffffff</colordiffuse>
-    </control>
-    <control>
-      <type>image</type>
-      <id>0</id>
-      <posX>20</posX>
-      <posY>927</posY>
-      <width>73</width>
-      <height>73</height>
-      <texture>tb_extend.png</texture>
-      <colordiffuse>ffffffff</colordiffuse>
-    </control>
+	</control>
     <!--control>
       <description>row 1 label</description>
       <type>label</type>
@@ -36,64 +26,69 @@
       <textcolor>fff5deb3</textcolor>
     </control-->
     <control>
-      <description>row 1 label</description>
-      <type>label</type>
-      <id>0</id>
-      <posX>120</posX>
-      <posY>924</posY>
-      <label>#pictures.folder  #scroll.wrap  #pictures.filename  #scroll.wrap  #pictures.exif.datepicturetaken</label>
-      <font>font11</font>
-      <textcolor>ff00bfff</textcolor>
-    </control>
-    <control>
-      <description>row 2 label</description>
+      <description>row 2 label: itemcount</description>
       <type>label</type>
       <id>11</id>
-      <posX>1850</posX>
-      <posY>924</posY>
-      <width>1850</width>
-      <align>right</align>
+      <posX>272</posX>
+      <posY>880</posY>
+      <width>180</width>
+      <label>-</label>
+      <align>center</align>
       <font>font11</font>
+      <textcolor>white</textcolor>
+	  <textcolor>lightgray</textcolor> 
     </control>
+	 <control>
+      <description>row 1 label: Folder/Filename</description>
+      <type>fadelabel</type>
+      <id>0</id>
+      <posX>250</posX> 
+      <posY>919</posY>
+	  <width>1440</width>
+      <label>#pictures.folder  #scroll.wrap  #selecteditem</label>        
+      <font>font11</font>
+      <textcolor>lightgray</textcolor> 
+	  <visible>![string.starts(#selecteditem,1)|string.starts(#selecteditem, 2)|string.starts(#selecteditem, 3)|string.starts(#selecteditem, 4)|string.starts(#selecteditem, 5)|string.starts(#selecteditem, 6)|string.starts(#selecteditem, 7)]</visible> 
+	</control>
     <control>
       <description>row 2 extra label</description>
       <type>label</type>
       <id>12</id>
-      <posX>1900</posX>
-      <posY>924</posY>
+      <posX>440</posX> 
+      <posY>870</posY>
       <label>-</label>
       <align>right</align>
       <font>font11</font>
-      <textcolor>ff00bfff</textcolor>
+      <textcolor>lightgray</textcolor>
     </control>
     
-    <control>
-      <description>DatePictureTaken / Keywords</description>
+   <control>
+      <description>Picture Location</description>
       <type>fadelabel</type>
       <id>0</id>
-      <posX>120</posX>
-      <posY>965</posY>
-      <width>1780</width>
-      <label>#pictures.exif.provinceorstate  #scroll.wrap  #pictures.exif.city</label>
-		  <align>left</align>
-		  <font>font11</font>
-		  <textcolor>ff00bfff</textcolor>
+      <posX>250</posX>
+      <posY>960</posY>
+      <width>1440</width>
+      <label>#pictures.exif.datepicturetaken #scroll.wrap #pictures.exif.provinceorstate  #scroll.wrap  #pictures.exif.city</label>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
     </control>
-    
-    <control>
-      <description>DatePictureTaken / Keywords</description>
+	<control>
+      <description>Picture Comment</description>
       <type>fadelabel</type>
       <id>0</id>
-      <posX>120</posX>
-      <posY>1006</posY>
-      <width>1780</width>
+      <posX>250</posX>
+      <posY>1001</posY>
+      <width>1440</width>
       <label>#pictures.exif.comment</label>
-		  <align>left</align>
-		  <font>font11</font>
-		  <textcolor>ff00bfff</textcolor>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>green</textcolor> 
     </control>
     
-    <control>
+    
+   <!--<control>
         <description>Pause</description>
         <type>fadelabel</type>
         <id>15</id>
@@ -102,11 +97,26 @@
         <width>1920</width>
         <label>19011</label>
         <align>center</align>
-        <font>font36</font>
+        <font>font36</font> 
         <shadowAngle>45</shadowAngle>
         <shadowDistance>7</shadowDistance>
         <shadowColor>ff000000</shadowColor>
         <textcolor>fff5deb3</textcolor>
+    </control>-->
+	
+	<control>
+      <description>Pause dot white transparent</description>
+      <type>image</type>
+      <id>15</id>
+      <posX>885</posX> 
+      <posY>465</posY> 
+      <width>150</width>
+      <height>150</height>
+      <texture>Pause_camerafinder.png</texture>
+      <colordiffuse>d9ffffff</colordiffuse>
     </control>
+	
+	
+	 
   </controls>
 </window>

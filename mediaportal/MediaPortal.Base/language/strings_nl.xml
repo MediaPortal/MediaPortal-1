@@ -1898,8 +1898,8 @@
     <String id="100510">Muziek/Speelt nu</String>
     <String id="100511">Muziek/Beeldvullend</String>
     <String id="100512">LastFM Voorkeur/Afkeur</String>
-	<String id="100513">Voer oude pincode in</String>
-	<String id="100514">Voer nieuwe pincode in</String>
+    <String id="100513">Voer oude pincode in</String>
+    <String id="100514">Voer nieuwe pincode in</String>
     <String id="100600">TV/TV-gids</String>
     <String id="100601">TV/Planner</String>
     <String id="100602">TV/Beeldvullend</String>
@@ -1961,6 +1961,7 @@
     <String id="100761">TV-gids</String>
     <String id="100762">Radiogids</String>
     <String id="100763">Radio opnames</String>
+    <String id="100764">Radio/Nu speelt</String>
     <String id="100800" prefix="Mijn ">Extensies</String>
     <String id="101000">Toetsenbord</String>
     <String id="101001">Bestandsextensies</String>

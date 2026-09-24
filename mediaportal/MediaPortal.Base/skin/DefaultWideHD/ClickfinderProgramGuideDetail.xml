@@ -91,7 +91,7 @@
       <type>image</type>
       <id>37</id>
       <posX>126</posX>
-      <posY>425</posY> 
+      <posY>450</posY> 
       <width>67</width>
       <height>67</height>
       <texture></texture>
@@ -103,19 +103,19 @@
       <type>image</type>
       <id>37</id>
       <posX>372</posX>
-      <posY>430</posY> 
+      <posY>455</posY> 
       <width>57</width>
       <height>55</height>
       <centered>no</centered>
       <texture>#DetailRecordingState</texture>
     </control>
    
-    <control>
+    <!--<control>
       <description>Label Genre</description>
       <type>label</type>
       <id>1</id>
       <posX>119</posX>
-      <posY>517</posY>
+      <posY>535</posY>
       <width>98</width>
       <label>#ClickfinderPG.Translation.GenreLabel</label>
       <align>left</align>
@@ -127,14 +127,14 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>438</posX>
-      <posY>517</posY>
+      <posY>535</posY>
       <width>220</width>
       <align>right</align>
       <font>font11</font>
       <textcolor>lightgray</textcolor>
       <label>#DetailGenre</label>
       <wrapString>~</wrapString>
-    </control>
+    </control>-->
 	 <control>
       <description>Label Jahr</description>
       <type>label</type>
@@ -240,7 +240,7 @@
       <type>label</type>
       <id>1</id>
       <posX>119</posX>
-      <posY>697</posY>
+      <posY>715</posY>
       <width>98</width>
       <label>#ClickfinderPG.Translation.TimeLabel</label>
       <align>left</align>
@@ -252,7 +252,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>438</posX>
-      <posY>697</posY>
+      <posY>715</posY>
       <width>220</width>
       <align>right</align>
       <font>font11</font>
@@ -286,7 +286,7 @@
       <posX>461</posX> 461
       <posY>245</posY> 276
       <width>1</width>
-      <height>548</height> 488
+      <height>548</height> 
       <texture>slider_vertical.png</texture>
       <colordiffuse>80363636</colordiffuse>  
     </control>
@@ -295,7 +295,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>491</posX>
-      <posY>249</posY> 189
+      <posY>249</posY> 
       <width>1140</width>
       <align>left</align>
       <font>Menutitle</font>
@@ -308,7 +308,7 @@
       <type>fadelabel</type>
       <id>1</id>
       <posX>494</posX>
-      <posY>304</posY> 239
+      <posY>304</posY> 
       <width>1140</width>
       <align>left</align>
       <font>font11</font>
@@ -320,9 +320,9 @@
 	 <control>
       <description>Detail Channel Logo</description>
       <type>image</type>
-      <id>1</id> 37
+      <id>1</id> 
       <posX>1690</posX>
-      <posY>265</posY> 560
+      <posY>265</posY> 
       <width>100</width>
       <height>100</height>
       <texture>#DetailChannelLogo</texture>
@@ -378,14 +378,14 @@
       <textcolor>lightgray</textcolor>
       <wrapString>~</wrapString>
     </control>
-    <control>
-      <description>Label Kurzkritik</description>
+    <!--<control>
+      <description>Label Bewertung</description> 
       <type>label</type>
       <id>1</id>
       <posX>491</posX>
       <posY>416</posY>
       <width>180</width>
-      <label>#ClickfinderPG.Translation.Critic</label>
+      <label>Bewertung:</label> #ClickfinderPG.Translation.Critic
       <align>left</align>
       <font>font11</font>
       <textcolor>ff00bfff</textcolor>
@@ -401,6 +401,31 @@
       <align>left</align>
       <font>font11</font>
       <textcolor>lightgray</textcolor>
+      <wrapString>~</wrapString>
+    </control>-->
+	<control>
+      <description>Label Genre</description>
+      <type>label</type>
+      <id>1</id>
+      <posX>491</posX>
+      <posY>416</posY>
+      <width>180</width>
+      <label>#ClickfinderPG.Translation.GenreLabel</label>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>ff00bfff</textcolor>
+    </control>
+    <control>
+      <description>Detail Genre</description>
+      <type>fadelabel</type>
+      <id>1</id>
+      <posX>690</posX>
+      <posY>416</posY>
+      <width>1085</width>
+      <align>left</align>
+      <font>font11</font>
+      <textcolor>lightgray</textcolor>
+      <label>#DetailGenre</label>
       <wrapString>~</wrapString>
     </control>
     <control>
@@ -456,7 +481,7 @@
       <description>Audio Logo</description>
       <type>image</type>
       <id>1</id>
-      <posX>585</posX>
+      <posX>590</posX> 
       <posY>722</posY>
       <width>84</width>
       <height>84</height>
@@ -467,18 +492,18 @@
       <description>HD/SD Logo</description>
       <type>image</type>
       <id>1</id>
-      <posX>688</posX>
+      <posX>698</posX> 
       <posY>722</posY>
       <width>84</width>
       <height>84</height>
       <texture>#DetailProgramFormat</texture>
       <keepaspectratio>yes</keepaspectratio>
     </control>
-    <control>
+   <control>
       <description>Spaß</description>
       <type>label</type>
       <id>1</id>
-      <posX>763</posX>
+      <posX>905</posX> 
       <posY>730</posY>
       <width>140</width>
       <label>#ClickfinderPG.Translation.FunLabel</label>
@@ -490,7 +515,7 @@
       <description>SpaßStars</description>
       <type>imagelist</type>
       <id>1</id>
-      <posX>807</posX>
+      <posX>948</posX> 
       <posY>752</posY>
       <width>140</width>
       <height>14</height>
@@ -506,11 +531,11 @@
       <percentage>#DetailRatingFun</percentage>
       <visible>!string.starts(#DetailRatingFun,0)</visible>
     </control>
-    <control>
+   <control>
       <description>Action</description>
       <type>label</type>
       <id>1</id>
-      <posX>905</posX>
+      <posX>1045</posX> 
       <posY>730</posY>
       <width>140</width>
       <label>#ClickfinderPG.Translation.ActionLabel</label>
@@ -522,7 +547,7 @@
       <description>ActionStars</description>
       <type>imagelist</type>
       <id>1</id>
-      <posX>948</posX>
+      <posX>1088</posX> 
       <posY>752</posY>
       <width>140</width>
       <height>14</height>
@@ -542,7 +567,7 @@
       <description>Gefühl</description>
       <type>label</type>
       <id>1</id>
-      <posX>1045</posX>
+      <posX>1181</posX> 
       <posY>730</posY>
       <width>140</width>
       <label>#ClickfinderPG.Translation.EmotionsLabel</label>
@@ -554,7 +579,7 @@
       <description>GefühlStars</description>
       <type>imagelist</type>
       <id>1</id>
-      <posX>1088</posX>
+      <posX>1229</posX> 
       <posY>752</posY>
       <width>140</width>
       <height>14</height>
@@ -570,7 +595,7 @@
       <percentage>#DetailRatingEmotions</percentage>
       <visible>!string.starts(#DetailRatingEmotions,0)</visible>
     </control>
-    <control>
+    <!--<control>
       <description>Erotik</description>
       <type>label</type>
       <id>1</id>
@@ -601,7 +626,7 @@
       <imagesToDraw>3</imagesToDraw>
       <percentage>#DetailRatingErotic</percentage>
       <visible>!string.starts(#DetailRatingErotic,0)</visible>
-    </control>
+    </control>-->
     <control>
       <description>Spannung</description>
       <type>label</type>
@@ -614,7 +639,7 @@
       <align>center</align>
       <textcolor>ff00bfff</textcolor>
     </control>
-    <control>
+	 <control>
       <description>SpannungStars</description>
       <type>imagelist</type>
       <id>1</id>
@@ -634,7 +659,7 @@
       <percentage>#DetailRatingSuspense</percentage>
       <visible>!string.starts(#DetailRatingSuspense,0)</visible>
     </control>
-    <control>
+   <control>
       <description>Anspruch</description>
       <type>label</type>
       <id>1</id>
@@ -673,7 +698,7 @@
       <posX>1634</posX> 
       <posY>730</posY>
       <width>140</width>
-      <label>Abstimmung</label>
+      <label>Bewertung</label>
       <font>font10</font>
       <align>center</align>
       <textcolor>ff00bfff</textcolor>
@@ -697,6 +722,22 @@
       <imagesToDraw>10</imagesToDraw>
       <percentage>#DetailRatingStar</percentage>
       <visible>!string.starts(#DetailRatingStar,0)</visible>
+    </control>
+	 <control>
+      <description>Bewertungssterne 1-5</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>1651</posX> 
+      <posY>751</posY> 
+      <width>103</width> 
+      <height>18</height> 
+      <texture>#(switch(
+        eq(#DetailKritik,'1 von 5 Sterne'),'1 von 5 Sterne.png',
+        eq(#DetailKritik,'2 von 5 Sterne'),'2 von 5 Sterne.png',
+        eq(#DetailKritik,'3 von 5 Sterne'),'3 von 5 Sterne.png',
+        eq(#DetailKritik,'4 von 5 Sterne'),'4 von 5 Sterne.png',
+        eq(#DetailKritik,'5 von 5 Sterne'),'5 von 5 Sterne.png',
+        eq(1,1),''))</texture>
     </control>
    
     <import>ClickfinderProgramGuide.HiddenMenu.xml</import>

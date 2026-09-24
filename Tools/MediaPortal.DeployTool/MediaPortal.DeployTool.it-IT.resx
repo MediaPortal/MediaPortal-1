@@ -513,6 +513,9 @@ Abilitando AERO si ridurrà anche l'uso della CPU, e il vostro HTPC sarà silenz
     <value>E' richiesto un riavvio da un componente Microsoft.
 Procedere con tale operazione prima di continuare l'installazione di MediaPortal.</value>
   </data>
+  <data name="Need_Reboot" xml:space="preserve">
+    <value>Assicurati di riavviare il computer prima di utilizzare MediaPortal.</value>
+  </data>
   <data name="ExtensionChoice_LAV" xml:space="preserve">
     <value>Installa LAV Filters per abilitare la riproduzione di molti dei più comuni formati audio e video</value>
   </data>

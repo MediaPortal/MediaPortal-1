@@ -396,14 +396,14 @@
     <downloadColor2>ff80ff80</downloadColor2>
     <dimColor>ffffffff</dimColor>
     <scrollStartDelaySec>1</scrollStartDelaySec>
-    <textXOff>3</textXOff>
+    <textXOff>15</textXOff>
     <textYOff>2</textYOff>
     <textXOff2>0</textXOff2>
     <textYOff2>2</textYOff2>
     <itemWidth>44</itemWidth>
     <itemHeight>44</itemHeight>
-    <IconXOff>6</IconXOff>
-    <IconYOff>1</IconYOff>
+    <IconXOff>10</IconXOff> 6
+    <IconYOff>2</IconYOff> 1
     <PinIconXOff>1177</PinIconXOff>
     <PinIconYOff>9</PinIconYOff>
     <PinIconWidth>35</PinIconWidth>

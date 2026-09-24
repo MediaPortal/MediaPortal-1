@@ -24,6 +24,7 @@
           <textXOff3>3816</textXOff3>
           <textYOff3>12</textYOff3>
           <textalign3>right</textalign3>
+		  <textpadding>160</textpadding>
           <font3>font9</font3>
           <scrollOffset>2</scrollOffset>
           <spinCanFocus>no</spinCanFocus>

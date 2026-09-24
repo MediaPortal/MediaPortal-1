@@ -2021,7 +2021,6 @@ namespace TvPlugin
       
       if (!g_Player.IsTVRecording)
       {
-        double fPercent;
         Program prog = GetChannel().CurrentProgram;
 
         if (prog == null)
@@ -2029,17 +2028,7 @@ namespace TvPlugin
           GUIPropertyManager.SetProperty("#TV.View.Percentage", "0");
           return;
         }
-        string strTime = String.Format("{0}-{1}",
-                                       prog.StartTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat),
-                                       prog.EndTime.ToString("t", CultureInfo.CurrentCulture.DateTimeFormat));
-
-        TimeSpan ts = prog.EndTime - prog.StartTime;
-        double iTotalSecs = ts.TotalSeconds;
-        ts = DateTime.Now - prog.StartTime;
-        double iCurSecs = ts.TotalSeconds;
-        fPercent = ((double)iCurSecs) / ((double)iTotalSecs);
-        fPercent *= 100.0d;
-        GUIPropertyManager.SetProperty("#TV.View.Percentage", fPercent.ToString());
+        GUIPropertyManager.SetProperty("#TV.View.Percentage", prog.GetPercentage().ToString());
         Get_TimeInfo();
 
         bool updateProperties = false;

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -72,7 +72,7 @@ namespace MediaPortal.DeployTool
     [System.Runtime.InteropServices.DllImport("user32.dll")]
     public static extern bool ReleaseCapture();
 
-    public DeployTool()
+    public DeployTool(bool isContinue)
     {
       // Create necessary directory tree
       if (!Directory.Exists(Application.StartupPath + "\\deploy"))
@@ -117,21 +117,21 @@ namespace MediaPortal.DeployTool
       Localizer.SwitchCulture("en-US");
       UpdateUI();
 
-      // Delete Run registry key
+      // Check for Installation continue
       DialogType firstDlg;
-      if (Utils.AutoRunApplication("delete"))
+      _restart = isContinue;
+      if (_restart)
       {
         firstDlg = DialogType.Installation;
         InstallationProperties.Instance.Load();
         Localizer.SwitchCulture(InstallationProperties.Instance["language"]);
-        _restart = true;
       }
       else
       {
         firstDlg = DialogType.Welcome;
         Localizer.SwitchCulture("en-US");
-        _restart = false;
       }
+      InstallationProperties.Instance.Set("Reboot_Required", "no");
       _currentDialog = DialogFlowHandler.Instance.GetDialogInstance(firstDlg);
       splitContainer2.Panel1.Controls.Add(_currentDialog);
       InstallationProperties.Instance.Set("InstallTypeHeader", "Choose installation type");

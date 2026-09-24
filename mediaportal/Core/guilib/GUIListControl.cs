@@ -3473,6 +3473,7 @@ namespace MediaPortal.GUI.Library
       {
         return;
       }
+      bool isEmpty = _listItems.Count == 0;
       if (WordWrap)
       {
         ArrayList wrappedLines;
@@ -3499,6 +3500,8 @@ namespace MediaPortal.GUI.Library
       _upDownControl.SetRange(1, iPages);
       _upDownControl.Value = 1;
       _refresh = true;
+      if (isEmpty)
+        OnSelectionChanged();
     }
 
     public void Replace(int index, GUIListItem item)

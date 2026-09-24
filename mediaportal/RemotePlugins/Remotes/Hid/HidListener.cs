@@ -70,7 +70,7 @@ namespace MediaPortal.InputDevices
       {
         //Since HID now replaces the retired MCE implementation we test both setting options to migrate users nicely to HID
         //Please also note that HID is now enabled by default on new installation.
-        _controlEnabled = xmlreader.GetValueAsBool("remote", "HidEnabled", true) || xmlreader.GetValueAsBool("remote", "MCE", false);
+        _controlEnabled = !HIDOverride.SuppressHID && xmlreader.GetValueAsBool("remote", "HidEnabled", true) || xmlreader.GetValueAsBool("remote", "MCE", false);
         Verbose = xmlreader.GetValueAsBool("remote", "HidVerbose", false) || xmlreader.GetValueAsBool("remote", "MCEVerboseLog", false);
 
         //Get the name of our current HID profile, default to legacy Generic-HID.
