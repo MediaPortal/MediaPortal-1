@@ -2440,12 +2440,12 @@ namespace MediaPortal.MusicPlayer.BASS
       return GetSpectrum(ref spectrum, lines, 0, 255);
     }
 
-    public int GetDataFFT(float[] buffer, int lenght)
+    public int GetDataFFT(float[] buffer, int length)
     {
       lock (_syncRoot)
       {
         // Return the GetData effect
-        return BassWasapi.BASS_WASAPI_GetData(buffer, lenght);
+        return BassWasapi.BASS_WASAPI_GetData(buffer, length);
       }
     }
 
