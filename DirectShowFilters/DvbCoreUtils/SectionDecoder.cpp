@@ -70,7 +70,7 @@ void CSectionDecoder::EnableCrcCheck(bool onOff)
   m_bCrcCheck=onOff;
 }
 
-void CSectionDecoder::OnTsPacket(byte* tsPacket)
+void CSectionDecoder::OnTsPacket(const byte* tsPacket)
 {
   if (m_pid < 0) return;
   if (tsPacket==NULL) return;
@@ -79,7 +79,7 @@ void CSectionDecoder::OnTsPacket(byte* tsPacket)
   OnTsPacket(m_header,tsPacket);
 }
 
-int CSectionDecoder::StartNewSection(byte* tsPacket,int index,int sectionLen)
+int CSectionDecoder::StartNewSection(const byte* tsPacket,int index,int sectionLen)
 {
 	int newstart=-1;
   int len=-1;
@@ -108,7 +108,7 @@ int CSectionDecoder::StartNewSection(byte* tsPacket,int index,int sectionLen)
   return newstart;
 }
 
-int CSectionDecoder::AppendSection(byte* tsPacket, int index, int sectionLen)
+int CSectionDecoder::AppendSection(const byte* tsPacket, int index, int sectionLen)
 {
 	int newstart=-1;
   int len=-1;
@@ -127,14 +127,14 @@ int CSectionDecoder::AppendSection(byte* tsPacket, int index, int sectionLen)
   return newstart;
 }
 
-int CSectionDecoder::SnapshotSectionLength(byte* tsPacket,int start)
+int CSectionDecoder::SnapshotSectionLength(const byte* tsPacket,int start)
 {
 	if (start >= 184)
 		return -1;
   return (int)(((tsPacket[start+1] & 0xF) << 8) + tsPacket[start+2]);
 }
 
-void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
+void CSectionDecoder::OnTsPacket(CTsHeader& header,const byte* tsPacket)
 {
 	try
 	{
@@ -176,17 +176,17 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
       {
         if (m_section.section_length == -1)
           m_section.CalcSectionLength(tsPacket, start);
-				if (m_section.section_length==0)
-				{
-					if (m_bLog)
-						LogDebug("!!! CSectionDecoder::OnTsPacket got a section with section length: 0 on pid: 0x%X tableid: 0x%X bufferpos: %d start: %d - Discarding whole packet.",header.Pid,m_section.Data[0],m_section.BufferPos,start);
-					m_section.Reset();
-					return;
-				}
+		if (m_section.section_length==0)
+		{
+			if (m_bLog)
+				LogDebug("!!! CSectionDecoder::OnTsPacket got a section with section length: 0 on pid: 0x%X tableid: 0x%X bufferpos: %d start: %d - Discarding whole packet.",header.Pid,m_section.Data[0],m_section.BufferPos,start);
+			m_section.Reset();
+			return;
+		}
         int len = m_section.section_length - m_section.BufferPos;
         if (pointer_field != 0 && ((start + len) > pointer_field))
         {
-					// We have an incomplete section here
+		  // We have an incomplete section here
           len = pointer_field - start;
           start = AppendSection(tsPacket, start, len);
           m_section.section_length = m_section.BufferPos - 1;
@@ -237,5 +237,3 @@ void CSectionDecoder::OnTsPacket(CTsHeader& header,byte* tsPacket)
 void CSectionDecoder::OnNewSection(CSection& section)
 {
 }
-
-
