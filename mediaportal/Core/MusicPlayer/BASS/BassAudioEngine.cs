@@ -2449,6 +2449,63 @@ namespace MediaPortal.MusicPlayer.BASS
       }
     }
 
+    public bool GetRawFFT(float[] fft, int flags)
+    {
+      // check if buffer provided
+      if (fft == null)
+      {
+        return false;
+      }
+
+      // reset array in case of error
+      Array.Clear(fft, 0, fft.Length);
+
+      // check if player provides FFT data
+      if (Config.MusicPlayer == AudioPlayer.Asio || Config.MusicPlayer == AudioPlayer.DShow)
+      {
+        return false;
+      }
+
+      // check if audio is playing
+      if (!Playing)
+      {
+        return false;
+      }
+
+      // retrieve the FFT data
+      int result;
+      try
+      {
+        if (Config.MusicPlayer == AudioPlayer.WasApi)
+        {
+          result = GetDataFFT(fft, flags);
+        }
+        else if (_streamcopy != null)
+        {
+          result = GetChannelData(_streamcopy.ChannelHandle, fft, flags);
+        }
+        else
+        {
+          return false;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("BASS: Error getting FFT data: {0}", ex.Message);
+        return false;
+      }
+
+      // check for BASS error
+      if (result < 0)
+      {
+        Log.Error("BASS: Error getting FFT data; error code: {0}", Bass.BASS_ErrorGetCode());
+        return false;
+      }
+
+      // success!
+      return true;
+    }
+
     public bool BASS_WASAPI_IsStarted()
     {
       lock (_syncRoot)
