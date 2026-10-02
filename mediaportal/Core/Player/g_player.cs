@@ -839,10 +839,16 @@ namespace MediaPortal.Player
         switch (streamType)
         {
           case "AC3":
-          case "AC3plus": // just for the time being use the same icon for AC3 & AC3plus
             AudioCodec = "AC-3";
             break;
 
+          case "AC3plus":
+            AudioCodec = "AC-3Plus";
+            break;
+
+          case "E-AC-3":
+            AudioCodec = "E-AC-3";
+            break;
           case "Mpeg1":
             AudioCodec = "MP1";
             break;
