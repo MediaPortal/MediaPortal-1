@@ -432,6 +432,148 @@
     	<font>font11</font>
       <textcolor>ff00b7ff</textcolor>
 		</control>
+		
+		
+		
+	<control>
+      <description>2x image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>898</posX>
+      <posY>978</posY>
+      <width>111</width>
+      <height>26</height>
+      <visible>no</visible>
+      <texture>video+2x.png</texture>
+	  <colordiffuse>ffe4e4e4</colordiffuse>
+	  <visible>player.forwarding2x</visible>
+	</control>
+
+   <control>
+      <description>4x image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>898</posX>
+      <posY>978</posY>
+      <width>111</width>
+      <height>26</height>
+      <visible>no</visible>
+      <texture>video+4x.png</texture>
+	  <colordiffuse>ffe4e4e4</colordiffuse>
+	  <visible>player.forwarding4x</visible>
+	</control>
+
+    <control>
+      <description>8x image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>898</posX>
+      <posY>978</posY>
+      <width>111</width>
+      <height>26</height>
+      <visible>no</visible>
+      <texture>video+8x.png</texture>
+	  <colordiffuse>ffe4e4e4</colordiffuse>
+	  <visible>player.forwarding8x</visible>
+	</control>
+
+    <control>
+      <description>16x image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>898</posX>
+      <posY>978</posY>
+      <width>111</width>
+      <height>26</height>
+      <visible>no</visible>
+      <texture>video+16x.png</texture>
+	  <colordiffuse>ffe4e4e4</colordiffuse>
+	  <visible>player.forwarding16x</visible>
+	</control>
+
+    <control>
+      <description>32x image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>898</posX>
+      <posY>978</posY>
+      <width>111</width>
+      <height>26</height>
+      <visible>no</visible>
+      <texture>video+32x.png</texture>
+	  <colordiffuse>ffe4e4e4</colordiffuse>
+	  <visible>player.forwarding32x</visible>
+	</control>
+
+    <control>
+      <description>- 2x image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>898</posX>
+      <posY>978</posY>
+      <width>111</width>
+      <height>26</height>
+      <visible>no</visible>
+      <texture>video-2x.png</texture>
+	  <colordiffuse>ffe4e4e4</colordiffuse>
+	  <visible>player.rewinding2x</visible>
+	</control>
+
+    <control>
+      <description>- 4x image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>898</posX>
+      <posY>978</posY>
+      <width>111</width>
+      <height>26</height>
+      <visible>no</visible>
+      <texture>video-4x.png</texture>
+	  <colordiffuse>ffe4e4e4</colordiffuse>
+	  <visible>player.rewinding4x</visible>
+	</control>
+
+    <control>
+      <description>- 8x image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>898</posX>
+      <posY>978</posY>
+      <width>111</width>
+      <height>26</height>
+      <visible>no</visible>
+      <texture>video-8x.png</texture>
+	  <colordiffuse>ffe4e4e4</colordiffuse>
+	  <visible>player.rewinding8x</visible>
+    </control>
+
+    <control>
+      <description>- 16x image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>898</posX>
+      <posY>978</posY>
+      <width>111</width>
+      <height>26</height>
+      <visible>no</visible>
+      <texture>video-16x.png</texture>
+	  <colordiffuse>ffe4e4e4</colordiffuse>
+	  <visible>player.rewinding16x</visible>
+	</control>
+
+    <control>
+      <description>- 32x image</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>898</posX>
+      <posY>978</posY>
+      <width>111</width>
+      <height>26</height>
+      <visible>no</visible>
+      <texture>video-32x.png</texture>
+	  <colordiffuse>ffe4e4e4</colordiffuse>
+	  <visible>player.rewinding32x</visible>
+	</control>
 	
 		<include>videoOSD.mediainfo.xml</include>
 		

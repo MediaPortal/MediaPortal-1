@@ -45,11 +45,11 @@ namespace MPRepository.Tests
       string location  = FileManager.GetSaveLocation("test.mpe1");
       System.Console.WriteLine("Save location is {0}", location);
 
-      Assert.That(location, Is.Not.Null);
+      Assert.IsNotNull(location);
 
       bool dirExists = Directory.Exists(Path.GetDirectoryName(location));
 
-      Assert.That(dirExists, Is.True);
+      Assert.IsTrue(dirExists);
 
     }
 

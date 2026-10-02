@@ -271,7 +271,7 @@
       <posY>500</posY>
       <width>1920</width>
       <textcolor>ff00bfff</textcolor>
-      <label>769</label>
+      <label>#SkinTranslation.Translations.NoRecordingsFound.Label</label>
       <font>font20</font>
       <align>center</align>
       <visible>string.equals(#TV.RecordedTV.Channel,'')+[facadeview.list|facadeview.album|facadeview.smallicons|facadeview.largeicons]</visible>

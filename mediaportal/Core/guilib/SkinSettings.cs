@@ -41,17 +41,27 @@ namespace MediaPortal.GUI.Library
       public string Name;
       public string Value;
       public Kind Kind;
-    } ;
+
+      public override string ToString()
+      {
+        return String.Format("{0}:{1}, {2}", Name, Value, Kind);
+      }
+    }
 
     private class SkinBool
     {
       public string Name;
       public bool Value;
       public Kind Kind;
-    } ;
+      public override string ToString()
+      {
+        return String.Format("{0}:{1}, {2}", Name, Value, Kind);
+      }
+    };
 
     private static Dictionary<int, SkinString> _skinStringSettings = new Dictionary<int, SkinString>();
     private static Dictionary<int, SkinBool> _skinBoolSettings = new Dictionary<int, SkinBool>();
+    private static Dictionary<string, int> _propertyLocation = new Dictionary<string, int>();
     private static string _loadedSkinSettings = "";
     private static bool _noTheme;
 
@@ -78,18 +88,14 @@ namespace MediaPortal.GUI.Library
     {
       lock (_skinStringSettings)
       {
-        foreach (int iKey in _skinStringSettings.Keys.ToList())
+        if (_propertyLocation.TryGetValue(line, out int iKey))
         {
           SkinString skin = _skinStringSettings[iKey];
-          if (skin.Name == line)
+          if (skin.Kind == Kind.TRANSIENT && kind == Kind.PERSISTENT)
           {
-            if (skin.Kind == Kind.TRANSIENT && kind == Kind.PERSISTENT)
-            {
-              skin.Kind = kind;
-              _skinStringSettings[iKey] = skin;
-            }
-            return iKey;
+            skin.Kind = kind;
           }
+          return iKey;
         }
       }
 
@@ -113,6 +119,7 @@ namespace MediaPortal.GUI.Library
       {
         key = _skinStringSettings.Count;
         _skinStringSettings[key] = newString;
+        _propertyLocation[newString.Name] = key;
       }
       return key;
     }
@@ -124,8 +131,7 @@ namespace MediaPortal.GUI.Library
     /// <returns></returns>
     public static string GetSkinName(int key)
     {
-      SkinString skin = null;
-      if (_skinStringSettings.TryGetValue(key, out skin))
+      if (_skinStringSettings.TryGetValue(key, out SkinString skin))
       {
         return skin.Name;
       }
@@ -139,8 +145,7 @@ namespace MediaPortal.GUI.Library
     /// <returns></returns>
     public static string GetSkinString(int key)
     {
-      SkinString skin = null;
-      if (_skinStringSettings.TryGetValue(key, out skin))
+      if (_skinStringSettings.TryGetValue(key, out SkinString skin))
       {
         return skin.Value;
       }
@@ -154,17 +159,26 @@ namespace MediaPortal.GUI.Library
     /// <param name="newValue"></param>
     public static void SetSkinString(int key, string newValue)
     {
-      SkinString skin = null;
-      if (_skinStringSettings.TryGetValue(key, out skin))
+      if (_skinStringSettings.TryGetValue(key, out SkinString skin))
       {
         skin.Value = newValue;
-        _skinStringSettings[key] = skin;
 
         // Save the setting as a property.
         GUIPropertyManager.SetProperty(skin.Name, skin.Value);
 
         // Save change to disk immediately.
         Save();
+      }
+    }
+
+    public static void PropertyChanged(string tag, string tagValue)
+    {
+      lock (_skinStringSettings) //Lock the dictionary, it might be getting saved at the moment
+      {
+        if (_propertyLocation.TryGetValue(tag, out int key))
+        {
+          _skinStringSettings[key].Value = tagValue;
+        }
       }
     }
 
@@ -188,17 +202,15 @@ namespace MediaPortal.GUI.Library
     {
       lock (_skinBoolSettings)
       {
-        foreach (int iKey in _skinBoolSettings.Keys.ToList())
+        foreach (var kv in _skinBoolSettings)
         {
-          SkinBool skin = _skinBoolSettings[iKey];
-          if (skin.Name == setting)
+          if (kv.Value.Name == setting)
           {
-            if (skin.Kind == Kind.TRANSIENT && kind == Kind.PERSISTENT)
+            if (kv.Value.Kind == Kind.TRANSIENT && kind == Kind.PERSISTENT)
             {
-              skin.Kind = kind;
-              _skinBoolSettings[iKey] = skin;
+              kv.Value.Kind = kind;
             }
-            return iKey;
+            return kv.Key;
           }
         }
       }
@@ -242,8 +254,7 @@ namespace MediaPortal.GUI.Library
     /// <returns></returns>
     public static bool GetSkinBool(int key)
     {
-      SkinBool skinBool = null;
-      if (_skinBoolSettings.TryGetValue(key, out skinBool))
+      if (_skinBoolSettings.TryGetValue(key, out SkinBool skinBool))
       {
         return skinBool.Value;
       }
@@ -257,11 +268,9 @@ namespace MediaPortal.GUI.Library
     /// <param name="newValue"></param>
     public static void SetSkinBool(int key, bool newValue)
     {
-      SkinBool skinBool = null;
-      if (_skinBoolSettings.TryGetValue(key, out skinBool))
+      if (_skinBoolSettings.TryGetValue(key, out SkinBool skinBool))
       {
         skinBool.Value = newValue;
-        _skinBoolSettings[key] = skinBool;
 
         // Save the setting as a property.  The boolean value is converted as a string representation.
         GUIPropertyManager.SetProperty(skinBool.Name, skinBool.Value.ToString());
@@ -277,10 +286,8 @@ namespace MediaPortal.GUI.Library
     /// <param name="setting"></param>
     public static void ResetSkinBool(string setting)
     {
-      Dictionary<int, SkinBool>.Enumerator enumer = _skinBoolSettings.GetEnumerator();
-      while (enumer.MoveNext())
+      foreach (var skin in _skinBoolSettings.Values)
       {
-        SkinBool skin = enumer.Current.Value;
         if (skin.Name == setting)
         {
           skin.Value = false;
@@ -296,10 +303,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void ResetAllSkinBool()
     {
-      Dictionary<int, SkinBool>.Enumerator enumer = _skinBoolSettings.GetEnumerator();
-      while (enumer.MoveNext())
+      foreach (var skin in _skinBoolSettings.Values)
       {
-        SkinBool skin = enumer.Current.Value;
         skin.Value = false;
 
         // Save the setting as a property if specified as such.  The boolean value is converted as a string representation.
@@ -313,17 +318,13 @@ namespace MediaPortal.GUI.Library
     /// <param name="setting"></param>
     public static void ResetSkinString(string setting)
     {
-      Dictionary<int, SkinString>.Enumerator enumer = _skinStringSettings.GetEnumerator();
-      while (enumer.MoveNext())
+      if (_propertyLocation.TryGetValue(setting, out int key))
       {
-        SkinString skin = enumer.Current.Value;
-        if (skin.Name == setting)
-        {
-          skin.Value = "";
+        SkinString skin = _skinStringSettings[key];
+        skin.Value = "";
 
-          // Save the setting as a property if specified as such.
-          GUIPropertyManager.SetProperty(skin.Name, skin.Value);
-        }
+        // Save the setting as a property if specified as such.
+        GUIPropertyManager.SetProperty(skin.Name, skin.Value);
       }
     }
 
@@ -332,10 +333,8 @@ namespace MediaPortal.GUI.Library
     /// </summary>
     public static void ResetAllSkinString()
     {
-      Dictionary<int, SkinString>.Enumerator enumer = _skinStringSettings.GetEnumerator();
-      while (enumer.MoveNext())
+      foreach (var skin in _skinStringSettings.Values)
       {
-        SkinString skin = enumer.Current.Value;
         skin.Value = "";
 
         // Save the setting as a property if specified as such.
@@ -367,24 +366,20 @@ namespace MediaPortal.GUI.Library
 
         lock (_skinBoolSettings)
         {
-          var enumerator = allBooleanSettings.GetEnumerator();
-          if (enumerator != null)
+          foreach (var kv in allBooleanSettings)
           {
-            while (enumerator.MoveNext())
-            {
-              // Create the new boolean setting.
-              SkinBool newBool = new SkinBool();
-              newBool.Name = enumerator.Current.Key;
-              newBool.Value = enumerator.Current.Value;
-              newBool.Kind = Kind.PERSISTENT;
+            // Create the new boolean setting.
+            SkinBool newBool = new SkinBool();
+            newBool.Name = kv.Key;
+            newBool.Value = kv.Value;
+            newBool.Kind = Kind.PERSISTENT;
 
-              // Add the setting to the dictionary.
-              int key = _skinBoolSettings.Count;
-              _skinBoolSettings[key] = newBool;
+            // Add the setting to the dictionary.
+            int key = _skinBoolSettings.Count;
+            _skinBoolSettings[key] = newBool;
 
-              // Create the setting as a property.  The boolean value is converted as a string representation.
-              GUIPropertyManager.SetProperty(newBool.Name, newBool.Value.ToString());
-            }
+            // Create the setting as a property.  The boolean value is converted as a string representation.
+            GUIPropertyManager.SetProperty(newBool.Name, newBool.Value.ToString());
           }
         }
       }
@@ -403,24 +398,21 @@ namespace MediaPortal.GUI.Library
 
         lock (_skinStringSettings)
         {
-          var enumerator = allStringSettings.GetEnumerator();
-          if (enumerator != null)
+          foreach (var kv in allStringSettings)
           {
-            while (enumerator.MoveNext())
-            {
-              // Create the new string setting.
-              SkinString newString = new SkinString();
-              newString.Name = enumerator.Current.Key;
-              newString.Value = enumerator.Current.Value;
-              newString.Kind = Kind.PERSISTENT;
+            // Create the new string setting.
+            SkinString newString = new SkinString();
+            newString.Name = kv.Key;
+            newString.Value = kv.Value;
+            newString.Kind = Kind.PERSISTENT;
 
-              // Add the setting to the dictionary.
-              int key = _skinStringSettings.Count;
-              _skinStringSettings[key] = newString;
+            // Add the setting to the dictionary.
+            int key = _skinStringSettings.Count;
+            _skinStringSettings[key] = newString;
+            _propertyLocation[newString.Name] = key;
 
-              // Create the setting as a property.
-              GUIPropertyManager.SetProperty(newString.Name, newString.Value);
-            }
+            // Create the setting as a property.
+            GUIPropertyManager.SetProperty(newString.Name, newString.Value);
           }
         }
       }
@@ -477,16 +469,14 @@ namespace MediaPortal.GUI.Library
 
     private static void ClearBooleanSettings()
     {
-      ArrayList keysToRemove = new ArrayList();
-      Dictionary<int, SkinBool>.Enumerator bEnumer = _skinBoolSettings.GetEnumerator();
-      SkinBool bSetting;
-      while (bEnumer.MoveNext())
+      List<int> keysToRemove = new List<int>();
+      foreach (var kv in _skinBoolSettings)
       {
-        bSetting = bEnumer.Current.Value;
-        if (bSetting.Kind == Kind.PERSISTENT)  // Keep transient settings
+        SkinBool bSetting = kv.Value;
+        if (bSetting.Kind == Kind.PERSISTENT) // Keep transient settings
         {
           GUIPropertyManager.RemoveProperty(bSetting.Name);
-          keysToRemove.Add(bEnumer.Current.Key);
+          keysToRemove.Add(kv.Key);
         }
       }
 
@@ -502,16 +492,15 @@ namespace MediaPortal.GUI.Library
 
     private static void ClearStringSettings()
     {
-      ArrayList keysToRemove = new ArrayList();
-      Dictionary<int, SkinString>.Enumerator strEnumer = _skinStringSettings.GetEnumerator();
-      SkinString strSetting;
-      while (strEnumer.MoveNext())
+      List<int> keysToRemove = new List<int>();
+      foreach (var kv in _skinStringSettings)
       {
-        strSetting = strEnumer.Current.Value;
-        if (strSetting.Kind == Kind.PERSISTENT)  // Keep transient settings
+        SkinString strSetting = kv.Value;
+        if (strSetting.Kind == Kind.PERSISTENT) // Keep transient settings
         {
           GUIPropertyManager.RemoveProperty(strSetting.Name);
-          keysToRemove.Add(strEnumer.Current.Key);
+          keysToRemove.Add(kv.Key);
+          _propertyLocation.Remove(strSetting.Name);
         }
       }
 
@@ -540,12 +529,12 @@ namespace MediaPortal.GUI.Library
       if (_delaySave == null)
       {
         _delaySave = tp.Add(LazySave, "Wait for saving SkinSettings");
-      } 
+      }
       else if (_delaySave.State != WorkState.INPROGRESS && _delaySave.State != WorkState.INQUEUE)
       {
-        _delaySave = tp.Add(LazySave,"Wait for saving SkinSettings");
+        _delaySave = tp.Add(LazySave, "Wait for saving SkinSettings");
       }
-      
+
     }
 
     static void LazySave()
@@ -578,11 +567,8 @@ namespace MediaPortal.GUI.Library
 
     private static void SaveBooleanSettings(Settings xmlWriter)
     {
-      Dictionary<int, SkinBool>.Enumerator bEnumer = _skinBoolSettings.GetEnumerator();
-      SkinBool bSetting;
-      while (bEnumer.MoveNext())
+      foreach (var bSetting in _skinBoolSettings.Values)
       {
-        bSetting = bEnumer.Current.Value;
         if (bSetting.Kind == Kind.PERSISTENT)
         {
           xmlWriter.SetValue("booleansettings", bSetting.Name, bSetting.Value);
@@ -592,11 +578,8 @@ namespace MediaPortal.GUI.Library
 
     private static void SaveStringSettings(Settings xmlWriter)
     {
-      Dictionary<int, SkinString>.Enumerator strEnumer = _skinStringSettings.GetEnumerator();
-      SkinString strSetting;
-      while (strEnumer.MoveNext())
+      foreach (var strSetting in _skinStringSettings.Values)
       {
-        strSetting = strEnumer.Current.Value;
         if (strSetting.Kind == Kind.PERSISTENT)
         {
           xmlWriter.SetValue("stringsettings", strSetting.Name, strSetting.Value);

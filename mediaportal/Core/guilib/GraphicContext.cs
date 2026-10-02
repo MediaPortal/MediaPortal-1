@@ -120,7 +120,8 @@ namespace MediaPortal.GUI.Library
           _VideoPixelShaders = new PixelShaderCollection(DX9Device);
         return _VideoPixelShaders;
       }
-    }private static PixelShaderCollection _VideoPixelShaders = null;
+    }
+    private static PixelShaderCollection _VideoPixelShaders = null;
 
     // ReSharper disable InconsistentNaming
     public static Graphics graphics = null; // GDI+ Graphics object
@@ -189,7 +190,7 @@ namespace MediaPortal.GUI.Library
     private static bool _allowRememberLastFocusedItem = true;
     private static bool _fullHD3DFormat = false;
     private static bool _tabWithBlackBars = false;
-    
+
     /// <summary>
     /// Device lost event
     /// </summary>
@@ -564,7 +565,7 @@ namespace MediaPortal.GUI.Library
         var intPixelRatio = (int)pixelRatio;
         xmlWriter.SetValue("screen", "pixelratio", intPixelRatio.ToString(CultureInfo.InvariantCulture));
         xmlWriter.SetValue("screen", "subtitles", _subtitles.ToString(CultureInfo.InvariantCulture));
-       
+
         Log.Debug("GraphicContext: Settings saved to {0}", strFileName);
       }
     }
@@ -1821,29 +1822,7 @@ namespace MediaPortal.GUI.Library
     /// false: does not belong to the my tv plugin</returns>
     public static bool IsTvWindow(int windowId)
     {
-      GUIWindow window = GUIWindowManager.GetWindow(windowId);
-
-      if (window != null && window.IsTv)
-      {
-        return true;
-      }
-
-      switch (windowId)
-      {
-        case (int)GUIWindow.Window.WINDOW_TV:
-        case (int)GUIWindow.Window.WINDOW_TVFULLSCREEN:
-        case (int)GUIWindow.Window.WINDOW_TVGUIDE:
-        case (int)GUIWindow.Window.WINDOW_RECORDEDTV:
-        case (int)GUIWindow.Window.WINDOW_SCHEDULER:
-        case (int)GUIWindow.Window.WINDOW_SEARCHTV:
-        case (int)GUIWindow.Window.WINDOW_TELETEXT:
-        case (int)GUIWindow.Window.WINDOW_FULLSCREEN_TELETEXT:
-        case (int)GUIWindow.Window.WINDOW_TV_SCHEDULER_PRIORITIES:
-        case (int)GUIWindow.Window.WINDOW_TV_NO_SIGNAL:
-        case (int)GUIWindow.Window.WINDOW_TV_PROGRAM_INFO:
-          return true;
-      }
-      return false;
+      return GUIWindowManager.IsTv(windowId);
     }
 
     /// <summary>
@@ -2421,14 +2400,15 @@ namespace MediaPortal.GUI.Library
     /// <param name="e"></param>
     public static void OnDeviceLost(object sender, EventArgs e)
     {
-        if (DeviceLost != null)
-          DeviceLost(sender, e);
+      if (DeviceLost != null)
+        DeviceLost(sender, e);
     }
 
     public static Direct3D Direct3D
     {
       get { return _d3d; }
-    } private static Direct3D _d3d;
+    }
+    private static Direct3D _d3d;
 
     public static void Direct3DLoad()
     {

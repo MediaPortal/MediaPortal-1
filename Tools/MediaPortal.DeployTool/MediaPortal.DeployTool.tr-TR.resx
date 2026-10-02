@@ -514,4 +514,7 @@ böylece HTPC'niz daha serin ve sessiz çalışmasını sağlayabilirsiniz.</val
     <value>Bir Microsoft bileşeni, sistemin yeniden başlatılmasına ihtiyaç duymaktadır.
 Lütfen MediaPortal kurulumuna devam etmeden önce, bu işlemi gerçekleştirin.</value>
   </data>
+  <data name="Need_Reboot" xml:space="preserve">
+    <value>MediaPortal'ı kullanmadan önce bilgisayarınızı mutlaka yeniden başlatın.</value>
+  </data>
 </root>

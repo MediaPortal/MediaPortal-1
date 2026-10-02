@@ -253,14 +253,14 @@ namespace TvEngine
 
         try
         {
-          if (e.Result != null || e.Result.Length > 0)
+          if (e.Result != null)
           {
             result = e.Result;
           }
         }
         catch (Exception ex)
         {
-          info = "Download failed: (" + ex.InnerException.Message + ").";
+          info = "Download failed: (" + (ex.InnerException ?? ex).Message + ").";
         }
 
         if (result != null)
@@ -328,6 +328,7 @@ namespace TvEngine
                 Log.Info("xmltv: file is locked, retrying in 30secs. [{0}]", ex.Message);
                 retries++;
                 Thread.Sleep(30000); //wait 30 sec. before retrying.
+                continue;
               }
 
               if (isZip)
@@ -337,12 +338,14 @@ namespace TvEngine
                 {
                   string newLoc = layer.GetSetting("xmlTv", "").Value + @"\";
                   Log.Info("xmltv: extracting zip file {0} to location {1}", path, newLoc);
-                  ZipFile zip = new ZipFile(path);
-                  zip.ExtractAll(newLoc, true);
-                  if (RenameFileInZIp == true)
+                  using (ZipFile zip = new ZipFile(path))
                   {
-                    sourceFileName = newLoc + (zip.EntryFileNames[0]);
-                    destinationFileName = newLoc + "tvguide.xml";
+                    zip.ExtractAll(newLoc, true);
+                    if (RenameFileInZIp == true)
+                    {
+                      sourceFileName = newLoc + (zip.EntryFileNames[0]);
+                      destinationFileName = newLoc + "tvguide.xml";
+                    }
                   }
                 }
                 catch (Exception ex2)
@@ -350,6 +353,7 @@ namespace TvEngine
                   Log.Info("xmltv: file is locked, retrying in 30secs. [{0}]", ex2.Message);
                   retries++;
                   Thread.Sleep(30000); //wait 30 sec. before retrying.
+                  continue;
                 }
               }
 

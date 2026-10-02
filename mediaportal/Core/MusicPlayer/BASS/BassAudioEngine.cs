@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -133,8 +133,8 @@ namespace MediaPortal.MusicPlayer.BASS
     private int _DefaultCrossFadeIntervalMS = 4000;
     public static bool _initialized = false;
     private bool _bassFreed = false;
-    private int _playBackType;
-    private int _savedPlayBackType = -1;
+    private PlayBackType _playBackType;
+    private PlayBackType? _savedPlayBackType = null;
 
     private bool _IsFullScreen = false;
 
@@ -379,7 +379,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public override int PlaybackType
     {
-      get { return _playBackType; }
+      get { return (int)_playBackType; }
     }
 
     /// <summary>
@@ -474,25 +474,25 @@ namespace MediaPortal.MusicPlayer.BASS
         case Action.ActionType.ACTION_TOGGLE_MUSIC_GAP:
           {
             _playBackType++;
-            if (_playBackType > 2)
+            if (_playBackType > PlayBackType.CROSSFADE)
             {
-              _playBackType = 0;
+              _playBackType = PlayBackType.NORMAL;
             }
 
             string type = "";
             switch (_playBackType)
             {
-              case (int)PlayBackType.NORMAL:
+              case PlayBackType.NORMAL:
                 Config.CrossFadeIntervalMs = 100;
                 type = "Normal";
                 break;
 
-              case (int)PlayBackType.GAPLESS:
+              case PlayBackType.GAPLESS:
                 Config.CrossFadeIntervalMs = 0;
                 type = "Gapless";
                 break;
 
-              case (int)PlayBackType.CROSSFADE:
+              case PlayBackType.CROSSFADE:
                 Config.CrossFadeIntervalMs = _DefaultCrossFadeIntervalMS == 0 ? 4000 : _DefaultCrossFadeIntervalMS;
                 type = "Crossfading";
                 break;
@@ -619,18 +619,18 @@ namespace MediaPortal.MusicPlayer.BASS
             }
             QueueItem item = _commandQueue[0];
             _commandQueue.RemoveAt(0);
-            switch ((int) item.cmd)
+            switch (item.cmd)
             {
-              case (int) PlaybackCommand.Stop:
+              case PlaybackCommand.Stop:
                 StopCommand();
                 break;
 
-              case (int) PlaybackCommand.ExitThread:
+              case PlaybackCommand.ExitThread:
                 exitThread = true;
                 break;
 
               default:
-                Log.Error("BASS: CommandThread unknown command {0}", (int) item.cmd);
+                Log.Error("BASS: CommandThread unknown command {0}", item.cmd);
                 continue;
             }
           }
@@ -643,11 +643,9 @@ namespace MediaPortal.MusicPlayer.BASS
     }
 
     private void StopCommand()
-    { 
+    {
       lock (_syncRoot)
       {
-        _commandRegistered.Set();
-
         MusicStream stream = GetCurrentStream();
         try
         {
@@ -768,8 +766,11 @@ namespace MediaPortal.MusicPlayer.BASS
         {
           Log.Error("BASS: Stop command caused an exception - {0}. {1}", ex.Message, ex.StackTrace);
         }
-
-        NotifyPlaying = false;
+        finally
+        {
+          NotifyPlaying = false;
+          _commandRegistered.Set();
+        }
       }
     }
 
@@ -819,10 +820,10 @@ namespace MediaPortal.MusicPlayer.BASS
         Config.LoadAudioDecoderPlugins();
         Config.LoadDSPPlugins();
 
-        _playBackType = (int)Config.PlayBack;
+        _playBackType = Config.PlayBack;
 
         // Create a Stream Copy, if Visualisation is enabled
-        if (Config.MusicPlayer == AudioPlayer.Bass )
+        if (Config.MusicPlayer == AudioPlayer.Bass)
         {
           Log.Debug("BASS: Create Stream copy for Visualisation");
           _streamcopy = new StreamCopy(this);
@@ -894,11 +895,10 @@ namespace MediaPortal.MusicPlayer.BASS
           if (Config.MusicPlayer == AudioPlayer.Asio)
           {
             BASSError errorasio = BassAsio.BASS_ASIO_ErrorGetCode();
-            Log.Error("BASS: Error initializing BASS audio engine {0} Asio: {1}",
-                      Enum.GetName(typeof(BASSError), error), Enum.GetName(typeof(BASSError), errorasio));
+            Log.Error("BASS: Error initializing BASS audio engine {0} Asio: {1}", error, errorasio);
           }
           else
-            Log.Error("BASS: Error initializing BASS audio engine {0}", Enum.GetName(typeof(BASSError), error));
+            Log.Error("BASS: Error initializing BASS audio engine {0}", error);
         }
       }
       catch (Exception ex)
@@ -1418,7 +1418,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="methodName"></param>
     private void HandleBassError(string methodName)
     {
-      Log.Error("BASS: {0}() failed: {1}", methodName, Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+      Log.Error("BASS: {0}() failed: {1}", methodName, Bass.BASS_ErrorGetCode());
     }
 
     /// <summary>
@@ -1470,7 +1470,7 @@ namespace MediaPortal.MusicPlayer.BASS
         }
 
         // Start a StreamCopy for Visualisation purposes
-        if (Config.MusicPlayer == AudioPlayer.Bass )
+        if (Config.MusicPlayer == AudioPlayer.Bass)
         {
           _streamcopy.ChannelHandle = _mixer.BassStream;
           _streamcopy.Start();
@@ -1527,6 +1527,12 @@ namespace MediaPortal.MusicPlayer.BASS
       if (!_initialized)
       {
         return false;
+      }
+
+      if (!_commandRegistered.IsSet)
+      {
+        Log.Debug("BASS: Previous stop command is still running, waiting for clean up...");
+        _commandRegistered.Wait(1000);
       }
 
       MusicStream currentStream = GetCurrentStream();
@@ -1613,6 +1619,7 @@ namespace MediaPortal.MusicPlayer.BASS
           BassWasapi.BASS_WASAPI_Stop(true);
         }
 
+        Bass.BASS_Start();
         if (!PlayInternal(filePath))
         {
           return false;
@@ -1640,7 +1647,7 @@ namespace MediaPortal.MusicPlayer.BASS
         }
 
         MusicStream stream = GetCurrentStream();
-        
+
         if (stream.BassStream != 0 && playbackStarted)
         {
           Log.Info("BASS: playback started");
@@ -1674,8 +1681,7 @@ namespace MediaPortal.MusicPlayer.BASS
         }
         else
         {
-          Log.Error("BASS: Unable to play {0}.  Reason: {1}.", filePath,
-                    Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+          Log.Error("BASS: Unable to play {0}.  Reason: {1}.", filePath, Bass.BASS_ErrorGetCode());
 
           stream.Dispose();
           result = false;
@@ -1964,11 +1970,11 @@ namespace MediaPortal.MusicPlayer.BASS
             isWASAPI = true;
             BassWasapi.BASS_WASAPI_Stop(true);
           }
-          
+
           BassMix.BASS_Mixer_ChannelSetPosition(stream.BassStream, Bass.BASS_ChannelSeconds2Bytes(stream.BassStream, position));
           Bass.BASS_ChannelSetPosition(_mixer.BassStream, 0, BASSMode.BASS_POS_BYTES); // reset the mixer
           _mixer.SetSyncPos(stream, position);
-          
+
           if (isWASAPI)
           {
             BassWasapi.BASS_WASAPI_Start();
@@ -2204,19 +2210,17 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public void SwitchToGaplessPlaybackMode()
     {
-      if (_playBackType == (int)PlayBackType.CROSSFADE)
+      if (_playBackType == PlayBackType.CROSSFADE)
       {
         // Store the current settings, so that when the album playback is completed, we can switch back to the default
-        if (_savedPlayBackType == -1)
+        if (!_savedPlayBackType.HasValue)
         {
           _savedPlayBackType = _playBackType;
         }
 
-        Log.Info("BASS: Playback of complete Album starting. Switching playbacktype from {0} to {1}",
-                 Enum.GetName(typeof(PlayBackType), _playBackType),
-                 Enum.GetName(typeof(PlayBackType), (int)PlayBackType.GAPLESS));
+        Log.Info("BASS: Playback of complete Album starting. Switching playbacktype from {0} to {1}", _playBackType, PlayBackType.GAPLESS);
 
-        _playBackType = (int)PlayBackType.GAPLESS;
+        _playBackType = PlayBackType.GAPLESS;
         Config.CrossFadeIntervalMs = 0;
       }
     }
@@ -2226,17 +2230,15 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public void SwitchToDefaultPlaybackMode()
     {
-      if (_savedPlayBackType > -1)
+      if (_savedPlayBackType.HasValue)
       {
-        Log.Info("BASS: Playback of complete Album stopped. Switching playbacktype from {0} to {1}",
-                 Enum.GetName(typeof(PlayBackType), _playBackType),
-                 Enum.GetName(typeof(PlayBackType), _savedPlayBackType));
+        Log.Info("BASS: Playback of complete Album stopped. Switching playbacktype from {0} to {1}", _playBackType, _savedPlayBackType);
 
-        if (_savedPlayBackType == 0)
+        if (_savedPlayBackType == PlayBackType.NORMAL)
         {
           Config.CrossFadeIntervalMs = 100;
         }
-        else if (_savedPlayBackType == 1)
+        else if (_savedPlayBackType == PlayBackType.GAPLESS)
         {
           Config.CrossFadeIntervalMs = 0;
         }
@@ -2245,8 +2247,8 @@ namespace MediaPortal.MusicPlayer.BASS
           Config.CrossFadeIntervalMs = _DefaultCrossFadeIntervalMS == 0 ? 4000 : _DefaultCrossFadeIntervalMS;
         }
 
-        _playBackType = _savedPlayBackType;
-        _savedPlayBackType = -1;
+        _playBackType = _savedPlayBackType.Value;
+        _savedPlayBackType = null;
       }
     }
 
@@ -2257,45 +2259,34 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="dbLevelR"></param>
     public void RMS(out double dbLevelL, out double dbLevelR)
     {
-      int peakL = 0;
-      int peakR = 0;
-      double dbLeft = 0.0;
-      double dbRight = 0.0;
+      dbLevelL = -144.0;
+      dbLevelR = -144.0;
 
-      // Find out with which stream to deal with
-      int level = 0;
-
+      float[] levels = null;
       if (Config.MusicPlayer == AudioPlayer.Asio)
       {
-        float fpeakL = BassAsio.BASS_ASIO_ChannelGetLevel(false, 0);
-        float fpeakR = (int)BassAsio.BASS_ASIO_ChannelGetLevel(false, 1);
-        dbLeft = 20.0 * Math.Log10(fpeakL);
-        dbRight = 20.0 * Math.Log10(fpeakR);
+        levels = new float[2];
+        levels[0] = BassAsio.BASS_ASIO_ChannelGetLevel(false, 0);
+        levels[1] = BassAsio.BASS_ASIO_ChannelGetLevel(false, 1);
       }
       else if (Config.MusicPlayer == AudioPlayer.WasApi)
       {
-        level = BassWasapi.BASS_WASAPI_GetLevel();
+        levels = BassWasapi.BASS_WASAPI_GetLevel(0.05f, BASSLevel.BASS_LEVEL_STEREO | BASSLevel.BASS_LEVEL_RMS);
       }
       else
       {
         MusicStream stream = GetCurrentStream();
         if (stream != null)
         {
-          level = BassMix.BASS_Mixer_ChannelGetLevel(stream.BassStream);
+          levels = BassMix.BASS_Mixer_ChannelGetLevel(stream.BassStream, 0.05f, BASSLevel.BASS_LEVEL_STEREO | BASSLevel.BASS_LEVEL_RMS);
         }
       }
 
-      if (Config.MusicPlayer != AudioPlayer.Asio) // For Asio, we already got the peaklevel above
+      if (levels != null && levels.Length >= 2)
       {
-        peakL = Un4seen.Bass.Utils.LowWord32(level); // the left level
-        peakR = Un4seen.Bass.Utils.HighWord32(level); // the right level
-
-        dbLeft = Un4seen.Bass.Utils.LevelToDB(peakL, 65535);
-        dbRight = Un4seen.Bass.Utils.LevelToDB(peakR, 65535);
+        dbLevelL = levels[0] > 0.00001f ? 20.0 * Math.Log10(levels[0]) : dbLevelL;
+        dbLevelR = levels[1] > 0.00001f ? 20.0 * Math.Log10(levels[1]) : dbLevelR;
       }
-
-      dbLevelL = dbLeft;
-      dbLevelR = dbRight;
     }
 
     /// <summary>
@@ -2316,7 +2307,8 @@ namespace MediaPortal.MusicPlayer.BASS
       {
         return false;
       }
-      if (lines < 0 || lines > 255)
+      // Prevent division by zero and invalid grid sizes (minimum 2 lines required)
+      if (lines < 2 || lines > 255)
       {
         return false;
       }
@@ -2327,18 +2319,37 @@ namespace MediaPortal.MusicPlayer.BASS
 
       int _result = -1;
       float[] _fft = new float[1024];
+      double sampleRate = 44100.0; // Fallback value
 
       try
       {
         if (Config.MusicPlayer == AudioPlayer.WasApi)
         {
           _result = GetDataFFT(_fft, (int)BASSData.BASS_DATA_FFT2048);
+          if (_result >= 0)
+          {
+            // Fetch info directly from the active WASAPI output device
+            BASS_WASAPI_INFO wasapiInfo = BassWasapi.BASS_WASAPI_GetInfo();
+            if (wasapiInfo != null)
+            {
+              sampleRate = wasapiInfo.freq; // Gets current WASAPI endpoint rate (e.g., 48000 Hz)
+            }
+          }
         }
         else
         {
           if (_streamcopy != null)
           {
             _result = GetChannelData(_streamcopy.ChannelHandle, _fft, (int)BASSData.BASS_DATA_FFT2048);
+            if (_result >= 0)
+            {
+              // Fetch info directly from the accessible stream copy handle
+              BASS_CHANNELINFO chinfo = Bass.BASS_ChannelGetInfo(_streamcopy.ChannelHandle);
+              if (chinfo != null)
+              {
+                sampleRate = chinfo.freq; // Automatically gets 44100, 48000, 96000, etc.
+              }
+            }
           }
           else
           {
@@ -2353,50 +2364,68 @@ namespace MediaPortal.MusicPlayer.BASS
       }
       if (_result < 0)
       {
-        return false ;
+        return false;
       }
 
-      int x, y;
-      int b0 = 0;
-      bool _needRecalc = (_min != _max && _min != 0 && _max != 255);
+      bool _needRecalc = !(_min == 0 && _max == 255) && (_max != _min);
 
-      // Computes the spectrum data, the code is taken from a bass_wasapi sample.
-      for (x = 0; x < lines; x++)
+      // Frequency distribution settings (Standard human hearing range)
+      double minFreq = 20.0;
+      double maxFreq = 20000.0;
+
+      for (int x = 0; x < lines; x++)
       {
+        // Logarithmic frequency bin distribution
+        double f0 = minFreq * Math.Pow(maxFreq / minFreq, (double)x / lines);
+        double f1 = minFreq * Math.Pow(maxFreq / minFreq, (double)(x + 1) / lines);
+
+        // Map frequencies to FFT array indices using the detected sample rate
+        int b0 = (int)Math.Floor(f0 * 1024.0 / sampleRate);
+        int b1 = (int)Math.Ceiling(f1 * 1024.0 / sampleRate);
+
+        b0 = Math.Max(1, Math.Min(b0, _fft.Length - 1));
+        b1 = Math.Max(b0 + 1, Math.Min(b1, _fft.Length));
+
         float peak = 0;
-        int b1 = (int)Math.Pow(2, x * 10.0 / (lines - 1));
-        if (b1 > 1023) 
+        for (int i = b0; i < b1; i++)
         {
-          b1 = 1023;
-        }
-        if (b1 <= b0)
-        {
-          b1 = b0 + 1;
-        }
-        for (; b0 < b1; b0++)
-        {
-          if (peak < _fft[1 + b0]) 
+          if (_fft[i] > peak)
           {
-            peak = _fft[1 + b0];
+            peak = _fft[i];
           }
         }
-        y = (int)(Math.Sqrt(peak) * 3 * 255 - 4);
 
-        if (y > 255) 
-        { 
-          y = 255;
-        }
-        if (y < 0)
-        {
-           y = 0;
-        }
-        if (_needRecalc)
-        {
-          y = (int)( ( ( (float)y / 255.0 ) * ( (float)_max - (float)_min) ) + (float)_min );
-        }
+        // Convert linear FFT amplitude to dBFS scale
+        // 1e-8 offset prevents Math.Log10(0) and sets the hard noise floor to -160 dBFS
+        double dbfs = 20 * Math.Log10(peak + 1e-8);
 
-        spectrum[x] = y;
+        // Linear dynamic range scaling
+        // -60 dBFS represents silence (0% height), 0 dBFS represents maximum (100% height)
+        double minDB = -60.0;
+        double maxDB = -0.5; // Shifted slightly from 0.0 to compensate for spectral leakage
+
+        if (dbfs < minDB) dbfs = minDB;
+        if (dbfs > maxDB) dbfs = maxDB;
+
+        // Normalize value to 0.0 - 1.0 range
+        double normalized = (dbfs - minDB) / (maxDB - minDB);
+
+        // Gamma correction: Adds beautiful organic bounce to bars and exposes rich mid-to-quiet details
+        normalized = Math.Sqrt(normalized);
+
+        // Map normalized value to the active canvas coordinate grid
+        float rawHeight = _needRecalc ? ((float)normalized * (_max - _min)) + _min : (float)normalized * 255.0f;
+
+        // Apply a single atomic round operation to avoid precision loss on peak levels
+        int barHeight = (int)Math.Round(rawHeight);
+
+        // Clamp the final value safely within the resolved grid boundaries
+        int clampMin = _needRecalc ? Math.Min(_min, _max) : 0;
+        int clampMax = _needRecalc ? Math.Max(_min, _max) : 255;
+
+        spectrum[x] = Math.Max(clampMin, Math.Min(barHeight, clampMax));
       }
+
       return true;
     }
 
@@ -2411,13 +2440,70 @@ namespace MediaPortal.MusicPlayer.BASS
       return GetSpectrum(ref spectrum, lines, 0, 255);
     }
 
-    public int GetDataFFT(float[] buffer, int lenght)
+    public int GetDataFFT(float[] buffer, int length)
     {
       lock (_syncRoot)
       {
         // Return the GetData effect
-        return BassWasapi.BASS_WASAPI_GetData(buffer, lenght);
+        return BassWasapi.BASS_WASAPI_GetData(buffer, length);
       }
+    }
+
+    public bool GetRawFFT(float[] fft, int flags)
+    {
+      // check if buffer provided
+      if (fft == null)
+      {
+        return false;
+      }
+
+      // reset array in case of error
+      Array.Clear(fft, 0, fft.Length);
+
+      // check if player provides FFT data
+      if (Config.MusicPlayer == AudioPlayer.Asio || Config.MusicPlayer == AudioPlayer.DShow)
+      {
+        return false;
+      }
+
+      // check if audio is playing
+      if (!Playing)
+      {
+        return false;
+      }
+
+      // retrieve the FFT data
+      int result;
+      try
+      {
+        if (Config.MusicPlayer == AudioPlayer.WasApi)
+        {
+          result = GetDataFFT(fft, flags);
+        }
+        else if (_streamcopy != null)
+        {
+          result = GetChannelData(_streamcopy.ChannelHandle, fft, flags);
+        }
+        else
+        {
+          return false;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("BASS: Error getting FFT data: {0}", ex.Message);
+        return false;
+      }
+
+      // check for BASS error
+      if (result < 0)
+      {
+        Log.Error("BASS: Error getting FFT data; error code: {0}", Bass.BASS_ErrorGetCode());
+        return false;
+      }
+
+      // success!
+      return true;
     }
 
     public bool BASS_WASAPI_IsStarted()

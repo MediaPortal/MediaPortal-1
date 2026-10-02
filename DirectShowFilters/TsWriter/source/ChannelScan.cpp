@@ -199,8 +199,8 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 									 int* hasAudio,
 									 int* hasCaDescriptor)
 {
-	static char sServiceName[128];
-	static char sProviderName[128];
+	static char sServiceName[_countof(CChannelInfo::ServiceName)];
+	static char sProviderName[_countof(CChannelInfo::ProviderName)];
 	CEnterCriticalSection enter(m_section);
 	try
 	{
@@ -213,9 +213,12 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
     else
     {
       gotInfo = m_scteParser.GetChannel(index, &info);
-      LogDebug("%4d) %-25s TSID = 0x%04x, service ID = 0x%04x, source ID = 0x%04x, maj. ch. # = %-4d, min. ch. # = %-4d, access controlled = %d, type = %d, video stream count = %d, audio stream count = %d, frequency = %-6d kHz, modulation = %d",
-        index, info->ServiceName, info->TransportId, info->ServiceId, info->NetworkId, info->MajorChannel, info->MinorChannel,
-        info->FreeCAMode, info->ServiceType, info->hasVideo, info->hasVideo, info->Frequency, info->Modulation);
+      if (gotInfo && info != NULL)
+      {
+        LogDebug("%4d) %-25s TSID = 0x%04x, service ID = 0x%04x, source ID = 0x%04x, maj. ch. # = %-4d, min. ch. # = %-4d, access controlled = %d, type = %d, video stream count = %d, audio stream count = %d, frequency = %-6d kHz, modulation = %d",
+          index, info->ServiceName, info->TransportId, info->ServiceId, info->NetworkId, info->MajorChannel, info->MinorChannel,
+          info->FreeCAMode, info->ServiceType, info->hasVideo, info->hasVideo, info->Frequency, info->Modulation);
+      }
     }
     if (!gotInfo)
     {
@@ -237,8 +240,8 @@ STDMETHODIMP CChannelScan::GetChannel(int index,
 		*freeCAMode=info->FreeCAMode;
 		*serviceType=info->ServiceType;
 		*modulation=info->Modulation;
-		strcpy(sProviderName,info->ProviderName);
-		strcpy(sServiceName,info->ServiceName);
+		strncpy_s(sProviderName,sizeof(info->ProviderName),info->ProviderName,sizeof(sProviderName));
+		strncpy_s(sServiceName,sizeof(info->ServiceName),info->ServiceName, sizeof(sServiceName));
 		*providerName=sProviderName;
 		*serviceName=sServiceName;
 		*pmtPid=info->PidTable.PmtPid;
@@ -373,8 +376,9 @@ STDMETHODIMP CChannelScan::GetNITChannel(int channel,int* type,int* frequency,in
     *symbolrate=des.Symbolrate;
     *fecInner=des.FECInner;
     *rollOff=des.RollOff;
-    strcpy(sNetworkName,des.NetworkName.c_str());
-	  *networkName=sNetworkName;
+    const char* pNetwork = des.NetworkName.c_str();
+    strncpy_s(sNetworkName,strlen(pNetwork),pNetwork, sizeof(sNetworkName));
+	*networkName=sNetworkName;
     *type=0;
     return 0;
   }
@@ -386,8 +390,9 @@ STDMETHODIMP CChannelScan::GetNITChannel(int channel,int* type,int* frequency,in
     *modulation=des.Modulation;
     *symbolrate=des.Symbolrate;
     *fecInner=des.FECInner;
-    strcpy(sNetworkName,des.NetworkName.c_str());
-	  *networkName=sNetworkName;
+    const char* pNetwork = des.NetworkName.c_str();
+    strncpy_s(sNetworkName, strlen(pNetwork), pNetwork, sizeof(sNetworkName));
+    *networkName=sNetworkName;
     *type=1;
     return 0;
   }
@@ -397,8 +402,9 @@ STDMETHODIMP CChannelScan::GetNITChannel(int channel,int* type,int* frequency,in
     NITTerrestrialDescriptor& des = m_nit.m_nit.terrestialNIT[channel];
     *frequency=des.CentreFrequency;
     *bandwidth=des.Bandwidth;
-    strcpy(sNetworkName,des.NetworkName.c_str());
-	  *networkName=sNetworkName;
+    const char* pNetwork = des.NetworkName.c_str();
+    strncpy_s(sNetworkName, strlen(pNetwork), pNetwork, sizeof(sNetworkName));
+    *networkName=sNetworkName;
     *type=2;
     return 0;
   }

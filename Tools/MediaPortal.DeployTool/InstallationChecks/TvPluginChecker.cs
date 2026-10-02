@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2024 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2024 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -65,7 +65,7 @@ namespace MediaPortal.DeployTool.InstallationChecks
         string targetDir = InstallationProperties.Instance["MPDir"];
         if (File.Exists(targetDir + "\\reboot"))
         {
-          Utils.NotifyReboot(GetDisplayName());
+          Utils.NotifyReboot(GetDisplayName(), 1);
         }
         return true;
       }

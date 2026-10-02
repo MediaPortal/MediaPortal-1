@@ -128,6 +128,7 @@ namespace MediaPortal.GUI.Library
       WINDOW_DIALOG_TVGUIDE = 761,
       WINDOW_RADIO_GUIDE = 762,
       WINDOW_RECORDEDRADIO = 763,
+      WINDOW_RADIO_PLAYING_NOW = 764,
       WINDOW_SETTINGS_FOLDERS = 1000,
       WINDOW_SETTINGS_EXTENSIONS = 1001,
       WINDOW_VIRTUAL_KEYBOARD = 1002,
@@ -244,6 +245,7 @@ namespace MediaPortal.GUI.Library
     private static bool isSkinXMLLoading = false;
     private static int FocusID { get; set; }
     private static int FocusIDPrevious { get; set; }
+    public string WindowXmlFileName { get { return _windowXmlFileName; } }
 
     //-1=default from topbar.xml 
     // 0=flase from skin.xml

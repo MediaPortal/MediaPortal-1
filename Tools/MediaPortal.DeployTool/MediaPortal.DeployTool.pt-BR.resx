@@ -517,4 +517,7 @@ Ativando AERO também reduzirá o uso de CPU, tornando o seu HTPC mais frio e si
     <value>Uma reinicialização é necessária por um componente da Microsoft.
 Por favor, reinicie o sistema antes de prosseguir com a instalação do MediaPortal.</value>
   </data>
+  <data name="Need_Reboot" xml:space="preserve">
+    <value>Asegúrate de reiniciar la computadora antes de usar MediaPortal.</value>
+  </data>
 </root>

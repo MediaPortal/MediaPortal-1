@@ -2,118 +2,125 @@
 <window>
 	<controls>
 
-  <control>
+    <control>
       <description>Video resolution</description>
       <type>image</type>
       <id>0</id>
-			<posX>646</posX>
-			<posY>958</posY>
-    	<width>99</width>
-    	<height>65</height>
+	  <posX>646</posX>
+	  <posY>958</posY>
+      <width>99</width>
+      <height>65</height>
       <texture>Logos\resolution\#Play.Current.VideoResolution.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <colordiffuse>FF000000</colordiffuse>
+	  <visible>!player.forwarding2x+!player.forwarding4x+!player.forwarding8x+!player.forwarding16x+!player.forwarding32x+!player.rewinding2x+!player.rewinding4x+!player.rewinding8x+!player.rewinding16x+!player.rewinding32x</visible>
     </control>
-		<control>
-    	<description>Video codec</description>
+	  <control>
+      <description>Video codec</description>
       <type>image</type>
       <id>0</id>
-			<posX>736</posX>
-			<posY>958</posY>
-    	<width>99</width>
-    	<height>65</height>
+	  <posX>736</posX>
+	  <posY>958</posY>
+      <width>99</width>
+      <height>65</height>
       <texture>Logos\video\#Play.Current.VideoCodec.Texture.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <colordiffuse>FF000000</colordiffuse>
+	  <visible>!player.forwarding2x+!player.forwarding4x+!player.forwarding8x+!player.forwarding16x+!player.forwarding32x+!player.rewinding2x+!player.rewinding4x+!player.rewinding8x+!player.rewinding16x+!player.rewinding32x</visible>
     </control>
     <control>
       <description>AspectRatio</description>
       <type>image</type>
       <id>0</id>
-			<posX>826</posX>
-			<posY>958</posY>
-    	<width>99</width>
-    	<height>65</height>
+	  <posX>826</posX>
+	  <posY>958</posY>
+      <width>99</width>
+      <height>65</height>
       <texture>Logos\aspectratio\#Play.Current.AspectRatio.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <colordiffuse>FF000000</colordiffuse>
+	  <visible>!player.forwarding2x+!player.forwarding4x+!player.forwarding8x+!player.forwarding16x+!player.forwarding32x+!player.rewinding2x+!player.rewinding4x+!player.rewinding8x+!player.rewinding16x+!player.rewinding32x</visible>
     </control>
-<control>
-        <description>Subtitles</description>
-        <type>image</type>
-        <id>0</id>
-			<posX>936</posX>
-			<posY>968</posY>
-    	<width>49</width>
-    	<height>45</height>
-        <visible>string.equals(#Play.Current.HasSubtitles, True)</visible>
-        <texture>logos\subtitles.png</texture>
-        <keepaspectratio>yes</keepaspectratio>
+	<control>
+      <description>Subtitles</description>
+      <type>image</type>
+      <id>0</id>
+	  <posX>936</posX>
+	  <posY>968</posY>
+      <width>49</width>
+      <height>45</height>
+      <texture>logos\subtitles.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
       <colordiffuse>FF000000</colordiffuse>
-      </control>
-      <control>
-        <description>NoSubtitles</description>
-        <type>image</type>
-        <id>0</id>
-			<posX>936</posX>
-			<posY>968</posY>
-    	<width>49</width>
-    	<height>45</height>
-        <visible>!string.equals(#Play.Current.HasSubtitles, True)</visible>
-        <texture>logos\nosubtitles.png</texture>
-        <keepaspectratio>yes</keepaspectratio>
+	  <visible>string.equals(#Play.Current.HasSubtitles, True)+!player.forwarding2x+!player.forwarding4x+!player.forwarding8x+!player.forwarding16x+!player.forwarding32x+!player.rewinding2x+!player.rewinding4x+!player.rewinding8x+!player.rewinding16x+!player.rewinding32x</visible>
+    </control>
+    <control>
+      <description>NoSubtitles</description>
+      <type>image</type>
+      <id>0</id>
+	  <posX>936</posX>
+	  <posY>968</posY>
+      <width>49</width>
+      <height>45</height>
+      <visible>!string.equals(#Play.Current.HasSubtitles, True)</visible>
+      <texture>logos\nosubtitles.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
       <colordiffuse>FF000000</colordiffuse>
+	  <visible>!player.forwarding2x+!player.forwarding4x+!player.forwarding8x+!player.forwarding16x+!player.forwarding32x+!player.rewinding2x+!player.rewinding4x+!player.rewinding8x+!player.rewinding16x+!player.rewinding32x</visible>
       </control>
 
     <control>
       <description>Audio codec</description>
       <type>image</type>
       <id>0</id>
-			<posX>1006</posX>
-			<posY>958</posY>
-    	<width>99</width>
-    	<height>65</height>
+	  <posX>1006</posX>
+	  <posY>958</posY>
+      <width>99</width>
+      <height>65</height>
       <texture>Logos\audio\#Play.Current.AudioCodec.Texture.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <colordiffuse>FF000000</colordiffuse>
+	  <visible>!player.forwarding2x+!player.forwarding4x+!player.forwarding8x+!player.forwarding16x+!player.forwarding32x+!player.rewinding2x+!player.rewinding4x+!player.rewinding8x+!player.rewinding16x+!player.rewinding32x</visible>
     </control>
-<control>
-        <description>Teletext</description>
-        <type>image</type>
-        <id>0</id>
-			<posX>1136</posX>
-			<posY>968</posY>
-    	<width>62</width>
-    	<height>45</height>
-        <visible>string.equals(#TV.View.HasTeletext, True)</visible>
-        <texture>logos\Teletext.png</texture>
-        <keepaspectratio>yes</keepaspectratio>
+    <control>
+      <description>Teletext</description>
+      <type>image</type>
+      <id>0</id>
+	  <posX>1136</posX>
+	  <posY>968</posY>
+      <width>62</width>
+      <height>45</height>
+      <texture>logos\Teletext.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
       <colordiffuse>FF000000</colordiffuse>
-      </control>
-      <control>
-        <description>NoTeletext</description>
-        <type>image</type>
-        <id>0</id>
-			<posX>1136</posX>
-			<posY>968</posY>
-    	<width>62</width>
-    	<height>45</height>
-        <visible>!string.equals(#TV.View.HasTeletext, True)</visible>
-        <texture>logos\noTeletext.png</texture>
-        <keepaspectratio>yes</keepaspectratio>
+	  <visible>string.equals(#TV.View.HasTeletext, True)+!player.forwarding2x+!player.forwarding4x+!player.forwarding8x+!player.forwarding16x+!player.forwarding32x+!player.rewinding2x+!player.rewinding4x+!player.rewinding8x+!player.rewinding16x+!player.rewinding32x</visible>
+    </control>
+    <control>
+      <description>NoTeletext</description>
+      <type>image</type>
+      <id>0</id>
+	  <posX>1136</posX>
+	  <posY>968</posY>
+      <width>62</width>
+      <height>45</height>
+      <texture>logos\noTeletext.png</texture>
+      <keepaspectratio>yes</keepaspectratio>
       <colordiffuse>FF000000</colordiffuse>
+	  <visible>!string.equals(#TV.View.HasTeletext, True)+!player.forwarding2x+!player.forwarding4x+!player.forwarding8x+!player.forwarding16x+!player.forwarding32x+!player.rewinding2x+!player.rewinding4x+!player.rewinding8x+!player.rewinding16x+!player.rewinding32x</visible>
       </control>
     <control>
       <description>Audio channels</description>
       <type>image</type>
       <id>0</id>
-			<posX>1216</posX>
-			<posY>958</posY>
-    	<width>99</width>
-    	<height>65</height>
+	  <posX>1216</posX>
+	  <posY>958</posY>
+      <width>99</width>
+      <height>65</height>
       <texture>Logos\audio\#Play.Current.AudioChannels.png</texture>
       <keepaspectratio>yes</keepaspectratio>
       <colordiffuse>FF000000</colordiffuse>
+	  <visible>!player.forwarding2x+!player.forwarding4x+!player.forwarding8x+!player.forwarding16x+!player.forwarding32x+!player.rewinding2x+!player.rewinding4x+!player.rewinding8x+!player.rewinding16x+!player.rewinding32x</visible>
     </control>
-	</controls>
+   
+   </controls>
 </window>

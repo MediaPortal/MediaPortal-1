@@ -30,7 +30,7 @@ public:
   virtual ~CSection(void);
   void   Reset();
   bool	 DecodeHeader();
-	int		 CalcSectionLength(byte* tsPacket, int start);
+  int    CalcSectionLength(const byte* tsPacket, int start);
   bool   SectionComplete();
   CSection& operator = (const CSection& section);
   void Copy(const CSection &section);

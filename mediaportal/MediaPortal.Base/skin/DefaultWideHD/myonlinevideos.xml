@@ -31,24 +31,24 @@
       <description>Label for Current, Total Amount and Localized Type of items</description>
       <type>label</type>
       <id>0</id>
-      <posX>1866</posX>
-      <posY>52</posY>
+      <posX>1869</posX>
+      <posY>16</posY>
       <label>#selectedindex/#itemcount #itemtype</label>
       <align>right</align>
-      <textcolor>White</textcolor>
-      <font>font10</font>
+      <textcolor>lightgray</textcolor>
+      <font>RSS</font>
       <visible>string.equals(#selectedindex)+!string.equals(#OnlineVideos.state, details)</visible>
     </control>
     <control>
       <description>Label for Total Amount and Localized Type of items</description>
       <type>label</type>
       <id>0</id>
-      <posX>1866</posX>
-      <posY>52</posY>
+      <posX>1869</posX>
+      <posY>16</posY>
       <label>#itemcount #itemtype</label>
       <align>right</align>
-      <textcolor>White</textcolor>
-      <font>font10</font>
+      <textcolor>lightgray</textcolor>
+      <font>RSS</font>
       <visible>!string.equals(#selectedindex)+!string.equals(#OnlineVideos.state, details)</visible>
     </control>
     <control>

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -152,6 +152,7 @@ namespace MediaPortal.GUI.Video
             }
             return 0;
           }
+
         case SortMethod.Rating:
           {
             if (SortAscending)
@@ -225,6 +226,18 @@ namespace MediaPortal.GUI.Video
 
         case SortMethod.Date: // Only recently added/watched->database view + date used for sort for title
 
+          if (item1.IsFolder && item2.IsFolder && !item1.IsBdDvdFolder && !item2.IsBdDvdFolder)
+          {
+            if (SortAscending)
+            {
+              return String.Compare(item1.Label, item2.Label, true);
+            }
+            else
+            {
+              return String.Compare(item2.Label, item1.Label, true);
+            }
+          }
+
           if (item1.FileInfo == null)
           {
             if (!this.TryGetFileInfo(ref item1))
@@ -261,6 +274,7 @@ namespace MediaPortal.GUI.Video
           }
           
         case SortMethod.Label:
+
           if (SortAscending)
           {
             return Util.StringLogicalComparer.Compare(item1.DVDLabel, item2.DVDLabel);
@@ -269,7 +283,9 @@ namespace MediaPortal.GUI.Video
           {
             return Util.StringLogicalComparer.Compare(item2.DVDLabel, item1.DVDLabel);
           }
+
         case SortMethod.Size:
+
           if (item1.FileInfo == null || item2.FileInfo == null)
           {
             if (SortAscending)
@@ -296,6 +312,18 @@ namespace MediaPortal.GUI.Video
           }
 
         case SortMethod.Created:
+
+          if (item1.IsFolder && item2.IsFolder && !item1.IsBdDvdFolder && !item2.IsBdDvdFolder)
+          {
+            if (SortAscending)
+            {
+              return String.Compare(item1.Label, item2.Label, true);
+            }
+            else
+            {
+              return String.Compare(item2.Label, item1.Label, true);
+            }
+          }
 
           if (item1.FileInfo == null)
           {
@@ -328,6 +356,18 @@ namespace MediaPortal.GUI.Video
           }
         
         case SortMethod.Modified:
+
+          if (item1.IsFolder && item2.IsFolder && !item1.IsBdDvdFolder && !item2.IsBdDvdFolder)
+          {
+            if (SortAscending)
+            {
+              return String.Compare(item1.Label, item2.Label, true);
+            }
+            else
+            {
+              return String.Compare(item2.Label, item1.Label, true);
+            }
+          }
         
           if (item1.FileInfo == null)
           {
