@@ -133,8 +133,8 @@ namespace MediaPortal.MusicPlayer.BASS
     private int _DefaultCrossFadeIntervalMS = 4000;
     public static bool _initialized = false;
     private bool _bassFreed = false;
-    private int _playBackType;
-    private int _savedPlayBackType = -1;
+    private PlayBackType _playBackType;
+    private PlayBackType? _savedPlayBackType = null;
 
     private bool _IsFullScreen = false;
 
@@ -379,7 +379,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public override int PlaybackType
     {
-      get { return _playBackType; }
+      get { return (int)_playBackType; }
     }
 
     /// <summary>
@@ -474,25 +474,25 @@ namespace MediaPortal.MusicPlayer.BASS
         case Action.ActionType.ACTION_TOGGLE_MUSIC_GAP:
           {
             _playBackType++;
-            if (_playBackType > 2)
+            if (_playBackType > PlayBackType.CROSSFADE)
             {
-              _playBackType = 0;
+              _playBackType = PlayBackType.NORMAL;
             }
 
             string type = "";
             switch (_playBackType)
             {
-              case (int)PlayBackType.NORMAL:
+              case PlayBackType.NORMAL:
                 Config.CrossFadeIntervalMs = 100;
                 type = "Normal";
                 break;
 
-              case (int)PlayBackType.GAPLESS:
+              case PlayBackType.GAPLESS:
                 Config.CrossFadeIntervalMs = 0;
                 type = "Gapless";
                 break;
 
-              case (int)PlayBackType.CROSSFADE:
+              case PlayBackType.CROSSFADE:
                 Config.CrossFadeIntervalMs = _DefaultCrossFadeIntervalMS == 0 ? 4000 : _DefaultCrossFadeIntervalMS;
                 type = "Crossfading";
                 break;
@@ -619,18 +619,18 @@ namespace MediaPortal.MusicPlayer.BASS
             }
             QueueItem item = _commandQueue[0];
             _commandQueue.RemoveAt(0);
-            switch ((int)item.cmd)
+            switch (item.cmd)
             {
-              case (int)PlaybackCommand.Stop:
+              case PlaybackCommand.Stop:
                 StopCommand();
                 break;
 
-              case (int)PlaybackCommand.ExitThread:
+              case PlaybackCommand.ExitThread:
                 exitThread = true;
                 break;
 
               default:
-                Log.Error("BASS: CommandThread unknown command {0}", (int)item.cmd);
+                Log.Error("BASS: CommandThread unknown command {0}", item.cmd);
                 continue;
             }
           }
@@ -820,7 +820,7 @@ namespace MediaPortal.MusicPlayer.BASS
         Config.LoadAudioDecoderPlugins();
         Config.LoadDSPPlugins();
 
-        _playBackType = (int)Config.PlayBack;
+        _playBackType = Config.PlayBack;
 
         // Create a Stream Copy, if Visualisation is enabled
         if (Config.MusicPlayer == AudioPlayer.Bass)
@@ -895,11 +895,10 @@ namespace MediaPortal.MusicPlayer.BASS
           if (Config.MusicPlayer == AudioPlayer.Asio)
           {
             BASSError errorasio = BassAsio.BASS_ASIO_ErrorGetCode();
-            Log.Error("BASS: Error initializing BASS audio engine {0} Asio: {1}",
-                      Enum.GetName(typeof(BASSError), error), Enum.GetName(typeof(BASSError), errorasio));
+            Log.Error("BASS: Error initializing BASS audio engine {0} Asio: {1}", error, errorasio);
           }
           else
-            Log.Error("BASS: Error initializing BASS audio engine {0}", Enum.GetName(typeof(BASSError), error));
+            Log.Error("BASS: Error initializing BASS audio engine {0}", error);
         }
       }
       catch (Exception ex)
@@ -1419,7 +1418,7 @@ namespace MediaPortal.MusicPlayer.BASS
     /// <param name="methodName"></param>
     private void HandleBassError(string methodName)
     {
-      Log.Error("BASS: {0}() failed: {1}", methodName, Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+      Log.Error("BASS: {0}() failed: {1}", methodName, Bass.BASS_ErrorGetCode());
     }
 
     /// <summary>
@@ -1682,8 +1681,7 @@ namespace MediaPortal.MusicPlayer.BASS
         }
         else
         {
-          Log.Error("BASS: Unable to play {0}.  Reason: {1}.", filePath,
-                    Enum.GetName(typeof(BASSError), Bass.BASS_ErrorGetCode()));
+          Log.Error("BASS: Unable to play {0}.  Reason: {1}.", filePath, Bass.BASS_ErrorGetCode());
 
           stream.Dispose();
           result = false;
@@ -2212,19 +2210,17 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public void SwitchToGaplessPlaybackMode()
     {
-      if (_playBackType == (int)PlayBackType.CROSSFADE)
+      if (_playBackType == PlayBackType.CROSSFADE)
       {
         // Store the current settings, so that when the album playback is completed, we can switch back to the default
-        if (_savedPlayBackType == -1)
+        if (!_savedPlayBackType.HasValue)
         {
           _savedPlayBackType = _playBackType;
         }
 
-        Log.Info("BASS: Playback of complete Album starting. Switching playbacktype from {0} to {1}",
-                 Enum.GetName(typeof(PlayBackType), _playBackType),
-                 Enum.GetName(typeof(PlayBackType), (int)PlayBackType.GAPLESS));
+        Log.Info("BASS: Playback of complete Album starting. Switching playbacktype from {0} to {1}", _playBackType, PlayBackType.GAPLESS);
 
-        _playBackType = (int)PlayBackType.GAPLESS;
+        _playBackType = PlayBackType.GAPLESS;
         Config.CrossFadeIntervalMs = 0;
       }
     }
@@ -2234,17 +2230,15 @@ namespace MediaPortal.MusicPlayer.BASS
     /// </summary>
     public void SwitchToDefaultPlaybackMode()
     {
-      if (_savedPlayBackType > -1)
+      if (_savedPlayBackType.HasValue)
       {
-        Log.Info("BASS: Playback of complete Album stopped. Switching playbacktype from {0} to {1}",
-                 Enum.GetName(typeof(PlayBackType), _playBackType),
-                 Enum.GetName(typeof(PlayBackType), _savedPlayBackType));
+        Log.Info("BASS: Playback of complete Album stopped. Switching playbacktype from {0} to {1}", _playBackType, _savedPlayBackType);
 
-        if (_savedPlayBackType == 0)
+        if (_savedPlayBackType == PlayBackType.NORMAL)
         {
           Config.CrossFadeIntervalMs = 100;
         }
-        else if (_savedPlayBackType == 1)
+        else if (_savedPlayBackType == PlayBackType.GAPLESS)
         {
           Config.CrossFadeIntervalMs = 0;
         }
@@ -2253,8 +2247,8 @@ namespace MediaPortal.MusicPlayer.BASS
           Config.CrossFadeIntervalMs = _DefaultCrossFadeIntervalMS == 0 ? 4000 : _DefaultCrossFadeIntervalMS;
         }
 
-        _playBackType = _savedPlayBackType;
-        _savedPlayBackType = -1;
+        _playBackType = _savedPlayBackType.Value;
+        _savedPlayBackType = null;
       }
     }
 
