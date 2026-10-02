@@ -1,4 +1,4 @@
-    #region Copyright (C) 2005-2018 Team MediaPortal
+#region Copyright (C) 2005-2018 Team MediaPortal
 
 // Copyright (C) 2005-2011 Team MediaPortal
 // http://www.team-mediaportal.com
@@ -63,7 +63,7 @@ namespace MediaPortal.Player
     {
       CD,
       DVD
-    } ;
+    };
 
     #endregion
 
@@ -320,7 +320,7 @@ namespace MediaPortal.Player
         {
           strFromXml = ConvertToNewStyle(strFromXml);
         }
-        foreach (string token in strFromXml.Split(new char[] {',', ';', ' '}))
+        foreach (string token in strFromXml.Split(new char[] { ',', ';', ' ' }))
         {
           if (token == string.Empty)
           {
@@ -350,7 +350,7 @@ namespace MediaPortal.Player
     {
       int count = 0;
       bool foundOtherThanZeroOrOne = false;
-      foreach (string token in strSteps.Split(new char[] {',', ';', ' '}))
+      foreach (string token in strSteps.Split(new char[] { ',', ';', ' ' }))
       {
         if (token == string.Empty)
         {
@@ -370,7 +370,7 @@ namespace MediaPortal.Player
     {
       int count = 0;
       string newStyle = string.Empty;
-      foreach (string token in strSteps.Split(new char[] {',', ';', ' '}))
+      foreach (string token in strSteps.Split(new char[] { ',', ';', ' ' }))
       {
         if (token == string.Empty)
         {
@@ -632,7 +632,8 @@ namespace MediaPortal.Player
           }
         }
         Log.Info("g_Player.OnStarted() {0} media:{1}", _currentFilePlaying, _currentMedia.ToString());
-        if (String.IsNullOrEmpty(GUIPropertyManager.GetProperty("#Play.Current.Type"))) {
+        if (String.IsNullOrEmpty(GUIPropertyManager.GetProperty("#Play.Current.Type")))
+        {
           GUIPropertyManager.SetProperty("#Play.Current.Type", _currentMedia.ToString());
         }
 
@@ -1594,10 +1595,10 @@ namespace MediaPortal.Player
             IMediaInfoService mi = GlobalServiceProvider.Get<IMediaInfoService>();
             _mediaInfo = mi.Get(strFile);
             int nattempts = 0;
-            while (_mediaInfo.HasVideo && _mediaInfo.Framerate == 0 && nattempts<5)
+            while (_mediaInfo.HasVideo && _mediaInfo.Framerate == 0 && nattempts < 5)
             {
               nattempts++;
-              Log.Info("Mediainfo is empty for {0}, trying again for the {1} time", strFile,nattempts);
+              Log.Info("Mediainfo is empty for {0}, trying again for the {1} time", strFile, nattempts);
               Thread.Sleep(500);
               _mediaInfo = mi.Get(strFile);
             }
@@ -1609,7 +1610,7 @@ namespace MediaPortal.Player
         }
 
         // back to previous Windows if we are only in video fullscreen to do a proper release when next item is music only
-        if (((GUIWindow.Window) (Enum.Parse(typeof (GUIWindow.Window), GUIWindowManager.ActiveWindow.ToString())) ==
+        if (((GUIWindow.Window)(Enum.Parse(typeof(GUIWindow.Window), GUIWindowManager.ActiveWindow.ToString())) ==
              GUIWindow.Window.WINDOW_FULLSCREEN_VIDEO) && (MediaInfo != null && !MediaInfo.HasVideo) && type == MediaType.Music)
         {
           GUIWindowManager.ShowPreviousWindow();
@@ -2462,14 +2463,14 @@ namespace MediaPortal.Player
         {
           if (_currentStep < 0 || (_player.CurrentPosition + 4 < _player.Duration) || !IsTV)
           {
-            double dTime = (int) _currentStep + _player.CurrentPosition;
+            double dTime = (int)_currentStep + _player.CurrentPosition;
             Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}", _player.CurrentPosition, _player.Duration);
             if (!IsTV && (dTime > _player.Duration)) dTime = _player.Duration - 5;
             if (IsTV && (dTime + 3 > _player.Duration)) dTime = _player.Duration - 3; // Margin for live Tv
             if (dTime < 0) dTime = 0d;
 
-            Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}:{2} isTv {3}", (int) (dTime / 3600d),
-              (int) ((dTime % 3600d) / 60d), (int) (dTime % 60d), IsTV);
+            Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}:{2} isTv {3}", (int)(dTime / 3600d),
+              (int)((dTime % 3600d) / 60d), (int)(dTime % 60d), IsTV);
             _player.SeekAbsolute(dTime);
             Speed = Speed;
             GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0,
@@ -2511,15 +2512,15 @@ namespace MediaPortal.Player
             {
               if (_currentStep < 0 || (_player.CurrentPosition + 4 < _player.Duration) || !IsTV)
               {
-                double dTime = (int) _currentStep + _player.CurrentPosition;
+                double dTime = (int)_currentStep + _player.CurrentPosition;
                 Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}", _player.CurrentPosition,
                   _player.Duration);
                 if (!IsTV && (dTime > _player.Duration)) dTime = _player.Duration - 5;
                 if (IsTV && (dTime + 3 > _player.Duration)) dTime = _player.Duration - 3; // Margin for live Tv
                 if (dTime < 0) dTime = 0d;
 
-                Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}:{2} isTv {3}", (int) (dTime / 3600d),
-                  (int) ((dTime % 3600d) / 60d), (int) (dTime % 60d), IsTV);
+                Log.Debug("g_Player.StepNow() - Preparing to seek to {0}:{1}:{2} isTv {3}", (int)(dTime / 3600d),
+                  (int)((dTime % 3600d) / 60d), (int)(dTime % 60d), IsTV);
                 _player.SeekAbsolute(dTime);
                 Speed = Speed;
                 GUIMessage msgUpdate = new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0,
@@ -2756,9 +2757,9 @@ namespace MediaPortal.Player
           Log.Debug("g_Player: SeekAbsolute GUIGraphicsContext.State.SUSPENDING");
           GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
         }
-        Log.Debug("g_Player.SeekAbsolute() - Preparing to seek to {0}:{1}:{2}", (object) (int) (dTime / 3600.0), (object) (int) (dTime % 3600.0 / 60.0), (object) (int) (dTime % 60.0));
+        Log.Debug("g_Player.SeekAbsolute() - Preparing to seek to {0}:{1}:{2}", (object)(int)(dTime / 3600.0), (object)(int)(dTime % 3600.0 / 60.0), (object)(int)(dTime % 60.0));
         _player.SeekAbsolute(dTime);
-        GUIGraphicsContext.SendMessage(new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, (object) null));
+        GUIGraphicsContext.SendMessage(new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, (object)null));
         _currentStep = 0;
         _currentStepIndex = -1;
         _seekTimer = DateTime.MinValue;
@@ -2785,8 +2786,8 @@ namespace MediaPortal.Player
             GUIGraphicsContext.CurrentState = GUIGraphicsContext.State.SUSPENDING;
           }
 
-          Log.Debug("g_Player.SeekAbsolute() - Preparing to seek to {0}:{1}:{2}", (int) (dTime / 3600d),
-            (int) ((dTime % 3600d) / 60d), (int) (dTime % 60d));
+          Log.Debug("g_Player.SeekAbsolute() - Preparing to seek to {0}:{1}:{2}", (int)(dTime / 3600d),
+            (int)((dTime % 3600d) / 60d), (int)(dTime % 60d));
           _player.SeekAbsolute(dTime);
           GUIMessage msgUpdate =
             new GUIMessage(GUIMessage.MessageType.GUI_MSG_PLAYER_POSITION_CHANGED, 0, 0, 0, 0, 0, null);
@@ -3799,7 +3800,7 @@ namespace MediaPortal.Player
     {
       try
       {
-        using (new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.None)) {}
+        using (new FileStream(file, FileMode.Open, FileAccess.Read, FileShare.None)) { }
       }
       catch (System.IO.IOException exp)
       {
@@ -3882,7 +3883,7 @@ namespace MediaPortal.Player
             continue;
           }
 
-          string[] tokens = line.Split(new char[] {'\t'});
+          string[] tokens = line.Split(new char[] { '\t' });
           if (tokens.Length != 2)
           {
             continue;
@@ -4039,7 +4040,7 @@ namespace MediaPortal.Player
 
       foreach (string extension in extensions)
       {
-        if (extension.Trim().Equals(Path.GetExtension(filename),StringComparison.OrdinalIgnoreCase))
+        if (extension.Trim().Equals(Path.GetExtension(filename), StringComparison.OrdinalIgnoreCase))
         {
           return true;
         }
