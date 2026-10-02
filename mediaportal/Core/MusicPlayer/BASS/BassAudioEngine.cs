@@ -619,18 +619,18 @@ namespace MediaPortal.MusicPlayer.BASS
             }
             QueueItem item = _commandQueue[0];
             _commandQueue.RemoveAt(0);
-            switch ((int) item.cmd)
+            switch ((int)item.cmd)
             {
-              case (int) PlaybackCommand.Stop:
+              case (int)PlaybackCommand.Stop:
                 StopCommand();
                 break;
 
-              case (int) PlaybackCommand.ExitThread:
+              case (int)PlaybackCommand.ExitThread:
                 exitThread = true;
                 break;
 
               default:
-                Log.Error("BASS: CommandThread unknown command {0}", (int) item.cmd);
+                Log.Error("BASS: CommandThread unknown command {0}", (int)item.cmd);
                 continue;
             }
           }
@@ -643,7 +643,7 @@ namespace MediaPortal.MusicPlayer.BASS
     }
 
     private void StopCommand()
-    { 
+    {
       lock (_syncRoot)
       {
         MusicStream stream = GetCurrentStream();
@@ -823,7 +823,7 @@ namespace MediaPortal.MusicPlayer.BASS
         _playBackType = (int)Config.PlayBack;
 
         // Create a Stream Copy, if Visualisation is enabled
-        if (Config.MusicPlayer == AudioPlayer.Bass )
+        if (Config.MusicPlayer == AudioPlayer.Bass)
         {
           Log.Debug("BASS: Create Stream copy for Visualisation");
           _streamcopy = new StreamCopy(this);
@@ -1471,7 +1471,7 @@ namespace MediaPortal.MusicPlayer.BASS
         }
 
         // Start a StreamCopy for Visualisation purposes
-        if (Config.MusicPlayer == AudioPlayer.Bass )
+        if (Config.MusicPlayer == AudioPlayer.Bass)
         {
           _streamcopy.ChannelHandle = _mixer.BassStream;
           _streamcopy.Start();
@@ -1648,7 +1648,7 @@ namespace MediaPortal.MusicPlayer.BASS
         }
 
         MusicStream stream = GetCurrentStream();
-        
+
         if (stream.BassStream != 0 && playbackStarted)
         {
           Log.Info("BASS: playback started");
@@ -1972,11 +1972,11 @@ namespace MediaPortal.MusicPlayer.BASS
             isWASAPI = true;
             BassWasapi.BASS_WASAPI_Stop(true);
           }
-          
+
           BassMix.BASS_Mixer_ChannelSetPosition(stream.BassStream, Bass.BASS_ChannelSeconds2Bytes(stream.BassStream, position));
           Bass.BASS_ChannelSetPosition(_mixer.BassStream, 0, BASSMode.BASS_POS_BYTES); // reset the mixer
           _mixer.SetSyncPos(stream, position);
-          
+
           if (isWASAPI)
           {
             BassWasapi.BASS_WASAPI_Start();
@@ -2274,7 +2274,7 @@ namespace MediaPortal.MusicPlayer.BASS
         levels = new float[2];
         levels[0] = BassAsio.BASS_ASIO_ChannelGetLevel(false, 0);
         levels[1] = BassAsio.BASS_ASIO_ChannelGetLevel(false, 1);
-      } 
+      }
       else if (Config.MusicPlayer == AudioPlayer.WasApi)
       {
         levels = BassWasapi.BASS_WASAPI_GetLevel(0.05f, BASSLevel.BASS_LEVEL_STEREO | BASSLevel.BASS_LEVEL_RMS);
@@ -2389,13 +2389,13 @@ namespace MediaPortal.MusicPlayer.BASS
         int b0 = (int)Math.Floor(f0 * 1024.0 / sampleRate);
         int b1 = (int)Math.Ceiling(f1 * 1024.0 / sampleRate);
 
-        b0 = Math.Max(1, Math.Min(b0, _fft.Length - 1)); 
+        b0 = Math.Max(1, Math.Min(b0, _fft.Length - 1));
         b1 = Math.Max(b0 + 1, Math.Min(b1, _fft.Length));
 
         float peak = 0;
         for (int i = b0; i < b1; i++)
         {
-          if (_fft[i] > peak) 
+          if (_fft[i] > peak)
           {
             peak = _fft[i];
           }
@@ -2403,7 +2403,7 @@ namespace MediaPortal.MusicPlayer.BASS
 
         // Convert linear FFT amplitude to dBFS scale
         // 1e-8 offset prevents Math.Log10(0) and sets the hard noise floor to -160 dBFS
-        double dbfs = 20 * Math.Log10(peak + 1e-8); 
+        double dbfs = 20 * Math.Log10(peak + 1e-8);
 
         // Linear dynamic range scaling
         // -60 dBFS represents silence (0% height), 0 dBFS represents maximum (100% height)
