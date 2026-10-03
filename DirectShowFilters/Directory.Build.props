@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Common security hardening for every native project under DirectShowFilters
+  (MSBuild imports this file automatically, before the project settings).
+
+  Defaults only: a project can still override a value, so do not set
+  RandomizedBaseAddress / BufferSecurityCheck to false in a .vcxproj.
+  Build\Check-NativeHardening.ps1 verifies the produced binaries in CI.
+-->
+<Project>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <!-- /GS stack cookies -->
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+    </ClCompile>
+    <Link>
+      <!-- /DYNAMICBASE (ASLR) and /NXCOMPAT (DEP) -->
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <DataExecutionPrevention>true</DataExecutionPrevention>
+    </Link>
+  </ItemDefinitionGroup>
+
+  <!-- /guard:cf is incompatible with Edit and Continue (/ZI), so Release only.
+       MSBuild passes /guard:cf to the linker automatically. -->
+  <ItemDefinitionGroup Condition="$(Configuration.StartsWith('Release'))">
+    <ClCompile>
+      <ControlFlowGuard>Guard</ControlFlowGuard>
+    </ClCompile>
+  </ItemDefinitionGroup>
+</Project>
