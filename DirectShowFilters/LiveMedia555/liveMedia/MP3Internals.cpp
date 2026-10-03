@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2018 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2026 Live Networks, Inc.  All rights reserved.
 // MP3 internal implementation details
 // Implementation
 
@@ -48,7 +48,7 @@ struct bandInfoStruct {
   int shortDiff[13];
 };
 
-static struct bandInfoStruct const bandInfo[7] = {
+static struct bandInfoStruct const bandInfo[10] = {
 /* MPEG 1.0 */
  { {0,4,8,12,16,20,24,30,36,44,52,62,74, 90,110,134,162,196,238,288,342,418,576},
    {4,4,4,4,4,4,6,6,8, 8,10,12,16,20,24,28,34,42,50,54, 76,158},
@@ -86,6 +86,21 @@ static struct bandInfoStruct const bandInfo[7] = {
    {6,6,6,6,6,6,8,10,12,14,16,20,24,28,32,38,46,52,60,68,58,54 } ,
    {0,4*3,8*3,12*3,18*3,24*3,32*3,42*3,56*3,74*3,100*3,132*3,174*3,192*3} ,
    {4,4,4,6,6,8,10,14,18,26,32,42,18 } } ,
+
+ { {0,6,12,18,24,30,36,44,54,66,80,96,116,140,168,200,238,284,336,396,464,522,576},
+   {6,6,6,6,6,6,8,10,12,14,16,20,24,28,32,38,46,52,60,68,58,54 } ,
+   {0,4*3,8*3,12*3,18*3,24*3,32*3,42*3,56*3,74*3,100*3,132*3,174*3,192*3} ,
+   {4,4,4,6,6,8,10,14,18,26,32,42,18 } } ,
+
+ { {0,6,12,18,24,30,36,44,54,66,80,96,116,140,168,200,238,284,336,396,464,522,576},
+   {6,6,6,6,6,6,8,10,12,14,16,20,24,28,32,38,46,52,60,68,58,54 } ,
+   {0,4*3,8*3,12*3,18*3,24*3,32*3,42*3,56*3,74*3,100*3,132*3,174*3,192*3} ,
+   {4,4,4,6,6,8,10,14,18,26,32,42,18 } } ,
+
+ { {0,6,12,18,24,30,36,44,54,66,80,96,116,140,168,200,238,284,336,396,464,522,576},
+   {6,6,6,6,6,6,8,10,12,14,16,20,24,28,32,38,46,52,60,68,58,54 } ,
+   {0,4*3,8*3,12*3,18*3,24*3,32*3,42*3,56*3,74*3,100*3,132*3,174*3,192*3} ,
+   {4,4,4,6,6,8,10,14,18,26,32,42,18 } } ,
 };
 
 unsigned int n_slen2[512]; /* MPEG 2.0 slen for 'normal' mode */
@@ -97,7 +112,8 @@ unsigned int i_slen2[256]; /* MPEG 2.0 slen for intensity stereo */
 ////////// MP3FrameParams //////////
 
 MP3FrameParams::MP3FrameParams()
-  : bv(frameBytes, 0, sizeof frameBytes) /* by default */ {
+  : isMPEG2(0), samplingFreq(44100), frameSize(413), // init params, in case we're used early
+    bv(frameBytes, 0, sizeof frameBytes) /* by default */ {
   oldHdr = firstHdr = 0;
 
   static Boolean doneInit = False;

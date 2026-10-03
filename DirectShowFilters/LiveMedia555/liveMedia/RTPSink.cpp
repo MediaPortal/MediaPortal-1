@@ -14,11 +14,12 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2018 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2026 Live Networks, Inc.  All rights reserved.
 // RTP Sinks
 // Implementation
 
 #include "RTPSink.hh"
+#include "Base64.hh"
 #include "GroupsockHelper.hh"
 
 ////////// RTPSink //////////
@@ -39,62 +40,84 @@ Boolean RTPSink::lookupByName(UsageEnvironment& env, char const* sinkName,
   return True;
 }
 
-Boolean RTPSink::isRTPSink() const {
-  return True;
+void RTPSink::setupForSRTP(Boolean useEncryption, u_int32_t roc) {
+  // Set up keying state for streaming via SRTP:
+  if (fMIKEYState == NULL) fMIKEYState = MIKEYState::createNew(useEncryption);
+  fMIKEYState->setROC(roc);
+
+  if (fCrypto == NULL) fCrypto = new SRTPCryptographicContext(*fMIKEYState);
 }
 
-RTPSink::RTPSink(UsageEnvironment& env,
-		 Groupsock* rtpGS, unsigned char rtpPayloadType,
-		 unsigned rtpTimestampFrequency,
-		 char const* rtpPayloadFormatName,
-		 unsigned numChannels)
-  : MediaSink(env), fRTPInterface(this, rtpGS),
-    fRTPPayloadType(rtpPayloadType),
-    fPacketCount(0), fOctetCount(0), fTotalOctetCount(0),
-    fTimestampFrequency(rtpTimestampFrequency), fNextTimestampHasBeenPreset(False), fEnableRTCPReports(True),
-    fNumChannels(numChannels), fEstimatedBitrate(0) {
-  fRTPPayloadFormatName
-    = strDup(rtpPayloadFormatName == NULL ? "???" : rtpPayloadFormatName);
-  gettimeofday(&fCreationTime, NULL);
-  fTotalOctetCountStartTime = fCreationTime;
-  resetPresentationTimes();
+u_int8_t* RTPSink::setupForSRTP(Boolean useEncryption, u_int32_t roc,
+				unsigned& resultMIKEYStateMessageSize) {
+  // Set up keying state for streaming via SRTP:
+  setupForSRTP(useEncryption, roc);
 
-  fSeqNo = (u_int16_t)our_random();
-  fSSRC = our_random32();
-  fTimestampBase = our_random32();
-
-  fTransmissionStatsDB = new RTPTransmissionStatsDB(*this);
+  return fMIKEYState->generateMessage(resultMIKEYStateMessageSize);
 }
 
-RTPSink::~RTPSink() {
-  delete fTransmissionStatsDB;
-  delete[] (char*)fRTPPayloadFormatName;
-  fRTPInterface.forgetOurGroupsock();
-    // so that the "fRTCPInterface" destructor doesn't turn off background read handling (in case
-    // its 'groupsock' is being shared with something else that does background read handling).
+void RTPSink::setupForSRTP(u_int8_t const* MIKEYStateMessage, unsigned MIKEYStateMessageSize,
+			   u_int32_t roc) {
+  // Set up keying state for streaming via SRTP:
+  delete fMIKEYState; fMIKEYState = MIKEYState::createNew(MIKEYStateMessage, MIKEYStateMessageSize);
+  fMIKEYState->setROC(roc);
+
+  delete fCrypto; fCrypto = new SRTPCryptographicContext(*fMIKEYState);
 }
 
-u_int32_t RTPSink::convertToRTPTimestamp(struct timeval tv) {
-  // Begin by converting from "struct timeval" units to RTP timestamp units:
-  u_int32_t timestampIncrement = (fTimestampFrequency*tv.tv_sec);
-  timestampIncrement += (u_int32_t)(fTimestampFrequency*(tv.tv_usec/1000000.0) + 0.5); // note: rounding
+char const* RTPSink::sdpMediaType() const {
+  return "data";
+  // default SDP media (m=) type, unless redefined by subclasses
+}
 
-  // Then add this to our 'timestamp base':
-  if (fNextTimestampHasBeenPreset) {
-    // Make the returned timestamp the same as the current "fTimestampBase",
-    // so that timestamps begin with the value that was previously preset:
-    fTimestampBase -= timestampIncrement;
-    fNextTimestampHasBeenPreset = False;
+char* RTPSink::rtpmapLine() const {
+  if (rtpPayloadType() >= 96) { // the payload format type is dynamic
+    char* encodingParamsPart;
+    if (numChannels() != 1) {
+      encodingParamsPart = new char[1 + 20 /* max int len */];
+      sprintf(encodingParamsPart, "/%d", numChannels());
+    } else {
+      encodingParamsPart = strDup("");
+    }
+    char const* const rtpmapFmt = "a=rtpmap:%d %s/%d%s\r\n";
+    unsigned rtpmapLineSize = strlen(rtpmapFmt)
+      + 3 /* max char len */ + strlen(rtpPayloadFormatName())
+      + 20 /* max int len */ + strlen(encodingParamsPart);
+    char* rtpmapLine = new char[rtpmapLineSize];
+    sprintf(rtpmapLine, rtpmapFmt,
+	    rtpPayloadType(), rtpPayloadFormatName(),
+	    rtpTimestampFrequency(), encodingParamsPart);
+    delete[] encodingParamsPart;
+
+    return rtpmapLine;
+  } else {
+    // The payload format is static, so there's no "a=rtpmap:" line:
+    return strDup("");
   }
+}
 
-  u_int32_t const rtpTimestamp = fTimestampBase + timestampIncrement;
-#ifdef DEBUG_TIMESTAMPS
-  fprintf(stderr, "fTimestampBase: 0x%08x, tv: %lu.%06ld\n\t=> RTP timestamp: 0x%08x\n",
-	  fTimestampBase, tv.tv_sec, tv.tv_usec, rtpTimestamp);
-  fflush(stderr);
-#endif
+char* RTPSink::keyMgmtLine() {
+  u_int8_t* mikeyMessage;
+  unsigned mikeyMessageSize;
+  if (fMIKEYState != NULL &&
+      (mikeyMessage = fMIKEYState->generateMessage(mikeyMessageSize)) != NULL) {
+    char const* const keyMgmtFmt = "a=key-mgmt:mikey %s\r\n";
+    char* base64EncodedData = base64Encode((char*)mikeyMessage, mikeyMessageSize);
+    delete[] mikeyMessage;
+    
+    unsigned keyMgmtLineSize = strlen(keyMgmtFmt) + strlen(base64EncodedData);
+    char* keyMgmtLine = new char[keyMgmtLineSize];
+    sprintf(keyMgmtLine, keyMgmtFmt, base64EncodedData);
+    delete[] base64EncodedData;
 
-  return rtpTimestamp;
+    return keyMgmtLine;
+  } else { // no "a=key-mgmt:" line
+    return strDup("");
+  }
+}
+
+char const* RTPSink::auxSDPLine() {
+  return NULL; // by default
 }
 
 u_int32_t RTPSink::presetNextTimestamp() {
@@ -128,39 +151,68 @@ void RTPSink::resetPresentationTimes() {
   fInitialPresentationTime.tv_usec = fMostRecentPresentationTime.tv_usec = 0;
 }
 
-char const* RTPSink::sdpMediaType() const {
-  return "data";
-  // default SDP media (m=) type, unless redefined by subclasses
+Boolean RTPSink::isRTPSink() const {
+  return True;
 }
 
-char* RTPSink::rtpmapLine() const {
-  if (rtpPayloadType() >= 96) { // the payload format type is dynamic
-    char* encodingParamsPart;
-    if (numChannels() != 1) {
-      encodingParamsPart = new char[1 + 20 /* max int len */];
-      sprintf(encodingParamsPart, "/%d", numChannels());
-    } else {
-      encodingParamsPart = strDup("");
-    }
-    char const* const rtpmapFmt = "a=rtpmap:%d %s/%d%s\r\n";
-    unsigned rtpmapFmtSize = strlen(rtpmapFmt)
-      + 3 /* max char len */ + strlen(rtpPayloadFormatName())
-      + 20 /* max int len */ + strlen(encodingParamsPart);
-    char* rtpmapLine = new char[rtpmapFmtSize];
-    sprintf(rtpmapLine, rtpmapFmt,
-	    rtpPayloadType(), rtpPayloadFormatName(),
-	    rtpTimestampFrequency(), encodingParamsPart);
-    delete[] encodingParamsPart;
+u_int32_t RTPSink::srtpROC() const {
+  return fCrypto == NULL ? 0 : fCrypto->sendingROC();
+}
 
-    return rtpmapLine;
-  } else {
-    // The payload format is staic, so there's no "a=rtpmap:" line:
-    return strDup("");
+RTPSink::RTPSink(UsageEnvironment& env,
+		 Groupsock* rtpGS, unsigned char rtpPayloadType,
+		 unsigned rtpTimestampFrequency,
+		 char const* rtpPayloadFormatName,
+		 unsigned numChannels)
+  : MediaSink(env), fRTPInterface(this, rtpGS),
+    fRTPPayloadType(rtpPayloadType),
+    fPacketCount(0), fOctetCount(0), fTotalOctetCount(0),
+    fMIKEYState(NULL), fCrypto(NULL),
+    fTimestampFrequency(rtpTimestampFrequency), fNextTimestampHasBeenPreset(False), fEnableRTCPReports(True),
+    fNumChannels(numChannels), fEstimatedBitrate(0) {
+  fRTPPayloadFormatName
+    = strDup(rtpPayloadFormatName == NULL ? "???" : rtpPayloadFormatName);
+  gettimeofday(&fCreationTime, NULL);
+  fTotalOctetCountStartTime = fCreationTime;
+  resetPresentationTimes();
+
+  fSeqNo = (u_int16_t)our_random();
+  fSSRC = our_random32();
+  fTimestampBase = our_random32();
+
+  fTransmissionStatsDB = new RTPTransmissionStatsDB(*this);
+}
+
+RTPSink::~RTPSink() {
+  delete fTransmissionStatsDB;
+  delete[] (char*)fRTPPayloadFormatName;
+  delete fCrypto; delete fMIKEYState;
+  fRTPInterface.forgetOurGroupsock();
+    // so that the "fRTPInterface" destructor doesn't turn off background read handling (in case
+    // its 'groupsock' is being shared with something else that does background read handling).
+}
+
+u_int32_t RTPSink::convertToRTPTimestamp(struct timeval tv) {
+  // Begin by converting from "struct timeval" units to RTP timestamp units:
+  u_int32_t timestampIncrement = (fTimestampFrequency*tv.tv_sec);
+  timestampIncrement += (u_int32_t)(fTimestampFrequency*(tv.tv_usec/1000000.0) + 0.5); // note: rounding
+
+  // Then add this to our 'timestamp base':
+  if (fNextTimestampHasBeenPreset) {
+    // Make the returned timestamp the same as the current "fTimestampBase",
+    // so that timestamps begin with the value that was previously preset:
+    fTimestampBase -= timestampIncrement;
+    fNextTimestampHasBeenPreset = False;
   }
-}
 
-char const* RTPSink::auxSDPLine() {
-  return NULL; // by default
+  u_int32_t const rtpTimestamp = fTimestampBase + timestampIncrement;
+#ifdef DEBUG_TIMESTAMPS
+  fprintf(stderr, "fTimestampBase: 0x%08x, tv: %lu.%06ld\n\t=> RTP timestamp: 0x%08x\n",
+	  fTimestampBase, tv.tv_sec, tv.tv_usec, rtpTimestamp);
+  fflush(stderr);
+#endif
+
+  return rtpTimestamp;
 }
 
 
@@ -184,7 +236,7 @@ RTPTransmissionStatsDB::~RTPTransmissionStatsDB() {
 }
 
 void RTPTransmissionStatsDB
-::noteIncomingRR(u_int32_t SSRC, struct sockaddr_in const& lastFromAddress,
+::noteIncomingRR(u_int32_t SSRC, struct sockaddr_storage const& lastFromAddress,
                  unsigned lossStats, unsigned lastPacketNumReceived,
                  unsigned jitter, unsigned lastSRTime, unsigned diffSR_RRTime) {
   RTPTransmissionStats* stats = lookup(SSRC);
@@ -259,7 +311,7 @@ RTPTransmissionStats::RTPTransmissionStats(RTPSink& rtpSink, u_int32_t SSRC)
 RTPTransmissionStats::~RTPTransmissionStats() {}
 
 void RTPTransmissionStats
-::noteIncomingRR(struct sockaddr_in const& lastFromAddress,
+::noteIncomingRR(struct sockaddr_storage const& lastFromAddress,
 		 unsigned lossStats, unsigned lastPacketNumReceived,
 		 unsigned jitter, unsigned lastSRTime,
 		 unsigned diffSR_RRTime) {

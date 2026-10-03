@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2018 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2026 Live Networks, Inc.  All rights reserved.
 // RTP sink for H.264 or H.265 video
 // Implementation
 
@@ -116,8 +116,9 @@ Boolean H264or5VideoRTPSink::continuePlaying() {
   // First, check whether we have a 'fragmenter' class set up yet.
   // If not, create it now:
   if (fOurFragmenter == NULL) {
-    fOurFragmenter = new H264or5Fragmenter(fHNumber, envir(), fSource, OutPacketBuffer::maxSize,
-					   ourMaxPacketSize() - 12/*RTP hdr size*/);
+    fOurFragmenter
+      = new H264or5Fragmenter(fHNumber, envir(), fSource, OutPacketBuffer::maxSize,
+			      ourMaxPacketSize() - 12/*RTP hdr size*/ - specialHeaderSize());
   } else {
     fOurFragmenter->reassignInputSource(fSource);
   }

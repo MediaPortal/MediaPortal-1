@@ -72,8 +72,8 @@ void StreamAddTimeShiftFile(char* streamName, wchar_t* fileName,bool isProgramSt
 void StreamAddMpegFile(char* streamName, wchar_t* fileName, int channelType);
 void StreamRemove(char* streamName);
 
-extern netAddressBits SendingInterfaceAddr ;
-extern netAddressBits ReceivingInterfaceAddr ;
+extern ipv4AddressBits SendingInterfaceAddr ;
+extern ipv4AddressBits ReceivingInterfaceAddr ;
 
 #if _DEBUG
 

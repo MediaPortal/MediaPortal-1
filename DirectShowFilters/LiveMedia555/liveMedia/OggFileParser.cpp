@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2018 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2026 Live Networks, Inc.  All rights reserved.
 // A parser for an Ogg file.
 // Implementation
 
@@ -132,7 +132,9 @@ u_int8_t OggFileParser::parseInitialPage() {
   OggTrack* track;
   if ((header_type_flag&0x02) != 0) { // BOS
     char const* mimeType = NULL; // if unknown
-    if (fPacketSizeTable != NULL && fPacketSizeTable->size[0] >= 8) { // sanity check
+    if (fPacketSizeTable != NULL
+	&& fPacketSizeTable->numCompletedPackets > 0
+	&& fPacketSizeTable->size[0] >= 8) { // sanity check
       char buf[8];
       testBytes((u_int8_t*)buf, 8);
 
@@ -356,8 +358,6 @@ static Boolean parseVorbisSetup_codebook(LEBitVector& bv) {
       }
 #ifdef DEBUG_SETUP_HEADER
       fprintf(stderr, "\t\t\t\tcodeword length[%d]:\t%d\n", i, codewordLength);
-#else
-      codewordLength = codewordLength; // to prevent compiler warning
 #endif
     }
   } else { // ordered

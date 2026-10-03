@@ -13,7 +13,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
-// Copyright (c) 1996-2018 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2026 Live Networks, Inc.  All rights reserved.
 // Usage Environment
 // C++ header
 
@@ -39,6 +39,12 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 
 #ifndef NULL
 #define NULL 0
+#endif
+
+#ifndef NO_STD_LIB
+#ifndef _LIBCPP_ATOMIC
+#include <atomic>
+#endif
 #endif
 
 #ifdef __BORLANDC__
@@ -103,6 +109,12 @@ typedef void TaskFunc(void* clientData);
 typedef void* TaskToken;
 typedef u_int32_t EventTriggerId;
 
+#ifndef NO_STD_LIB
+typedef std::atomic_char EventLoopWatchVariable;
+#else
+typedef char volatile EventLoopWatchVariable;
+#endif
+
 class TaskScheduler {
 public:
   virtual ~TaskScheduler();
@@ -140,7 +152,7 @@ public:
   virtual void moveSocketHandling(int oldSocketNum, int newSocketNum) = 0;
         // Changes any socket handling for "oldSocketNum" so that occurs with "newSocketNum" instead.
 
-  virtual void doEventLoop(char volatile* watchVariable = NULL) = 0;
+  virtual void doEventLoop(EventLoopWatchVariable* watchVariable = NULL) = 0;
       // Causes further execution to take place within the event loop.
       // Delayed tasks, background I/O handling, and other events are handled, sequentially (as a single thread of control).
       // (If "watchVariable" is not NULL, then we return from this routine when *watchVariable != 0)
@@ -154,8 +166,12 @@ public:
       // Causes the (previously-registered) handler function for the specified event to be handled (from the event loop).
       // The handler function is called with "clientData" as parameter.
       // Note: This function (unlike other library functions) may be called from an external thread
-      // - to signal an external event.  (However, "triggerEvent()" should not be called with the
-      // same 'event trigger id' from different threads.)
+      // - to signal an external event.
+      // (In fact, this is the *only* LIVE555 function that can be called from a non-LIVE555 thread.)
+      // (However, "triggerEvent()" should not be called with the same 'event trigger id' from
+      // different threads.  Also, once "triggerEvent()" is called with one 'event trigger id',
+      // it should not be called again with the same 'event trigger id' until after its event
+      // has been handled.)
 
   // The following two functions are deprecated, and are provided for backwards-compatibility only:
   void turnOnBackgroundReadHandling(int socketNum, BackgroundHandlerProc* handlerProc, void* clientData) {

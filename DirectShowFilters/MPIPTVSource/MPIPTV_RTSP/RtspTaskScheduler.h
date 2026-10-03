@@ -36,7 +36,7 @@ protected:
 	// called only by "createNew()"
 
 protected:
-	virtual void doEventLoop(volatile char* watchVariable);
+	virtual void doEventLoop(EventLoopWatchVariable* watchVariable) override;
 };
 
 #endif

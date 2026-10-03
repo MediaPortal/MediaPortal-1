@@ -20,6 +20,15 @@
     </Link>
   </ItemDefinitionGroup>
 
+  <!-- LIVE555 is built without TLS/SRTP support (no OpenSSL dependency). The define must be
+       visible to LiveMedia555 and to every project including its headers, as it changes
+       class layouts (TLSState). -->
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>NO_OPENSSL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
   <!-- /guard:cf is incompatible with Edit and Continue (/ZI), so Release only.
        MSBuild passes /guard:cf to the linker automatically. -->
   <ItemDefinitionGroup Condition="$(Configuration.StartsWith('Release'))">

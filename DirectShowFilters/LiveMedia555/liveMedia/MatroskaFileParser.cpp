@@ -14,7 +14,7 @@ along with this library; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
 **********/
 // "liveMedia"
-// Copyright (c) 1996-2018 Live Networks, Inc.  All rights reserved.
+// Copyright (c) 1996-2026 Live Networks, Inc.  All rights reserved.
 // A parser for a Matroska file.
 // Implementation
 
@@ -37,6 +37,7 @@ MatroskaFileParser::MatroskaFileParser(MatroskaFile& ourFile, FramedSource* inpu
   if (ourDemux == NULL) {
     // Initialization
     fCurrentParseState = PARSING_START_OF_FILE;
+
     continueParsing();
   } else {
     fCurrentParseState = LOOKING_FOR_CLUSTER;
@@ -84,6 +85,18 @@ void MatroskaFileParser::seekToTime(double& seekNPT) {
   }
 }
 
+void MatroskaFileParser::pause() {
+  resetPresentationTimes();
+  // to ensure that we presentation times continue from 'wall clock' time after we resume
+}
+
+void MatroskaFileParser::stopAnyDeliveryForTrack(unsigned trackNumber) {
+  if (trackNumber == fBlockTrackNumber) {
+    fCurFrameTo = NULL;
+    fCurFrameNumBytesToGet = fCurFrameNumBytesToSkip = 0;
+  }
+}
+
 void MatroskaFileParser
 ::continueParsing(void* clientData, unsigned char* /*ptr*/, unsigned /*size*/, struct timeval /*presentationTime*/) {
   ((MatroskaFileParser*)clientData)->continueParsing();
@@ -91,8 +104,6 @@ void MatroskaFileParser
 
 void MatroskaFileParser::continueParsing() {
   if (fInputSource != NULL) {
-    if (fInputSource->isCurrentlyAwaitingData()) return; // Our input source is currently being read. Wait until that read completes
-
     if (!parse()) {
       // We didn't complete the parsing, because we had to read more data from the source, or because we're waiting for
       // another read from downstream.  Once that happens, we'll get called again.
@@ -107,9 +118,14 @@ void MatroskaFileParser::continueParsing() {
 Boolean MatroskaFileParser::parse() {
   Boolean areDone = False;
 
+  if (fInputSource->isCurrentlyAwaitingData()) return False;
+      // Our input source is currently being read. Wait until that read completes
   try {
     skipRemainingHeaderBytes(True); // if any
     do {
+      if (fInputSource->isCurrentlyAwaitingData()) return False;
+          // Our input source is currently being read. Wait until that read completes
+
       switch (fCurrentParseState) {
         case PARSING_START_OF_FILE: {
 	  areDone = parseStartOfFile();
@@ -324,7 +340,8 @@ Boolean MatroskaFileParser::parseTrack() {
 #ifdef DEBUG
 	  fprintf(stderr, "\tTrack Number %d\n", trackNumber);
 #endif
-	  if (track != NULL && trackNumber != 0) {
+	  if (track != NULL && trackNumber != 0
+	      && track->trackNumber == 0 /* this track doesn't already have a number */) {
 	    track->trackNumber = trackNumber;
 	    fOurFile.addTrack(track, trackNumber);
 	  }
@@ -473,12 +490,11 @@ Boolean MatroskaFileParser::parseTrack() {
       }
       case MATROSKA_ID_CODEC_PRIVATE: {
 	u_int8_t* codecPrivate;
-	unsigned codecPrivateSize;
-	if (parseEBMLVal_binary(size, codecPrivate)) {
-	  codecPrivateSize = (unsigned)size.val();
+	u_int32_t codecPrivateSize;
+	if (parseEBMLVal_binary_constrainSize(size, codecPrivateSize, codecPrivate)) {
 #ifdef DEBUG
 	  fprintf(stderr, "\tCodec Private: ");
-	  for (unsigned i = 0; i < codecPrivateSize; ++i) fprintf(stderr, "%02x:", codecPrivate[i]);
+	  for (u_int32_t i = 0; i < codecPrivateSize; ++i) fprintf(stderr, "%02x:", codecPrivate[i]);
 	  fprintf(stderr, "\n");
 #endif
 	  if (track != NULL) {
@@ -638,12 +654,11 @@ Boolean MatroskaFileParser::parseTrack() {
       }
       case MATROSKA_ID_CONTENT_COMP_SETTINGS: {
 	u_int8_t* headerStrippedBytes;
-	unsigned headerStrippedBytesSize;
-	if (parseEBMLVal_binary(size, headerStrippedBytes)) {
-	  headerStrippedBytesSize = (unsigned)size.val();
+	u_int32_t headerStrippedBytesSize;
+	if (parseEBMLVal_binary_constrainSize(size, headerStrippedBytesSize, headerStrippedBytes)) {
 #ifdef DEBUG
 	  fprintf(stderr, "\tHeader Stripped Bytes: ");
-	  for (unsigned i = 0; i < headerStrippedBytesSize; ++i) fprintf(stderr, "%02x:", headerStrippedBytes[i]);
+	  for (u_int32_t i = 0; i < headerStrippedBytesSize; ++i) fprintf(stderr, "%02x:", headerStrippedBytes[i]);
 	  fprintf(stderr, "\n");
 #endif
 	  if (track != NULL) {
@@ -662,9 +677,8 @@ Boolean MatroskaFileParser::parseTrack() {
       }
       case MATROSKA_ID_COLOR_SPACE: {
 	u_int8_t* colourSpace;
-	unsigned colourSpaceSize;
-	if (parseEBMLVal_binary(size, colourSpace)) {
-	  colourSpaceSize = (unsigned)size.val();
+	u_int32_t colourSpaceSize;
+	if (parseEBMLVal_binary_constrainSize(size, colourSpaceSize, colourSpace)) {
 #ifdef DEBUG
 	  fprintf(stderr, "\tColor space : %02x %02x %02x %02x\n", colourSpace[0], colourSpace[1], colourSpace[2], colourSpace[3]);
 #endif
@@ -1093,18 +1107,18 @@ Boolean MatroskaFileParser::deliverFrameWithinBlock() {
     u_int8_t const* specialFrameSource = NULL;
     u_int8_t const opusCommentHeader[16]
       = {'O','p','u','s','T','a','g','s', 0, 0, 0, 0, 0, 0, 0, 0};
-    if (track->codecIsOpus && demuxedTrack->fOpusTrackNumber < 2) {
+    if (track->codecIsOpus && demuxedTrack->fOpusFrameNumber < 2) {
       // Special case for Opus audio.  The first frame (the 'configuration' header) comes from
       // the 'private data'.  The second frame (the 'comment' header) comes is synthesized by
       // us here:
-      if (demuxedTrack->fOpusTrackNumber == 0) {
+      if (demuxedTrack->fOpusFrameNumber == 0) {
 	specialFrameSource = track->codecPrivate;
 	frameSize = track->codecPrivateSize;
-      } else { // demuxedTrack->fOpusTrackNumber == 1
+      } else { // demuxedTrack->fOpusFrameNumber == 1
 	specialFrameSource = opusCommentHeader;
 	frameSize = sizeof opusCommentHeader;
       }
-      ++demuxedTrack->fOpusTrackNumber;
+      ++demuxedTrack->fOpusFrameNumber;
     } else {
       frameSize = fFrameSizesWithinBlock[fNextFrameNumberToDeliver];
       if (track->haveSubframes()) {
@@ -1129,8 +1143,8 @@ Boolean MatroskaFileParser::deliverFrameWithinBlock() {
     double pt = (fClusterTimecode+fBlockTimecode)*(fOurFile.fTimecodeScale/1000000000.0)
       + fNextFrameNumberToDeliver*(track->defaultDuration/1000000000.0);
     if (fPresentationTimeOffset == 0.0) {
-      // This is the first time we've computed a presentation time.  Compute an offset to make the presentation times aligned
-      // with 'wall clock' time:
+      // This is the first time we've computed a presentation time.
+      // Compute an offset to make the presentation times aligned with 'wall clock' time:
       struct timeval timeNow;
       gettimeofday(&timeNow, NULL);
       double ptNow = timeNow.tv_sec + timeNow.tv_usec/1000000.0;
@@ -1222,6 +1236,7 @@ void MatroskaFileParser::deliverFrameBytes() {
 
     MatroskaDemuxedTrack* demuxedTrack = fOurDemux->lookupDemuxedTrack(fBlockTrackNumber);
     if (demuxedTrack == NULL) break; // shouldn't happen
+    if (!demuxedTrack->isCurrentlyAwaitingData()) return; // wait until we're asked for data
 
     unsigned const BANK_SIZE = bankSize();
     while (fCurFrameNumBytesToGet > 0) {
@@ -1337,7 +1352,7 @@ Boolean MatroskaFileParser::parseEBMLIdAndSize(EBMLId& id, EBMLDataSize& size) {
   return parseEBMLNumber(id) && parseEBMLNumber(size);
 }
 
-Boolean MatroskaFileParser::parseEBMLVal_unsigned64(EBMLDataSize& size, u_int64_t& result) {
+Boolean MatroskaFileParser::parseEBMLVal_unsigned64(EBMLDataSize const& size, u_int64_t& result) {
   u_int64_t sv = size.val();
   if (sv > 8) return False; // size too large
 
@@ -1354,7 +1369,7 @@ Boolean MatroskaFileParser::parseEBMLVal_unsigned64(EBMLDataSize& size, u_int64_
   return True;
 }
 
-Boolean MatroskaFileParser::parseEBMLVal_unsigned(EBMLDataSize& size, unsigned& result) {
+Boolean MatroskaFileParser::parseEBMLVal_unsigned(EBMLDataSize const& size, unsigned& result) {
   if (size.val() > 4) return False; // size too large
 
   u_int64_t result64;
@@ -1365,7 +1380,7 @@ Boolean MatroskaFileParser::parseEBMLVal_unsigned(EBMLDataSize& size, unsigned& 
   return True;
 }
 
-Boolean MatroskaFileParser::parseEBMLVal_float(EBMLDataSize& size, float& result) {
+Boolean MatroskaFileParser::parseEBMLVal_float(EBMLDataSize const& size, float& result) {
   if (size.val() == 4) {
     // Normal case.  Read the value as if it were a 4-byte integer, then copy it to the 'float' result:
     unsigned resultAsUnsigned;
@@ -1391,13 +1406,13 @@ Boolean MatroskaFileParser::parseEBMLVal_float(EBMLDataSize& size, float& result
   }
 }
 
-Boolean MatroskaFileParser::parseEBMLVal_string(EBMLDataSize& size, char*& result) {
-  unsigned resultLength = (unsigned)size.val();
+Boolean MatroskaFileParser::parseEBMLVal_string(EBMLDataSize const& size, char*& result) {
+  u_int64_t resultLength = size.val();
   result = new char[resultLength + 1]; // allow for the trailing '\0'
   if (result == NULL) return False;
 
   char* p = result;
-  unsigned i;
+  u_int64_t i;
   for (i = 0; i < resultLength; ++i) {
     if (fLimitOffsetInFile > 0 && fCurOffsetInFile > fLimitOffsetInFile) break; // We've hit our pre-set limit
 
@@ -1416,13 +1431,13 @@ Boolean MatroskaFileParser::parseEBMLVal_string(EBMLDataSize& size, char*& resul
   return True;
 }
 
-Boolean MatroskaFileParser::parseEBMLVal_binary(EBMLDataSize& size, u_int8_t*& result) {
-  unsigned resultLength = (unsigned)size.val();
+Boolean MatroskaFileParser::parseEBMLVal_binary(EBMLDataSize const& size, u_int8_t*& result) {
+  u_int64_t resultLength = size.val();
   result = new u_int8_t[resultLength];
   if (result == NULL) return False;
 
   u_int8_t* p = result;
-  unsigned i;
+  u_int64_t i;
   for (i = 0; i < resultLength; ++i) {
     if (fLimitOffsetInFile > 0 && fCurOffsetInFile > fLimitOffsetInFile) break; // We've hit our pre-set limit
 
@@ -1432,11 +1447,28 @@ Boolean MatroskaFileParser::parseEBMLVal_binary(EBMLDataSize& size, u_int8_t*& r
     *p++ = c;
   }
   if (i < resultLength) { // an error occurred
-    delete[] result;
-    result = NULL;
+    delete[] result; result = NULL;
     return False;
   }
 
+  return True;
+}
+
+Boolean MatroskaFileParser
+::parseEBMLVal_binary_constrainSize(EBMLDataSize const& size, u_int32_t& length, u_int8_t*& result) {
+  if (!parseEBMLVal_binary(size, result)) {
+    length = 0;
+    return False;
+  }
+
+  if (size.val() > (u_int64_t)0xFFFFFFFF) {
+    // size would not fit into 32 bits => reject this
+    delete[] result; result = NULL;
+    length = 0;
+    return False;
+  }
+
+  length = (u_int32_t)size.val();
   return True;
 }
 
@@ -1501,8 +1533,18 @@ void MatroskaFileParser::seekToEndOfFile() {
 }
 
 void MatroskaFileParser::resetStateAfterSeeking() {
+  // Presentation times aren't affected by the seek; they continue advancing as normal.
+  // Therefore, ensure that they continue to be aligned with 'wall clock' time:
+  resetPresentationTimes();
+
   // Because we're resuming parsing after seeking to a new position in the file, reset the parser state:
   fCurOffsetInFile = fSavedCurOffsetInFile = 0;
   fCurOffsetWithinFrame = fSavedCurOffsetWithinFrame = 0;
   flushInput();
+}
+
+void MatroskaFileParser::resetPresentationTimes() {
+  if (fOurDemux != NULL) fOurDemux->resetState();
+
+  fPresentationTimeOffset = 0.0;
 }

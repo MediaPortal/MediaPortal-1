@@ -44,8 +44,8 @@ class MPMPEG2TransportStreamFromPESSource : public MPEG2TransportStreamMultiplex
   //---------------------------------------------------------------------------
   // LIVE555 MPEG2TransportStreamFromPESSource.h code copied 1:1.
   private:
-    virtual void doStopGettingFrames();
-    virtual void awaitNewBuffer(unsigned char* oldBuffer);
+    virtual void doStopGettingFrames() override;
+    virtual void awaitNewBuffer(unsigned char* oldBuffer) override;
 
     static void afterGettingFrame(void* clientData,
                                   unsigned frameSize,
