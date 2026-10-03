@@ -37,7 +37,7 @@ void LogDebug(const char *fmt, ...)
   char buffer[1000];
   int tmp;
   va_start(ap, fmt);
-  tmp = vsprintf(buffer, fmt, ap);
+  tmp = _vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, fmt, ap);
   va_end(ap);
   SYSTEMTIME systemTime;
   GetLocalTime(&systemTime);
@@ -58,12 +58,6 @@ void LogDebug(const char *fmt, ...)
     fclose(fp);
   }
 //#endif
-  char buf[1000];
-  sprintf(buf,"%02.2d-%02.2d-%04.4d %02.2d:%02.2d:%02.2d %s\n",
-    systemTime.wDay, systemTime.wMonth, systemTime.wYear,
-    systemTime.wHour,systemTime.wMinute,systemTime.wSecond,
-    buffer);
-  //::OutputDebugString(buf);
 };
 
 

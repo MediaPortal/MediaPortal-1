@@ -49,16 +49,23 @@ typedef struct
   visible_region_t regions[MAX_REGIONS];
 } page_t;
 
-typedef struct 
+// Largest display (and therefore region / composed bitmap) the decoder accepts
+#define MAX_DISPLAY_WIDTH  1920
+#define MAX_DISPLAY_HEIGHT 1080
+
+// PES_packet_length is 16 bit, plus 6 bytes of PES header
+#define MAX_PES_SIZE (65535 + 6)
+
+struct region_t
 {
-  int width,height;
-  int depth;
-  int win;
-  int CLUT_id;
-  int objects_start,objects_end;
+  int width = 0, height = 0;
+  int depth = 0;
+  int win = -1;
+  int CLUT_id = 0;
+  int objects_start = 0, objects_end = 0;
   unsigned int object_pos[65536];
-  unsigned char img[720*576];
-} region_t;
+  std::vector<unsigned char> img; // width * height pixels
+};
 
 class CSubtitle;
 
@@ -101,8 +108,31 @@ private:
   char* Pts2hmsu( uint64_t pts, char sep );
   uint64_t Get_pes_pts ( unsigned char* buf );
 
+  void ClearRenderedSubtitles();
+
+  // Decoder state (was global, which broke multiple filter instances)
+  page_t page;
+  region_t regions[MAX_REGIONS];
+  uint8_t colours[256*3];
+  uint8_t trans[256];
+  uint16_t apid;
+  int y;
+  int x;
+  int ext;
+  int acquired;
+  uint64_t PTS;
+  uint64_t first_PTS;
+  unsigned int curr_obj;
+  unsigned int curr_reg[64];
+  // Segment parsing trusts 16 bit lengths from the stream and may read up to a few
+  // segment lengths past the PES end, hence the (zeroed) slack
+  uint8_t buf[MAX_PES_SIZE + 8 * 65536];
+  int i;
+  int nibble_flag;
+  int in_scanline;
+
   // Member data
-  unsigned char m_Buffer[1920*1080]; // should be dynamically allocated
+  unsigned char m_Buffer[MAX_DISPLAY_WIDTH * MAX_DISPLAY_HEIGHT];
 
   int m_ScreenWidth;
   int m_ScreenHeight;

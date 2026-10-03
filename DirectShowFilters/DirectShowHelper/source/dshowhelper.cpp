@@ -391,7 +391,7 @@ void Log(const char *fmt, ...)
   char buffer[1000]; 
   int tmp;
   va_start(ap,fmt);
-  tmp = vsprintf(buffer, fmt, ap);
+  tmp = _vsnprintf_s(buffer, sizeof(buffer), _TRUNCATE, fmt, ap);
   va_end(ap); 
 
   SYSTEMTIME systemTime;

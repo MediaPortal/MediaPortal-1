@@ -286,7 +286,7 @@ void LogDebug(const wchar_t *fmt, ...)
   int tmp;
   va_list ap;
   va_start(ap,fmt);
-  tmp = vswprintf_s(buffer, fmt, ap);
+  tmp = _vsnwprintf_s(buffer, _countof(buffer), _TRUNCATE, fmt, ap);
   va_end(ap); 
 
   SYSTEMTIME systemTime;
@@ -312,10 +312,10 @@ void LogDebug(const char *fmt, ...)
 
 	va_list ap;
 	va_start(ap,fmt);
-	vsprintf_s(logbuffer, fmt, ap);
-	va_end(ap); 
+	_vsnprintf_s(logbuffer, sizeof(logbuffer), _TRUNCATE, fmt, ap);
+	va_end(ap);
 
-	MultiByteToWideChar(CP_ACP, 0, logbuffer, -1,logbufferw, sizeof(logbuffer)/sizeof(wchar_t));
+	MultiByteToWideChar(CP_ACP, 0, logbuffer, -1, logbufferw, _countof(logbufferw));
 	LogDebug(L"%s", logbufferw);
 };
 

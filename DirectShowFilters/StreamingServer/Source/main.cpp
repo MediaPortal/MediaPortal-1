@@ -11,15 +11,14 @@
 #include <sstream>
 #include <iomanip>  // setfill(), setw()
 
-static char logbuffer[2000]; 
-static wchar_t logbufferw[2000];
 void LogDebug(const wchar_t *fmt, ...)
 {
 	va_list ap;
 	va_start(ap,fmt);
 
 	va_start(ap,fmt);
-	vswprintf_s(logbufferw, fmt, ap);
+	wchar_t logbufferw[2000];
+	_vsnwprintf_s(logbufferw, _countof(logbufferw), _TRUNCATE, fmt, ap);
 	va_end(ap); 
 
 	wchar_t folder[MAX_PATH];
@@ -47,10 +46,12 @@ void LogDebug(const char *fmt, ...)
 	va_start(ap,fmt);
 
 	va_start(ap,fmt);
-	vsprintf(logbuffer, fmt, ap);
-	va_end(ap); 
+	char logbuffer[2000];
+	_vsnprintf_s(logbuffer, sizeof(logbuffer), _TRUNCATE, fmt, ap);
+	va_end(ap);
 
-	MultiByteToWideChar(CP_ACP, 0, logbuffer, -1, logbufferw, sizeof(logbuffer)/sizeof(wchar_t));
+	wchar_t logbufferw[2000];
+	MultiByteToWideChar(CP_ACP, 0, logbuffer, -1, logbufferw, _countof(logbufferw));
 	LogDebug(L"%s", logbufferw);
 };
 

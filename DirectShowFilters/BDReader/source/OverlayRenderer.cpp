@@ -770,21 +770,44 @@ void COverlayRenderer::DrawBitmap(OSDTexture* pOsdTexture, const BD_OVERLAY* pOv
         {
           UINT32* dst = (UINT32*)lockedRect.pBits;
           const BD_PG_RLE_ELEM* rlep = pOv->img;
-          unsigned pixels = pOv->w * pOv->h;
+          const unsigned w = pOv->w;
+          const unsigned h = pOv->h;
+          const unsigned pitch = lockedRect.Pitch / 4;
 
-          // Copy image data to the texture
+          // Copy image data to the texture. The RLE data comes from the disc: never write
+          // outside of the w x h texture and never consume more elements than a valid
+          // encoding can have (one per pixel plus one end-of-line marker per line).
           if (pOv->img)
           {
-            for (unsigned int i = 0; i < pixels; rlep++)
+            unsigned x = 0, y = 0;
+            for (unsigned elems = w * h + h; y < h && elems > 0; elems--, rlep++)
             {
-              for (unsigned int j = rlep->len; j > 0; j--)
+              unsigned len = rlep->len;
+              if (len == 0) // end of line
               {
-                if (i > 0 && i % pOv->w == 0)
-                  dst += lockedRect.Pitch / 4 - pOv->w;
+                if (x > 0)
+                {
+                  x = 0;
+                  y++;
+                }
+                continue;
+              }
 
-                *dst = m_palette[rlep->color];
-                dst++;
-                i++;
+              const UINT32 color = m_palette[rlep->color];
+              while (len > 0 && y < h)
+              {
+                unsigned n = min(len, w - x);
+                UINT32* p = dst + y * pitch + x;
+                for (unsigned k = 0; k < n; k++)
+                  p[k] = color;
+
+                x += n;
+                len -= n;
+                if (x == w)
+                {
+                  x = 0;
+                  y++;
+                }
               }
             }
           }

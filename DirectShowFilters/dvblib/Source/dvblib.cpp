@@ -110,7 +110,7 @@ void Log(const char *fmt, ...)
 
 	int tmp;
 	va_start(ap,fmt);
-	tmp=vsprintf(logbuffer, fmt, ap);
+	tmp=_vsnprintf_s(logbuffer, 100000, _TRUNCATE, fmt, ap);
 	va_end(ap); 
 
 	FILE* fp = fopen("log/dvb.log","a+");

@@ -626,7 +626,7 @@ void CDiskRecorder::WriteLog(const char* fmt,...)
 
 	int tmp;
 	va_start(ap,fmt);
-	tmp=vsprintf(logbuffer, fmt, ap);
+	tmp=_vsnprintf_s(logbuffer, sizeof(logbuffer), _TRUNCATE, fmt, ap);
 	va_end(ap); 
 
 	if (m_recordingMode==RecordingMode::TimeShift)
@@ -643,7 +643,7 @@ void CDiskRecorder::WriteLog(const wchar_t* fmt,...)
 
   int tmp;
   va_start(ap,fmt);
-  tmp=vswprintf_s(logbuffer, fmt, ap);
+  tmp=_vsnwprintf_s(logbuffer, _countof(logbuffer), _TRUNCATE, fmt, ap);
   va_end(ap); 
 
   if (m_recordingMode==RecordingMode::TimeShift)
