@@ -4,8 +4,18 @@ on:
   workflow_call:
   workflow_dispatch:
 
+  schedule:
+    # Weekly, Monday 03:00 UTC
+    - cron: "0 3 * * 1"
+
+  pull_request:
+    paths:
+      - 'DirectShowFilters/**'
+
 jobs:
   CodeQL:
+    # The C# analysis needs the full installer build, skip it for pull requests
+    if: ${{ github.event_name != 'pull_request' }}
 
     runs-on: windows-2022
 
@@ -55,3 +65,48 @@ jobs:
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
+
+  CodeQL-cpp:
+    name: CodeQL (C/C++ native filters)
+
+    runs-on: windows-2022
+
+    # Same permissions as the C# job: the release workflow grants only security-events
+    permissions:
+      security-events: write
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v2
+
+      - name: Restore NuGet packages
+        run: >-
+          nuget restore DirectShowFilters\Filters.sln
+          -PackagesDirectory Packages
+          -Source https://api.nuget.org/v3/index.json
+          -Source https://www.myget.org/F/mediaportal/api/v3/index.json
+          -NonInteractive
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: c-cpp
+          build-mode: manual
+
+      - name: Build
+        run: >-
+          msbuild DirectShowFilters\Filters.sln /m /nologo /v:m
+          /t:Rebuild /p:Configuration=Release /p:Platform=Win32
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:c-cpp"

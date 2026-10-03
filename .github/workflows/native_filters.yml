@@ -1,0 +1,93 @@
+name: Native Filters
+
+on:
+  pull_request:
+    paths:
+      - 'DirectShowFilters/**'
+      - 'Build/Check-NativeHardening.ps1'
+      - '.github/workflows/native_filters.yml'
+
+  push:
+    branches:
+      - master
+      - 'MP1.**'
+    paths:
+      - 'DirectShowFilters/**'
+      - 'Build/Check-NativeHardening.ps1'
+      - '.github/workflows/native_filters.yml'
+
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    name: Build DirectShowFilters (${{ matrix.platform }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [Win32, x64]
+
+    runs-on: windows-2022
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v2
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: Packages
+          key: nuget-native-${{ hashFiles('DirectShowFilters/**/packages.config') }}
+
+      - name: Restore NuGet packages
+        run: >-
+          nuget restore DirectShowFilters\Filters.sln
+          -PackagesDirectory Packages
+          -Source https://api.nuget.org/v3/index.json
+          -Source https://www.myget.org/F/mediaportal/api/v3/index.json
+          -NonInteractive
+
+      - name: Build
+        run: >-
+          msbuild DirectShowFilters\Filters.sln /m /nologo /v:m
+          /t:Build /p:Configuration=Release /p:Platform=${{ matrix.platform }}
+          "/flp:logfile=Build\NativeFilters_${{ matrix.platform }}.log;verbosity=normal"
+
+      - name: Check binary hardening (ASLR, DEP, CFG)
+        shell: pwsh
+        run: .\Build\Check-NativeHardening.ps1 -Path DirectShowFilters
+
+      - name: Upload Artifact / Build log
+        uses: actions/upload-artifact@v7
+        if: ${{ always() }}
+        with:
+          name: Native filters build log ${{ matrix.platform }}
+          path: Build\NativeFilters_${{ matrix.platform }}.log
+          retention-days: 3
+
+      - name: Upload Artifact / Filters
+        uses: actions/upload-artifact@v7
+        if: ${{ success() }}
+        with:
+          name: Native filters ${{ matrix.platform }}
+          path: |
+            DirectShowFilters/**/Release/*.ax
+            DirectShowFilters/**/Release/*.dll
+            DirectShowFilters/**/Release/*.pdb
+          retention-days: 7
