@@ -103,6 +103,7 @@ xcopy %1\..\DirectShowFilters\Win7RefreshRateHelper\bin\%2\Win7RefreshRateHelper
 xcopy %1\..\DirectShowFilters\DXUtil\bin\%2\dxutil.dll . /Y /D
 xcopy %1\..\DirectShowFilters\fontEngine\bin\%2\fontEngine.dll . /Y /D
 xcopy %1\..\DirectShowFilters\mpc-hc_subs\bin\%2\mpcSubs.dll . /Y /D
+xcopy %1\..\DirectShowFilters\mpc-hc_subs\bin\%2\unrar.dll . /Y /D
 
 if /I "%2" EQU "DEBUG" (
 xcopy %1\..\DirectShowFilters\DirectShowHelper\bin\%2\dshowhelper.pdb . /Y /D

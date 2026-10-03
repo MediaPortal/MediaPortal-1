@@ -7,6 +7,10 @@ max_jobs: 4
 
 environment:
   JAVA_HOME: C:\Program Files (x86)\Java\jdk1.8.0
+  # vcpkg for the native filter dependencies (DirectShowFilters\vcpkg.json), checked out at
+  # the manifest baseline in "install"; binaries are cached between builds
+  VCPKG_ROOT: C:\vcpkg-mp
+  VCPKG_BINARY_SOURCES: clear;files,C:\vcpkg-cache,readwrite
 
 configuration:
   - x86
@@ -27,6 +31,7 @@ skip_commits:
 # NuGet packages restored by Build\RestorePackages.bat
 cache:
   - Packages -> **\packages.config
+  - C:\vcpkg-cache -> DirectShowFilters\vcpkg.json, DirectShowFilters\vcpkg-triplets\*.cmake
 
 install:
   - cmd: >-
@@ -39,6 +44,20 @@ install:
       mkdir "C:\Program Files (x86)\Microsoft Visual Studio\2019\"
 
       mklink /J "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community" "C:\Program Files\Microsoft Visual Studio\2022\Community"
+  - ps: |
+      $baseline = (Get-Content "$Env:APPVEYOR_BUILD_FOLDER\DirectShowFilters\vcpkg.json" -Raw | ConvertFrom-Json).'builtin-baseline'
+      git init --quiet $Env:VCPKG_ROOT
+      git -C $Env:VCPKG_ROOT remote add origin https://github.com/microsoft/vcpkg
+      git -C $Env:VCPKG_ROOT fetch --quiet --depth 1 origin $baseline
+      git -C $Env:VCPKG_ROOT checkout --quiet FETCH_HEAD
+      & "$Env:VCPKG_ROOT\bootstrap-vcpkg.bat" -disableMetrics
+      if ($LASTEXITCODE) { throw "vcpkg bootstrap failed" }
+      New-Item -ItemType Directory -Force C:\vcpkg-cache | Out-Null
+      $triplet = if ($Env:CONFIGURATION -eq 'x64') { 'x64-windows-mp' } else { 'x86-windows-mp' }
+      Push-Location "$Env:APPVEYOR_BUILD_FOLDER\DirectShowFilters"
+      & "$Env:VCPKG_ROOT\vcpkg.exe" install --triplet $triplet --x-install-root=vcpkg_installed\$triplet --disable-metrics
+      if ($LASTEXITCODE) { throw "vcpkg install failed" }
+      Pop-Location
 
 build_script:
   - cmd: >-

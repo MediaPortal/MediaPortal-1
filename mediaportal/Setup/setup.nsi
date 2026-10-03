@@ -592,6 +592,8 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_DirectShowFilters}\Win7RefreshRateHelper\bin\${BUILD_TYPE}\Win7RefreshRateHelper.dll"
   File "${git_DirectShowFilters}\DxUtil\bin\${BUILD_TYPE}\dxutil.dll"
   File "${git_DirectShowFilters}\mpc-hc_subs\bin\${BUILD_TYPE}\mpcSubs.dll"
+  ; unrar (vcpkg), loaded by mpcSubs.dll for VobSub subtitles in RAR archives
+  File "${git_DirectShowFilters}\mpc-hc_subs\bin\${BUILD_TYPE}\unrar.dll"
   File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\Dxerr9.dll"
   File "${git_MP}\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.dll"
   ; Json Library
@@ -984,6 +986,7 @@ SectionEnd
   Delete "$MPdir.Base\dxutil.dll"
   Delete "$MPdir.Base\Dxerr9.dll"
   Delete "$MPdir.Base\mpcSubs.dll"
+  Delete "$MPdir.Base\unrar.dll"
   Delete "$MPdir.Base\MiniDisplayLibrary.dll"
   Delete "$MPdir.Base\System.Management.Automation.dll"
   ; Json Library

@@ -61,6 +61,11 @@ jobs:
         run: |
           git submodule update --init --recursive
 
+      - name: Setup vcpkg (native filter dependencies)
+        uses: ./.github/actions/setup-vcpkg
+        with:
+          triplets: ${{ matrix.architecture }}-windows-mp
+
       - name: Build
         run: |
           BuildFullinstaller.cmd LOG ${{ matrix.architecture }}

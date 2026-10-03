@@ -7,18 +7,6 @@
     <ClCompile Include="source\MediaSeeking.cpp" />
     <ClCompile Include="source\MpAudioRenderer.cpp" />
     <ClCompile Include="source\VolumeHandler.cpp" />
-    <ClCompile Include="libresample\src\src_linear.c">
-      <Filter>libsamplerate</Filter>
-    </ClCompile>
-    <ClCompile Include="libresample\src\src_zoh.c">
-      <Filter>libsamplerate</Filter>
-    </ClCompile>
-    <ClCompile Include="libresample\src\samplerate.c">
-      <Filter>libsamplerate</Filter>
-    </ClCompile>
-    <ClCompile Include="libresample\src\src_sinc.c">
-      <Filter>libsamplerate</Filter>
-    </ClCompile>
     <ClCompile Include="source\Globals.cpp" />
     <ClCompile Include="AE_mixer\AEChannelInfo.cpp">
       <Filter>AE Mixer</Filter>
@@ -26,53 +14,11 @@
     <ClCompile Include="AE_mixer\AERemap.cpp">
       <Filter>AE Mixer</Filter>
     </ClCompile>
-    <ClCompile Include="SoundTouch\source\AAFilter.cpp">
-      <Filter>SoundTouch</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundTouch\source\BPMDetect.cpp">
-      <Filter>SoundTouch</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundTouch\source\FIFOSampleBuffer.cpp">
-      <Filter>SoundTouch</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundTouch\source\FIRFilter.cpp">
-      <Filter>SoundTouch</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundTouch\source\TDStretch.cpp">
-      <Filter>SoundTouch</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundTouch\source\SoundTouch.cpp">
-      <Filter>SoundTouch</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundTouch\source\RateTransposer.cpp">
-      <Filter>SoundTouch</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundTouch\source\PeakFinder.cpp">
-      <Filter>SoundTouch</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundTouch\source\mmx_optimized.cpp">
-      <Filter>SoundTouch</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundTouch\source\sse_optimized.cpp">
-      <Filter>SoundTouch</Filter>
-    </ClCompile>
     <ClCompile Include="AC3_encoder\ac3enc.cpp">
       <Filter>AC3_encoder</Filter>
     </ClCompile>
     <ClCompile Include="AC3_encoder\bits.cpp">
       <Filter>AC3_encoder</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundTouch\source\cpu_detect_x86.cpp">
-      <Filter>SoundTouch</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundTouch\source\InterpolateLinear.cpp">
-      <Filter>SoundTouch</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundTouch\source\InterpolateShannon.cpp">
-      <Filter>SoundTouch</Filter>
-    </ClCompile>
-    <ClCompile Include="SoundTouch\source\InterpolateCubic.cpp">
-      <Filter>SoundTouch</Filter>
     </ClCompile>
     <ClCompile Include="source\BaseAudioSink.cpp">
       <Filter>Filters</Filter>
@@ -129,9 +75,6 @@
     <ClInclude Include="source\SharedInclude.h" />
     <ClInclude Include="source\stdafx.h" />
     <ClInclude Include="source\VolumeHandler.h" />
-    <ClInclude Include="libresample\src\samplerate.h">
-      <Filter>libsamplerate</Filter>
-    </ClInclude>
     <ClInclude Include="source\Globals.h" />
     <ClInclude Include="AE_mixer\AEAudioFormat.h">
       <Filter>AE Mixer</Filter>
@@ -145,53 +88,11 @@
     <ClInclude Include="AE_mixer\StdString.h">
       <Filter>AE Mixer</Filter>
     </ClInclude>
-    <ClInclude Include="SoundTouch\source\AAFilter.h">
-      <Filter>SoundTouch</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundTouch\include\BPMDetect.h">
-      <Filter>SoundTouch</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundTouch\source\cpu_detect.h">
-      <Filter>SoundTouch</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundTouch\include\FIFOSamplePipe.h">
-      <Filter>SoundTouch</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundTouch\include\FIFOSampleBuffer.h">
-      <Filter>SoundTouch</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundTouch\source\FIRFilter.h">
-      <Filter>SoundTouch</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundTouch\source\TDStretch.h">
-      <Filter>SoundTouch</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundTouch\include\STTypes.h">
-      <Filter>SoundTouch</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundTouch\include\SoundTouch.h">
-      <Filter>SoundTouch</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundTouch\source\RateTransposer.h">
-      <Filter>SoundTouch</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundTouch\source\PeakFinder.h">
-      <Filter>SoundTouch</Filter>
-    </ClInclude>
     <ClInclude Include="AC3_encoder\ac3enc.h">
       <Filter>AC3_encoder</Filter>
     </ClInclude>
     <ClInclude Include="AC3_encoder\bits.h">
       <Filter>AC3_encoder</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundTouch\source\InterpolateCubic.h">
-      <Filter>SoundTouch</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundTouch\source\InterpolateLinear.h">
-      <Filter>SoundTouch</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundTouch\source\InterpolateShannon.h">
-      <Filter>SoundTouch</Filter>
     </ClInclude>
     <ClInclude Include="source\BaseAudioSink.h">
       <Filter>Filters</Filter>
@@ -263,14 +164,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="libsamplerate">
-      <UniqueIdentifier>{c3308725-5e02-47b7-bf02-7405fc07ac36}</UniqueIdentifier>
-    </Filter>
     <Filter Include="AE Mixer">
       <UniqueIdentifier>{0a4b0027-dc20-4b7c-aef5-49e5ba1bbfc7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="SoundTouch">
-      <UniqueIdentifier>{378dd32b-d3f5-455c-beee-34f0ee1c42e3}</UniqueIdentifier>
     </Filter>
     <Filter Include="AC3_encoder">
       <UniqueIdentifier>{c3c8d455-8c72-4d60-af16-01d8b87474ed}</UniqueIdentifier>

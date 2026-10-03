@@ -91,7 +91,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;MPIPTV_RTSP_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPIPTVSource;..\MPIPTV_UDP;..\..\LiveMedia555\UsageEnvironment\include;..\..\LiveMedia555\groupsock\include;..\..\LiveMedia555\BasicUsageEnvironment\include;..\..\LiveMedia555\liveMedia\include;..\..\LiveMedia555\MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPIPTVSource;..\MPIPTV_UDP;..\..\LiveMedia555\MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -112,7 +112,7 @@ copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)\MPIPTVSource\bin\Debug\
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;MPIPTV_RTSP_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPIPTVSource;..\MPIPTV_UDP;..\..\LiveMedia555\UsageEnvironment\include;..\..\LiveMedia555\groupsock\include;..\..\LiveMedia555\BasicUsageEnvironment\include;..\..\LiveMedia555\liveMedia\include;..\..\LiveMedia555\MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPIPTVSource;..\MPIPTV_UDP;..\..\LiveMedia555\MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -135,7 +135,7 @@ copy /Y "$(TargetDir)\$(TargetName).pdb" "$(SolutionDir)\MPIPTVSource\bin\Debug\
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;MPIPTV_RTSP_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPIPTVSource;..\MPIPTV_UDP;..\..\LiveMedia555\UsageEnvironment\include;..\..\LiveMedia555\groupsock\include;..\..\LiveMedia555\BasicUsageEnvironment\include;..\..\LiveMedia555\liveMedia\include;..\..\LiveMedia555\MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPIPTVSource;..\MPIPTV_UDP;..\..\LiveMedia555\MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -161,7 +161,7 @@ copy /Y "$(TargetPath)" "$(SolutionDir)\MPIPTVSource\bin\Release\$(TargetFileNam
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;MPIPTV_RTSP_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPIPTVSource;..\MPIPTV_UDP;..\..\LiveMedia555\UsageEnvironment\include;..\..\LiveMedia555\groupsock\include;..\..\LiveMedia555\BasicUsageEnvironment\include;..\..\LiveMedia555\liveMedia\include;..\..\LiveMedia555\MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;..\MPIPTVSource;..\MPIPTV_UDP;..\..\LiveMedia555\MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

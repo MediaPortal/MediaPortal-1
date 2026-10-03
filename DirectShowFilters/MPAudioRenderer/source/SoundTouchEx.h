@@ -24,7 +24,7 @@
 
 #include <MMReg.h>  //must be before other Wasapi headers
 
-#include "../SoundTouch/Include/SoundTouch.h"
+#include <soundtouch/SoundTouch.h> // vcpkg
 
 //#undef INTEGER_SAMPLES
 
@@ -40,6 +40,10 @@ public:
 
   bool StartResampling();
   bool StopResampling();
+
+  // Pushes the last samples out of the processing pipeline by feeding silence;
+  // returns the number of injected silent samples (was a MediaPortal patch of SoundTouch)
+  uint flushEx();
 
   virtual void putBuffer(const BYTE *pInBuffer, int numSamples);
   virtual void putMediaSample(IMediaSample *pMediaSample);

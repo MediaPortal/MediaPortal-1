@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Common security hardening for every native project under DirectShowFilters
+  Common settings for every native project under DirectShowFilters
   (MSBuild imports this file automatically, before the project settings).
 
-  Defaults only: a project can still override a value, so do not set
-  RandomizedBaseAddress / BufferSecurityCheck to false in a .vcxproj.
-  Build\Check-NativeHardening.ps1 verifies the produced binaries in CI.
+  1. Security hardening. Defaults only: a project can still override a value, so do not
+     set RandomizedBaseAddress / BufferSecurityCheck to false in a .vcxproj.
+     Build\Check-NativeHardening.ps1 verifies the produced binaries in CI.
+  2. Third-party libraries come from vcpkg in manifest mode (vcpkg.json next to this file,
+     triplets in vcpkg-triplets\). vcpkg is located through the VCPKG_ROOT environment
+     variable (or VCPKG_INSTALLATION_ROOT on GitHub runners); the libraries are installed
+     into DirectShowFilters\vcpkg_installed on the first build.
 -->
 <Project>
   <ItemDefinitionGroup>
@@ -20,15 +24,6 @@
     </Link>
   </ItemDefinitionGroup>
 
-  <!-- LIVE555 is built without TLS/SRTP support (no OpenSSL dependency). The define must be
-       visible to LiveMedia555 and to every project including its headers, as it changes
-       class layouts (TLSState). -->
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <PreprocessorDefinitions>NO_OPENSSL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-  </ItemDefinitionGroup>
-
   <!-- /guard:cf is incompatible with Edit and Continue (/ZI), so Release only.
        MSBuild passes /guard:cf to the linker automatically. -->
   <ItemDefinitionGroup Condition="$(Configuration.StartsWith('Release'))">
@@ -36,4 +31,26 @@
       <ControlFlowGuard>Guard</ControlFlowGuard>
     </ClCompile>
   </ItemDefinitionGroup>
+
+  <!-- vcpkg (manifest mode) -->
+  <PropertyGroup>
+    <VcpkgRoot Condition="'$(VcpkgRoot)' == '' and '$(VCPKG_ROOT)' != ''">$([MSBuild]::EnsureTrailingSlash('$(VCPKG_ROOT)'))</VcpkgRoot>
+    <VcpkgRoot Condition="'$(VcpkgRoot)' == '' and '$(VCPKG_INSTALLATION_ROOT)' != ''">$([MSBuild]::EnsureTrailingSlash('$(VCPKG_INSTALLATION_ROOT)'))</VcpkgRoot>
+    <!-- Use this repository's integration only, not a user-wide "vcpkg integrate install" -->
+    <VCPkgLocalAppDataDisabled>true</VCPkgLocalAppDataDisabled>
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
+    <VcpkgManifestRoot>$(MSBuildThisFileDirectory)</VcpkgManifestRoot>
+    <VcpkgTriplet Condition="'$(Platform)' == 'Win32'">x86-windows-mp</VcpkgTriplet>
+    <VcpkgTriplet Condition="'$(Platform)' == 'x64'">x64-windows-mp</VcpkgTriplet>
+    <!-- One install root per triplet: in manifest mode an install removes the other triplets -->
+    <VcpkgInstalledDir>$(MSBuildThisFileDirectory)vcpkg_installed\$(VcpkgTriplet)\</VcpkgInstalledDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <Link>
+      <!-- Static OpenSSL (pulled in by live555) uses the Windows certificate store -->
+      <AdditionalDependencies>crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.props"
+          Condition="'$(VcpkgRoot)' != '' and Exists('$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.props')" />
 </Project>

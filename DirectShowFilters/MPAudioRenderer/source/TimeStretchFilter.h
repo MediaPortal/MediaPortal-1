@@ -21,7 +21,7 @@
 #include "queuedaudiosink.h"
 #include "ITimeStretch.h"
 
-#include "../SoundTouch/Include/SoundTouch.h"
+#include <soundtouch/SoundTouch.h> // vcpkg
 #include "SoundTouchEx.h"
 #include "Globals.h"
 #include "SyncClock.h"

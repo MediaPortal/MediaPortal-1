@@ -17,7 +17,7 @@
 #include "stdafx.h"
 #include "Settings.h"
 #include "resource.h"
-#include "..\libresample\src\samplerate.h"
+#include <samplerate.h> // vcpkg (libsamplerate)
 
 #include <FunctionDiscoveryKeys_devpkey.h>
 

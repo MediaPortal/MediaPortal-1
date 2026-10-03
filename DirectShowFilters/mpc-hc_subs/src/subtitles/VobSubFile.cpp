@@ -27,7 +27,7 @@
 #include "mpc-hc_config.h"
 
 #if !USE_STATIC_UNRAR
-#include "unrar.h"
+#include <unrar.h> // vcpkg: rarlab's dll.hpp
 #else
 #include "unrar/dll.hpp"
 #endif
@@ -798,20 +798,18 @@ static int CALLBACK MyCallbackProc(UINT msg, LPARAM UserData, LPARAM P1, LPARAM 
 bool CVobSubFile::ReadRar(CString fn)
 {
 #if !USE_STATIC_UNRAR
-#ifdef _WIN64
-    HMODULE h = LoadLibrary(_T("unrar64.dll"));
-#else
-    HMODULE h = LoadLibrary(_T("unrar.dll"));
-#endif
+    // Same name for x86 and x64 (vcpkg port). Only look next to the application and in
+    // System32, never in the current directory (DLL planting).
+    HMODULE h = LoadLibraryEx(_T("unrar.dll"), nullptr, LOAD_LIBRARY_SEARCH_APPLICATION_DIR | LOAD_LIBRARY_SEARCH_SYSTEM32);
     if (!h) {
         return false;
     }
 
-    RAROpenArchiveEx OpenArchiveEx = (RAROpenArchiveEx)GetProcAddress(h, "RAROpenArchiveEx");
-    RARCloseArchive  CloseArchive  = (RARCloseArchive)GetProcAddress(h, "RARCloseArchive");
-    RARReadHeaderEx  ReadHeaderEx  = (RARReadHeaderEx)GetProcAddress(h, "RARReadHeaderEx");
-    RARProcessFile   ProcessFile   = (RARProcessFile)GetProcAddress(h, "RARProcessFile");
-    RARSetCallback   SetCallback   = (RARSetCallback)GetProcAddress(h, "RARSetCallback");
+    auto OpenArchiveEx = reinterpret_cast<decltype(&::RAROpenArchiveEx)>(GetProcAddress(h, "RAROpenArchiveEx"));
+    auto CloseArchive  = reinterpret_cast<decltype(&::RARCloseArchive)>(GetProcAddress(h, "RARCloseArchive"));
+    auto ReadHeaderEx  = reinterpret_cast<decltype(&::RARReadHeaderEx)>(GetProcAddress(h, "RARReadHeaderEx"));
+    auto ProcessFile   = reinterpret_cast<decltype(&::RARProcessFile)>(GetProcAddress(h, "RARProcessFile"));
+    auto SetCallback   = reinterpret_cast<decltype(&::RARSetCallback)>(GetProcAddress(h, "RARSetCallback"));
 
     if (!(OpenArchiveEx && CloseArchive && ReadHeaderEx && ProcessFile && SetCallback)) {
         FreeLibrary(h);

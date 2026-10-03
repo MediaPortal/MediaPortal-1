@@ -52,6 +52,11 @@ jobs:
         run: |
           git submodule update --init --recursive
 
+      - name: Setup vcpkg (native filter dependencies)
+        uses: ./.github/actions/setup-vcpkg
+        with:
+          triplets: x86-windows-mp
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
         with:
@@ -94,6 +99,12 @@ jobs:
           -Source https://api.nuget.org/v3/index.json
           -Source https://www.myget.org/F/mediaportal/api/v3/index.json
           -NonInteractive
+
+      # Before CodeQL init, so the third-party libraries built by vcpkg are not analysed
+      - name: Setup vcpkg (native filter dependencies)
+        uses: ./.github/actions/setup-vcpkg
+        with:
+          triplets: x86-windows-mp
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4

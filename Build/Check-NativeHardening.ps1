@@ -18,7 +18,7 @@
 param(
   [Parameter(Mandatory = $true)][string]$Path,
   # File name patterns of binaries we do not build ourselves
-  [string[]]$Exclude = @('libbluray*.dll', 'freetype*.dll', 'd3dx9*.dll', 'msvc*.dll', 'vcruntime*.dll')
+  [string[]]$Exclude = @('libbluray*.dll', 'freetype*.dll', 'd3dx9*.dll', 'msvc*.dll', 'vcruntime*.dll', 'unrar.dll')
 )
 
 $ErrorActionPreference = 'Stop'
@@ -51,7 +51,7 @@ try {
 }
 
 $binaries = Get-ChildItem -Path $root -Recurse -File -Include *.dll, *.ax |
-  Where-Object { $_.FullName -notmatch '\\obj\\' -and -not $tracked.ContainsKey($_.FullName.ToLowerInvariant()) } |
+  Where-Object { $_.FullName -notmatch '\\obj\\|\\vcpkg_installed\\' -and -not $tracked.ContainsKey($_.FullName.ToLowerInvariant()) } |
   Where-Object { $name = $_.Name; -not ($Exclude | Where-Object { $name -like $_ }) }
 
 if (-not $binaries) {
