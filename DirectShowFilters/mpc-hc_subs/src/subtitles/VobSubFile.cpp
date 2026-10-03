@@ -775,11 +775,18 @@ bool CVobSubFile::ReadSub(CString fn)
 
 static unsigned char* RARbuff = nullptr;
 static unsigned int RARpos = 0;
+static unsigned int RARsize = 0;
 
 static int CALLBACK MyCallbackProc(UINT msg, LPARAM UserData, LPARAM P1, LPARAM P2)
 {
     if (msg == UCM_PROCESSDATA) {
         ASSERT(RARbuff);
+
+        // The buffer is sized from the header's UnpSize, which the archive can lie about:
+        // abort the extraction instead of writing past the end of the buffer.
+        if (!RARbuff || (size_t)P2 > RARsize - RARpos) {
+            return -1;
+        }
 
         memcpy(&RARbuff[RARpos], (char*)P1, (size_t)P2);
         RARpos += (unsigned int)P2;
@@ -849,7 +856,7 @@ bool CVobSubFile::ReadRar(CString fn)
 
         if (!subfn.Right(4).CompareNoCase(_T(".sub"))) {
             CAutoVectorPtr<BYTE> buff;
-            if (!buff.Allocate(HeaderDataEx.UnpSize)) {
+            if (HeaderDataEx.UnpSizeHigh != 0 || !buff.Allocate(HeaderDataEx.UnpSize)) {
                 CloseArchive(hArcData);
 #if !USE_STATIC_UNRAR
                 FreeLibrary(h);
@@ -859,8 +866,10 @@ bool CVobSubFile::ReadRar(CString fn)
 
             RARbuff = buff;
             RARpos = 0;
+            RARsize = HeaderDataEx.UnpSize;
 
             if (ProcessFile(hArcData, RAR_TEST, nullptr, nullptr)) {
+                RARbuff = nullptr;
                 CloseArchive(hArcData);
 #if !USE_STATIC_UNRAR
                 FreeLibrary(h);
@@ -869,9 +878,10 @@ bool CVobSubFile::ReadRar(CString fn)
                 return false;
             }
 
-            m_sub.SetLength(HeaderDataEx.UnpSize);
+            // Only what was actually extracted is initialized
+            m_sub.SetLength(RARpos);
             m_sub.SeekToBegin();
-            m_sub.Write(buff, HeaderDataEx.UnpSize);
+            m_sub.Write(buff, RARpos);
             m_sub.SeekToBegin();
 
             RARbuff = nullptr;
