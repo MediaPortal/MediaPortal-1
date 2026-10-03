@@ -146,7 +146,7 @@ void RSCoder16::MakeDecoderMatrix()
 }
 
 
-// Apply Gauss–Jordan elimination to find inverse of decoder matrix.
+// Apply Gauss-Jordan elimination to find inverse of decoder matrix.
 // We have the square NDxND matrix, but we do not store its trivial
 // diagonal "1" rows matching valid data, so we work with NExND matrix.
 // Our original Cauchy matrix does not contain 0, so we skip search
@@ -258,11 +258,14 @@ void RSCoder16::Process(const uint *Data, uint *Out)
 #endif
 
 
-// We update ECC in blocks by applying every data block to all ECC blocks.
-// This function applies one data block to one ECC block.
+// We write recovery data over former ECC blocks by applying every data block
+// to each ECC block. This function applies one data block to one ECC block.
 void RSCoder16::UpdateECC(uint DataNum, uint ECCNum, const byte *Data, byte *ECC, size_t BlockSize)
 {
-  if (DataNum==0) // Init ECC data.
+  // Init former ECC data before processing the first data block.
+  // We use this former ECC as output buffer and we copied its actual
+  // ECC contents over invalid data block before that.
+  if (DataNum==0)
     memset(ECC, 0, BlockSize);
 
   bool DirectAccess;
@@ -333,14 +336,14 @@ bool RSCoder16::SSE_UpdateECC(uint DataNum, uint ECCNum, const byte *Data, byte 
 
   for (uint I=0;I<16;I++)
   {
-    ((byte *)&T0L)[I]=gfMul(I,M);
-    ((byte *)&T0H)[I]=gfMul(I,M)>>8;
-    ((byte *)&T1L)[I]=gfMul(I<<4,M);
-    ((byte *)&T1H)[I]=gfMul(I<<4,M)>>8;
-    ((byte *)&T2L)[I]=gfMul(I<<8,M);
-    ((byte *)&T2H)[I]=gfMul(I<<8,M)>>8;
-    ((byte *)&T3L)[I]=gfMul(I<<12,M);
-    ((byte *)&T3H)[I]=gfMul(I<<12,M)>>8;
+    ((byte *)&T0L)[I]=byte(gfMul(I,M));
+    ((byte *)&T0H)[I]=byte(gfMul(I,M)>>8);
+    ((byte *)&T1L)[I]=byte(gfMul(I<<4,M));
+    ((byte *)&T1H)[I]=byte(gfMul(I<<4,M)>>8);
+    ((byte *)&T2L)[I]=byte(gfMul(I<<8,M));
+    ((byte *)&T2H)[I]=byte(gfMul(I<<8,M)>>8);
+    ((byte *)&T3L)[I]=byte(gfMul(I<<12,M));
+    ((byte *)&T3H)[I]=byte(gfMul(I<<12,M)>>8);
   }
 
   size_t Pos=0;

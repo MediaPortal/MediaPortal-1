@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -41,7 +41,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <PrecompiledHeaderFile>rar.hpp</PrecompiledHeaderFile>
-      <PreprocessorDefinitions>_LIB;RARDLL;SILENT;_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_LIB;RARDLL;UNRAR;SILENT;_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MultiThreadedDLL</RuntimeLibrary>
       <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MultiThreadedDLL</RuntimeLibrary>
       <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MultiThreadedDLL</RuntimeLibrary>
@@ -72,7 +72,8 @@
     <ClCompile Include="hash.cpp" />
     <ClCompile Include="headers.cpp" />
     <ClCompile Include="isnt.cpp" />
-    <ClCompile Include="list.cpp" />
+    <ClCompile Include="largepage.cpp" />
+    <ClCompile Include="motw.cpp" />
     <ClCompile Include="match.cpp" />
     <ClCompile Include="options.cpp" />
     <ClCompile Include="pathfn.cpp" />
@@ -84,8 +85,6 @@
     <ClCompile Include="rarvm.cpp" />
     <ClCompile Include="rawread.cpp" />
     <ClCompile Include="rdwrfn.cpp" />
-    <ClCompile Include="recvol.cpp" />
-    <ClCompile Include="resource.cpp" />
     <ClCompile Include="rijndael.cpp" />
     <ClCompile Include="rs.cpp" />
     <ClCompile Include="rs16.cpp" />
@@ -106,7 +105,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="archive.hpp" />
-    <ClInclude Include="array.hpp" />
+    <ClInclude Include="largepage.hpp" />
+    <ClInclude Include="motw.hpp" />
     <ClInclude Include="blake2s.hpp" />
     <ClInclude Include="cmddata.hpp" />
     <ClInclude Include="coder.hpp" />
