@@ -82,10 +82,12 @@ namespace MediaPortal.Tests.Core.Util
     }
 
     [Test]
-    [ExpectedException(typeof (ArgumentException))]
     public void TestInvalidFileName()
     {
-      Config.GetFile(Config.Dir.Base, @"\file.ext");
+      Assert.Throws<ArgumentException>(() =>
+      {
+        Config.GetFile(Config.Dir.Base, @"\file.ext");
+      });
     }
 
     [Test]
