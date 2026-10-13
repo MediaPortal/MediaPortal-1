@@ -55,7 +55,7 @@ version-resolver:
       - dependencies
   default: patch
 template: |
-  [![Downloads](https://img.shields.io/github/downloads/$OWNER/$REPOSITORY/$RESOLVED_VERSION/total)](https://github.com/$OWNER/$REPOSITORY/releases/tag/$RESOLVED_VERSION)
+  [![Downloads](https://img.shields.io/github/downloads/$OWNER/$REPOSITORY/Release_$RESOLVED_VERSION/total)](https://github.com/$OWNER/$REPOSITORY/releases/tag/Release_$RESOLVED_VERSION)
 
   ## What's Changed
 
