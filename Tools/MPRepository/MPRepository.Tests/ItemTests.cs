@@ -74,9 +74,9 @@ namespace MPRepository.Tests
       //string tagsList = "video,music,test2,test3";
       string tagsList = "video,music,test1";
       MPRSession session = MPRController.StartSession();
-      ISet<MPTag> tags = MPRController.GetTags(session, tagsList);
+      Iesi.Collections.Generic.ISet<MPTag> tags = MPRController.GetTags(session, tagsList);
 
-      Assert.That(tags.Count, Is.EqualTo(3));
+      Assert.AreEqual(tags.Count,3);
 
       foreach (MPTag tag in tags)
       {
@@ -162,8 +162,8 @@ namespace MPRepository.Tests
               prevType = type;
             }
 
-            Assert.NotNull(mptype);
-            Assert.That(mptype.Name, Is.EqualTo(type));
+            Assert.IsNotNull(mptype);
+            Assert.AreEqual(mptype.Name, type);
 
             MPCategory category = new MPCategory();
             category.Type = mptype;
@@ -214,7 +214,7 @@ namespace MPRepository.Tests
       ids.Add(5); ids.Add(7); ids.Add(8);
       IList<MPCategory> categories = MPRController.RetrieveByIdList<MPCategory>(session, ids);
 
-      Assert.That(categories.Count, Is.EqualTo(3));
+      Assert.AreEqual(categories.Count, 3);
 
       foreach (MPCategory category in categories)
       {

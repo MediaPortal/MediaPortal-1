@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -123,6 +123,8 @@ namespace MediaPortal.GUI.Music
     private static readonly Random Randomizer = new Random();
     private bool _lookupSimilarTracks;
     private bool _isStopped = false;
+    private double _smoothLevelL = -15.0;
+    private double _smoothLevelR = -15.0;
 
     #endregion
 
@@ -286,7 +288,7 @@ namespace MediaPortal.GUI.Music
       UpdateTrackInfo();
 
       // Do last.fm updates
-      if (g_Player.IsMusic && _lookupSimilarTracks && g_Player.CurrentPosition >= 10.0 && lstSimilarTracks.Count == 0)
+      if (g_Player.IsMusic && _lookupSimilarTracks && g_Player.CurrentPosition >= 10.0 && lstSimilarTracks != null && lstSimilarTracks.Count == 0)
       {
         Log.Debug("GUIMusicPlayingNow: Do Last.FM lookup for similar tracks");
         UpdateSimilarTracks(CurrentTrackFileName);
@@ -512,7 +514,7 @@ namespace MediaPortal.GUI.Music
           _vuMeter.ToLowerInvariant() != "none")
       {
         VUMeterTimer = new Timer();
-        VUMeterTimer.Interval = 10;
+        VUMeterTimer.Interval = 30;
         VUMeterTimer.Elapsed += new ElapsedEventHandler(OnVUMterTimerTickEvent);
         VUMeterTimer.Start();
       }
@@ -713,146 +715,93 @@ namespace MediaPortal.GUI.Music
     /// <param name="e"></param>
     private void OnVUMterTimerTickEvent(object sender, ElapsedEventArgs e)
     {
-      double dbLevelL = 0.0;
-      double dbLevelR = 0.0;
       if (BassAudioEngine._initialized)
       {
-        BassMusicPlayer.Player.RMS(out dbLevelL, out dbLevelR);
+        BassMusicPlayer.Player.RMS(out double dbfsL, out double dbfsR);
 
-        // Raise the level with factor 1.5 so that the VUMeter shows more activity
-        dbLevelL += Math.Abs(dbLevelL*0.5);
-        dbLevelR += Math.Abs(dbLevelR*0.5);
+        // Calibration: Shift the digital scale so that -18 dBFS aligns with 0 VU reference point.
+        // Additionally adds +3.01 dB (AES-17) to compensate for the Peak-to-RMS difference of a sine wave.
+        const double calibrationOffset = 21.01; 
+        double vuLevelL = dbfsL + calibrationOffset;
+        double vuLevelR = dbfsR + calibrationOffset;
 
-        //Console.WriteLine("{0} {1}",(int)dbLevelL, (int)dbLevelR);
+        // Log.Debug("VU Meter Levels (VU Scale): L={0:F2} dB | R={1:F2} dB", vuLevelL, vuLevelR);
 
-        string file = "VU1.png";
-        if ((int) dbLevelL < -15)
+        // Left channel non-linear compression and expansion
+        if (vuLevelL > 0.0)
         {
-          file = "VU1.png";
-        }
-        else if ((int) dbLevelL < -10)
-        {
-          file = "VU2.png";
-        }
-        else if ((int) dbLevelL < -8)
-        {
-          file = "VU3.png";
-        }
-        else if ((int) dbLevelL < -7)
-        {
-          file = "VU4.png";
-        }
-        else if ((int) dbLevelL < -6)
-        {
-          file = "VU5.png";
-        }
-        else if ((int) dbLevelL < -5)
-        {
-          file = "VU6.png";
-        }
-        else if ((int) dbLevelL < -4)
-        {
-          file = "VU7.png";
-        }
-        else if ((int) dbLevelL < -3)
-        {
-          file = "VU8.png";
-        }
-        else if ((int) dbLevelL < -2)
-        {
-          file = "VU9.png";
-        }
-        else if ((int) dbLevelL < -1)
-        {
-          file = "VU10.png";
-        }
-        else if ((int) dbLevelL < 0)
-        {
-          file = "VU11.png";
-        }
-        else if ((int) dbLevelL < 1)
-        {
-          file = "VU12.png";
-        }
-        else if ((int) dbLevelL < 2)
-        {
-          file = "VU13.png";
-        }
-        else if ((int) dbLevelL < 3)
-        {
-          file = "VU14.png";
+          // Positive zone (+0VU to +3VU): Softly flattens over-levels towards +3VU limit.
+          // The Math.Exp function flattens the curve, smoothly scaling down even a +16VU spike.
+          vuLevelL = 3.0 * (1.0 - Math.Exp(-vuLevelL / 9.0));
         }
         else
         {
-          file = "VU15.png";
+          // Negative zone (-60VU up to 0VU): Smoothly scales down towards -20VU.
+          if (vuLevelL < -60.0) vuLevelL = -60.0;
+          // Scale the dynamic range so that -60 VU of silence maps smoothly to your lowest texture (-20 VU).
+          // Using a tuning factor of 20.0 allows the needle to decay linearly and spend more time 
+          // in the active musical zones (-3 to -15 VU), rather than dropping like a stone.
+          vuLevelL = -20.0 * (1.0 - Math.Exp(vuLevelL / 20.0)) / (1.0 - Math.Exp(-60.0 / 20.0));          
         }
-        // GUIPropertyManager.SetProperty("#VUMeterL", Path.Combine(VUMeterLeft.ImagePath, file));
-        GUIPropertyManager.SetProperty("#VUMeterL", file);
 
-        if ((int) dbLevelR < -15)
+        // Right channel non-linear compression and expansion
+        if (vuLevelR > 0.0)
         {
-          file = "VU1.png";
-        }
-        else if ((int) dbLevelR < -10)
-        {
-          file = "VU2.png";
-        }
-        else if ((int) dbLevelR < -8)
-        {
-          file = "VU3.png";
-        }
-        else if ((int) dbLevelR < -7)
-        {
-          file = "VU4.png";
-        }
-        else if ((int) dbLevelR < -6)
-        {
-          file = "VU5.png";
-        }
-        else if ((int) dbLevelR < -5)
-        {
-          file = "VU6.png";
-        }
-        else if ((int) dbLevelR < -4)
-        {
-          file = "VU7.png";
-        }
-        else if ((int) dbLevelR < -3)
-        {
-          file = "VU8.png";
-        }
-        else if ((int) dbLevelR < -2)
-        {
-          file = "VU9.png";
-        }
-        else if ((int) dbLevelR < -1)
-        {
-          file = "VU10.png";
-        }
-        else if ((int) dbLevelR < 0)
-        {
-          file = "VU11.png";
-        }
-        else if ((int) dbLevelR < 1)
-        {
-          file = "VU12.png";
-        }
-        else if ((int) dbLevelR < 2)
-        {
-          file = "VU13.png";
-        }
-        else if ((int) dbLevelR < 3)
-        {
-          file = "VU14.png";
+          // Positive zone (+0VU to +3VU): Softly flattens over-levels towards +3VU limit.
+          vuLevelR = 3.0 * (1.0 - Math.Exp(-vuLevelR / 9.0));
         }
         else
         {
-          file = "VU15.png";
+          // Negative zone (-60VU up to 0VU): Smoothly scales down towards -20VU.
+          if (vuLevelR < -60.0) vuLevelR = -60.0;
+          // Scale the dynamic range so that -60 VU of silence maps smoothly to your lowest texture (-20 VU).
+          // Using a tuning factor of 20.0 allows the needle to decay linearly and spend more time 
+          // in the active musical zones (-3 to -15 VU), rather than dropping like a stone.
+          vuLevelR = -20.0 * (1.0 - Math.Exp(vuLevelR / 20.0)) / (1.0 - Math.Exp(-60.0 / 20.0));          
         }
-        // GUIPropertyManager.SetProperty("#VUMeterR", Path.Combine(VUMeterRight.ImagePath, file));
-        GUIPropertyManager.SetProperty("#VUMeterR", file);
+
+        // Ballistics: Smooth needle decay
+        // 1.0 means instant movement (for attack), 0.18 means smooth falling (for decay)
+        // Adjusted specifically for a 30ms timer interval to mimic IEC 60268-17 standard.
+        double coefL = (vuLevelL > _smoothLevelL) ? 1.0 : 0.13;
+        _smoothLevelL += (vuLevelL - _smoothLevelL) * coefL;
+
+        double coefR = (vuLevelR > _smoothLevelR) ? 1.0 : 0.13;
+        _smoothLevelR += (vuLevelR - _smoothLevelR) * coefR;
+
+        // Resolve the texture names according to the calibrated VU scale
+        string fileL = GetVUTextureName(_smoothLevelL);
+        string fileR = GetVUTextureName(_smoothLevelR);
+
+        GUIPropertyManager.SetProperty("#VUMeterL", fileL);
+        GUIPropertyManager.SetProperty("#VUMeterR", fileR);
       }
     }
+
+    /// <summary>
+    /// Maps calibrated VU decibel values directly to the non-linear analog meter texture slots.
+    /// </summary>
+    private string GetVUTextureName(double vuLevel)
+    {
+      // Exact mapping based on the visual layout of your 15-frame VU meter
+      if (vuLevel <= -15.0) return "VU1.png";  // -20 VU (Minimum resting point)
+      if (vuLevel <= -11.0) return "VU2.png";  // Approach to -10 VU
+      if (vuLevel <= -9.0) return "VU3.png";   // -10 VU
+      if (vuLevel <= -7.5) return "VU4.png";   // Between -10 and -7 VU
+      if (vuLevel <= -6.5) return "VU5.png";   // -8 VU
+      if (vuLevel <= -5.5) return "VU6.png";   // -7 VU
+      if (vuLevel <= -4.5) return "VU7.png";   // -5 VU
+      if (vuLevel <= -3.5) return "VU8.png";   // -4 VU
+      if (vuLevel <= -2.5) return "VU9.png";   // -3 VU
+      if (vuLevel <= -1.5) return "VU10.png";  // -2 VU
+      if (vuLevel <= -0.5) return "VU11.png";  // -1 VU
+      if (vuLevel <= 0.5) return "VU12.png";   //  0 VU (Reference Zero Point)
+      if (vuLevel <= 1.5) return "VU13.png";   // +1 VU
+      if (vuLevel <= 2.5) return "VU14.png";   // +2 VU
+
+      return "VU15.png";                       // +3 VU (Scale Maximum / Red Zone)
+    }
+
 
     private void UpdateImagePathContainer()
     {

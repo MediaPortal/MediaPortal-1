@@ -48,7 +48,7 @@ namespace TvPlugin
       LABEL_PROGRAMTIME = 14,
       LABEL_PROGRAMDESCRIPTION = 15,
       LABEL_PROGRAMGENRE = 17,
-    } ;
+    };
 
     private enum SortMethod
     {
@@ -85,7 +85,7 @@ namespace TvPlugin
     protected GUIButtonControl btnCleanup = null;
     [SkinControl(7)]
     protected GUIButtonControl btnCompress = null;
-    
+
 
     #endregion
 
@@ -107,7 +107,7 @@ namespace TvPlugin
       {
         currentLayout = (Layout)xmlreader.GetValueAsInt(SerializeName, "layout", (int)Layout.List);
         m_bSortAscending = xmlreader.GetValueAsBool(SerializeName, "sortasc", true);
-        
+
         string strTmp = xmlreader.GetValueAsString("tvrecorded", "sort", "channel");
         _watchedPercentage = xmlreader.GetValueAsInt("movies", "playedpercentagewatched", 95);
 
@@ -147,7 +147,7 @@ namespace TvPlugin
       {
         xmlwriter.SetValue(SerializeName, "layout", (int)currentLayout);
         xmlwriter.SetValueAsBool(SerializeName, "sortasc", m_bSortAscending);
-        
+
         switch (_currentSortMethod)
         {
           case SortMethod.Channel:
@@ -372,7 +372,7 @@ namespace TvPlugin
       dlg.AddLocalizedString(669); // genre
       dlg.AddLocalizedString(671); // watched
       dlg.AddLocalizedString(1017); // duration
-      
+
 
       // set the focus to currently used sort method
       dlg.SelectedLabel = (int)_currentSortMethod;
@@ -542,7 +542,8 @@ namespace TvPlugin
 
     protected override void SetView(int selectedViewId)
     {
-      try {
+      try
+      {
         switch (selectedViewId)
         {
           case 0:
@@ -850,8 +851,8 @@ namespace TvPlugin
             Utils.SetDefaultIcons(item);
             item.ThumbnailImage = item.IconImageBig;
             facadeLayout.Add(item);
-            
-            if (string.IsNullOrEmpty(item.Label)) 	
+
+            if (string.IsNullOrEmpty(item.Label))
             {
               item.Label = GUILocalizeStrings.Get(2014); //unknown
             }
@@ -862,7 +863,7 @@ namespace TvPlugin
           #region Showing a folders content
 
           // add parent item
-          var item = new GUIListItem("..") {IsFolder = true};
+          var item = new GUIListItem("..") { IsFolder = true };
           Utils.SetDefaultIcons(item);
           facadeLayout.Add(item);
 
@@ -919,7 +920,7 @@ namespace TvPlugin
       Log.Debug("LoadDirectory() - finished sorting facade after '{0}' ms.", watch.ElapsedMilliseconds);
 
       UpdateProperties();
-      UpdateThumbnails(); 
+      UpdateThumbnails();
     }
 
     public static string GetRecordingDisplayName(Recording rec)
@@ -954,10 +955,25 @@ namespace TvPlugin
       return aRecording.IsRecording;
     }
 
+    public string GetIcon(Recording aRecording, bool big)
+    {
+      string fileName = (big, aRecording.TimesWatched > 0) switch
+      {
+        (true, true) => "defaultVideoSeenBigTVrecordings.png",
+        (true, false) => "defaultVideoBigTVrecordings.png",
+        (false, true) => "defaultVideoSeen.png",
+        (false, false) => "defaultVideo.png",
+      };
+      fileName = GUIGraphicsContext.GetThemedSkinFile(@"\Media\" + fileName);
+      if (File.Exists(fileName))
+      {
+        return fileName;
+      }
+      return GUIGraphicsContext.GetThemedSkinFile(@"\Media\" + (aRecording.TimesWatched > 0 ? "defaultVideoSeenBig.png" : "defaultVideoBig.png"));
+    }
+
     private GUIListItem BuildItemFromRecording(Recording aRecording, Channel refCh)
     {
-      string strDefaultUnseenIcon = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultVideoBig.png");
-      string strDefaultSeenIcon = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultVideoSeenBig.png");
       GUIListItem item = null;
 
       try
@@ -985,14 +1001,11 @@ namespace TvPlugin
             break;
         }
 
-        // Set a default logo indicating the watched status
-        string SmallThumb = aRecording.TimesWatched > 0 ? strDefaultSeenIcon : strDefaultUnseenIcon;
-
         // Get the channel logo for the small icons
         string StationLogo = Utils.GetCoverArt(Thumbs.TVChannel, strChannelName);
-        if (Utils.FileExistsInCache(StationLogo))
+        if (String.IsNullOrEmpty(StationLogo) || !Utils.FileExistsInCache(StationLogo))
         {
-          SmallThumb = StationLogo;
+          StationLogo = null;
         }
 
         string PreviewThumb = string.Format("{0}\\{1}{2}", Thumbs.TVRecorded, Path.ChangeExtension(Utils.SplitFilename(aRecording.FileName), null), Utils.GetThumbExtension());
@@ -1010,11 +1023,11 @@ namespace TvPlugin
         else
         {
           // Fallback to Logo/Default icon
-          item.IconImageBig = SmallThumb;
+          item.IconImageBig = StationLogo ?? GetIcon(aRecording, true);
           item.ThumbnailImage = String.Empty;
           item.IsRemote = true;  // -> will load thumbnail image later
         }
-        item.IconImage = SmallThumb;
+        item.IconImage = StationLogo ?? GetIcon(aRecording, false);
       }
       catch (Exception singleex)
       {
@@ -1264,7 +1277,7 @@ namespace TvPlugin
           return;
         }
       }
-      
+
       _iSelectedItem = GetSelectedItemNo();
       GUIListItem pItem = GetItem(iItem);
       if (pItem == null)
@@ -1385,7 +1398,7 @@ namespace TvPlugin
     {
       _oldStateSMSsearch = facadeLayout.EnableSMSsearch;
       facadeLayout.EnableSMSsearch = false;
-      
+
       TryDeleteRecordingAndNotifyUser(rec);
 
       UpdateGUI();
@@ -1525,7 +1538,7 @@ namespace TvPlugin
 
     private void UpdateThumbnails()
     {
-      new Thread(delegate()
+      new Thread(delegate ()
       {
         {
           try
@@ -1550,7 +1563,8 @@ namespace TvPlugin
           }
         }
         GUIWindowManager.SendThreadCallbackAndWait((p1, p2, data) => 0, 0, 0, null);
-      }) { Name = "UpdateThumbnails", IsBackground = true, Priority = ThreadPriority.BelowNormal }.Start();
+      })
+      { Name = "UpdateThumbnails", IsBackground = true, Priority = ThreadPriority.BelowNormal }.Start();
     }
 
     private void UpdateProperties()
@@ -1660,7 +1674,12 @@ namespace TvPlugin
         }
         else
         {
-          GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", "defaultVideoBig.png");
+          var thumbName = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultTVLogo.png");
+          if (!File.Exists(thumbName))
+          {
+            thumbName = GUIGraphicsContext.GetThemedSkinFile(@"\Media\defaultTVBig.png");
+          }
+          GUIPropertyManager.SetProperty("#TV.RecordedTV.thumb", thumbName);
         }
       }
       catch (Exception ex)

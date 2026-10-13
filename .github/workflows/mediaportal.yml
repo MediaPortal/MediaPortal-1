@@ -67,6 +67,21 @@ jobs:
         working-directory: ${{ github.workspace }}\Build
         shell: cmd
 
+      - name: Display Build logs on failure
+        if: ${{ failure() }}
+        shell: pwsh
+        run: |
+          $logPath = "${{ github.workspace }}\Build"
+          if (Test-Path $logPath) {
+            Get-ChildItem -Path "$logPath\*.log" -ErrorAction SilentlyContinue | ForEach-Object {
+                Write-Host "--- Contents of $($_.Name) ---"
+                Get-Content $_.FullName
+                Write-Host "`n"
+            }
+          } else {
+            Write-Host "Directory $logPath not found. Nothing to display."
+          }
+
       - name: Upload Artifact / Build result file
         uses: actions/upload-artifact@v7
         if: ${{ always() }}

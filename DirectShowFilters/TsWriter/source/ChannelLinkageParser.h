@@ -74,13 +74,13 @@ public:
   ULONG GetLinkedChannelsCount (ULONG channel);
   void GetLinkedChannel (ULONG channelIndex, ULONG linkIndex, WORD* network_id, WORD* transport_id,WORD* service_id, char** channelName  );
 
-  void  OnTsPacket(CTsHeader& header,byte* tsPacket);
+  void  OnTsPacket(CTsHeader& header,const byte* tsPacket);
   void  OnNewSection(int pid, int tableId, CSection& section); 
 
 
 private:
 		bool GetChannelByindex(ULONG channel, PortalChannel& portalChannel);
-		void DecodeLinkage(byte* buf, int len);
+		void DecodeLinkage(const byte* buf, int len);
 
 		CCriticalSection m_section;
     CTsHeader             m_tsHeader;

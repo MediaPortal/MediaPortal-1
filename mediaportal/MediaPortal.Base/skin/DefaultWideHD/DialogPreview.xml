@@ -84,6 +84,7 @@
       <posY>225</posY>
       <width>570</width>
       <height>630</height>
+	  <onleft>2</onleft>
       <onright>2</onright>
       <spinPosX>4390</spinPosX>
       <spinPosY>765</spinPosY>
@@ -92,8 +93,8 @@
       <description>preview</description>
       <type>image</type>
       <id>6</id>
-      <posX>1110</posX>
-      <posY>225</posY>
+      <posX>1210</posX> 
+      <posY>265</posY> 
       <width>300</width>
       <height>300</height>
       <keepaspectratio>true</keepaspectratio>

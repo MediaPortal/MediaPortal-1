@@ -156,7 +156,7 @@ void CChannelLinkageParser::GetLinkedChannel (ULONG channelIndex,ULONG linkIndex
 	*channelName=(char*)lChannel.name.c_str();
 }
 
-void CChannelLinkageParser::OnTsPacket(CTsHeader& header, byte* tsPacket)
+void CChannelLinkageParser::OnTsPacket(CTsHeader& header, const byte* tsPacket)
 {
 	if (m_bScanning==false) return;
 
@@ -178,7 +178,7 @@ void CChannelLinkageParser::OnNewSection(int pid, int tableId, CSection& section
 	}
 }
 
-void CChannelLinkageParser::DecodeLinkage(byte* buf, int len)
+void CChannelLinkageParser::DecodeLinkage(const byte* buf, int len)
 {
 	CEnterCriticalSection lock (m_section);
 	try
@@ -244,17 +244,16 @@ void CChannelLinkageParser::DecodeLinkage(byte* buf, int len)
 				int descriptor_len = buf[start+off+1];
 				if (start+off+descriptor_len+2>len) 
 					return;
-				if ((descriptor_len>0) && (descriptor_tag==0x4a)) // Linkage descriptor
+				if ((descriptor_len >= 7) && (descriptor_tag == 0x4a)) // Linkage descriptor (ids + linkage type = 7 bytes before name)
 				{
-					LinkedChannel lChannel;
-					lChannel.transport_id=(buf[start+off+2]<<8)+buf[start+off+3];
-					lChannel.network_id=(buf[start+off+4]<<8)+buf[start+off+5];
-					lChannel.service_id=(buf[start+off+6]<<8)+buf[start+off+7];
-					char *cname=(char*)malloc(400);
-					strncpy(cname,(char*)&buf[start+off+9],descriptor_len-7);
-					cname[descriptor_len-7]=0;
-					lChannel.name.assign(cname);
-					free(cname);
+					LinkedChannel lChannel =
+					{
+						transport_id = (buf[start + off + 2] << 8) + buf[start + off + 3],
+						network_id = (buf[start + off + 4] << 8) + buf[start + off + 5],
+						service_id = (buf[start + off + 6] << 8) + buf[start + off + 7],
+					};
+                    lChannel.name.resize(descriptor_len-7);
+					lChannel.name.copy((char*)&buf[start+off+9], descriptor_len-7);
 					channel.m_linkedChannels.push_back(lChannel);
 					//LogDebug("ChannelLinkageScanner: PortalChannel tsid=%d nid=%d sid=%d",channel.transport_id,channel.original_network_id,channel.service_id);
 					//LogDebug("ChannelLinkageScanner: LinkedChannel found len=%d tsid=%d nid=%d sid=%d %s",descriptor_len,lChannel.transport_id,lChannel.network_id,lChannel.service_id,lChannel.name.c_str());

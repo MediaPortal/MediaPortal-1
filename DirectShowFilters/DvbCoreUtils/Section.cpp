@@ -67,7 +67,7 @@ void CSection::Copy(const CSection &section)
   BufferPos = 0;
 }
 
-int CSection::CalcSectionLength(byte* tsPacket,int start)
+int CSection::CalcSectionLength(const byte* tsPacket,int start)
 {
   if(start >= 188)
     return 0;

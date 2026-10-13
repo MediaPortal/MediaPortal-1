@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2024 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 /*
-// Copyright (C) 2005-2024 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -240,7 +240,7 @@ VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyName       "${PRODUCT_PUBLISHER}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} CompanyWebsite    "${PRODUCT_WEB_SITE}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileVersion       "${VERSION}"
 VIAddVersionKey /LANG=${LANG_ENGLISH} FileDescription   "${PRODUCT_NAME} installation ${VERSION_DISP}"
-VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright © 2005-2025 ${PRODUCT_PUBLISHER}"
+VIAddVersionKey /LANG=${LANG_ENGLISH} LegalCopyright    "Copyright © 2005-2026 ${PRODUCT_PUBLISHER}"
 ShowUninstDetails show
 
 
@@ -308,6 +308,7 @@ ShowUninstDetails show
   File "${git_MP}\Utils\bin\${BUILD_TYPE}\Utils.dll"
   File "${git_MP}\core\bin\${BUILD_TYPE}\Core.dll"
   File "${git_MP}\MediaPortal.Base\CSScriptLibrary.dll"
+  File "${git_MP}\MediaPortal.Base\Mono.Posix.dll"
 
   ; create startmenu shortcuts
   ${If} $noDesktopSC != 1
@@ -332,6 +333,7 @@ ShowUninstDetails show
   Delete "$INSTDIR\Utils.dll"
   Delete "$INSTDIR\Core.dll"
   Delete "$INSTDIR\CSScriptLibrary.dll"
+  Delete "$INSTDIR\Mono.Posix.dll"
 
   ; remove startmenu shortcuts
   Delete "$DESKTOP\MediaPortal Extension Manager.lnk"
@@ -571,30 +573,38 @@ ${MementoSection} "MediaPortal TV Server" SecServer
   File "${TVSERVER.BASE}\tevii.dll"
   File "${TVSERVER.BASE}\Ionic.Zip.dll"
 
-  ; Additional assemblies
-  File "${TVSERVER.BASE}\System.Threading.Tasks.Extensions.dll"
-  File "${TVSERVER.BASE}\System.Runtime.CompilerServices.Unsafe.dll"
-
   ; WatchDogService
   File "${git_Common_MP_TVE3}\WatchDogService.Interface\bin\${BUILD_TYPE}\WatchDogService.Interface.dll"
   File "${git_TVServer}\WatchDogService\bin\${BUILD_TYPE}\WatchDogService.exe"
 
+  ; Additional assemblies
+  SetOutPath "$INSTDIR"
+  File "${git_ROOT}\Packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll"
+  File "${git_ROOT}\Packages\System.Threading.Tasks.Extensions.4.6.3\lib\net462\System.Threading.Tasks.Extensions.dll"
 
   ; MediaInfo
   SetOutPath "$INSTDIR"
   !if "${Architecture}" == "x64"
-    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\MediaInfo.dll"
-    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\libcrypto-3-x64.dll"
-    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\libcurl.dll"
-    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x64\libssl-3-x64.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\libcurl.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\libssh2.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\libcrypto-3-x64.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\libssl-3-x64.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\brotlicommon.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\brotlidec.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x64\brotlienc.dll"  
   !else
-    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\MediaInfo.dll"
-    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libcrypto-3.dll"
-    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libcurl.dll"
-    File "${git_ROOT}\Packages\MediaInfo.Native.21.9.1\build\native\x86\libssl-3.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\MediaInfo.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\libcurl.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\libssh2.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\libcrypto-3.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\libssl-3.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\brotlicommon.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\brotlidec.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Native.26.1.0\build\native\x86\brotlienc.dll"  
   !endif
-  File "${git_ROOT}\Packages\MediaInfo.Wrapper.21.9.3\lib\net40\MediaInfo.Wrapper.dll"
-  File "${git_ROOT}\Packages\System.ValueTuple.4.5.0\lib\portable-net40+sl4+win8+wp8\System.ValueTuple.dll"
+  File "${git_ROOT}\Packages\MediaInfo.Wrapper.26.1.0\lib\net45\MediaInfo.Wrapper.dll"
+  File "${git_ROOT}\Packages\System.ValueTuple.4.6.2\lib\net462\System.ValueTuple.dll"
 
   ; thumbnail software
   ${If} ${RunningX64}
@@ -833,12 +843,14 @@ ${MementoSectionEnd}
   ;Delete "$INSTDIR\Interop.SHDocVw.dll"
   Delete "$INSTDIR\ffmpeg.exe"
   Delete "$INSTDIR\TvThumbnails.dll"
+
+  ; MediaInfo
   Delete "$INSTDIR\MediaInfo.dll"
-  Delete "$INSTDIR\libcrypto-1_1.dll"
   Delete "$INSTDIR\libcurl.dll"
-  Delete "$INSTDIR\libssl-1_1.dll"
-  Delete "$INSTDIR\MediaInfo.Wrapper.dll"
-  
+  Delete "$INSTDIR\libssh2.dll"
+  Delete "$INSTDIR\brotlicommon.dll"
+  Delete "$INSTDIR\brotlidec.dll"
+  Delete "$INSTDIR\brotlienc.dll"
   !if "${Architecture}" == "x64"
     Delete "$INSTDIR\libcrypto-3-x64.dll"
     Delete "$INSTDIR\libssl-3-x64.dll"
@@ -846,10 +858,11 @@ ${MementoSectionEnd}
     Delete "$INSTDIR\libcrypto-3.dll"
     Delete "$INSTDIR\libssl-3.dll"
   !endif
+  Delete "$INSTDIR\MediaInfo.Wrapper.dll"
 
   ; Additional assemblies
-  Delete "$INSTDIR\System.Threading.Tasks.Extensions.dll"
   Delete "$INSTDIR\System.Runtime.CompilerServices.Unsafe.dll"
+  Delete "$INSTDIR\System.Threading.Tasks.Extensions.dll"
   Delete "$INSTDIR\System.ValueTuple.dll"
 
   ; protocol implementations for MPIPTVSource.ax
@@ -909,8 +922,11 @@ ${MementoSection} "MediaPortal TV Client plugin" SecClient
   File /oname=System.Data.SQLite.dll "${git_TVServer}\TVDatabase\references\System.Data.SQLite_${Architecture}.dll"
   File "${git_TVServer}\TVDatabase\references\log4net.dll"
   File "${git_TVServer}\TvPlugin\TvPlugin\bin\${BUILD_TYPE}\TvBusinessLayer.dll"
-  File "${git_TVServer}\TVServer.Base\System.Threading.Tasks.Extensions.dll"
-  File "${git_TVServer}\TVServer.Base\System.Runtime.CompilerServices.Unsafe.dll"
+
+  ; Additional assemblies
+  SetOutPath "$MPdir.Base"
+  File "${git_ROOT}\Packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll"
+  File "${git_ROOT}\Packages\System.Threading.Tasks.Extensions.4.6.3\lib\net462\System.Threading.Tasks.Extensions.dll"
 
   ;Gentle.Config
   SetOutPath "$MPdir.Config"
@@ -972,8 +988,8 @@ ${MementoSectionEnd}
   Delete "$MPdir.Base\TvBusinessLayer.dll"
   Delete "$MPdir.Base\TvControl.dll"
   Delete "$MPdir.Base\TvLibrary.Interfaces.dll"
-  Delete "$MPdir.Base\System.Threading.Tasks.Extensions.dll"
   Delete "$MPdir.Base\System.Runtime.CompilerServices.Unsafe.dll"
+  Delete "$MPdir.Base\System.Threading.Tasks.Extensions.dll"
 !macroend
 
 ${MementoSectionDone}
@@ -1189,7 +1205,6 @@ Function .onInit
     SetRegView 32
   !endif
 
-  !insertmacro MediaPortalNetFrameworkCheck
   !insertmacro MediaPortalNet4FrameworkCheck
 
   #### check and parse cmdline parameter

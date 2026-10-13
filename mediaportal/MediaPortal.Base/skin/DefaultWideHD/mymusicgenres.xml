@@ -190,7 +190,7 @@
     <control>
       <id>1</id>
       <type>image</type>
-      <posX>1485</posX>
+      <posX>1420</posX>
       <posY>270</posY>
       <width>390</width>
       <height>390</height>
@@ -201,7 +201,7 @@
     <control>
       <id>500</id>
       <type>image</type>
-      <posX>1485</posX>
+      <posX>1420</posX>
       <posY>270</posY>
       <width>390</width>
       <height>390</height>
@@ -212,7 +212,7 @@
     <control>
       <type>image</type>
       <id>1</id>
-      <posX>1485</posX>
+      <posX>1420</posX>
       <posY>270</posY>
       <width>390</width>
       <height>390</height>
@@ -224,7 +224,7 @@
       <description>ClearArt image</description>
       <type>image</type>
       <id>0</id>
-      <posX>1480</posX>
+      <posX>1415</posX>
       <posY>700</posY>
       <width>400</width>
       <height>155</height>

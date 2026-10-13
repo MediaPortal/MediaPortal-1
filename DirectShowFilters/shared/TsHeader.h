@@ -24,9 +24,9 @@ class CTsHeader
 {
 public:
 	CTsHeader();
-	CTsHeader(byte* tsPacket);
+	CTsHeader(const byte* tsPacket);
 	virtual ~CTsHeader(void);
-	void Decode(byte *data);
+	void Decode(const byte *data);
 	void LogHeader();
 	bool PayLoadOnly();
 	bool AdaptionFieldOnly();

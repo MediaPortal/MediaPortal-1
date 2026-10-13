@@ -12,6 +12,20 @@
       <colordiffuse>ffffffff</colordiffuse>
       <texture>-</texture>
     </control>
+	<control>
+      <description>Number of lines</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1869</posX>
+      <posY>16</posY>
+      <label>#SkinTranslation.Translations.NumberEPGRows.Label: 10</label> 
+      <align>right</align>
+      <font>RSS</font> 
+      <textcolor>lightgray</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+    </control>
     <!-- ********************************************************************************** -->
     <!-- ********************* Single Channel Label and Logo ****************************** -->
     <!-- ********************************************************************************** -->
@@ -252,7 +266,7 @@
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
       <zoom>no</zoom>
-      <texture>defaultTVlogo.png</texture>
+      <texture>DefaultMyradio.png</texture>
     </control>
     <control>
       <description>channel Label template</description>

@@ -188,7 +188,7 @@ namespace MediaPortal.Configuration.Sections
             this.cbRememberLastGroup.Name = "cbRememberLastGroup";
             this.cbRememberLastGroup.Size = new System.Drawing.Size(124, 17);
             this.cbRememberLastGroup.TabIndex = 1;
-            this.cbRememberLastGroup.Text = "Remember last group";
+            this.cbRememberLastGroup.Text = "Remember group of last played channel";
             this.cbRememberLastGroup.UseVisualStyleBackColor = true;
             this.cbRememberLastGroup.CheckedChanged += new System.EventHandler(this.cbRememberLastGroup_CheckedChanged);
             // 

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -40,8 +40,7 @@ namespace MpeMaker.Sections
     {
       try
       {
-        System.Diagnostics.Process.Start(
-          "http://forum.team-mediaportal.com/skins-plugins-installer-mpei-212/extension-installer-v2-71542/");
+        System.Diagnostics.Process.Start("https://forum.team-mediaportal.com/threads/extension-installer-v2.71542/");
       }
       catch (Exception) {}
     }
@@ -57,7 +56,7 @@ namespace MpeMaker.Sections
     {
       try
       {
-        System.Diagnostics.Process.Start("http://wiki.team-mediaportal.com/MpeMaker");
+        System.Diagnostics.Process.Start("https://www.team-mediaportal.com/wiki/display/MediaPortal1/Skins+Installer");
       }
       catch (Exception) {}
     }

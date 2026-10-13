@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2025 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2025 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -50,7 +50,7 @@ namespace MediaPortal.DeployTool.Sections
       // listView.Columns[1].Text = Localizer.GetBestTranslation("Install_colState");
       // listView.Columns[2].Text = Localizer.GetBestTranslation("Install_colAction");
       labelSectionHeader.Text = "";
-      flpApplication.Update();
+      flpApplication.Refresh();
     }
 
     public override DeployDialog GetNextDialog()
@@ -59,7 +59,7 @@ namespace MediaPortal.DeployTool.Sections
       progressInstall.Maximum = flpApplication.Controls.Count;
       progressInstall.Value = 0;
       progressInstall.Visible = true;
-      progressInstall.Update();
+      progressInstall.Refresh();
 
       Application.DoEvents();
       Thread.Sleep(1);
@@ -70,10 +70,7 @@ namespace MediaPortal.DeployTool.Sections
         int action = PerformPackageAction(package, (ApplicationCtrl)item);
         ((ApplicationCtrl)item).InAction = false;
 
-        item.Update();
-
-        Application.DoEvents();
-        Thread.Sleep(1);
+        item.Refresh();
 
         if (action == 2)
         {
@@ -88,16 +85,17 @@ namespace MediaPortal.DeployTool.Sections
           ((ApplicationCtrl)item).StatusName = CheckState.COMPLETE.ToString();
         }
 
-        item.Update();
+        item.Refresh();
 
         progressInstall.Value++;
-        progressInstall.Update();
+        progressInstall.Refresh();
 
         Application.DoEvents();
         Thread.Sleep(1);
       }
       // PopulateListView();
       progressInstall.Visible = false;
+      progressInstall.Refresh();
       return DialogFlowHandler.Instance.GetDialogInstance(DialogType.Finished);
     }
 
@@ -358,13 +356,14 @@ namespace MediaPortal.DeployTool.Sections
       {
         item.InAction = true;
         item.StatusName = CheckState.PROGRESS.ToString();
+        item.Refresh();
         switch (result.state)
         {
           case CheckState.NOT_INSTALLED:
             if (result.needsDownload)
             {
               item.Action = Localizer.GetBestTranslation("Install_msgDownloading");
-              item.Update();
+              item.Refresh();
               if (!package.Download())
               {
                 Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errInstallFailed"),
@@ -373,7 +372,7 @@ namespace MediaPortal.DeployTool.Sections
               }
             }
             item.Action = Localizer.GetBestTranslation("Install_msgInstalling");
-            item.Update();
+            item.Refresh();
             if (!package.Install())
             {
               Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errInstallFailed"),
@@ -384,7 +383,7 @@ namespace MediaPortal.DeployTool.Sections
 
           case CheckState.NOT_CONFIGURED:
             item.Action = Localizer.GetBestTranslation("Install_msgConfiguring");
-            item.Update();
+            item.Refresh();
             if (!package.Install())
             {
               Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errConfigureFailed"),
@@ -395,7 +394,7 @@ namespace MediaPortal.DeployTool.Sections
 
           case CheckState.NOT_REMOVED:
             item.Action = Localizer.GetBestTranslation("Install_msgUninstalling");
-            item.Update();
+            item.Refresh();
             if (!package.Install())
             {
               Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errRemoveFailed"),
@@ -406,7 +405,7 @@ namespace MediaPortal.DeployTool.Sections
 
           case CheckState.VERSION_MISMATCH:
             item.Action = Localizer.GetBestTranslation("Install_msgUninstalling");
-            item.Update();
+            item.Refresh();
             if (!package.UnInstall())
             {
               Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errUinstallFailed"),
@@ -416,7 +415,7 @@ namespace MediaPortal.DeployTool.Sections
             if (result.needsDownload)
             {
               item.Action = Localizer.GetBestTranslation("Install_msgDownloading");
-              item.Update();
+              item.Refresh();
               if (!package.Download())
               {
                 Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errDownloadFailed"),
@@ -425,7 +424,7 @@ namespace MediaPortal.DeployTool.Sections
               }
             }
             item.Action = Localizer.GetBestTranslation("Install_msgInstalling");
-            item.Update();
+            item.Refresh();
             if (!package.Install())
             {
               Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errInstallFailed"),
@@ -436,7 +435,7 @@ namespace MediaPortal.DeployTool.Sections
 
           case CheckState.NOT_DOWNLOADED:
             item.Action = Localizer.GetBestTranslation("Install_msgDownloading");
-            item.Update();
+            item.Refresh();
             if (!package.Download())
             {
               Utils.ErrorDlg(string.Format(Localizer.GetBestTranslation("Install_errDownloadFailed"),

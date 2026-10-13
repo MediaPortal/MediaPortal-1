@@ -49,7 +49,7 @@ namespace WatchDogService
       {
         sc.Start();
         int i = 0;
-        while (sc.Status == ServiceControllerStatus.Running)
+        while (sc.Status != ServiceControllerStatus.Running)
         {
           i++;
           Thread.Sleep(500);
@@ -80,7 +80,7 @@ namespace WatchDogService
       {
         sc.Stop();
         int i = 0;
-        while (sc.Status == ServiceControllerStatus.Stopped)
+        while (sc.Status != ServiceControllerStatus.Stopped)
         {
           i++;
           Thread.Sleep(500);

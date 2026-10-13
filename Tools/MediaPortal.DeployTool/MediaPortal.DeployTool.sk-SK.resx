@@ -465,6 +465,9 @@ Pokračujte na vlastné nebezpečie!</value>
     <value>Daný Microsoft komponent vyžaduje reštart.
 Prosím reštartuje pred pokračovaním inštalácie MediaPortalu.</value>
   </data>
+  <data name="Need_Reboot" xml:space="preserve">
+    <value>Nezabudnite reštartovať počítač pred spustením programu MediaPortal.</value>
+  </data>
   <data name="TvServerSettings_errInvalidPath" xml:space="preserve">
     <value>Musíte zadať platnú inštalačnú cestu pre TV server.</value>
   </data>

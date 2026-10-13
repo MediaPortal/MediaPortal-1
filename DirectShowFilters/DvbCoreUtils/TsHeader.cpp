@@ -32,7 +32,7 @@ extern void LogDebug(const char *fmt, ...) ;
 CTsHeader::CTsHeader()
 {
 }
-CTsHeader::CTsHeader(byte* tsPacket)
+CTsHeader::CTsHeader(const byte* tsPacket)
 {
 	Decode(tsPacket);
 }
@@ -56,9 +56,9 @@ bool CTsHeader::AdaptionFieldAndPayLoad()
 	return (AdaptionControl==3);
 }
 
-void CTsHeader::Decode(byte *data)
+void CTsHeader::Decode(const byte *data)
 {
-	m_packet=data;
+	m_packet=(byte*)data;
   //47 40 d2 10
 	//															bits  byteNo		mask
 	//SyncByte											:	8			0				0xff  11111111
