@@ -1,5 +1,5 @@
-name-template: $RESOLVED_VERSION
-tag-template: $RESOLVED_VERSION
+name-template: MediaPortal $RESOLVED_VERSION
+tag-template: Release_$RESOLVED_VERSION
 exclude-contributors:
   - github-actions[bot]
   - github-actions
