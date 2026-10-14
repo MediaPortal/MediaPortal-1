@@ -220,7 +220,7 @@ namespace MediaPortal.GUI.Library
         }
         catch (Exception ex) 
         {
-          Log.Error("TexturePacker: Cleanup {0}", ex.Message);
+          Log.Info("TexturePacker: Cleanup {0}", ex.Message);
         }
 
       }
