@@ -820,7 +820,7 @@ namespace MediaPortal.DeployTool
     {
       int major = 1;
       int minor = 39;
-      int revision = 000;
+      int revision = 001;
 
       Version ver = new Version(major, minor, revision);
       return ver;
@@ -870,7 +870,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.39 Endurance";
+      return "1.39.1 Endurance";
     }
 
     /// <summary>
