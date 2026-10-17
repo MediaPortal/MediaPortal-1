@@ -32,9 +32,9 @@
 class Effect;
 struct CTextDims;
 struct CPolygonPath {
-    CAtlArray<BYTE> typesOrg;
-    CAtlArray<CPoint> pointsOrg;
-    CSize size;
+    std::vector<BYTE> typesOrg;
+    std::vector<POINT> pointsOrg;
+    SIZE size = {};
 };
 
 struct CAlphaMask;
@@ -58,7 +58,7 @@ struct CAlphaMask final : std::unique_ptr<BYTE[]> {
     size_t m_size;
 
     explicit CAlphaMask(size_t size)
-        : std::unique_ptr<BYTE[]>(DEBUG_NEW BYTE[size])
+        : std::unique_ptr<BYTE[]>(new BYTE[size])
         , m_size(size) {
     }
 
@@ -66,23 +66,23 @@ struct CAlphaMask final : std::unique_ptr<BYTE[]> {
         for (auto it = alphaMaskPool.begin(); it != alphaMaskPool.end(); ++it) {
             auto& am = *it;
             if (am.m_size >= size) {
-                auto ret = std::shared_ptr<CAlphaMask>(DEBUG_NEW CAlphaMask(std::move(am)), alpha_mask_deleter(alphaMaskPool));
+                auto ret = std::shared_ptr<CAlphaMask>(new CAlphaMask(std::move(am)), alpha_mask_deleter(alphaMaskPool));
                 alphaMaskPool.erase(it);
                 return std::move(ret);
             }
         }
-        return std::shared_ptr<CAlphaMask>(DEBUG_NEW CAlphaMask(size), alpha_mask_deleter(alphaMaskPool));
+        return std::shared_ptr<CAlphaMask>(new CAlphaMask(size), alpha_mask_deleter(alphaMaskPool));
     }
 };
 
 typedef std::shared_ptr<CPolygonPath> CPolygonPathSharedPtr;
 struct SSATag;
-typedef std::shared_ptr<CAtlList<SSATag>> SSATagsList;
+typedef std::shared_ptr<std::list<SSATag>> SSATagsList;
 typedef std::shared_ptr<CAlphaMask> CAlphaMaskSharedPtr;
 
 typedef CRenderingCache<CTextDimsKey, CTextDims, CKeyTraits<CTextDimsKey>> CTextDimsCache;
 typedef CRenderingCache<CPolygonPathKey, CPolygonPathSharedPtr, CKeyTraits<CPolygonPathKey>> CPolygonCache;
-typedef CRenderingCache<CStringW, SSATagsList, CStringElementTraits<CStringW>> CSSATagsCache;
+typedef CRenderingCache<std::wstring, SSATagsList, CStringKeyTraits> CSSATagsCache;
 typedef CRenderingCache<CEllipseKey, CEllipseSharedPtr, CKeyTraits<CEllipseKey>> CEllipseCache;
 typedef CRenderingCache<COutlineKey, COutlineDataSharedPtr, CKeyTraits<COutlineKey>> COutlineCache;
 typedef CRenderingCache<COverlayKey, COverlayDataSharedPtr, CKeyTraits<COverlayKey>> COverlayCache;
@@ -109,12 +109,21 @@ struct RenderingCaches {
         , alphaMaskCache(128) {}
 };
 
-class CMyFont : public CFont
+class CMyFont
 {
+    HFONT m_hFont;
+
 public:
     int m_ascent, m_descent;
 
     CMyFont(const STSStyle& style);
+    ~CMyFont();
+    CMyFont(const CMyFont&) = delete;
+    CMyFont& operator=(const CMyFont&) = delete;
+
+    operator HFONT() const {
+        return m_hFont;
+    }
 };
 
 struct CTextDims {
@@ -127,20 +136,20 @@ class CPolygon;
 class CWord : public Rasterizer
 {
     bool m_fDrawn;
-    CPoint m_p;
+    POINT m_p = {};
 
-    void Transform(CPoint org);
+    void Transform(POINT org);
 
-    void Transform_C(const CPoint& org);
-    void Transform_SSE2(const CPoint& org);
-    void Transform_quick(const CPoint& org);
+    void Transform_C(const POINT& org);
+    void Transform_SSE2(const POINT& org);
+    void Transform_quick(const POINT& org);
     bool CreateOpaqueBox();
 
 protected:
     RenderingCaches& m_renderingCaches;
 
     double m_scalex, m_scaley;
-    CStringW m_str;
+    std::wstring m_str;
 
     virtual bool CreatePath() = 0;
 
@@ -156,14 +165,14 @@ public:
     int m_width, m_ascent, m_descent;
 
     // str[0] = 0 -> m_fLineBreak = true (in this case we only need and use the height of m_font from the whole class)
-    CWord(const STSStyle& style, CStringW str, int ktype, int kstart, int kend, double scalex, double scaley,
+    CWord(const STSStyle& style, std::wstring str, int ktype, int kstart, int kend, double scalex, double scaley,
           RenderingCaches& renderingCaches);
     virtual ~CWord();
 
     virtual CWord* Copy() = 0;
     virtual bool Append(CWord* w);
 
-    void Paint(const CPoint& p, const CPoint& org);
+    void Paint(const POINT& p, const POINT& org);
 
     friend class COutlineKey;
 };
@@ -174,7 +183,7 @@ protected:
     virtual bool CreatePath();
 
 public:
-    CText(const STSStyle& style, CStringW str, int ktype, int kstart, int kend, double scalex, double scaley,
+    CText(const STSStyle& style, std::wstring str, int ktype, int kstart, int kend, double scalex, double scaley,
           RenderingCaches& renderingCaches);
 
     virtual CWord* Copy();
@@ -194,7 +203,7 @@ protected:
     virtual bool CreatePath();
 
 public:
-    CPolygon(const STSStyle& style, CStringW str, int ktype, int kstart, int kend, double scalex, double scaley, int baseline,
+    CPolygon(const STSStyle& style, std::wstring str, int ktype, int kstart, int kend, double scalex, double scaley, int baseline,
              RenderingCaches& renderingCaches);
     CPolygon(CPolygon&); // can't use a const reference because we need to use CAtlArray::Copy which expects a non-const reference
     virtual ~CPolygon();
@@ -224,7 +233,7 @@ private:
     virtual bool Append(CWord* w);
 
 public:
-    CClipper(CStringW str, const CSize& size, double scalex, double scaley, bool inverse, const CPoint& cpOffset,
+    CClipper(std::wstring str, const SIZE& size, double scalex, double scaley, bool inverse, const POINT& cpOffset,
              RenderingCaches& renderingCaches);
 
     void SetEffect(const Effect& effect, int effectType) {
@@ -235,7 +244,7 @@ public:
     CAlphaMaskSharedPtr GetAlphaMask(const std::shared_ptr<CClipper>& clipper);
 
     ULONG Hash() const {
-        ULONG hash = CStringElementTraits<CString>::Hash(m_str);
+        ULONG hash = HashString(m_str.c_str(), int(m_str.size()));
         hash += hash << 5;
         hash += m_inverse;
         hash += hash << 5;
@@ -270,9 +279,9 @@ public:
     }
 
 private:
-    const CSize m_size;
+    const SIZE m_size = {};
     const bool m_inverse;
-    const CPoint m_cpOffset;
+    const POINT m_cpOffset = {};
     CAlphaMaskSharedPtr m_pAlphaMask;
     Effect m_effect;
     int m_effectType;
@@ -280,7 +289,7 @@ private:
 
 using CClipperSharedPtr = std::shared_ptr<CClipper>;
 
-class CLine : public CAtlList<CWord*>
+class CLine : public std::list<CWord*>
 {
 public:
     int m_width   = 0;
@@ -293,9 +302,9 @@ public:
 
     void Compact();
 
-    CRect PaintShadow(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha);
-    CRect PaintOutline(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha);
-    CRect PaintBody(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha);
+    RECT PaintShadow(SubPicDesc& spd, RECT& clipRect, BYTE* pAlphaMask, POINT p, POINT org, int time, int alpha);
+    RECT PaintOutline(SubPicDesc& spd, RECT& clipRect, BYTE* pAlphaMask, POINT p, POINT org, int time, int alpha);
+    RECT PaintBody(SubPicDesc& spd, RECT& clipRect, BYTE* pAlphaMask, POINT p, POINT org, int time, int alpha);
 };
 
 enum SSATagCmd {
@@ -362,9 +371,9 @@ enum SSATagCmd {
 
 struct SSATag {
     SSATagCmd cmd;
-    CAtlArray<CStringW, CStringElementTraits<CStringW>> params;
-    CAtlArray<int> paramsInt;
-    CAtlArray<double> paramsReal;
+    std::vector<std::wstring> params;
+    std::vector<int> paramsInt;
+    std::vector<double> paramsReal;
     SSATagsList subTagsList;
 
     SSATag() : cmd(SSA_unknown) {};
@@ -375,9 +384,9 @@ struct SSATag {
         , paramsInt()
         , paramsReal()
         , subTagsList(tag.subTagsList) {
-        params.Copy(tag.params);
-        paramsInt.Copy(tag.paramsInt);
-        paramsReal.Copy(tag.paramsReal);
+        params = tag.params;
+        paramsInt = tag.paramsInt;
+        paramsReal = tag.paramsReal;
     }
 };
 
@@ -391,14 +400,14 @@ enum eftype {
 
 #define EF_NUMBEROFEFFECTS 5
 
-class CSubtitle : public CAtlList<CLine*>
+class CSubtitle : public std::list<CLine*>
 {
     RenderingCaches& m_renderingCaches;
 
     int GetFullWidth();
-    int GetFullLineWidth(POSITION pos);
-    int GetWrapWidth(POSITION pos, int maxwidth);
-    CLine* GetNextLine(POSITION& pos, int maxwidth);
+    int GetFullLineWidth(std::list<CWord*>::iterator pos);
+    int GetWrapWidth(std::list<CWord*>::iterator pos, int maxwidth);
+    CLine* GetNextLine(std::list<CWord*>::iterator& pos, int maxwidth);
 
 public:
     int m_scrAlignment;
@@ -409,11 +418,11 @@ public:
 
     Effect* m_effects[EF_NUMBEROFEFFECTS];
 
-    CAtlList<CWord*> m_words;
+    std::list<CWord*> m_words;
 
     CClipperSharedPtr m_pClipper;
 
-    CRect m_rect, m_clip;
+    RECT m_rect, m_clip;
     int m_topborder, m_bottomborder;
     bool m_clipInverse;
 
@@ -427,41 +436,41 @@ public:
     virtual void Empty();
     void EmptyEffects();
 
-    void CreateClippers(CSize size);
+    void CreateClippers(SIZE size);
 
-    void MakeLines(CSize size, const CRect& marginRect);
+    void MakeLines(SIZE size, const RECT& marginRect);
 };
 
 class CScreenLayoutAllocator
 {
     struct SubRect {
-        CRect r;
+        RECT r = {};
         int segment, entry, layer;
     };
 
-    CAtlList<SubRect> m_subrects;
+    std::list<SubRect> m_subrects;
 
 public:
     /*virtual*/
     void Empty();
 
-    void AdvanceToSegment(int segment, const CAtlArray<int>& sa);
-    CRect AllocRect(const CSubtitle* s, int segment, int entry, int layer, int collisions);
+    void AdvanceToSegment(int segment, const std::vector<int>& sa);
+    RECT AllocRect(const CSubtitle* s, int segment, int entry, int layer, int collisions);
 };
 
 class __declspec(uuid("537DCACA-2812-4a4f-B2C6-1A34C17ADEB0"))
     CRenderedTextSubtitle : public CSimpleTextSubtitle, public CSubPicProviderImpl, public ISubStream
 {
-    static CAtlMap<CStringW, SSATagCmd, CStringElementTraits<CStringW>> s_SSATagCmds;
-    CAtlMap<int, CSubtitle*> m_subtitleCache;
+    static std::map<std::wstring, SSATagCmd> s_SSATagCmds;
+    std::map<int, CSubtitle*> m_subtitleCache;
 
     RenderingCaches m_renderingCaches;
     CCritSec renderLock;
 
     CScreenLayoutAllocator m_sla;
 
-    CSize m_size;
-    CRect m_vidrect;
+    SIZE m_size = {};
+    RECT m_vidrect = {};
 
     // temp variables, used when parsing the script
     int m_time, m_delay;
@@ -472,14 +481,14 @@ class __declspec(uuid("537DCACA-2812-4a4f-B2C6-1A34C17ADEB0"))
     int m_polygonBaselineOffset;
     bool m_bOverrideStyle;
     bool m_bOverridePlacement;
-    CSize m_overridePlacement;
+    SIZE m_overridePlacement = {};
 
-    void ParseEffect(CSubtitle* sub, CString str);
-    void ParseString(CSubtitle* sub, CStringW str, STSStyle& style);
-    void ParsePolygon(CSubtitle* sub, CStringW str, STSStyle& style);
-    bool ParseSSATag(SSATagsList& tagsList, const CStringW& str);
+    void ParseEffect(CSubtitle* sub, tstring str);
+    void ParseString(CSubtitle* sub, std::wstring str, STSStyle& style);
+    void ParsePolygon(CSubtitle* sub, std::wstring str, STSStyle& style);
+    bool ParseSSATag(SSATagsList& tagsList, const std::wstring& str);
     bool CreateSubFromSSATag(CSubtitle* sub, const SSATagsList& tagsList, STSStyle& style, STSStyle& org, bool fAnimate = false);
-    bool ParseHtmlTag(CSubtitle* sub, CStringW str, STSStyle& style, const STSStyle& org);
+    bool ParseHtmlTag(CSubtitle* sub, std::wstring str, STSStyle& style, const STSStyle& org);
 
     double CalcAnimation(double dst, double src, bool fAnimate);
 
@@ -512,13 +521,13 @@ public:
 
     void SetAlignment(bool bOverridePlacement, LONG lHorPos, LONG lVerPos) {
         m_bOverridePlacement = bOverridePlacement;
-        m_overridePlacement.SetSize(lHorPos, lVerPos);
+        m_overridePlacement = MakeSize(lHorPos, lVerPos);
     }
 
 public:
-    bool Init(CSize size, const CRect& vidrect); // will call Deinit()
+    bool Init(SIZE size, const RECT& vidrect); // will call Deinit()
     void Deinit();
-    CString GetPath();
+    tstring GetPath();
 
     bool m_webvtt_allow_clear;
 
@@ -542,5 +551,5 @@ public:
     STDMETHODIMP_(int) GetStream();
     STDMETHODIMP SetStream(int iStream);
     STDMETHODIMP Reload();
-    STDMETHODIMP SetSourceTargetInfo(CString yuvMatrix, int targetBlackLevel, int targetWhiteLevel);
+    STDMETHODIMP SetSourceTargetInfo(tstring yuvMatrix, int targetBlackLevel, int targetWhiteLevel);
 };

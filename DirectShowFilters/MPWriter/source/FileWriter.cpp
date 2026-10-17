@@ -28,7 +28,6 @@
 #include <ws2tcpip.h>
 #include <streams.h>
 #include "FileWriter.h"
-#include <atlbase.h>
 
 FileWriter::FileWriter() :
 	m_hFile(INVALID_HANDLE_VALUE),

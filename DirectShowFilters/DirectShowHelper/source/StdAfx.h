@@ -36,6 +36,9 @@
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 #endif
 
-#include <afx.h>
-#include <afxwin.h>         // MFC core and standard components
+#include <windows.h>
+#include <tchar.h>
+#include <process.h>
+#include "../../shared/MfcCompat.h"
+#include "helpers/smartptr.h"
 

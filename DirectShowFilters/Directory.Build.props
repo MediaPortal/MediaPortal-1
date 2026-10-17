@@ -16,6 +16,11 @@
     <ClCompile>
       <!-- /GS stack cookies -->
       <BufferSecurityCheck>true</BufferSecurityCheck>
+      <!-- 3. C++17 for every project (audit READ-01). A project can override it; the ones that need MFC and
+           could not be compiled as C++17 yet are pinned to stdcpp14 in their .vcxproj. -->
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <!-- C++17 adds std::byte, which clashes with the Windows 'byte' typedef under 'using namespace std' -->
+      <PreprocessorDefinitions>_HAS_STD_BYTE=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <!-- /DYNAMICBASE (ASLR) and /NXCOMPAT (DEP) -->

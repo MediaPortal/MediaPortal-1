@@ -14,8 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
-#include <atlstr.h>
-#include <atltypes.h>
+#include "StdString.h"
 #include <pdh.h>
 
 class MPEVRCustomPresenter;
@@ -42,10 +41,10 @@ public:
   StatsRenderer(MPEVRCustomPresenter* presenter, IDirect3DDevice9* device);
   ~StatsRenderer(void);
 
-  void DrawText(const RECT &rc, const CString &strText);
-  HRESULT DrawRect(DWORD color, DWORD alpha, const CRect &rect);
+  void DrawText(const RECT &rc, const CStdString &strText);
+  HRESULT DrawRect(DWORD color, DWORD alpha, const RECT &rect);
   
-  void DrawTearingTest(CComPtr<IDirect3DSurface9> pSurface);
+  void DrawTearingTest(Com::SmartPtr<IDirect3DSurface9> pSurface);
   void DrawStats();
   void VideSizeChanged();
 
@@ -55,12 +54,12 @@ private:
 
   // D3D lib
   int m_nDXSdkRelease;
-  CString m_strD3DX9Version;
+  CStdString m_strD3DX9Version;
 
   // for drawing stats
-  CComPtr<ID3DXLine>    m_pLine;
-  CComPtr<ID3DXFont>    m_pFont;
-  CComPtr<ID3DXSprite>  m_pSprite;
+  Com::SmartPtr<ID3DXLine>    m_pLine;
+  Com::SmartPtr<ID3DXFont>    m_pFont;
+  Com::SmartPtr<ID3DXSprite>  m_pSprite;
 
   // function pointers to D3D methods
   D3DXCreateLinePtr		m_pD3DXCreateLine;

@@ -43,8 +43,8 @@
 
 #pragma warning(disable : 4995)
 #include <streams.h>
+#include <process.h>
 #include "FileWriterThreaded.h"
-#include <atlbase.h>
 
 extern void LogDebug(const char *fmt, ...) ;
 extern void LogDebug(const wchar_t *fmt, ...) ;
@@ -95,7 +95,7 @@ HRESULT FileWriterThreaded::Open(LPCWSTR pszFileName)
     long length = wcslen(pszFileName);
   
     if(length > MAX_PATH)
-      return ERROR_FILENAME_EXCED_RANGE;
+      return HRESULT_FROM_WIN32(ERROR_FILENAME_EXCED_RANGE);
   
     // Take a copy of the filename
     m_pFileName = new wchar_t[length+1];
@@ -134,7 +134,7 @@ HRESULT FileWriterThreaded::OpenFile()
   // Has a filename been set yet?
   if (m_pFileName == NULL)
   {
-    return ERROR_INVALID_NAME;
+    return HRESULT_FROM_WIN32(ERROR_INVALID_NAME);
   }
 
   // Check if the file is being read by another process.

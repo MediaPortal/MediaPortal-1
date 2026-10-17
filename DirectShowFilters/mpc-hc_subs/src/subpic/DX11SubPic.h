@@ -61,15 +61,15 @@ public:
 
 class CDX11SubPicAllocator : public CSubPicAllocatorImpl, public CCritSec
 {
-	CComPtr<ID3D11Device> m_pDevice;
-	CSize m_maxsize;
+	ComPtr<ID3D11Device> m_pDevice;
+	SIZE m_maxsize = {};
 
-	CComPtr<ID3D11Texture2D> m_pOutputTexture;
-	CComPtr<ID3D11ShaderResourceView> m_pOutputShaderResource;
-	CComPtr<ID3D11BlendState> m_pAlphaBlendState;
-	CComPtr<ID3D11Buffer> m_pVertexBuffer;
-	CComPtr<ID3D11SamplerState> m_pSamplerPoint;
-	CComPtr<ID3D11SamplerState> m_pSamplerLinear;
+	ComPtr<ID3D11Texture2D> m_pOutputTexture;
+	ComPtr<ID3D11ShaderResourceView> m_pOutputShaderResource;
+	ComPtr<ID3D11BlendState> m_pAlphaBlendState;
+	ComPtr<ID3D11Buffer> m_pVertexBuffer;
+	ComPtr<ID3D11SamplerState> m_pSamplerPoint;
+	ComPtr<ID3D11SamplerState> m_pSamplerLinear;
 
 	bool Alloc(bool fStatic, ISubPic** ppSubPic) override;
 
@@ -83,7 +83,7 @@ public:
 	std::list<MemPic_t> m_FreeSurfaces;
 	std::list<CDX11SubPic*> m_AllocatedSurfaces;
 
-	HRESULT Render(const MemPic_t& memPic, const CRect& dirtyRect, const CRect& srcRect, const CRect& dstRect);
+	HRESULT Render(const MemPic_t& memPic, const RECT& dirtyRect, const RECT& srcRect, const RECT& dstRect);
 
 	void GetStats(int& _nFree, int& _nAlloc);
 

@@ -303,9 +303,9 @@ bool StrToDouble(const wchar_t* str, double& value)
 	return false;
 }
 
-CStringW HR2Str(const HRESULT hr)
+std::wstring HR2Str(const HRESULT hr)
 {
-	CStringW str;
+	std::wstring str;
 #define UNPACK_VALUE(VALUE) case VALUE: str = L#VALUE; break;
 #define UNPACK_HR_WIN32(VALUE) case (((VALUE) & 0x0000FFFF) | (FACILITY_WIN32 << 16) | 0x80000000): str = L#VALUE; break;
 	switch (hr) {
@@ -358,7 +358,7 @@ CStringW HR2Str(const HRESULT hr)
 		UNPACK_VALUE(MF_E_TRANSFORM_TYPE_NOT_SET);
 #endif
 	default:
-		str.Format(L"0x%08x", hr);
+		str = ::Format(L"0x%08x", hr);
 	};
 #undef UNPACK_VALUE
 #undef UNPACK_HR_WIN32

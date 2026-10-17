@@ -111,9 +111,9 @@ STDMETHODIMP CXySubPicProvider::Render(SubPicDesc& spd, REFERENCE_TIME rt, doubl
         return hr;
     }
 
-    CRect rcDirty;
-    rcDirty.IntersectRect(CRect(p, sz), CRect(0, 0, spd.w, spd.h));
-    int w = rcDirty.Width(), h = rcDirty.Height();
+    RECT rcDirty = {};
+    rcDirty = RectIntersect(MakeRect(p, sz), MakeRect(0, 0, spd.w, spd.h));
+    int w = RectWidth(rcDirty), h = RectHeight(rcDirty);
     BYTE* d = spd.bits + spd.pitch * rcDirty.top + rcDirty.left * 4; // move pointer to dirty rect
     for (ptrdiff_t j = 0; j < h; j++, s += pitch, d += spd.pitch) {
         memcpy(d, s, w * 4);
@@ -125,11 +125,11 @@ STDMETHODIMP CXySubPicProvider::Render(SubPicDesc& spd, REFERENCE_TIME rt, doubl
 
 STDMETHODIMP CXySubPicProvider::GetTextureSize(POSITION pos, SIZE& MaxTextureSize, SIZE& VirtualSize, POINT& VirtualTopLeft)
 {
-    CRect outputRect, clipRect;
+    RECT outputRect, clipRect;
     if (m_pSubFrame && SUCCEEDED(m_pSubFrame->GetOutputRect(&outputRect)) && SUCCEEDED(m_pSubFrame->GetClipRect(&clipRect))) {
-        MaxTextureSize = outputRect.Size();
-        VirtualSize = clipRect.Size();
-        VirtualTopLeft = clipRect.TopLeft();
+        MaxTextureSize = RectSize(outputRect);
+        VirtualSize = RectSize(clipRect);
+        VirtualTopLeft = RectTopLeft(clipRect);
         return S_OK;
     }
     return E_FAIL;

@@ -43,10 +43,11 @@
 #pragma warning(disable : 4995)
 #pragma warning(disable : 4996)
 #include <streams.h>
+#include <process.h>
 #include "MultiFileWriter.h"
-#include <atlbase.h>
 #include <windows.h>
 #include <stdio.h>
+#include "../../shared/TcharConv.h"
 extern void LogDebug(const char *fmt, ...) ;
 extern void LogDebug(const wchar_t *fmt, ...) ;
 
@@ -104,7 +105,7 @@ HRESULT MultiFileWriter::Open(LPCWSTR pszFileName)
   	if(wcslen(pszFileName) > MAX_PATH)
     {
       LogDebug(L"MultiFileWriter: filename too long");
-  		return ERROR_FILENAME_EXCED_RANGE;
+  		return HRESULT_FROM_WIN32(ERROR_FILENAME_EXCED_RANGE);
     }
   	// Take a copy of the filename
   	m_pTSBufferFileName = new WCHAR[1+lstrlenW(pszFileName)];
@@ -155,7 +156,7 @@ HRESULT MultiFileWriter::OpenFile()
   // Has a filename been set yet?
   if (m_pTSBufferFileName == NULL)
   {
-    return ERROR_INVALID_NAME;
+    return HRESULT_FROM_WIN32(ERROR_INVALID_NAME);
   }
 
   ::DeleteFileW((LPCWSTR) m_pTSBufferFileName);
@@ -322,7 +323,6 @@ HRESULT MultiFileWriter::WriteToDisk(PBYTE pbData, ULONG lDataLength)
 
 HRESULT MultiFileWriter::PrepareTSFile()
 {
-	USES_CONVERSION;
 	HRESULT hr;
 
 	//LogDebug("PrepareTSFile()");

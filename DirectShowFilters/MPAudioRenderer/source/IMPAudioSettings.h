@@ -144,6 +144,7 @@ IMPAudioRendererConfig: public IUnknown
   virtual HRESULT STDMETHODCALLTYPE GetInt(MPARSetting setting, int* pValue) = 0;
   virtual HRESULT STDMETHODCALLTYPE SetInt(MPARSetting setting, int value) = 0;
 
+  // GetString allocates the string with CoTaskMemAlloc: the caller frees it with CoTaskMemFree
   virtual HRESULT STDMETHODCALLTYPE GetString(MPARSetting setting, LPWSTR* ppValue) = 0;
   virtual HRESULT STDMETHODCALLTYPE SetString(MPARSetting setting, LPWSTR pValue) = 0;
 };

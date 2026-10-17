@@ -225,7 +225,7 @@ void CPmtParser::OnNewSection(CSection& section)
                 pid.Lang[3]=tempPids[i].Lang[3]; // should be null if no extra data is available
                 pid.Lang[4]=tempPids[i].Lang[4];
                 pid.Lang[5]=tempPids[i].Lang[5];
-                tempPids.pop_back();
+                tempPids.erase(tempPids.begin() + i); // the entry that was used, not the last one
                 break;
               }
             }
@@ -269,19 +269,20 @@ void CPmtParser::OnNewSection(CSection& section)
 
               pidFound=true;
             }
-            // Find corresponding subtitle stream by PID, if not found
-            // the stream type is be unknown to us
-            for(unsigned int i(0); i<m_pidInfo.subtitlePids.size(); i++)
+          }
+
+          // Find corresponding subtitle stream by PID, if not found
+          // the stream type is be unknown to us
+          for(unsigned int i(0); i<m_pidInfo.subtitlePids.size(); i++)
+          {
+            if(m_pidInfo.subtitlePids[i].Pid == elementary_PID)
             {
-              if(m_pidInfo.subtitlePids[i].Pid == elementary_PID)
-              {
-                m_pidInfo.subtitlePids[i].Lang[0]=section.Data[pointer+2];
-                m_pidInfo.subtitlePids[i].Lang[1]=section.Data[pointer+3];
-                m_pidInfo.subtitlePids[i].Lang[2]=section.Data[pointer+4];
-                m_pidInfo.subtitlePids[i].Lang[3]=0;
-                pidFound=true;
-              }
-            }            
+              m_pidInfo.subtitlePids[i].Lang[0]=section.Data[pointer+2];
+              m_pidInfo.subtitlePids[i].Lang[1]=section.Data[pointer+3];
+              m_pidInfo.subtitlePids[i].Lang[2]=section.Data[pointer+4];
+              m_pidInfo.subtitlePids[i].Lang[3]=0;
+              pidFound=true;
+            }
           }
 
           if(!pidFound)
@@ -348,6 +349,8 @@ void CPmtParser::OnNewSection(CSection& section)
             //}
 
             int teletext_magazine_number = (b3 & 0x07); // last(lsb) 3 bits
+            if (teletext_magazine_number == 0)
+              teletext_magazine_number = 8; // magazine 8 is coded as 0 (ETSI EN 300 468, teletext descriptor)
 
             int teletext_page_number = (section.Data[pointer + varBytes*j + 6]);
 

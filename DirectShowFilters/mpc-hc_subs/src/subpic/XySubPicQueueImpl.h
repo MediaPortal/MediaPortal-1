@@ -52,6 +52,6 @@ public:
     // ISubPicQueue
 
     STDMETHODIMP Invalidate(REFERENCE_TIME rtInvalidate = -1);
-    STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, CComPtr<ISubPic>& pSubPic);
-    STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, bool, CComPtr<ISubPic>& pSubPic);
+    STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, ComPtr<ISubPic>& pSubPic);
+    STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, bool, ComPtr<ISubPic>& pSubPic);
 };

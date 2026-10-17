@@ -18,9 +18,7 @@
 
 #include <streams.h>
 #include <stdio.h>
-#include <atlbase.h>
 #include <string.h>
-#include <atlconv.h>
 #include <mmsystem.h>
 #include <d3d9.h>
 #include <mfidl.h>

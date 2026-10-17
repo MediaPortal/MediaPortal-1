@@ -35,7 +35,7 @@ template<ptrdiff_t PixelDist>
 void SeparableFilterX(unsigned char* src, unsigned char* dst, int width, int height, ptrdiff_t stride,
                       short* kernel, int kernel_size, int divisor)
 {
-    int* tmp = DEBUG_NEW int[width];
+    int* tmp = new int[width];
 
     for (int y = 0; y < height; y++) {
         ZeroMemory(tmp, width * sizeof(int));
@@ -77,7 +77,7 @@ template<ptrdiff_t PixelDist>
 void SeparableFilterY(unsigned char* src, unsigned char* dst, int width, int height, ptrdiff_t stride,
                       short* kernel, int kernel_size, int divisor)
 {
-    int* tmp = DEBUG_NEW int[width];
+    int* tmp = new int[width];
 
     for (int y = 0; y < height; y++) {
         ZeroMemory(tmp, width * sizeof(int));
@@ -353,7 +353,7 @@ struct GaussianKernel {
         if (width < 3) {
             width = 3;
         }
-        kernel = DEBUG_NEW short[width];
+        kernel = new short[width];
         kernel[width / 2] = (short)(NormalDist(sigma, 0.0) * 255);
         divisor = kernel[width / 2];
         for (int x = width / 2 - 1; x >= 0; x--) {

@@ -23,14 +23,14 @@
 namespace VersionInfo
 {
     bool IsNightly();
-    CString GetNightlyWord();
+    tstring GetNightlyWord();
     bool Is64Bit();
-    CString GetVersionString();
-    CString GetFullVersionString();
-    CString GetBuildDateString();
+    tstring GetVersionString();
+    tstring GetFullVersionString();
+    tstring GetBuildDateString();
     unsigned GetMajorNumber();
     unsigned GetMinorNumber();
     unsigned GetPatchNumber();
     unsigned GetRevisionNumber();
-    CString GetGCCVersion();
+    tstring GetGCCVersion();
 };

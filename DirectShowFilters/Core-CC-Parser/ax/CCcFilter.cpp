@@ -679,7 +679,7 @@ HRESULT CCcFilter::Receive( IMediaSample* pSourceSample )
 	}
   //LogDebug("CCcFilter: SampleGetTime: %f", (float)sourceTimeStart/10000000.0);
 
-	m_rgCCData.SetCount(0);
+	m_rgCCData.clear();
 	if( !m_pPassThroughQueue )
 	{
 		m_proc.ProcessData( cbData, pSourceData, NULL, &m_rgCCData, m_bIsSubtypeAVC1, m_dwFlags, sourceTimeStart );
@@ -703,11 +703,11 @@ HRESULT CCcFilter::Receive( IMediaSample* pSourceSample )
 
 	if( m_pLine21Queue )
 	{
-		int cWORDs = m_rgCCData.GetCount();
+		int cWORDs = (int)m_rgCCData.size();
 		if( cWORDs > 0 )
 		{
 	    LOG_DETAIL("CCcFilter: Receive() - Line21, cWORDs = %d", cWORDs);
-			for( const WORD* pData = m_rgCCData.GetData(); pData < m_rgCCData.GetData() + cWORDs; ++pData )
+			for( const WORD* pData = m_rgCCData.data(); pData < m_rgCCData.data() + cWORDs; ++pData )
 			{        
 				auto_pif<IMediaSample> pifOutSample;
 				RETURN_FAILED( InitializeOutputSample( &m_outpinLine21, pSourceSample, pifOutSample.AcceptHere()));
@@ -739,7 +739,7 @@ HRESULT CCcFilter::Receive( IMediaSample* pSourceSample )
 				RETURN_FAILED( hr );
 			}
 
-			m_rgCCData.SetCount(0);
+			m_rgCCData.clear();
     } 
 		else 
 		{				
@@ -823,7 +823,7 @@ HRESULT CCcFilter::BeginFlush()
   
   {
     CAutoLock lock_it(m_pLock);
-  	m_rgCCData.SetCount(0);
+  	m_rgCCData.clear();
 	  m_proc.Reset();
   }
 
@@ -857,7 +857,7 @@ HRESULT CCcFilter::NewSegment( REFERENCE_TIME tStart, REFERENCE_TIME tStop, doub
 
   {
     CAutoLock lock_it(m_pLock);
-  	m_rgCCData.SetCount(0);
+  	m_rgCCData.clear();
 	  m_proc.Reset();
   }
   

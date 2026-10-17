@@ -15,5 +15,11 @@
     "soundtouch",
     "unrar",
     "zlib"
-  ]
+  ],
+  "features": {
+    "tests": {
+      "description": "Unit and integration tests of the filters (GoogleTest)",
+      "dependencies": [ "gtest" ]
+    }
+  }
 }

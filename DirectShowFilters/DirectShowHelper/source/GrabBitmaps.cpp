@@ -17,7 +17,8 @@
 #pragma warning(disable: 4244 4996)
 
 #include <streams.h>
-#include <atlbase.h>
+#include "helpers/smartptr.h"
+#include "../../shared/TcharConv.h"
 #pragma include_alias( "dxtrans.h", "qedit.h" )
 #define __IDxtCompositor_INTERFACE_DEFINED__
 #define __IDxtAlphaSetter_INTERFACE_DEFINED__
@@ -153,11 +154,10 @@ int GrabBitmaps(TCHAR * szFile )
 {
   try
   {
-    USES_CONVERSION;
-    CComPtr< ISampleGrabber > pGrabber;
-    CComPtr< IBaseFilter >    pSource;
-    CComPtr< IGraphBuilder >  pGraph;
-    CComPtr< IVideoWindow >   pVideoWindow;
+    Com::SmartPtr< ISampleGrabber > pGrabber;
+    Com::SmartPtr< IBaseFilter >    pSource;
+    Com::SmartPtr< IGraphBuilder >  pGraph;
+    Com::SmartPtr< IVideoWindow >   pVideoWindow;
     HRESULT hr;
 
     if (!szFile)
@@ -173,7 +173,7 @@ int GrabBitmaps(TCHAR * szFile )
         Log("grab:Could not create CLSID_SampleGrabber" );
         return -1;
     }
-    CComQIPtr< IBaseFilter, &IID_IBaseFilter > pGrabberBase( pGrabber );
+    Com::SmartQIPtr< IBaseFilter, &IID_IBaseFilter > pGrabberBase( pGrabber );
 
     // Create the file reader
     //
@@ -209,8 +209,8 @@ int GrabBitmaps(TCHAR * szFile )
 	}
     // Load the source
     //
-    CComQIPtr< IFileSourceFilter, &IID_IFileSourceFilter > pLoad( pSource );
-    hr = pLoad->Load( T2W( szFile ), NULL );
+    Com::SmartQIPtr< IFileSourceFilter, &IID_IFileSourceFilter > pLoad( pSource );
+    hr = pLoad->Load( ToWide( szFile ).c_str(), NULL );
     if( FAILED( hr ) )
     {
         Log("grab:Could not load the media file") ;
@@ -231,8 +231,8 @@ int GrabBitmaps(TCHAR * szFile )
 	}
     // Get the output pin and the input pin
     //
-    CComPtr< IPin > pSourcePin;
-    CComPtr< IPin > pGrabPin;
+    Com::SmartPtr< IPin > pSourcePin;
+    Com::SmartPtr< IPin > pGrabPin;
 
     pSourcePin = GetOutPin( pSource, 1 );
     pGrabPin   = GetInPin( pGrabberBase, 0 );
@@ -262,7 +262,7 @@ int GrabBitmaps(TCHAR * szFile )
 
     // Render the grabber output pin (to a video renderer)
     //
-    CComPtr <IPin> pGrabOutPin = GetOutPin( pGrabberBase, 0 );
+    Com::SmartPtr<IPin> pGrabOutPin = GetOutPin( pGrabberBase, 0 );
     hr = pGraph->Render( pGrabOutPin );
     if( FAILED( hr ) )
     {
@@ -285,12 +285,12 @@ int GrabBitmaps(TCHAR * szFile )
 
     // Get the seeking interface, so we can seek to a location
     //
-    CComQIPtr< IMediaSeeking, &IID_IMediaSeeking > pSeeking( pGraph );
+    Com::SmartQIPtr< IMediaSeeking, &IID_IMediaSeeking > pSeeking( pGraph );
 
     // Query the graph for the IVideoWindow interface and use it to
     // disable AutoShow.  This will prevent the ActiveMovie window from
     // being displayed while we grab bitmaps from the running movie.
-    CComQIPtr< IVideoWindow, &IID_IVideoWindow > pWindow = pGraph;
+    Com::SmartQIPtr< IVideoWindow, &IID_IVideoWindow > pWindow = pGraph;
     if (pWindow)
     {
         hr = pWindow->put_AutoShow(OAFALSE);
@@ -299,7 +299,7 @@ int GrabBitmaps(TCHAR * szFile )
     // Find a limited number of frames
     //
 
-    CComQIPtr< IMediaFilter, &IID_IMediaFilter > mediaFilt( pGraph );
+    Com::SmartQIPtr< IMediaFilter, &IID_IMediaFilter > mediaFilt( pGraph );
     mediaFilt->SetSyncSource(NULL);
    // for( int i = 0 ; i < NUM_FRAMES_TO_GRAB ; i++ )
     {
@@ -318,12 +318,12 @@ int GrabBitmaps(TCHAR * szFile )
 
 		Log("grab:run.");
 		// activate the threads
-		CComQIPtr< IMediaControl, &IID_IMediaControl > pControl( pGraph );
+		Com::SmartQIPtr< IMediaControl, &IID_IMediaControl > pControl( pGraph );
 		hr = pControl->Run( );
 
 		Log("grab:wait.");
 		// wait for the graph to settle
-		CComQIPtr< IMediaEvent, &IID_IMediaEvent > pEvent( pGraph );
+		Com::SmartQIPtr< IMediaEvent, &IID_IMediaEvent > pEvent( pGraph );
 		long EvCode = 0;
 
     // 15 sec timeout
@@ -346,7 +346,7 @@ int GrabBitmaps(TCHAR * szFile )
 
 HRESULT GetPin( IBaseFilter * pFilter, PIN_DIRECTION dirrequired, int iNum, IPin **ppPin)
 {
-    CComPtr< IEnumPins > pEnum;
+    Com::SmartPtr< IEnumPins > pEnum;
     *ppPin = NULL;
 
     HRESULT hr = pFilter->EnumPins(&pEnum);
@@ -382,7 +382,7 @@ HRESULT GetPin( IBaseFilter * pFilter, PIN_DIRECTION dirrequired, int iNum, IPin
 
 IPin * GetInPin( IBaseFilter * pFilter, int nPin )
 {
-    CComPtr<IPin> pComPin=0;
+    Com::SmartPtr<IPin> pComPin=0;
     GetPin(pFilter, PINDIR_INPUT, nPin, &pComPin);
     return pComPin;
 }
@@ -390,7 +390,7 @@ IPin * GetInPin( IBaseFilter * pFilter, int nPin )
 
 IPin * GetOutPin( IBaseFilter * pFilter, int nPin )
 {
-    CComPtr<IPin> pComPin=0;
+    Com::SmartPtr<IPin> pComPin=0;
     GetPin(pFilter, PINDIR_OUTPUT, nPin, &pComPin);
     return pComPin;
 }

@@ -20,6 +20,7 @@
 #pragma warning(disable : 4995)
 
 #include <vector>
+#include "helpers/smartptr.h"
 #include "callback.h"
 
 #pragma warning(pop)
@@ -116,10 +117,10 @@ protected:
 	void DeleteSurfaces();
 	HRESULT AllocVideoSurface();
 
-	CComPtr<IVMRSurfaceAllocatorNotify9> m_pIVMRSurfAllocNotify;
+	Com::SmartPtr<IVMRSurfaceAllocatorNotify9> m_pIVMRSurfAllocNotify;
 
-  CComPtr<IDirect3DDevice9> m_pD3DDev;
-	CComPtr<IDirect3D9> m_pD3D;
+  Com::SmartPtr<IDirect3DDevice9> m_pD3DDev;
+	Com::SmartPtr<IDirect3D9> m_pD3D;
 	IDirect3DSurface9** m_pSurfaces;
 
 	long		  m_refCount;

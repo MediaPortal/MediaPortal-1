@@ -18,7 +18,6 @@
 
 #include "StdAfx.h"
 #include <streams.h>
-#include <atlbase.h>
 #include <shlobj.h>
 #include <d3dx9.h>
 #include <vmr9.h>
@@ -445,7 +444,7 @@ BOOL Vmr9Init(IVMR9Callback* callback, LPVOID* dwD3DDevice, IBaseFilter* vmr9Fil
 
   Log("Vmr9Init");
 
-  CComQIPtr<IVMRFilterConfig9> pConfig = m_pVMR9Filter;
+  Com::SmartQIPtr<IVMRFilterConfig9> pConfig = m_pVMR9Filter;
   if(!pConfig)
   {
     return FALSE;
@@ -465,7 +464,7 @@ BOOL Vmr9Init(IVMR9Callback* callback, LPVOID* dwD3DDevice, IBaseFilter* vmr9Fil
     return FALSE;
   }
 
-  CComQIPtr<IVMRSurfaceAllocatorNotify9> pSAN = m_pVMR9Filter;
+  Com::SmartQIPtr<IVMRSurfaceAllocatorNotify9> pSAN = m_pVMR9Filter;
   if(!pSAN)
   {
     return FALSE;
@@ -802,7 +801,7 @@ BOOL EvrInit(IVMR9Callback* callback, LPVOID* dwD3DDevice, IBaseFilter** evrFilt
   m_evrPresenter = new MPEVRCustomPresenter(callback, m_pDevice, (HMONITOR)monitor, evrFilter, IsWin7(), monitorIdx, disVsyncCorr, disMparCorr);
   m_pVMR9Filter = (*evrFilter);
 
-  CComQIPtr<IMFVideoRenderer> pRenderer = m_pVMR9Filter;
+  Com::SmartQIPtr<IMFVideoRenderer> pRenderer = m_pVMR9Filter;
   if (!pRenderer) 
   {
     Log("Could not get IMFVideoRenderer");
@@ -819,12 +818,12 @@ BOOL EvrInit(IVMR9Callback* callback, LPVOID* dwD3DDevice, IBaseFilter** evrFilt
   pRenderer.Release();
 
 #else
-  CComPtr<IMFVideoDisplayControl> videoControl;
+  Com::SmartPtr<IMFVideoDisplayControl> videoControl;
   MFGetService(evrFilter, MR_VIDEO_RENDER_SERVICE, IID_IMFVideoDisplayControl, (LPVOID*)&videoControl);
   videoControl->SetVideoWindow((HWND)monitor);
 #endif
 
-  CComQIPtr<IEVRFilterConfig> pConfig = m_pVMR9Filter;
+  Com::SmartQIPtr<IEVRFilterConfig> pConfig = m_pVMR9Filter;
   if (!pConfig) 
   {
     Log("Could not get IEVRFilterConfig  interface" );
@@ -1142,7 +1141,7 @@ void Vmr9SetDeinterlaceMode(int mode)
   //2=Weave
   //3=Best
   Log("vmr9:SetDeinterlace() SetDeinterlaceMode(%d)",mode);
-  CComQIPtr<IVMRDeinterlaceControl9> pDeint = m_pVMR9Filter;
+  Com::SmartQIPtr<IVMRDeinterlaceControl9> pDeint = m_pVMR9Filter;
   VMR9VideoDesc VideoDesc; 
   DWORD dwNumModes = 0;
   GUID deintMode;
@@ -1205,7 +1204,7 @@ void Vmr9SetDeinterlaceMode(int mode)
   AM_MEDIA_TYPE pmt;
   ULONG fetched;
   IPin* pins[10];
-  CComPtr<IEnumPins> pinEnum;
+  Com::SmartPtr<IEnumPins> pinEnum;
   hr=m_pVMR9Filter->EnumPins(&pinEnum);
   pinEnum->Reset();
   pinEnum->Next(1,&pins[0],&fetched);
@@ -1432,7 +1431,7 @@ void Vmr9SetDeinterlaceMode(int mode)
 void Vmr9SetDeinterlacePrefs(DWORD dwMethod)
 {
   HRESULT hr;
-  CComQIPtr<IVMRDeinterlaceControl9> pDeint=m_pVMR9Filter;
+  Com::SmartQIPtr<IVMRDeinterlaceControl9> pDeint=m_pVMR9Filter;
   switch (dwMethod)
   {
   case 1:
@@ -1459,7 +1458,7 @@ bool DvrMsCreate(LONG *id, IBaseFilter* streamBufferSink, LPCWSTR strPath, DWORD
     Log("CStreamBufferRecorder::Create() Record");
     int hr;
     IUnknown* pRecUnk;
-    CComQIPtr<IStreamBufferSink> sink=streamBufferSink;
+    Com::SmartQIPtr<IStreamBufferSink> sink=streamBufferSink;
     if (!sink)
     {
       Log("cannot get IStreamBufferSink:%x");

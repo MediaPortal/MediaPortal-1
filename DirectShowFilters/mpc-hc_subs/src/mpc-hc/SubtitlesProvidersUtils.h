@@ -65,8 +65,8 @@ namespace SubtitlesProvidersUtils
     std::string StringGzipInflate(const std::string& data);
     std::string StringGzipUncompress(const std::string& data);
 
-    int FileUnzip(CStringA fn, stringMap& dataOut);
-    bool FileUnRar(CString fn, stringMap& dataOut);
+    int FileUnzip(std::string fn, stringMap& dataOut);
+    bool FileUnRar(tstring fn, stringMap& dataOut);
     int CALLBACK UnRarProc(UINT msg, LPARAM UserData, LPARAM P1, LPARAM P2);
 
     stringMap StringUncompress(const std::string& data, const std::string& fileName);

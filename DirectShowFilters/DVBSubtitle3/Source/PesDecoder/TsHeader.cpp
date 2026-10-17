@@ -21,7 +21,7 @@
 #pragma warning(disable : 4995)
 #include <windows.h>
 #include "TsHeader.h" 
-#include "packetsync.h"
+#include "..\..\..\shared\PacketSync.h"
 
 extern void LogDebug(const char *fmt, ...) ;
 

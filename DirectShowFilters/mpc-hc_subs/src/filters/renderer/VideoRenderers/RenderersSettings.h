@@ -102,7 +102,7 @@ public:
 
         // Other settings
         bool    bCacheShaders;
-        CString sShaderCachePath;
+        tstring sShaderCachePath;
 
         void    SetDefault();
         void    SetOptimal();
@@ -120,7 +120,7 @@ public:
     int         subPicVerticalShift;
     double      fontScaleOverride;
 
-    CString     D3D9RenderDevice;
+    tstring     D3D9RenderDevice;
     void        UpdateData(bool fSave);
 };
 
@@ -136,13 +136,13 @@ public:
     bool        m_bTearingTest;
     int         m_iDisplayStats;
     bool        m_bResetStats;  // Set to reset the presentation statistics
-    CString     m_strD3DX9Version;
+    tstring     m_strD3DX9Version;
 
     // Hardware feature support
     bool        m_bFP16Support;
     bool        m_bFP32Support;
     bool        m_b10bitSupport;
-    CString     m_strDXVAInfo;
+    tstring     m_strDXVAInfo;
 
     LONGLONG    GetPerfCounter() const;
     HINSTANCE   GetD3X9Dll();
@@ -152,4 +152,4 @@ public:
 extern CRenderersData*      GetRenderersData();
 extern CRenderersSettings&  GetRenderersSettings();
 
-extern bool LoadResource(UINT resid, CStringA& str, LPCTSTR restype);
+extern bool LoadResource(UINT resid, std::string& str, LPCTSTR restype);

@@ -26,12 +26,10 @@
 
 #include "Globals.h"
 #include "MpAudioRenderer.h"
-#include "FilterApp.h"
 #include "TimeSource.h"
 
 #include "alloctracing.h"
 
-CFilterApp theApp;
 
 CUnknown* WINAPI CMPAudioRenderer::CreateInstance(LPUNKNOWN punk, HRESULT* phr)
 {

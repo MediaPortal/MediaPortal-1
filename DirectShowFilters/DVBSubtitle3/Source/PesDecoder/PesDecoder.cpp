@@ -22,7 +22,7 @@
 #include <stdio.h>
 #include "pesdecoder.h"
 #include "TsHeader.h"
-#include "packetsync.h"
+#include "..\..\..\shared\PacketSync.h"
 #include <cassert>
 
 const int PADDING_STREAM_ID = 190;

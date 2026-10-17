@@ -34,6 +34,8 @@
 
 extern void LogDebug(const char *fmt, ...) ;
 
+#define TELETEXT_BUFFER_SIZE 20000
+
 // table to invert bit ordering of a byte
 unsigned char invtab[256] =
 {
@@ -63,9 +65,9 @@ CTeletextGrabber::CTeletextGrabber(){
 	m_iBufferPos=0;
 	m_bRunning=FALSE;
 	m_pCallback=NULL;
-	m_pBufferTemp = new byte[20000];
-	m_pBuffer = new byte[20000];
-	m_pInvData = new byte[20000];
+	m_pBufferTemp = new byte[TELETEXT_BUFFER_SIZE];
+	m_pBuffer = new byte[TELETEXT_BUFFER_SIZE];
+	m_pInvData = new byte[TELETEXT_BUFFER_SIZE];
 	m_pTsResultBuffer = new byte[COLLECT_TS_PACKETS*TS_PACKET_LENGTH+5];
 	m_pCurrentTsPacket = new byte[TS_PACKET_LENGTH+5];
 	// Fake TsHeader - Byte 0 must be 0x47
@@ -120,6 +122,13 @@ void CTeletextGrabber::OnSampleReceived(byte* sampleData, int sampleLen)
 	try{
 		if (!m_bRunning) return;
 		if (m_pCallback==NULL) return;
+		if (sampleData==NULL || sampleLen<=0) return;
+		if (sampleLen > TELETEXT_BUFFER_SIZE - m_iBufferPos)
+		{
+			// more than fits: start again with this sample (a sample is a few lines, never as many as the buffer holds)
+			m_iBufferPos = 0;
+			if (sampleLen > TELETEXT_BUFFER_SIZE) return;
+		}
 		for(int i=0;i<sampleLen;i++){
 			m_pInvData[i] = invtab[sampleData[i]];
 		}

@@ -44,7 +44,7 @@ int CountPins(IBaseFilter* pBF, int& nIn, int& nOut, int& nInC, int& nOutC)
     BeginEnumPins(pBF, pEP, pPin) {
         PIN_DIRECTION dir;
         if (SUCCEEDED(pPin->QueryDirection(&dir))) {
-            CComPtr<IPin> pPinConnectedTo;
+            ComPtr<IPin> pPinConnectedTo;
             pPin->ConnectedTo(&pPinConnectedTo);
 
             if (dir == PINDIR_INPUT) {
@@ -81,7 +81,7 @@ bool IsMultiplexer(IBaseFilter* pBF, bool fCountConnectedOnly)
 
 bool IsStreamStart(IBaseFilter* pBF)
 {
-    CComQIPtr<IAMFilterMiscFlags> pAMMF(pBF);
+    auto pAMMF = ComQuery<IAMFilterMiscFlags>(pBF);
     if (pAMMF && pAMMF->GetMiscFlags()&AM_FILTER_MISC_FLAGS_IS_SOURCE) {
         return true;
     }
@@ -89,7 +89,7 @@ bool IsStreamStart(IBaseFilter* pBF)
     int nIn, nOut, nInC, nOutC;
     CountPins(pBF, nIn, nOut, nInC, nOutC);
     AM_MEDIA_TYPE mt;
-    CComPtr<IPin> pIn = GetFirstPin(pBF);
+    ComPtr<IPin> pIn = GetFirstPin(pBF);
     return ((nOut > 1)
             || (nOut > 0 && nIn == 1 && pIn && SUCCEEDED(pIn->ConnectionMediaType(&mt)) && mt.majortype == MEDIATYPE_Stream));
 }
@@ -133,7 +133,7 @@ bool IsAudioWaveRenderer(IBaseFilter* pBF)
     int nIn, nOut, nInC, nOutC;
     CountPins(pBF, nIn, nOut, nInC, nOutC);
 
-    if (nInC > 0 && nOut == 0 && CComQIPtr<IBasicAudio>(pBF)) {
+    if (nInC > 0 && nOut == 0 && ComQuery<IBasicAudio>(pBF)) {
         BeginEnumPins(pBF, pEP, pPin) {
             AM_MEDIA_TYPE mt;
             if (S_OK != pPin->ConnectionMediaType(&mt)) {
@@ -174,12 +174,12 @@ IBaseFilter* GetUpStreamFilter(IBaseFilter* pBF, IPin* pInputPin)
 IPin* GetUpStreamPin(IBaseFilter* pBF, IPin* pInputPin)
 {
     BeginEnumPins(pBF, pEP, pPin) {
-        if (pInputPin && pInputPin != pPin) {
+        if (pInputPin && pInputPin != pPin.Get()) {
             continue;
         }
 
         PIN_DIRECTION dir;
-        CComPtr<IPin> pPinConnectedTo;
+        ComPtr<IPin> pPinConnectedTo;
         if (SUCCEEDED(pPin->QueryDirection(&dir)) && dir == PINDIR_INPUT
                 && SUCCEEDED(pPin->ConnectedTo(&pPinConnectedTo))) {
             IPin* pRet = pPinConnectedTo.Detach();
@@ -214,7 +214,7 @@ IPin* GetFirstDisconnectedPin(IBaseFilter* pBF, PIN_DIRECTION dir)
     if (pBF) {
         BeginEnumPins(pBF, pEP, pPin) {
             PIN_DIRECTION dir2;
-            CComPtr<IPin> pPinTo;
+            ComPtr<IPin> pPinTo;
             if (SUCCEEDED(pPin->QueryDirection(&dir2)) && dir == dir2 && (S_OK != pPin->ConnectedTo(&pPinTo))) {
                 IPin* pRet = pPin.Detach();
                 pRet->Release();
@@ -230,7 +230,7 @@ IPin* GetFirstDisconnectedPin(IBaseFilter* pBF, PIN_DIRECTION dir)
 IBaseFilter* FindFilter(LPCWSTR clsid, IFilterGraph* pFG)
 {
     CLSID clsid2;
-    CLSIDFromString(CComBSTR(clsid), &clsid2);
+    CLSIDFromString(_bstr_t(clsid), &clsid2);
     return FindFilter(clsid2, pFG);
 }
 
@@ -239,7 +239,7 @@ IBaseFilter* FindFilter(const CLSID& clsid, IFilterGraph* pFG)
     BeginEnumFilters(pFG, pEF, pBF) {
         CLSID clsid2;
         if (SUCCEEDED(pBF->GetClassID(&clsid2)) && clsid == clsid2) {
-            return pBF;
+            return pBF.Get();
         }
     }
     EndEnumFilters;
@@ -251,14 +251,14 @@ IPin* FindPin(IBaseFilter* pBF, PIN_DIRECTION direction, const AM_MEDIA_TYPE* pR
 {
     PIN_DIRECTION pindir;
     BeginEnumPins(pBF, pEP, pPin) {
-        CComPtr<IPin> pFellow;
+        ComPtr<IPin> pFellow;
 
         if (SUCCEEDED(pPin->QueryDirection(&pindir)) &&
                 pindir == direction &&
                 pPin->ConnectedTo(&pFellow) == VFW_E_NOT_CONNECTED) {
             BeginEnumMediaTypes(pPin, pEM, pmt) {
                 if (pmt->majortype == pRequestedMT->majortype && pmt->subtype == pRequestedMT->subtype) {
-                    return (pPin);
+                    return (pPin.Get());
                 }
             }
             EndEnumMediaTypes(pmt);
@@ -268,9 +268,9 @@ IPin* FindPin(IBaseFilter* pBF, PIN_DIRECTION direction, const AM_MEDIA_TYPE* pR
     return nullptr;
 }
 
-CStringW GetFilterName(IBaseFilter* pBF)
+std::wstring GetFilterName(IBaseFilter* pBF)
 {
-    CStringW name = _T("");
+    std::wstring name = _T("");
 
     if (pBF) {
         CFilterInfo fi;
@@ -282,9 +282,9 @@ CStringW GetFilterName(IBaseFilter* pBF)
     return name;
 }
 
-CStringW GetPinName(IPin* pPin)
+std::wstring GetPinName(IPin* pPin)
 {
-    CStringW name;
+    std::wstring name;
     CPinInfo pi;
     if (pPin && SUCCEEDED(pPin->QueryPinInfo(&pi))) {
         name = pi.achName;
@@ -319,84 +319,92 @@ IBaseFilter* GetFilterFromPin(IPin* pPin)
     return pBF;
 }
 
-IPin* AppendFilter(IPin* pPin, CString DisplayName, IGraphBuilder* pGB)
+IPin* AppendFilter(IPin* pPin, tstring DisplayName, IGraphBuilder* pGB)
 {
     IPin* pRet = pPin;
 
-    CInterfaceList<IBaseFilter> pFilters;
+    std::vector<ComPtr<IBaseFilter>> pFilters;
+    auto isKnown = [&pFilters](IBaseFilter* pFilter) {
+        for (const auto& f : pFilters) {
+            if (f.Get() == pFilter) {
+                return true;
+            }
+        }
+        return false;
+    };
 
     do {
-        if (!pPin || DisplayName.IsEmpty() || !pGB) {
+        if (!pPin || DisplayName.empty() || !pGB) {
             break;
         }
 
-        CComPtr<IPin> pPinTo;
+        ComPtr<IPin> pPinTo;
         PIN_DIRECTION dir;
         if (FAILED(pPin->QueryDirection(&dir)) || dir != PINDIR_OUTPUT || SUCCEEDED(pPin->ConnectedTo(&pPinTo))) {
             break;
         }
 
-        CComPtr<IBindCtx> pBindCtx;
+        ComPtr<IBindCtx> pBindCtx;
         CreateBindCtx(0, &pBindCtx);
 
-        CComPtr<IMoniker> pMoniker;
+        ComPtr<IMoniker> pMoniker;
         ULONG chEaten;
-        if (S_OK != MkParseDisplayName(pBindCtx, CComBSTR(DisplayName), &chEaten, &pMoniker)) {
+        if (S_OK != MkParseDisplayName(pBindCtx.Get(), _bstr_t(DisplayName.c_str()), &chEaten, &pMoniker)) {
             break;
         }
 
-        CComPtr<IBaseFilter> pBF;
-        if (FAILED(pMoniker->BindToObject(pBindCtx, 0, IID_PPV_ARGS(&pBF))) || !pBF) {
+        ComPtr<IBaseFilter> pBF;
+        if (FAILED(pMoniker->BindToObject(pBindCtx.Get(), 0, IID_PPV_ARGS(&pBF))) || !pBF) {
             break;
         }
 
-        CComPtr<IPropertyBag> pPB;
-        if (FAILED(pMoniker->BindToStorage(pBindCtx, 0, IID_PPV_ARGS(&pPB)))) {
+        ComPtr<IPropertyBag> pPB;
+        if (FAILED(pMoniker->BindToStorage(pBindCtx.Get(), 0, IID_PPV_ARGS(&pPB)))) {
             break;
         }
 
-        CComVariant var;
+        _variant_t var;
         if (FAILED(pPB->Read(_T("FriendlyName"), &var, nullptr))) {
             break;
         }
 
-        pFilters.AddTail(pBF);
+        pFilters.push_back(pBF);
         BeginEnumFilters(pGB, pEnum, pBF2);
-        pFilters.AddTail(pBF2);
+        pFilters.push_back(pBF2);
         EndEnumFilters;
 
-        if (FAILED(pGB->AddFilter(pBF, CStringW(var.bstrVal)))) {
+        if (FAILED(pGB->AddFilter(pBF.Get(), var.bstrVal))) {
             break;
         }
 
         BeginEnumFilters(pGB, pEnum, pBF2);
-        if (!pFilters.Find(pBF2) && SUCCEEDED(pGB->RemoveFilter(pBF2))) {
+        if (!isKnown(pBF2.Get()) && SUCCEEDED(pGB->RemoveFilter(pBF2.Get()))) {
             pEnum->Reset();
         }
         EndEnumFilters;
 
-        pPinTo = GetFirstPin(pBF, PINDIR_INPUT);
+        pPinTo = GetFirstPin(pBF.Get(), PINDIR_INPUT);
         if (!pPinTo) {
-            pGB->RemoveFilter(pBF);
+            pGB->RemoveFilter(pBF.Get());
             break;
         }
 
-        if (FAILED(pGB->ConnectDirect(pPin, pPinTo, nullptr))) {
-            pGB->Connect(pPin, pPinTo);
-            pGB->RemoveFilter(pBF);
+        if (FAILED(pGB->ConnectDirect(pPin, pPinTo.Get(), nullptr))) {
+            pGB->Connect(pPin, pPinTo.Get());
+            pGB->RemoveFilter(pBF.Get());
             break;
         }
 
         BeginEnumFilters(pGB, pEnum, pBF2);
-        if (!pFilters.Find(pBF2) && SUCCEEDED(pGB->RemoveFilter(pBF2))) {
+        if (!isKnown(pBF2.Get()) && SUCCEEDED(pGB->RemoveFilter(pBF2.Get()))) {
             pEnum->Reset();
         }
         EndEnumFilters;
 
-        pRet = GetFirstPin(pBF, PINDIR_OUTPUT);
+        pRet = GetFirstPin(pBF.Get(), PINDIR_OUTPUT);
         if (!pRet) {
             pRet = pPin;
-            pGB->RemoveFilter(pBF);
+            pGB->RemoveFilter(pBF.Get());
             break;
         }
     } while (false);
@@ -404,10 +412,10 @@ IPin* AppendFilter(IPin* pPin, CString DisplayName, IGraphBuilder* pGB)
     return pRet;
 }
 
-IPin* InsertFilter(IPin* pPin, CString DisplayName, IGraphBuilder* pGB)
+IPin* InsertFilter(IPin* pPin, tstring DisplayName, IGraphBuilder* pGB)
 {
     do {
-        if (!pPin || DisplayName.IsEmpty() || !pGB) {
+        if (!pPin || DisplayName.empty() || !pGB) {
             break;
         }
 
@@ -416,7 +424,7 @@ IPin* InsertFilter(IPin* pPin, CString DisplayName, IGraphBuilder* pGB)
             break;
         }
 
-        CComPtr<IPin> pFrom, pTo;
+        ComPtr<IPin> pFrom, pTo;
 
         if (dir == PINDIR_INPUT) {
             pPin->ConnectedTo(&pFrom);
@@ -430,109 +438,108 @@ IPin* InsertFilter(IPin* pPin, CString DisplayName, IGraphBuilder* pGB)
             break;
         }
 
-        CComPtr<IBindCtx> pBindCtx;
+        ComPtr<IBindCtx> pBindCtx;
         CreateBindCtx(0, &pBindCtx);
 
-        CComPtr<IMoniker> pMoniker;
+        ComPtr<IMoniker> pMoniker;
         ULONG chEaten;
-        if (S_OK != MkParseDisplayName(pBindCtx, CComBSTR(DisplayName), &chEaten, &pMoniker)) {
+        if (S_OK != MkParseDisplayName(pBindCtx.Get(), _bstr_t(DisplayName.c_str()), &chEaten, &pMoniker)) {
             break;
         }
 
-        CComPtr<IBaseFilter> pBF;
-        if (FAILED(pMoniker->BindToObject(pBindCtx, 0, IID_PPV_ARGS(&pBF))) || !pBF) {
+        ComPtr<IBaseFilter> pBF;
+        if (FAILED(pMoniker->BindToObject(pBindCtx.Get(), 0, IID_PPV_ARGS(&pBF))) || !pBF) {
             break;
         }
 
-        CComPtr<IPropertyBag> pPB;
-        if (FAILED(pMoniker->BindToStorage(pBindCtx, 0, IID_PPV_ARGS(&pPB)))) {
+        ComPtr<IPropertyBag> pPB;
+        if (FAILED(pMoniker->BindToStorage(pBindCtx.Get(), 0, IID_PPV_ARGS(&pPB)))) {
             break;
         }
 
-        CComVariant var;
+        _variant_t var;
         if (FAILED(pPB->Read(_T("FriendlyName"), &var, nullptr))) {
             break;
         }
 
-        if (FAILED(pGB->AddFilter(pBF, CStringW(var.bstrVal)))) {
+        if (FAILED(pGB->AddFilter(pBF.Get(), var.bstrVal))) {
             break;
         }
 
-        CComPtr<IPin> pFromTo = GetFirstPin(pBF, PINDIR_INPUT);
+        ComPtr<IPin> pFromTo = GetFirstPin(pBF.Get(), PINDIR_INPUT);
         if (!pFromTo) {
-            pGB->RemoveFilter(pBF);
+            pGB->RemoveFilter(pBF.Get());
             break;
         }
 
-        if (FAILED(pGB->Disconnect(pFrom)) || FAILED(pGB->Disconnect(pTo))) {
-            pGB->RemoveFilter(pBF);
-            pGB->ConnectDirect(pFrom, pTo, nullptr);
+        if (FAILED(pGB->Disconnect(pFrom.Get())) || FAILED(pGB->Disconnect(pTo.Get()))) {
+            pGB->RemoveFilter(pBF.Get());
+            pGB->ConnectDirect(pFrom.Get(), pTo.Get(), nullptr);
             break;
         }
 
-        if (FAILED(pGB->ConnectDirect(pFrom, pFromTo, nullptr))) {
-            pGB->RemoveFilter(pBF);
-            pGB->ConnectDirect(pFrom, pTo, nullptr);
+        if (FAILED(pGB->ConnectDirect(pFrom.Get(), pFromTo.Get(), nullptr))) {
+            pGB->RemoveFilter(pBF.Get());
+            pGB->ConnectDirect(pFrom.Get(), pTo.Get(), nullptr);
             break;
         }
 
-        CComPtr<IPin> pToFrom = GetFirstPin(pBF, PINDIR_OUTPUT);
+        ComPtr<IPin> pToFrom = GetFirstPin(pBF.Get(), PINDIR_OUTPUT);
         if (!pToFrom) {
-            pGB->RemoveFilter(pBF);
-            pGB->ConnectDirect(pFrom, pTo, nullptr);
+            pGB->RemoveFilter(pBF.Get());
+            pGB->ConnectDirect(pFrom.Get(), pTo.Get(), nullptr);
             break;
         }
 
-        if (FAILED(pGB->ConnectDirect(pToFrom, pTo, nullptr))) {
-            pGB->RemoveFilter(pBF);
-            pGB->ConnectDirect(pFrom, pTo, nullptr);
+        if (FAILED(pGB->ConnectDirect(pToFrom.Get(), pTo.Get(), nullptr))) {
+            pGB->RemoveFilter(pBF.Get());
+            pGB->ConnectDirect(pFrom.Get(), pTo.Get(), nullptr);
             break;
         }
 
-        pPin = pToFrom;
+        pPin = pToFrom.Get();
     } while (false);
 
     return pPin;
 }
 
-void ExtractMediaTypes(IPin* pPin, CAtlArray<GUID>& types)
+void ExtractMediaTypes(IPin* pPin, std::vector<GUID>& types)
 {
-    types.RemoveAll();
+    types.clear();
 
     BeginEnumMediaTypes(pPin, pEM, pmt) {
         bool fFound = false;
 
-        for (ptrdiff_t i = 0; !fFound && i < (int)types.GetCount(); i += 2) {
+        for (ptrdiff_t i = 0; !fFound && i < (int)types.size(); i += 2) {
             if (types[i] == pmt->majortype && types[i + 1] == pmt->subtype) {
                 fFound = true;
             }
         }
 
         if (!fFound) {
-            types.Add(pmt->majortype);
-            types.Add(pmt->subtype);
+            types.push_back(pmt->majortype);
+            types.push_back(pmt->subtype);
         }
     }
     EndEnumMediaTypes(pmt);
 }
 
-void ExtractMediaTypes(IPin* pPin, CAtlList<CMediaType>& mts)
+void ExtractMediaTypes(IPin* pPin, std::list<CMediaType>& mts)
 {
-    mts.RemoveAll();
+    mts.clear();
 
     BeginEnumMediaTypes(pPin, pEM, pmt) {
         bool fFound = false;
 
-        POSITION pos = mts.GetHeadPosition();
-        while (!fFound && pos) {
-            CMediaType& mt = mts.GetNext(pos);
+        for (const CMediaType& mt : mts) {
             if (mt.majortype == pmt->majortype && mt.subtype == pmt->subtype) {
                 fFound = true;
+                break;
             }
         }
 
         if (!fFound) {
-            mts.AddTail(CMediaType(*pmt));
+            mts.push_back(CMediaType(*pmt));
         }
     }
     EndEnumMediaTypes(pmt);
@@ -541,7 +548,7 @@ void ExtractMediaTypes(IPin* pPin, CAtlList<CMediaType>& mts)
 int Eval_Exception(int n_except)
 {
     if (n_except == STATUS_ACCESS_VIOLATION) {
-        AfxMessageBox(_T("The property page of this filter has just caused a\nmemory access violation. The application will gently die now :)"));
+        MessageBox(GetActiveWindow(), _T("The property page of this filter has just caused a\nmemory access violation. The application will gently die now :)"), nullptr, MB_OK);
     }
 
     return EXCEPTION_CONTINUE_SEARCH;
@@ -556,37 +563,37 @@ void MyOleCreatePropertyFrame(HWND hwndOwner, UINT x, UINT y, LPCOLESTR lpszCapt
     }
 }
 
-void ShowPPage(CString DisplayName, HWND hParentWnd)
+void ShowPPage(tstring DisplayName, HWND hParentWnd)
 {
-    CComPtr<IBindCtx> pBindCtx;
+    ComPtr<IBindCtx> pBindCtx;
     CreateBindCtx(0, &pBindCtx);
 
-    CComPtr<IMoniker> pMoniker;
+    ComPtr<IMoniker> pMoniker;
     ULONG chEaten;
-    if (S_OK != MkParseDisplayName(pBindCtx, CStringW(DisplayName), &chEaten, &pMoniker)) {
+    if (S_OK != MkParseDisplayName(pBindCtx.Get(), std::wstring(DisplayName).c_str(), &chEaten, &pMoniker)) {
         return;
     }
 
-    CComPtr<IBaseFilter> pBF;
-    if (FAILED(pMoniker->BindToObject(pBindCtx, 0, IID_PPV_ARGS(&pBF))) || !pBF) {
+    ComPtr<IBaseFilter> pBF;
+    if (FAILED(pMoniker->BindToObject(pBindCtx.Get(), 0, IID_PPV_ARGS(&pBF))) || !pBF) {
         return;
     }
 
-    ShowPPage(pBF, hParentWnd);
+    ShowPPage(pBF.Get(), hParentWnd);
 }
 
 void ShowPPage(IUnknown* pUnk, HWND hParentWnd)
 {
-    CComQIPtr<ISpecifyPropertyPages> pSPP = pUnk;
+    auto pSPP = ComQuery<ISpecifyPropertyPages>(pUnk);
     if (!pSPP) {
         return;
     }
 
-    CString str;
+    tstring str;
 
-    CComQIPtr<IBaseFilter> pBF = pSPP;
+    auto pBF = ComQuery<IBaseFilter>(pSPP);
     CFilterInfo fi;
-    CComQIPtr<IPin> pPin = pSPP;
+    auto pPin = ComQuery<IPin>(pSPP);
     CPinInfo pi;
     if (pBF && SUCCEEDED(pBF->QueryFilterInfo(&fi))) {
         str = fi.achName;
@@ -597,14 +604,13 @@ void ShowPPage(IUnknown* pUnk, HWND hParentWnd)
     CAUUID caGUID;
     caGUID.pElems = nullptr;
     if (SUCCEEDED(pSPP->GetPages(&caGUID))) {
-        IUnknown* lpUnk = nullptr;
-        pSPP.QueryInterface(&lpUnk);
+        ComPtr<IUnknown> lpUnk;
+        pSPP.As(&lpUnk);
         MyOleCreatePropertyFrame(
-            hParentWnd, 0, 0, CStringW(str),
-            1, (IUnknown**)&lpUnk,
+            hParentWnd, 0, 0, StringToW(str).c_str(),
+            1, lpUnk.GetAddressOf(),
             caGUID.cElems, caGUID.pElems,
             0, 0, nullptr);
-        lpUnk->Release();
 
         if (caGUID.pElems) {
             CoTaskMemFree(caGUID.pElems);
@@ -626,76 +632,96 @@ CLSID GetCLSID(IPin* pPin)
     return GetCLSID(GetFilterFromPin(pPin));
 }
 
-CString CLSIDToString(CLSID& clsid)
+tstring CLSIDToString(CLSID& clsid)
 {
-    CComHeapPtr<OLECHAR> pStr;
+    LPOLESTR pStr = nullptr;
+    tstring str;
     if (S_OK == StringFromCLSID(clsid, &pStr) && pStr) {
-        return CString(pStr);
+        str = pStr;
     }
-    return CString();
+    CoTaskMemFree(pStr);
+    return str;
+}
+
+static bool RegistryKeyExists(HKEY root, const tstring& subKey)
+{
+    HKEY key = nullptr;
+    if (RegOpenKeyEx(root, subKey.c_str(), 0, KEY_READ, &key) != ERROR_SUCCESS) {
+        return false;
+    }
+    RegCloseKey(key);
+    return true;
+}
+
+// the default value of a key, empty when there is none
+static tstring RegistryDefaultString(HKEY root, const tstring& subKey)
+{
+    TCHAR buff[MAX_PATH] = {};
+    DWORD size = sizeof(buff) - sizeof(TCHAR);
+    if (RegGetValue(root, subKey.c_str(), nullptr, RRF_RT_REG_SZ | RRF_RT_REG_EXPAND_SZ, nullptr, buff, &size) != ERROR_SUCCESS) {
+        return tstring();
+    }
+    return tstring(buff);
 }
 
 bool IsCLSIDRegistered(LPCTSTR clsid)
 {
-    CString rootkey1(_T("CLSID\\"));
-    CString rootkey2(_T("CLSID\\{083863F1-70DE-11d0-BD40-00A0C911CE86}\\Instance\\"));
+    tstring rootkey1(_T("CLSID\\"));
+    tstring rootkey2(_T("CLSID\\{083863F1-70DE-11d0-BD40-00A0C911CE86}\\Instance\\"));
 
-    return ERROR_SUCCESS == CRegKey().Open(HKEY_CLASSES_ROOT, rootkey1 + clsid, KEY_READ)
-           || ERROR_SUCCESS == CRegKey().Open(HKEY_CLASSES_ROOT, rootkey2 + clsid, KEY_READ);
+    return RegistryKeyExists(HKEY_CLASSES_ROOT, rootkey1 + clsid)
+           || RegistryKeyExists(HKEY_CLASSES_ROOT, rootkey2 + clsid);
 }
 
 bool IsCLSIDRegistered(const CLSID& clsid)
 {
     bool fRet = false;
 
-    CComHeapPtr<OLECHAR> pStr;
+    LPOLESTR pStr = nullptr;
     if (S_OK == StringFromCLSID(clsid, &pStr) && pStr) {
-        fRet = IsCLSIDRegistered(CString(pStr));
+        fRet = IsCLSIDRegistered(StringToT(pStr).c_str());
     }
+    CoTaskMemFree(pStr);
 
     return fRet;
 }
 
-CString GetFilterPath(LPCTSTR clsid)
+tstring GetFilterPath(LPCTSTR clsid)
 {
-    CString rootkey1(_T("CLSID\\"));
-    CString rootkey2(_T("CLSID\\{083863F1-70DE-11d0-BD40-00A0C911CE86}\\Instance\\"));
+    tstring rootkey1(_T("CLSID\\"));
+    tstring rootkey2(_T("CLSID\\{083863F1-70DE-11d0-BD40-00A0C911CE86}\\Instance\\"));
 
-    CRegKey key;
-    CString path;
-
-    if (ERROR_SUCCESS == key.Open(HKEY_CLASSES_ROOT, rootkey1 + clsid + _T("\\InprocServer32"), KEY_READ)
-            || ERROR_SUCCESS == key.Open(HKEY_CLASSES_ROOT, rootkey2 + clsid + _T("\\InprocServer32"), KEY_READ)) {
-        ULONG nCount = MAX_PATH;
-        key.QueryStringValue(nullptr, path.GetBuffer(nCount), &nCount);
-        path.ReleaseBuffer(nCount);
+    tstring path = RegistryDefaultString(HKEY_CLASSES_ROOT, rootkey1 + clsid + _T("\\InprocServer32"));
+    if (path.empty()) {
+        path = RegistryDefaultString(HKEY_CLASSES_ROOT, rootkey2 + clsid + _T("\\InprocServer32"));
     }
 
     return path;
 }
 
-CString GetFilterPath(const CLSID& clsid)
+tstring GetFilterPath(const CLSID& clsid)
 {
-    CString path;
+    tstring path;
 
-    CComHeapPtr<OLECHAR> pStr;
+    LPOLESTR pStr = nullptr;
     if (S_OK == StringFromCLSID(clsid, &pStr) && pStr) {
-        path = GetFilterPath(CString(pStr));
+        path = GetFilterPath(StringToT(pStr).c_str());
     }
+    CoTaskMemFree(pStr);
 
     return path;
 }
 
-void CStringToBin(CString str, CAtlArray<BYTE>& data)
+void CStringToBin(tstring str, std::vector<BYTE>& data)
 {
-    str.Trim();
-    ASSERT((str.GetLength() & 1) == 0);
-    data.SetCount(str.GetLength() / 2);
+    StringTrim(str);
+    ASSERT((int(str.size()) & 1) == 0);
+    data.resize(int(str.size()) / 2);
 
     BYTE b = 0;
 
-    str.MakeUpper();
-    for (int i = 0, j = str.GetLength(); i < j; i++) {
+    StringUpper(str);
+    for (int i = 0, j = int(str.size()); i < j; i++) {
         TCHAR c = str[i];
         if (c >= _T('0') && c <= _T('9')) {
             if (!(i & 1)) {
@@ -720,9 +746,9 @@ void CStringToBin(CString str, CAtlArray<BYTE>& data)
     }
 }
 
-CString BinToCString(const BYTE* ptr, size_t len)
+tstring BinToCString(const BYTE* ptr, size_t len)
 {
-    CString ret;
+    tstring ret;
 
     while (len-- > 0) {
         TCHAR high, low;
@@ -730,7 +756,7 @@ CString BinToCString(const BYTE* ptr, size_t len)
         high = (*ptr >> 4) >= 10 ? (*ptr >> 4) - 10 + _T('A') : (*ptr >> 4) + _T('0');
         low = (*ptr & 0xf) >= 10 ? (*ptr & 0xf) - 10 + _T('A') : (*ptr & 0xf) + _T('0');
 
-        ret.AppendFormat(_T("%c%c"), high, low);
+        ret += ::Format(_T("%c%c"), high, low);
 
         ptr++;
     }
@@ -738,37 +764,37 @@ CString BinToCString(const BYTE* ptr, size_t len)
     return ret;
 }
 
-void FindFiles(CString fn, CAtlList<CString>& files)
+void FindFiles(tstring fn, std::list<tstring>& files)
 {
     ExtendMaxPathLengthIfNeeded(fn, MAX_PATH);
-    CString path = fn;
-    path.Replace('/', '\\');
-    path = path.Left(path.ReverseFind('\\') + 1);
+    tstring path = fn;
+    StringReplace(path, '/', '\\');
+    path = StringLeft(path, StringRFind(path, '\\') + 1);
 
     WIN32_FIND_DATA findData;
-    HANDLE h = FindFirstFile(fn, &findData);
+    HANDLE h = FindFirstFile(fn.c_str(), &findData);
     if (h != INVALID_HANDLE_VALUE) {
         do {
-            files.AddTail(path + findData.cFileName);
+            files.push_back(path + findData.cFileName);
         } while (FindNextFile(h, &findData));
 
         FindClose(h);
     }
 }
 
-OpticalDiskType_t GetOpticalDiskType(TCHAR drive, CAtlList<CString>& files)
+OpticalDiskType_t GetOpticalDiskType(TCHAR drive, std::list<tstring>& files)
 {
-    files.RemoveAll();
+    files.clear();
 
-    CString path;
-    path.Format(_T("%c:"), drive);
+    tstring path;
+    path = ::Format(_T("%c:"), drive);
 
-    if (GetDriveType(path + _T("\\")) != DRIVE_CDROM) {
+    if (GetDriveType((path + _T("\\")).c_str()) != DRIVE_CDROM) {
         return OpticalDisk_NotFound;
     }
 
     // Check if it contains a disc
-    HANDLE hDevice = CreateFile(CString(_T("\\\\.\\")) + path, FILE_READ_ATTRIBUTES,
+    HANDLE hDevice = CreateFile((tstring(_T("\\\\.\\")) + path).c_str(), FILE_READ_ATTRIBUTES,
         FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
     if (hDevice == INVALID_HANDLE_VALUE) {
         return OpticalDisk_NotFound;
@@ -782,13 +808,13 @@ OpticalDiskType_t GetOpticalDiskType(TCHAR drive, CAtlList<CString>& files)
 
     // CDROM_DVDVideo
     FindFiles(path + _T("\\VIDEO_TS\\video_ts.ifo"), files);
-    if (!files.IsEmpty()) {
+    if (!files.empty()) {
         return OpticalDisk_DVDVideo;
     }
 
     // CDROM_BD
     FindFiles(path + _T("\\BDMV\\index.bdmv"), files);
-    if (!files.IsEmpty()) {
+    if (!files.empty()) {
         return OpticalDisk_BD;
     }
 
@@ -801,12 +827,12 @@ OpticalDiskType_t GetOpticalDiskType(TCHAR drive, CAtlList<CString>& files)
     FindFiles(path + _T("\\mpegav\\music??.mpg"), files);
     FindFiles(path + _T("\\mpeg2\\music??.dat"), files);
     FindFiles(path + _T("\\mpeg2\\music??.mpg"), files);
-    if (!files.IsEmpty()) {
+    if (!files.empty()) {
         return OpticalDisk_VideoCD;
     }
 
     // CDROM_Audio
-    HANDLE hDrive = CreateFile(CString(_T("\\\\.\\")) + path, GENERIC_READ, FILE_SHARE_READ, nullptr,
+    HANDLE hDrive = CreateFile((tstring(_T("\\\\.\\")) + path).c_str(), GENERIC_READ, FILE_SHARE_READ, nullptr,
                                 OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, (HANDLE)nullptr);
     if (hDrive != INVALID_HANDLE_VALUE) {
         DWORD BytesReturned;
@@ -820,16 +846,16 @@ OpticalDiskType_t GetOpticalDiskType(TCHAR drive, CAtlList<CString>& files)
                 auto& trackData = TOC.TrackData[i - 1];
                 trackData.Control &= 5;
                 if (trackData.Control == 0 || trackData.Control == 1) {
-                    CString fn;
-                    fn.Format(_T("%s\\track%02Id.cda"), path.GetString(), i);
-                    files.AddTail(fn);
+                    tstring fn;
+                    fn = ::Format(_T("%s\\track%02Id.cda"), path.c_str(), i);
+                    files.push_back(fn);
                 }
             }
         }
 
         CloseHandle(hDrive);
     }
-    if (!files.IsEmpty()) {
+    if (!files.empty()) {
         return OpticalDisk_Audio;
     }
 
@@ -837,22 +863,23 @@ OpticalDiskType_t GetOpticalDiskType(TCHAR drive, CAtlList<CString>& files)
     return OpticalDisk_Unknown;
 }
 
-CString GetDriveLabel(TCHAR drive)
+tstring GetDriveLabel(TCHAR drive)
 {
-    CString path;
-    path.Format(_T("%c:\\"), drive);
+    tstring path;
+    path = ::Format(_T("%c:\\"), drive);
 
-    return GetDriveLabel(CPath(path));
+    return GetDriveLabel(path);
 }
 
-CString GetDriveLabel(CPath path)
+tstring GetDriveLabel(tstring path)
 {
-    CString label;
-    path.StripToRoot();
+    tstring label;
+    PathStripToRoot(StringBuffer(path, MAX_PATH));
+    StringRelease(path);
 
     TCHAR VolumeNameBuffer[MAX_PATH], FileSystemNameBuffer[MAX_PATH];
     DWORD VolumeSerialNumber, MaximumComponentLength, FileSystemFlags;
-    if (GetVolumeInformation(path,
+    if (GetVolumeInformation(path.c_str(),
                              VolumeNameBuffer, MAX_PATH, &VolumeSerialNumber, &MaximumComponentLength,
                              &FileSystemFlags, FileSystemNameBuffer, MAX_PATH)) {
         label = VolumeNameBuffer;
@@ -861,74 +888,26 @@ CString GetDriveLabel(CPath path)
     return label;
 }
 
-bool IsDriveVirtual(CString drive)
+bool IsDriveVirtual(tstring drive)
 {
     HKEY hkey;
     DWORD type = REG_BINARY;
     TCHAR data[1024] = { 0 };
     DWORD size = sizeof(data) - 2;
 
-    drive=(drive+_T(":")).Left(2);
-    CString subkey = _T("\\DosDevices\\") + drive;
+    drive=StringLeft((drive+_T(":")), 2);
+    tstring subkey = _T("\\DosDevices\\") + drive;
 
     RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("SYSTEM\\MountedDevices"), 0, KEY_READ, &hkey);
     if (hkey == INVALID_HANDLE_VALUE) return 0;
-    RegQueryValueEx(hkey, subkey, 0, &type, (BYTE*)data, &size);
+    RegQueryValueEx(hkey, subkey.c_str(), 0, &type, (BYTE*)data, &size);
 
     RegCloseKey(hkey);
-    CString sig(data);
-    sig.MakeUpper();
-    return sig.Find(_T("VEN_MSFT&PROD_VIRTUAL_DVD-ROM")) >= 0
-        || sig.Find(_T("VEN_DISCSOFT&")) >= 0
-        || sig.Find(_T("VEN_ELBY&PROD_CLONEDRIVE")) >= 0;
-}
-
-bool GetKeyFrames(CString fn, CUIntArray& kfs)
-{
-    kfs.RemoveAll();
-
-    CString fn2 = CString(fn).MakeLower();
-    if (fn2.Mid(fn2.ReverseFind('.') + 1) == _T("avi")) {
-        AVIFileInit();
-
-        PAVIFILE pfile;
-        if (AVIFileOpen(&pfile, fn, OF_SHARE_DENY_WRITE, 0L) == 0) {
-            AVIFILEINFO afi;
-            ZeroMemory(&afi, sizeof(afi));
-            AVIFileInfo(pfile, &afi, sizeof(AVIFILEINFO));
-
-            CComPtr<IAVIStream> pavi;
-            if (AVIFileGetStream(pfile, &pavi, streamtypeVIDEO, 0) == AVIERR_OK) {
-                AVISTREAMINFO si;
-                AVIStreamInfo(pavi, &si, sizeof(si));
-
-                if (afi.dwCaps & AVIFILECAPS_ALLKEYFRAMES) {
-                    kfs.SetSize(si.dwLength);
-                    for (DWORD kf = 0; kf < si.dwLength; kf++) {
-                        kfs[kf] = kf;
-                    }
-                } else {
-                    for (LONG kf = 0; ; kf++) {
-                        kf = pavi->FindSample(kf, FIND_KEY | FIND_NEXT);
-                        if (kf < 0 || !kfs.IsEmpty() && kfs[kfs.GetCount() - 1] >= (UINT)kf) {
-                            break;
-                        }
-                        kfs.Add(kf);
-                    }
-
-                    if (!kfs.IsEmpty() && kfs[kfs.GetCount() - 1] < si.dwLength - 1) {
-                        kfs.Add(si.dwLength - 1);
-                    }
-                }
-            }
-
-            AVIFileRelease(pfile);
-        }
-
-        AVIFileExit();
-    }
-
-    return !kfs.IsEmpty();
+    tstring sig(data);
+    StringUpper(sig);
+    return StringFind(sig, _T("VEN_MSFT&PROD_VIRTUAL_DVD-ROM")) >= 0
+        || StringFind(sig, _T("VEN_DISCSOFT&")) >= 0
+        || StringFind(sig, _T("VEN_ELBY&PROD_CLONEDRIVE")) >= 0;
 }
 
 DVD_HMSF_TIMECODE RT2HMSF(REFERENCE_TIME rt, double fps /*= 0.0*/) // use to remember the current position
@@ -1123,33 +1102,33 @@ bool ExtractDim(const AM_MEDIA_TYPE* pmt, int& w, int& h, int& arx, int& ary)
     return true;
 }
 
-bool CreateFilter(CStringW DisplayName, IBaseFilter** ppBF, CStringW& FriendlyName)
+bool CreateFilter(std::wstring DisplayName, IBaseFilter** ppBF, std::wstring& FriendlyName)
 {
     if (!ppBF) {
         return false;
     }
 
     *ppBF = nullptr;
-    FriendlyName.Empty();
+    FriendlyName.clear();
 
-    CComPtr<IBindCtx> pBindCtx;
+    ComPtr<IBindCtx> pBindCtx;
     CreateBindCtx(0, &pBindCtx);
 
-    CComPtr<IMoniker> pMoniker;
+    ComPtr<IMoniker> pMoniker;
     ULONG chEaten;
-    if (S_OK != MkParseDisplayName(pBindCtx, CComBSTR(DisplayName), &chEaten, &pMoniker)) {
+    if (S_OK != MkParseDisplayName(pBindCtx.Get(), _bstr_t(DisplayName.c_str()), &chEaten, &pMoniker)) {
         return false;
     }
 
-    if (FAILED(pMoniker->BindToObject(pBindCtx, 0, IID_PPV_ARGS(ppBF))) || !*ppBF) {
+    if (FAILED(pMoniker->BindToObject(pBindCtx.Get(), 0, IID_PPV_ARGS(ppBF))) || !*ppBF) {
         return false;
     }
 
-    CComPtr<IPropertyBag> pPB;
-    CComVariant var;
-    if (SUCCEEDED(pMoniker->BindToStorage(pBindCtx, 0, IID_PPV_ARGS(&pPB)))
+    ComPtr<IPropertyBag> pPB;
+    _variant_t var;
+    if (SUCCEEDED(pMoniker->BindToStorage(pBindCtx.Get(), 0, IID_PPV_ARGS(&pPB)))
             && SUCCEEDED(pPB->Read(_T("FriendlyName"), &var, nullptr))) {
-        FriendlyName = var.bstrVal;
+        FriendlyName = StringToT(var.bstrVal);
     }
 
     return true;
@@ -1162,31 +1141,31 @@ IBaseFilter* AppendFilter(IPin* pPin, IMoniker* pMoniker, IGraphBuilder* pGB)
             break;
         }
 
-        CComPtr<IPin> pPinTo;
+        ComPtr<IPin> pPinTo;
         PIN_DIRECTION dir;
         if (FAILED(pPin->QueryDirection(&dir)) || dir != PINDIR_OUTPUT || SUCCEEDED(pPin->ConnectedTo(&pPinTo))) {
             break;
         }
 
-        CComPtr<IBindCtx> pBindCtx;
+        ComPtr<IBindCtx> pBindCtx;
         CreateBindCtx(0, &pBindCtx);
 
-        CComPtr<IPropertyBag> pPB;
-        if (FAILED(pMoniker->BindToStorage(pBindCtx, 0, IID_PPV_ARGS(&pPB)))) {
+        ComPtr<IPropertyBag> pPB;
+        if (FAILED(pMoniker->BindToStorage(pBindCtx.Get(), 0, IID_PPV_ARGS(&pPB)))) {
             break;
         }
 
-        CComVariant var;
+        _variant_t var;
         if (FAILED(pPB->Read(_T("FriendlyName"), &var, nullptr))) {
             break;
         }
 
-        CComPtr<IBaseFilter> pBF;
-        if (FAILED(pMoniker->BindToObject(pBindCtx, 0, IID_PPV_ARGS(&pBF))) || !pBF) {
+        ComPtr<IBaseFilter> pBF;
+        if (FAILED(pMoniker->BindToObject(pBindCtx.Get(), 0, IID_PPV_ARGS(&pBF))) || !pBF) {
             break;
         }
 
-        if (FAILED(pGB->AddFilter(pBF, CStringW(var.bstrVal)))) {
+        if (FAILED(pGB->AddFilter(pBF.Get(), var.bstrVal))) {
             break;
         }
 
@@ -1196,33 +1175,33 @@ IBaseFilter* AppendFilter(IPin* pPin, IMoniker* pMoniker, IGraphBuilder* pGB)
                 continue;
             }
 
-            if (SUCCEEDED(pGB->ConnectDirect(pPin, pPinTo2, nullptr))) {
-                return pBF;
+            if (SUCCEEDED(pGB->ConnectDirect(pPin, pPinTo2.Get(), nullptr))) {
+                return pBF.Get();
             }
         }
         EndEnumFilters;
 
-        pGB->RemoveFilter(pBF);
+        pGB->RemoveFilter(pBF.Get());
     } while (false);
 
     return nullptr;
 }
 
-CStringW GetFriendlyName(CStringW displayName)
+std::wstring GetFriendlyName(std::wstring displayName)
 {
-    CStringW friendlyName;
+    std::wstring friendlyName;
 
-    CComPtr<IBindCtx> pBindCtx;
+    ComPtr<IBindCtx> pBindCtx;
     CreateBindCtx(0, &pBindCtx);
 
-    CComPtr<IMoniker> pMoniker;
+    ComPtr<IMoniker> pMoniker;
     ULONG chEaten;
-    if (S_OK == MkParseDisplayName(pBindCtx, CComBSTR(displayName), &chEaten, &pMoniker)) {
-        CComPtr<IPropertyBag> pPB;
-        CComVariant var;
-        if (SUCCEEDED(pMoniker->BindToStorage(pBindCtx, 0, IID_PPV_ARGS(&pPB)))
+    if (S_OK == MkParseDisplayName(pBindCtx.Get(), _bstr_t(displayName.c_str()), &chEaten, &pMoniker)) {
+        ComPtr<IPropertyBag> pPB;
+        _variant_t var;
+        if (SUCCEEDED(pMoniker->BindToStorage(pBindCtx.Get(), 0, IID_PPV_ARGS(&pPB)))
                 && SUCCEEDED(pPB->Read(_T("FriendlyName"), &var, nullptr))) {
-            friendlyName = var.bstrVal;
+            friendlyName = StringToT(var.bstrVal);
         }
     }
 
@@ -1232,14 +1211,14 @@ CStringW GetFriendlyName(CStringW displayName)
 typedef HRESULT(__stdcall* fDllCanUnloadNow)(void);
 
 struct ExternalObject {
-    CString path;
+    tstring path;
     HINSTANCE hInst;
     CLSID clsid;
     fDllCanUnloadNow fpDllCanUnloadNow;
     bool bUnloadOnNextCheck;
 };
 
-static CAtlList<ExternalObject> s_extObjs;
+static std::list<ExternalObject> s_extObjs;
 static CCritSec s_csExtObjs;
 
 HRESULT LoadExternalObject(LPCTSTR path, REFCLSID clsid, REFIID iid, void** ppv)
@@ -1248,15 +1227,13 @@ HRESULT LoadExternalObject(LPCTSTR path, REFCLSID clsid, REFIID iid, void** ppv)
 
     CAutoLock lock(&s_csExtObjs);
 
-    CString fullpath = MakeFullPath(path);
+    tstring fullpath = MakeFullPath(path);
 
     HINSTANCE hInst = nullptr;
     bool fFound = false;
 
-    POSITION pos = s_extObjs.GetHeadPosition();
-    while (pos) {
-        ExternalObject& eo = s_extObjs.GetNext(pos);
-        if (!eo.path.CompareNoCase(fullpath)) {
+    for (ExternalObject&eo : s_extObjs) {
+        if (!StringICompare(eo.path, fullpath)) {
             hInst = eo.hInst;
             fFound = true;
             eo.bUnloadOnNextCheck = false;
@@ -1267,14 +1244,14 @@ HRESULT LoadExternalObject(LPCTSTR path, REFCLSID clsid, REFIID iid, void** ppv)
     HRESULT hr = E_FAIL;
 
     if (!hInst) {
-        hInst = LoadLibraryEx(fullpath, nullptr, LOAD_WITH_ALTERED_SEARCH_PATH);
+        hInst = LoadLibraryEx(fullpath.c_str(), nullptr, LOAD_WITH_ALTERED_SEARCH_PATH);
     }
     if (hInst) {
         typedef HRESULT(__stdcall * PDllGetClassObject)(REFCLSID rclsid, REFIID riid, LPVOID * ppv);
         PDllGetClassObject p = (PDllGetClassObject)GetProcAddress(hInst, "DllGetClassObject");
 
         if (p && FAILED(hr = p(clsid, iid, ppv))) {
-            CComPtr<IClassFactory> pCF;
+            ComPtr<IClassFactory> pCF;
             if (SUCCEEDED(hr = p(clsid, IID_PPV_ARGS(&pCF)))) {
                 hr = pCF->CreateInstance(nullptr, iid, ppv);
             }
@@ -1293,7 +1270,7 @@ HRESULT LoadExternalObject(LPCTSTR path, REFCLSID clsid, REFIID iid, void** ppv)
         eo.clsid = clsid;
         eo.fpDllCanUnloadNow = (fDllCanUnloadNow)GetProcAddress(hInst, "DllCanUnloadNow");
         eo.bUnloadOnNextCheck = false;
-        s_extObjs.AddTail(eo);
+        s_extObjs.push_back(eo);
     }
 
     return hr;
@@ -1313,11 +1290,9 @@ HRESULT LoadExternalPropertyPage(IPersist* pP, REFCLSID clsid, IPropertyPage** p
         return E_FAIL;
     }
 
-    POSITION pos = s_extObjs.GetHeadPosition();
-    while (pos) {
-        ExternalObject& eo = s_extObjs.GetNext(pos);
+    for (ExternalObject&eo : s_extObjs) {
         if (eo.clsid == clsid2) {
-            return LoadExternalObject(eo.path, clsid, IID_PPV_ARGS(ppPP));
+            return LoadExternalObject(eo.path.c_str(), clsid, IID_PPV_ARGS(ppPP));
         }
     }
 
@@ -1328,10 +1303,8 @@ bool UnloadUnusedExternalObjects()
 {
     CAutoLock lock(&s_csExtObjs);
 
-    POSITION pos = s_extObjs.GetHeadPosition(), currentPos;
-    while (pos) {
-        currentPos = pos;
-        ExternalObject& eo = s_extObjs.GetNext(pos);
+    for (auto it = s_extObjs.begin(); it != s_extObjs.end();) {
+        ExternalObject& eo = *it;
 
         if (eo.fpDllCanUnloadNow && eo.fpDllCanUnloadNow() == S_OK) {
             // Before actually unloading it, we require that the library reports
@@ -1339,24 +1312,25 @@ bool UnloadUnusedExternalObjects()
             // between the two checks.
             if (eo.bUnloadOnNextCheck) {
                 FreeLibrary(eo.hInst);
-                s_extObjs.RemoveAt(currentPos);
-            } else {
-                eo.bUnloadOnNextCheck = true;
+                it = s_extObjs.erase(it);
+                continue;
             }
+            eo.bUnloadOnNextCheck = true;
         } else {
             eo.bUnloadOnNextCheck = false;
         }
+        ++it;
     }
 
-    return s_extObjs.IsEmpty();
+    return s_extObjs.empty();
 }
 
-void ExtendMaxPathLengthIfNeeded(CString& path, int max_length /*= MAX_PATH*/, bool no_url /*= false */)
+void ExtendMaxPathLengthIfNeeded(tstring& path, int max_length /*= MAX_PATH*/, bool no_url /*= false */)
 {
-    if (path.GetLength() >= max_length) {
-        if (no_url || path.Find(_T("://")) < 0) { // not URL
-            if (path.Left(2) != _T("\\\\")) { // not UNC
-                if (path.Left(4) != _T("\\\\?\\")) { // not already have long path prefix
+    if (int(path.size()) >= max_length) {
+        if (no_url || StringFind(path, _T("://")) < 0) { // not URL
+            if (StringLeft(path, 2) != _T("\\\\")) { // not UNC
+                if (StringLeft(path, 4) != _T("\\\\?\\")) { // not already have long path prefix
                     path = _T("\\\\?\\") + path;
                 }
             }
@@ -1364,67 +1338,67 @@ void ExtendMaxPathLengthIfNeeded(CString& path, int max_length /*= MAX_PATH*/, b
     }
 }
 
-bool ContainsWildcard(CString& path)
+bool ContainsWildcard(tstring& path)
 {
-    int p = path.Find('*');
+    int p = StringFind(path, '*');
     if (p >= 0) {
         return true;
     }
-    p = path.Find('?');
+    p = StringFind(path, '?');
     if (p >= 0) {
-        if (p == 2 && path.Left(4) == _T("\\\\?\\")) {
-            CString tmp = CString(path);
-            tmp.Delete(0, 3);
-            return tmp.Find('?') > 0;
+        if (p == 2 && StringLeft(path, 4) == _T("\\\\?\\")) {
+            tstring tmp = tstring(path);
+            StringDelete(tmp, 0, 3);
+            return StringFind(tmp, '?') > 0;
         }
         return true;
     }
     return false;
 }
 
-void ShortenLongPath(CString& path)
+void ShortenLongPath(tstring& path)
 {
-    if (path.GetLength() > MAX_PATH && path.Find(_T("\\\\?\\")) < 0) {
-        CString longpath = _T("\\\\?\\") + path;
-        TCHAR* buffer = DEBUG_NEW TCHAR[MAX_PATH];
-        long length = GetShortPathName(longpath, buffer, MAX_PATH);
+    if (int(path.size()) > MAX_PATH && StringFind(path, _T("\\\\?\\")) < 0) {
+        tstring longpath = _T("\\\\?\\") + path;
+        TCHAR* buffer = new TCHAR[MAX_PATH];
+        long length = GetShortPathName(longpath.c_str(), buffer, MAX_PATH);
         if (length > 0 && length < MAX_PATH) {
             path = buffer;
-            path.Replace(_T("\\\\?\\"), _T(""));
+            StringReplace(path, _T("\\\\?\\"), _T(""));
             delete[] buffer;
         }
     }
 }
 
-CString MakeFullPath(LPCTSTR path)
+tstring MakeFullPath(LPCTSTR path)
 {
-    CString full(path);
-    full.Replace('/', '\\');
+    tstring full(path);
+    StringReplace(full, '/', '\\');
 
-    if (full.GetLength() > MAX_PATH) {
+    if (int(full.size()) > MAX_PATH) {
         return full;
     }
 
-    if (full.GetLength() >= 2 && full[0] == '\\') {
+    if (int(full.size()) >= 2 && full[0] == '\\') {
         if (full[1] != '\\') {
-            CString fn;
-            fn.ReleaseBuffer(GetModuleFileName(AfxGetInstanceHandle(), fn.GetBuffer(MAX_PATH), MAX_PATH));
-            CPath p(fn);
-            p.StripToRoot();
-            full = CString(p) + full.Mid(1);
+            tstring fn;
+            StringRelease(fn, GetModuleFileName(ThisModule(), StringBuffer(fn, MAX_PATH), MAX_PATH));
+            PathStripToRoot(StringBuffer(fn, MAX_PATH));
+            StringRelease(fn);
+            full = fn + StringMid(full, 1);
         }
-    } else if (full.Find(_T(":\\")) < 0) {
-        CString fn;
-        fn.ReleaseBuffer(GetModuleFileName(AfxGetInstanceHandle(), fn.GetBuffer(MAX_PATH), MAX_PATH));
-        CPath p(fn);
-        p.RemoveFileSpec();
-        p.AddBackslash();
-        full = CString(p) + full;
+    } else if (StringFind(full, _T(":\\")) < 0) {
+        tstring fn;
+        StringRelease(fn, GetModuleFileName(ThisModule(), StringBuffer(fn, MAX_PATH), MAX_PATH));
+        PathRemoveFileSpec(StringBuffer(fn, MAX_PATH));
+        StringRelease(fn);
+        PathAddBackslash(StringBuffer(fn, MAX_PATH));
+        StringRelease(fn);
+        full = fn + full;
     }
 
-    CPath c(full);
-    c.Canonicalize();
-    return CString(c);
+    TCHAR canonical[MAX_PATH] = {};
+    return PathCanonicalize(canonical, full.c_str()) ? tstring(canonical) : full;
 }
 
 inline bool _IsFourCC(const GUID& guid)
@@ -1435,13 +1409,11 @@ inline bool _IsFourCC(const GUID& guid)
         (((DWORD*)guid.Data4)[1] == 0x719b3800);
 }
 
-bool GetMediaTypeFourCC(const GUID& guid, CString& fourCC)
+bool GetMediaTypeFourCC(const GUID& guid, tstring& fourCC)
 {
     if (_IsFourCC(guid) && (guid.Data1 >= 0x10000)) {
-        fourCC.Format(_T("%c%c%c%c"),
-            (TCHAR)(guid.Data1 >> 0 ) & 0xFF, (TCHAR)(guid.Data1 >> 8 ) & 0xFF,
-            (TCHAR)(guid.Data1 >> 16) & 0xFF, (TCHAR)(guid.Data1 >> 24) & 0xFF);
-        fourCC.MakeUpper();
+        fourCC = ::Format(_T("%c%c%c%c"), (TCHAR)(guid.Data1 >> 0 ) & 0xFF, (TCHAR)(guid.Data1 >> 8 ) & 0xFF, (TCHAR)(guid.Data1 >> 16) & 0xFF, (TCHAR)(guid.Data1 >> 24) & 0xFF);
+        StringUpper(fourCC);
         return true;
     }
 
@@ -1449,76 +1421,76 @@ bool GetMediaTypeFourCC(const GUID& guid, CString& fourCC)
     return false;
 }
 
-CString GetMediaTypeName(const GUID& guid)
+tstring GetMediaTypeName(const GUID& guid)
 {
-    CString ret = guid == GUID_NULL
-                  ? CString(_T("Any type"))
-                  : CString(GuidNames[guid]);
+    tstring ret = guid == GUID_NULL
+                  ? tstring(_T("Any type"))
+                  : StringToT(GuidNames[guid]);
 
     if (ret == _T("FOURCC GUID")) {
-        CString str;
+        tstring str;
         if (guid.Data1 >= 0x10000) {
-            str.Format(_T("Video: %c%c%c%c"), (guid.Data1 >> 0) & 0xff, (guid.Data1 >> 8) & 0xff, (guid.Data1 >> 16) & 0xff, (guid.Data1 >> 24) & 0xff);
+            str = ::Format(_T("Video: %c%c%c%c"), (guid.Data1 >> 0) & 0xff, (guid.Data1 >> 8) & 0xff, (guid.Data1 >> 16) & 0xff, (guid.Data1 >> 24) & 0xff);
         } else {
-            str.Format(_T("Audio: 0x%08x"), guid.Data1);
+            str = ::Format(_T("Audio: 0x%08x"), guid.Data1);
         }
         ret = str;
     } else if (ret == _T("Unknown GUID Name")) {
         WCHAR null[128] = {0}, buff[128];
         StringFromGUID2(GUID_NULL, null, _countof(null) - 1);
-        ret = CString(CStringW(StringFromGUID2(guid, buff, _countof(buff) - 1) ? buff : null));
+        ret = tstring(std::wstring(StringFromGUID2(guid, buff, _countof(buff) - 1) ? buff : null));
     }
 
     return ret;
 }
 
-GUID GUIDFromCString(CString str)
+GUID GUIDFromCString(tstring str)
 {
     GUID guid = GUID_NULL;
-    HRESULT hr = CLSIDFromString(CComBSTR(str), &guid);
+    HRESULT hr = CLSIDFromString(_bstr_t(str.c_str()), &guid);
     ASSERT(SUCCEEDED(hr));
     UNREFERENCED_PARAMETER(hr);
     return guid;
 }
 
-HRESULT GUIDFromCString(CString str, GUID& guid)
+HRESULT GUIDFromCString(tstring str, GUID& guid)
 {
     guid = GUID_NULL;
-    return CLSIDFromString(CComBSTR(str), &guid);
+    return CLSIDFromString(_bstr_t(str.c_str()), &guid);
 }
 
-CString CStringFromGUID(const GUID& guid)
+tstring CStringFromGUID(const GUID& guid)
 {
     WCHAR null[128] = {0}, buff[128];
     StringFromGUID2(GUID_NULL, null, _countof(null) - 1);
-    return CString(StringFromGUID2(guid, buff, _countof(buff) - 1) > 0 ? buff : null);
+    return tstring(StringFromGUID2(guid, buff, _countof(buff) - 1) > 0 ? buff : null);
 }
 
-CStringW UTF8To16(LPCSTR utf8)
+std::wstring UTF8To16(LPCSTR utf8)
 {
-    CStringW str;
+    std::wstring str;
     int n = MultiByteToWideChar(CP_UTF8, 0, utf8, -1, nullptr, 0) - 1;
     if (n <= 0) {
         return str;
     }
-    str.ReleaseBuffer(MultiByteToWideChar(CP_UTF8, 0, utf8, -1, str.GetBuffer(n), n + 1) - 1);
+    StringRelease(str, MultiByteToWideChar(CP_UTF8, 0, utf8, -1, StringBuffer(str, n), n + 1) - 1);
     return str;
 }
 
-CStringA UTF16To8(LPCWSTR utf16)
+std::string UTF16To8(LPCWSTR utf16)
 {
-    CStringA str;
+    std::string str;
     int n = WideCharToMultiByte(CP_UTF8, 0, utf16, -1, nullptr, 0, nullptr, nullptr) - 1;
     if (n < 0) {
         return str;
     }
-    str.ReleaseBuffer(WideCharToMultiByte(CP_UTF8, 0, utf16, -1, str.GetBuffer(n), n + 1, nullptr, nullptr) - 1);
+    StringRelease(str, WideCharToMultiByte(CP_UTF8, 0, utf16, -1, StringBuffer(str, n), n + 1, nullptr, nullptr) - 1);
     return str;
 }
 
-CStringW UTF8ToStringW(const char* S)
+std::wstring UTF8ToStringW(const char* S)
 {
-    CStringW str;
+    std::wstring str;
     if (S == nullptr) {
         return str;
     }
@@ -1537,7 +1509,7 @@ CStringW UTF8ToStringW(const char* S)
                 str += (wchar_t)((((wchar_t)(*Z & 0x1F)) << 6) | (*(Z + 1) & 0x3F));
                 Z += 2;
             } else {
-                str.Empty();
+                str.clear();
                 return str; //Bad character
             }
         }
@@ -1547,7 +1519,7 @@ CStringW UTF8ToStringW(const char* S)
                 str += (wchar_t)((((wchar_t)(*Z & 0x0F)) << 12) | ((*(Z + 1) & 0x3F) << 6) | (*(Z + 2) & 0x3F));
                 Z += 3;
             } else {
-                str.Empty();
+                str.clear();
                 return str; //Bad character
             }
         }
@@ -1557,42 +1529,29 @@ CStringW UTF8ToStringW(const char* S)
                 str += (wchar_t)((((wchar_t)(*Z & 0x0F)) << 18) | ((*(Z + 1) & 0x3F) << 12) || ((*(Z + 2) & 0x3F) << 6) | (*(Z + 3) & 0x3F));
                 Z += 4;
             } else {
-                str.Empty();
+                str.clear();
                 return str; //Bad character
             }
         } else {
-            str.Empty();
+            str.clear();
             return str; //Bad character
         }
     }
     return str;
 }
 
-CStringW LocalToStringW(const char* S)
+std::wstring LocalToStringW(const char* S)
 {
-    CStringW str;
+    std::wstring str;
     if (S == nullptr) {
         return str;
     }
 
     int Size = MultiByteToWideChar(CP_ACP, 0, S, -1, nullptr, 0);
     if (Size != 0) {
-        str.ReleaseBuffer(MultiByteToWideChar(CP_ACP, 0, S, -1, str.GetBuffer(Size), Size + 1) - 1);
+        StringRelease(str, MultiByteToWideChar(CP_ACP, 0, S, -1, StringBuffer(str, Size), Size + 1) - 1);
     }
     return str;
-}
-
-BOOL CFileGetStatus(LPCTSTR lpszFileName, CFileStatus& status)
-{
-    try {
-        return CFile::GetStatus(lpszFileName, status);
-    } catch (CException* e) {
-        // MFCBUG: E_INVALIDARG / "Parameter is incorrect" is thrown for certain cds (vs2003)
-        // http://groups.google.co.uk/groups?hl=en&lr=&ie=UTF-8&threadm=OZuXYRzWDHA.536%40TK2MSFTNGP10.phx.gbl&rnum=1&prev=/groups%3Fhl%3Den%26lr%3D%26ie%3DISO-8859-1
-        TRACE(_T("CFile::GetStatus has thrown an exception\n"));
-        e->Delete();
-        return false;
-    }
 }
 
 // filter registration helpers
@@ -1620,13 +1579,13 @@ bool SetRegKeyValue(LPCTSTR pszKey, LPCTSTR pszSubkey, LPCTSTR pszValueName, LPC
 {
     bool bOK = false;
 
-    CString szKey(pszKey);
+    tstring szKey(pszKey);
     if (pszSubkey != 0) {
-        szKey += CString(_T("\\")) + pszSubkey;
+        szKey += tstring(_T("\\")) + pszSubkey;
     }
 
     HKEY hKey;
-    LONG ec = ::RegCreateKeyEx(HKEY_CLASSES_ROOT, szKey, 0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, 0, &hKey, 0);
+    LONG ec = ::RegCreateKeyEx(HKEY_CLASSES_ROOT, szKey.c_str(), 0, 0, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, 0, &hKey, 0);
     if (ec == ERROR_SUCCESS) {
         if (pszValue != 0) {
             ec = ::RegSetValueEx(hKey, pszValueName, 0, REG_SZ,
@@ -1649,14 +1608,14 @@ bool SetRegKeyValue(LPCTSTR pszKey, LPCTSTR pszSubkey, LPCTSTR pszValue)
 
 void RegisterSourceFilter(const CLSID& clsid, const GUID& subtype2, LPCTSTR chkbytes, LPCTSTR ext, ...)
 {
-    CString null = CStringFromGUID(GUID_NULL);
-    CString majortype = CStringFromGUID(MEDIATYPE_Stream);
-    CString subtype = CStringFromGUID(subtype2);
+    tstring null = CStringFromGUID(GUID_NULL);
+    tstring majortype = CStringFromGUID(MEDIATYPE_Stream);
+    tstring subtype = CStringFromGUID(subtype2);
 
     SetRegKeyValue(_T("Media Type\\") + majortype, subtype, _T("0"), chkbytes);
     SetRegKeyValue(_T("Media Type\\") + majortype, subtype, _T("Source Filter"), CStringFromGUID(clsid));
 
-    DeleteRegKey(_T("Media Type\\") + null, subtype);
+    DeleteRegKey((_T("Media Type\\") + null).c_str(), subtype.c_str());
 
     va_list marker;
     va_start(marker, ext);
@@ -1666,22 +1625,22 @@ void RegisterSourceFilter(const CLSID& clsid, const GUID& subtype2, LPCTSTR chkb
     va_end(marker);
 }
 
-void RegisterSourceFilter(const CLSID& clsid, const GUID& subtype2, const CAtlList<CString>& chkbytes, LPCTSTR ext, ...)
+void RegisterSourceFilter(const CLSID& clsid, const GUID& subtype2, const std::list<tstring>& chkbytes, LPCTSTR ext, ...)
 {
-    CString null = CStringFromGUID(GUID_NULL);
-    CString majortype = CStringFromGUID(MEDIATYPE_Stream);
-    CString subtype = CStringFromGUID(subtype2);
+    tstring null = CStringFromGUID(GUID_NULL);
+    tstring majortype = CStringFromGUID(MEDIATYPE_Stream);
+    tstring subtype = CStringFromGUID(subtype2);
 
-    POSITION pos = chkbytes.GetHeadPosition();
-    for (ptrdiff_t i = 0; pos; i++) {
-        CString idx;
-        idx.Format(_T("%Id"), i);
-        SetRegKeyValue(_T("Media Type\\") + majortype, subtype, idx, chkbytes.GetNext(pos));
+    ptrdiff_t i = 0;
+    for (const tstring& chkbyte : chkbytes) {
+        tstring idx;
+        idx = ::Format(_T("%Id"), i++);
+        SetRegKeyValue(_T("Media Type\\") + majortype, subtype, idx, chkbyte);
     }
 
     SetRegKeyValue(_T("Media Type\\") + majortype, subtype, _T("Source Filter"), CStringFromGUID(clsid));
 
-    DeleteRegKey(_T("Media Type\\") + null, subtype);
+    DeleteRegKey((_T("Media Type\\") + null).c_str(), subtype.c_str());
 
     va_list marker;
     va_start(marker, ext);
@@ -1693,7 +1652,7 @@ void RegisterSourceFilter(const CLSID& clsid, const GUID& subtype2, const CAtlLi
 
 void UnRegisterSourceFilter(const GUID& subtype)
 {
-    DeleteRegKey(_T("Media Type\\") + CStringFromGUID(MEDIATYPE_Stream), CStringFromGUID(subtype));
+    DeleteRegKey((_T("Media Type\\") + CStringFromGUID(MEDIATYPE_Stream)).c_str(), CStringFromGUID(subtype).c_str());
 }
 
 struct DXVA2_DECODER {
@@ -1777,43 +1736,43 @@ LPCTSTR GetDXVAMode(const GUID* guidDecoder)
 }
 
 // hour, minute, second, millisec
-CString ReftimeToString(const REFERENCE_TIME& rtVal)
+tstring ReftimeToString(const REFERENCE_TIME& rtVal)
 {
     if (rtVal == _I64_MIN) {
         return _T("INVALID TIME");
     }
 
-    CString strTemp;
+    tstring strTemp;
     LONGLONG llTotalMs = ConvertToMilliseconds(rtVal);
     int lHour     = (int)(llTotalMs / (1000 * 60 * 60));
     int lMinute   = (llTotalMs / (1000 * 60)) % 60;
     int lSecond   = (llTotalMs /  1000) % 60;
     int lMillisec = llTotalMs  %  1000;
 
-    strTemp.Format(_T("%02d:%02d:%02d,%03d"), lHour, lMinute, lSecond, lMillisec);
+    strTemp = ::Format(_T("%02d:%02d:%02d,%03d"), lHour, lMinute, lSecond, lMillisec);
     return strTemp;
 }
 
 // hour, minute, second (round)
-CString ReftimeToString2(const REFERENCE_TIME& rtVal)
+tstring ReftimeToString2(const REFERENCE_TIME& rtVal)
 {
-    CString strTemp;
+    tstring strTemp;
     LONGLONG seconds = (rtVal + 5000000) / 10000000;
     int lHour   = (int)(seconds / 3600);
     int lMinute = (int)(seconds / 60 % 60);
     int lSecond = (int)(seconds % 60);
 
-    strTemp.Format(_T("%02d:%02d:%02d"), lHour, lMinute, lSecond);
+    strTemp = ::Format(_T("%02d:%02d:%02d"), lHour, lMinute, lSecond);
     return strTemp;
 }
 
-CString DVDtimeToString(const DVD_HMSF_TIMECODE& rtVal, bool bAlwaysShowHours)
+tstring DVDtimeToString(const DVD_HMSF_TIMECODE& rtVal, bool bAlwaysShowHours)
 {
-    CString strTemp;
+    tstring strTemp;
     if (rtVal.bHours > 0 || bAlwaysShowHours) {
-        strTemp.Format(_T("%02u:%02u:%02u"), rtVal.bHours, rtVal.bMinutes, rtVal.bSeconds);
+        strTemp = ::Format(_T("%02u:%02u:%02u"), rtVal.bHours, rtVal.bMinutes, rtVal.bSeconds);
     } else {
-        strTemp.Format(_T("%02u:%02u"), rtVal.bMinutes, rtVal.bSeconds);
+        strTemp = ::Format(_T("%02u:%02u"), rtVal.bMinutes, rtVal.bSeconds);
     }
     return strTemp;
 }
@@ -1906,55 +1865,28 @@ void SetThreadName(DWORD dwThreadID, LPCSTR szThreadName)
     }
 }
 
-void CorrectComboBoxHeaderWidth(CWnd* pComboBox)
-{
-    if (!pComboBox) {
-        return;
-    }
-
-    CDC*   pDC = pComboBox->GetDC();
-    CFont* pFont = pComboBox->GetFont();
-    CFont* pOldFont = pDC->SelectObject(pFont);
-
-    CString str;
-    pComboBox->GetWindowText(str);
-    CSize szText = pDC->GetTextExtent(str);
-
-    TEXTMETRIC tm;
-    pDC->GetTextMetrics(&tm);
-    pDC->SelectObject(pOldFont);
-    pComboBox->ReleaseDC(pDC);
-
-    CRect r;
-    pComboBox->GetWindowRect(r);
-    pComboBox->GetOwner()->ScreenToClient(r);
-
-    r.right = r.left + ::GetSystemMetrics(SM_CXMENUCHECK) + ::GetSystemMetrics(SM_CXEDGE) + szText.cx + tm.tmAveCharWidth;
-    pComboBox->MoveWindow(r);
-}
-
-CString NormalizeUnicodeStrForSearch(CString srcStr, LANGID langid) {
-    if (srcStr.IsEmpty()) return srcStr;
+tstring NormalizeUnicodeStrForSearch(tstring srcStr, LANGID langid) {
+    if (srcStr.empty()) return srcStr;
     wchar_t* src;
 
     _locale_t locale;
     LCID lcid = MAKELCID(MAKELANGID(langid, SUBLANG_DEFAULT), SORT_DEFAULT);
     wchar_t localeName[32];
     if (0 == LCIDToLocaleName(lcid, localeName, 32, LOCALE_ALLOW_NEUTRAL_NAMES)) { //try to lowercase by locale, but if not, do a regular MakeLower()
-        srcStr.MakeLower();
-        src = srcStr.GetBuffer();
+        StringLower(srcStr);
+        src = StringBuffer(srcStr, 0);
     } else {
-        src = srcStr.GetBuffer();
+        src = StringBuffer(srcStr, 0);
         locale = _wcreate_locale(LC_ALL, localeName);
         _wcslwr_s_l(src, wcslen(src) + 1, locale);
     }
 
     int dstLen = int(wcslen(src) * 4);
-    wchar_t* dest = DEBUG_NEW wchar_t[dstLen];
+    wchar_t* dest = new wchar_t[dstLen];
 
     int cchActual = NormalizeString(NormalizationKD, src, -1, dest, dstLen);
     if (cchActual <= 0) dest[0] = 0;
-    WORD* rgType = DEBUG_NEW WORD[dstLen];
+    WORD* rgType = new WORD[dstLen];
     GetStringTypeW(CT_CTYPE3, dest, -1, rgType);
     PWSTR pszWrite = dest;
     for (int i = 0; dest[i]; i++) {
@@ -1965,7 +1897,7 @@ CString NormalizeUnicodeStrForSearch(CString srcStr, LANGID langid) {
     *pszWrite = 0;
     delete[] rgType;
 
-    CString ret = dest;
+    tstring ret = dest;
     delete[] dest;
     return ret;
 }
@@ -1987,14 +1919,12 @@ inline const LONGLONG GetPerfCounter() {
     }
 }
 
-bool FindStringInList(const CAtlList<CString>& list, CString& value)
+bool FindStringInList(const std::list<tstring>& list, tstring& value)
 {
-    bool found = false;
-    POSITION pos = list.GetHeadPosition();
-    while (pos && !found) {
-        if (list.GetNext(pos).CompareNoCase(value) == 0) {
-            found = true;
+    for (const tstring& item : list) {
+        if (StringICompare(item, value) == 0) {
+            return true;
         }
     }
-    return found;
+    return false;
 }

@@ -161,7 +161,7 @@ void ParseSrtLine(std::string& srtLine, const STSStyle& style) {
                         double resy = style.SrtResY / 288.0;
                         int font_size = (int)std::round(style.fontSize * resy);
                         subtitle_output.append("{\\c}");
-                        CT2CA tmpFontName(style.fontName);
+                        std::string tmpFontName = StringToA(style.fontName);
                         subtitle_output.append("{\\fn" + std::string(tmpFontName) + "}");
                         subtitle_output.append("{\\fs" + std::to_string(font_size) + "}");
                     } else {
@@ -251,12 +251,12 @@ void srt_header(char (&outBuffer)[1024], const STSStyle& style, const SubRendere
     double resx = style.SrtResX / 384.0;
     double resy = style.SrtResY / 288.0;
 
-    CT2CA tmpFontName(style.fontName);
+    std::string tmpFontName = StringToA(style.fontName);
 
     // Generate a standard ass header
-    CStringA langTagStr = "";
+    std::string langTagStr = "";
     if (subRendererSettings.openTypeLangHint[0]) {
-        CStringA tagLang(subRendererSettings.openTypeLangHint);
+        std::string tagLang(subRendererSettings.openTypeLangHint);
         tagLang.Replace(" ", "");
         langTagStr.Format("Language: %s\n", tagLang.GetBuffer());
     }
@@ -356,7 +356,7 @@ ASS_Track* srt_read_data(ASS_Library* library, ASS_Track* track, std::istream &s
 
             ParseSrtLine(lineOut, style);
 
-            CT2CA tmpCustomTags(style.customTags);
+            std::string tmpCustomTags = StringToA(style.customTags);
             _snprintf_s(outBuffer, _TRUNCATE, "Dialogue: 0,%d:%02d:%02d.%02d,%d:%02d:%02d.%02d,Default,,0,0,0,,{\\blur%u}%s%s",
                 start[0], start[1], start[2],
                 (int)floor((double)start[3] / 10.0), end[0], end[1],

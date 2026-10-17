@@ -20,6 +20,7 @@
  */
 
 #include "stdafx.h"
+#include <filesystem>
 #include <algorithm>
 #include "VobSubFile.h"
 #include "VobSubFileRipper.h"
@@ -67,7 +68,7 @@ void CVobSubFileRipper::Log(log_t type, LPCTSTR lpszFormat, ...)
     _vstprintf_s(buff, _countof(buff), lpszFormat, args);
     va_end(args);
 
-    CString msg;
+    tstring msg;
     switch (type) {
         default:
         case LOG_INFO:
@@ -83,7 +84,7 @@ void CVobSubFileRipper::Log(log_t type, LPCTSTR lpszFormat, ...)
 
     msg += buff;
 
-    m_pCallback->OnMessage(msg);
+    m_pCallback->OnMessage(msg.c_str());
 }
 
 void CVobSubFileRipper::Progress(double progress)
@@ -106,16 +107,16 @@ void CVobSubFileRipper::Finished(bool bSucceeded)
     m_pCallback->OnFinished(bSucceeded);
 }
 
-bool CVobSubFileRipper::LoadIfo(CString fn)
+bool CVobSubFileRipper::LoadIfo(tstring fn)
 {
-    CFileStatus status;
-    if (!CFileGetStatus(fn, status) || !status.m_size) {
+    std::error_code fileSizeError;
+    if (std::filesystem::file_size(fn.c_str(), fileSizeError) == 0 || fileSizeError) {
         Log(LOG_ERROR, _T("Invalid ifo"));
         return false;
     }
 
-    CFile f;
-    if (!f.Open(fn, CFile::modeRead | CFile::typeBinary | CFile::shareDenyNone)) {
+    FilePtr f = OpenFile(fn, L"rb");
+    if (!f) {
         Log(LOG_ERROR, _T("Cannot open ifo"));
         return false;
     }
@@ -123,7 +124,7 @@ bool CVobSubFileRipper::LoadIfo(CString fn)
     Log(LOG_INFO, _T("Opening ifo OK"));
 
     char hdr[13];
-    f.Read(hdr, 12);
+    fread(hdr, 1, 12, f.get());
     hdr[12] = 0;
     if (strcmp(hdr, "DVDVIDEO-VTS")) {
         Log(LOG_ERROR, _T("Not a Video Title Set IFO file!"));
@@ -132,7 +133,7 @@ bool CVobSubFileRipper::LoadIfo(CString fn)
 
     // lang ids
 
-    f.Seek(0x254, CFile::begin);
+    _fseeki64(f.get(), 0x254, SEEK_SET);
 
     WORD ids[32];
     ZeroMemory(ids, sizeof(ids));
@@ -141,18 +142,18 @@ bool CVobSubFileRipper::LoadIfo(CString fn)
     ReadBEw(len);
 
     for (ptrdiff_t i = 0; i < len; i++) {
-        f.Seek(2, CFile::current); // 01 00 ?
+        _fseeki64(f.get(), 2, SEEK_CUR); // 01 00 ?
         ReadBEw(ids[i]);
         if (ids[i] == 0) {
             ids[i] = '--';
         }
-        f.Seek(2, CFile::current); // 00 00 ?
+        _fseeki64(f.get(), 2, SEEK_CUR); // 00 00 ?
     }
 
     /* Video info */
 
-    f.Seek(0x200, CFile::begin);
-    f.Read(&m_rd.vidinfo, 2);
+    _fseeki64(f.get(), 0x200, SEEK_SET);
+    fread(&m_rd.vidinfo, 1, 2, f.get());
 
     SIZE res[4][2] = {
         {{720, 480}, {720, 576}},
@@ -171,26 +172,26 @@ bool CVobSubFileRipper::LoadIfo(CString fn)
         DWORD offset;
 
         DWORD pgcpos;
-        f.Seek(0xc0 + 0x0c, CFile::begin);
+        _fseeki64(f.get(), 0xc0 + 0x0c, SEEK_SET);
         ReadBEdw(pgcpos);
         pgcpos *= 0x800;
 
         WORD nPGC;
-        f.Seek(pgcpos, CFile::begin);
+        _fseeki64(f.get(), pgcpos, SEEK_SET);
         ReadBEw(nPGC);
 
-        m_rd.pgcs.RemoveAll();
-        m_rd.pgcs.SetCount(nPGC);
+        m_rd.pgcs.clear();
+        m_rd.pgcs.resize(nPGC);
 
         for (size_t i = 0; i < nPGC; i++) {
             PGC& pgc = m_rd.pgcs[i];
 
-            f.Seek(pgcpos + 8 + i * 8 + 4, CFile::begin);
+            _fseeki64(f.get(), pgcpos + 8 + i * 8 + 4, SEEK_SET);
             ReadBEdw(offset);
             offset += pgcpos;
 
             BYTE nProgs, nCells;
-            f.Seek(offset + 2, CFile::begin);
+            _fseeki64(f.get(), offset + 2, SEEK_SET);
             ReadBEb(nProgs);
             ReadBEb(nCells);
 
@@ -203,8 +204,8 @@ bool CVobSubFileRipper::LoadIfo(CString fn)
             };
             splanginfo splinfo[32];
 
-            f.Seek(offset + 0x1c, CFile::begin);
-            f.Read(splinfo, 32 * 4);
+            _fseeki64(f.get(), offset + 0x1c, SEEK_SET);
+            fread(splinfo, 1, 32 * 4, f.get());
 
             for (size_t j = 0; j < 32; j++) {
                 if (splinfo[j].id1 || splinfo[i].id2) {
@@ -224,15 +225,15 @@ bool CVobSubFileRipper::LoadIfo(CString fn)
 
             //
 
-            f.Seek(offset + 0xa4, CFile::begin);
+            _fseeki64(f.get(), offset + 0xa4, SEEK_SET);
 
             for (size_t j = 0; j < 16; j++) {
                 BYTE y, u, v, tmp;
 
-                f.Read(&tmp, 1);
-                f.Read(&y, 1);
-                f.Read(&u, 1);
-                f.Read(&v, 1);
+                fread(&tmp, 1, 1, f.get());
+                fread(&y, 1, 1, f.get());
+                fread(&u, 1, 1, f.get());
+                fread(&v, 1, 1, f.get());
 
                 y = (y - 16) * 255 / 219;
 
@@ -244,28 +245,28 @@ bool CVobSubFileRipper::LoadIfo(CString fn)
             //
 
             WORD progoff, celladdroff, vobcelloff;
-            f.Seek(offset + 0xe6, CFile::begin);
+            _fseeki64(f.get(), offset + 0xe6, SEEK_SET);
             ReadBEw(progoff);
-            f.Seek(offset + 0xe8, CFile::begin);
+            _fseeki64(f.get(), offset + 0xe8, SEEK_SET);
             ReadBEw(celladdroff);
-            f.Seek(offset + 0xea, CFile::begin);
+            _fseeki64(f.get(), offset + 0xea, SEEK_SET);
             ReadBEw(vobcelloff);
 
             //
 
-            CAtlArray<BYTE> progs;
-            progs.SetCount(nProgs);
-            f.Seek(offset + progoff, CFile::begin);
-            f.Read(progs.GetData(), nProgs);
+            std::vector<BYTE> progs;
+            progs.resize(nProgs);
+            _fseeki64(f.get(), offset + progoff, SEEK_SET);
+            fread(progs.data(), 1, nProgs, f.get());
 
             //
 
-            pgc.angles[0].SetCount(nCells);
+            pgc.angles[0].resize(nCells);
             pgc.iSelAngle = 0;
 
             //
 
-            f.Seek(offset + vobcelloff, CFile::begin);
+            _fseeki64(f.get(), offset + vobcelloff, SEEK_SET);
             for (size_t j = 0; j < nCells; j++) {
                 ReadBEw(pgc.angles[0][j].vob);
                 ReadBEw(pgc.angles[0][j].cell);
@@ -279,7 +280,7 @@ bool CVobSubFileRipper::LoadIfo(CString fn)
 
             pgc.nAngles = 0;
 
-            f.Seek(offset + celladdroff, CFile::begin);
+            _fseeki64(f.get(), offset + celladdroff, SEEK_SET);
             for (size_t j = 0; j < nCells; j++) {
                 BYTE b;
                 ReadBEb(b);
@@ -300,10 +301,10 @@ bool CVobSubFileRipper::LoadIfo(CString fn)
                 pgc.angles[0][j].iAngle = iAngle;
                 pgc.nAngles = std::max(pgc.nAngles, iAngle);
 
-                f.Seek(3, CFile::current);
+                _fseeki64(f.get(), 3, SEEK_CUR);
                 ReadBEdw(pgc.angles[0][j].tTime);
                 ReadBEdw(pgc.angles[0][j].start);
-                f.Seek(8, CFile::current);
+                _fseeki64(f.get(), 8, SEEK_CUR);
                 ReadBEdw(pgc.angles[0][j].end);
 
                 float fps;
@@ -345,7 +346,7 @@ bool CVobSubFileRipper::LoadIfo(CString fn)
                         continue;
                     }
 
-                    pgc.angles[iAngle].Add(pgc.angles[0][j]);
+                    pgc.angles[iAngle].push_back(pgc.angles[0][j]);
 
                     if (pgc.angles[iAngle][k].bDiscontinuity) {
                         tOffset = tTotal;
@@ -367,24 +368,23 @@ bool CVobSubFileRipper::LoadIfo(CString fn)
     return true;
 }
 
-bool CVobSubFileRipper::LoadVob(CString fn)
+bool CVobSubFileRipper::LoadVob(tstring fn)
 {
     Log(LOG_INFO, _T("Searching vobs..."));
 
-    CAtlList<CString> vobs;
+    std::list<tstring> vobs;
     if (!m_vob.Open(fn, vobs/*m_vobs*/)) {
         Log(LOG_ERROR, _T("Cannot open vob sequence"));
         return false;
     }
 
-    if (vobs.GetCount() <= 0) {
-        Log(LOG_ERROR, _T("Nothing found! (%s*.vob)"), fn.GetString());
+    if (vobs.size() <= 0) {
+        Log(LOG_ERROR, _T("Nothing found! (%s*.vob)"), fn.c_str());
         return false;
     }
 
-    POSITION pos = vobs.GetHeadPosition();
-    while (pos) {
-        Log(LOG_INFO, _T("Found ") + vobs.GetNext(pos));
+    for (const tstring& vob : vobs) {
+        Log(LOG_INFO, (_T("Found ") + vob).c_str());
     }
 
     if (m_vob.IsDVD()) {
@@ -459,26 +459,26 @@ bool CVobSubFileRipper::Create()
 {
     CAutoLock cAutoLock(&m_csAccessLock);
 
-    if (m_rd.iSelPGC < 0 || (size_t)m_rd.iSelPGC >= m_rd.pgcs.GetCount()) {
+    if (m_rd.iSelPGC < 0 || (size_t)m_rd.iSelPGC >= m_rd.pgcs.size()) {
         Log(LOG_ERROR, _T("Invalid program chain number (%d)!"), m_rd.iSelPGC);
         return false;
     }
 
     PGC& pgc = m_rd.pgcs[m_rd.iSelPGC];
 
-    if (pgc.iSelAngle < 0 || pgc.iSelAngle > 9 || pgc.angles[pgc.iSelAngle].IsEmpty()) {
+    if (pgc.iSelAngle < 0 || pgc.iSelAngle > 9 || pgc.angles[pgc.iSelAngle].empty()) {
         Log(LOG_ERROR, _T("Invalid angle number (%d)!"), pgc.iSelAngle);
         return false;
     }
 
-    CAtlArray<vc_t>& angle = pgc.angles[pgc.iSelAngle];
+    std::vector<vc_t>& angle = pgc.angles[pgc.iSelAngle];
 
-    if (m_rd.selids.IsEmpty() && !m_rd.bClosedCaption) {
+    if (m_rd.selids.empty() && !m_rd.bClosedCaption) {
         Log(LOG_ERROR, _T("No valid stream set to be extacted!"));
         return false;
     }
 
-    if (m_rd.selvcs.IsEmpty()) {
+    if (m_rd.selvcs.empty()) {
         Log(LOG_ERROR, _T("No valid vob/cell id set to be extacted!"));
         return false;
     }
@@ -505,7 +505,7 @@ bool CVobSubFileRipper::Create()
     int PTSframeoffset = 0, minPTSframeoffset = 0;
 
     if (m_rd.bResetTime) {
-        for (size_t i = 0; i < angle.GetCount() && (UINT)((angle[i].vob << 16) | angle[i].cell) != m_rd.selvcs[0]; i++) {
+        for (size_t i = 0; i < angle.size() && (UINT)((angle[i].vob << 16) | angle[i].cell) != m_rd.selvcs[0]; i++) {
             tStart += angle[i].tTime;
         }
 
@@ -513,25 +513,25 @@ bool CVobSubFileRipper::Create()
             tStart, m_rd.selvcs[0] >> 16, m_rd.selvcs[0] & 0xffff);
     }
 
-    CAtlMap<DWORD, int> selvcmap;
-    selvcmap.RemoveAll();
-    for (size_t i = 0; i < m_rd.selvcs.GetCount(); i++) {
+    std::map<DWORD, int> selvcmap;
+    selvcmap.clear();
+    for (size_t i = 0; i < m_rd.selvcs.size(); i++) {
         selvcmap[m_rd.selvcs[i]] = 90000;
     }
 
-    CAtlArray<vcchunk> chunks, foundchunks, loadedchunks;
+    std::vector<vcchunk> chunks, foundchunks, loadedchunks;
 
     if (m_vob.IsDVD()) {
         Log(LOG_INFO, _T("Indexing mode: DVD"));
 
-        for (size_t i = 0; i < angle.GetCount(); i++) {
+        for (size_t i = 0; i < angle.size(); i++) {
             DWORD vc = (angle[i].vob << 16) | angle[i].cell;
-            if (!selvcmap.Lookup(vc)) {
+            if (!(selvcmap.find(vc) != selvcmap.end())) {
                 continue;
             }
 
             vcchunk c = {2048i64 * angle[i].start, 2048i64 * angle[i].end + 2048, vc};
-            chunks.Add(c);
+            chunks.push_back(c);
 
             Log(LOG_INFO, _T("Adding: 0x%x - 0x%x (lba) for vob %d cell %d"),
                 angle[i].start, angle[i].end, angle[i].vob, angle[i].cell);
@@ -539,30 +539,30 @@ bool CVobSubFileRipper::Create()
     } else if (LoadChunks(loadedchunks)) {
         Log(LOG_INFO, _T("Indexing mode: File"));
 
-        for (size_t i = 0; i < loadedchunks.GetCount(); i++) {
+        for (size_t i = 0; i < loadedchunks.size(); i++) {
             DWORD vcid = loadedchunks[i].vc;
-            if (!selvcmap.Lookup(vcid)) {
+            if (!(selvcmap.find(vcid) != selvcmap.end())) {
                 continue;
             }
 
-            chunks.Add(loadedchunks[i]);
+            chunks.push_back(loadedchunks[i]);
         }
 
         Log(LOG_INFO, _T(".chunk file loaded"));
     } else {
         Log(LOG_INFO, _T("Indexing mode: File"));
 
-        chunks.RemoveAll();
+        chunks.clear();
         vcchunk c = {0, 2048i64 * m_vob.GetLength(), 0};
-        chunks.Add(c);
+        chunks.push_back(c);
     }
 
     __int64 sizedone = 0, sizetotal = 0;
-    for (size_t i = 0; i < chunks.GetCount(); i++) {
+    for (size_t i = 0; i < chunks.size(); i++) {
         sizetotal += chunks[i].end - chunks[i].start;
     }
 
-    for (size_t i = 0; !m_bBreakThread && i < chunks.GetCount(); i++) {
+    for (size_t i = 0; !m_bBreakThread && i < chunks.size(); i++) {
         __int64 curpos = chunks[i].start, endpos = chunks[i].end;
 
         vcchunk curchunk = {curpos, curpos, chunks[i].vc};
@@ -620,7 +620,7 @@ bool CVobSubFileRipper::Create()
             if (*((DWORD*)&buff[0]) != 0xba010000) {
                 Log(LOG_WARNING, _T("Bad sector header at block %08d!"), (int)(curpos / 2048));
 
-                if (AfxMessageBox(_T("Bad packet header found, do you want to continue?"), MB_YESNO) == IDNO) {
+                if (MessageBox(GetActiveWindow(), _T("Bad packet header found, do you want to continue?"), nullptr, MB_YESNO) == IDNO) {
                     Log(LOG_ERROR, _T("Terminated!"));
                     return false;
                 }
@@ -659,7 +659,7 @@ bool CVobSubFileRipper::Create()
 
                 tOffset = tTotal = 0;
 
-                for (size_t j = 0; j < angle.GetCount(); j++) {
+                for (size_t j = 0; j < angle.size(); j++) {
                     if (angle[j].vob == vob && angle[j].cell == cell) {
                         tPrevOffset = tOffset;
                         tOffset = (__int64)angle[j].tOffset;
@@ -672,33 +672,32 @@ bool CVobSubFileRipper::Create()
 
                 if (curchunk.vc != (DWORD)((vob << 16) | cell)) {
                     if (curchunk.vc != 0) {
-                        foundchunks.Add(curchunk);
+                        foundchunks.push_back(curchunk);
                     }
                     curchunk.start = curchunk.end = curpos;
                     curchunk.vc = (vob << 16) | cell;
                 }
 
-                CString str, str2;
-                str.Format(_T("v%02d c%02d lba%08d"), vob, cell, (int)(curpos / 2048));
+                tstring str, str2;
+                str = ::Format(_T("v%02d c%02d lba%08d"), vob, cell, (int)(curpos / 2048));
                 UINT vcid = (vob << 16) | cell;
-                if (!selvcmap.Lookup(vcid, minPTSframeoffset)) {
+                if (!Lookup(selvcmap, vcid, minPTSframeoffset)) {
                     str2 = _T(", skipping");
-                } else str2.Format(_T(", total=%I64dms, off=%I64dms, corr=%I64dms, discont.:%d"),
-                                       tTotal, tOffset, -tStart, (int)bDiscontinuity);
-                Log(LOG_INFO, str + str2);
+                } else str2 = ::Format(_T(", total=%I64dms, off=%I64dms, corr=%I64dms, discont.:%d"), tTotal, tOffset, -tStart, (int)bDiscontinuity);
+                Log(LOG_INFO, (str + str2).c_str());
             }
 
             DWORD vcid = (vob << 16) | cell;
-            if (!selvcmap.Lookup(vcid, minPTSframeoffset)) {
+            if (!Lookup(selvcmap, vcid, minPTSframeoffset)) {
                 continue;
             }
 
             if (hasPTS && bDiscontinuity && !bDiscontinuityFixApplied) {
                 __int64 tDiff = tOffset - tPrevOffset;
                 if (tDiff > 0 && tDiff < (PTS / 90 + 1000)) {
-                    CString str;
-                    str.Format(_T("False discontinuity detected, correcting time by %I64dms"), -tDiff);
-                    Log(LOG_INFO, str);
+                    tstring str;
+                    str = ::Format(_T("False discontinuity detected, correcting time by %I64dms"), -tDiff);
+                    Log(LOG_INFO, str.c_str());
 
                     tStart += tDiff;
                 }
@@ -720,7 +719,7 @@ bool CVobSubFileRipper::Create()
             } else if (*(DWORD*)&buff[0x0e] == 0xbd010000) {
                 BYTE id = buff[0x17 + buff[0x16]], iLang = id & 0x1f;
 
-                if ((id & 0xe0) == 0x20 && m_rd.selids.Lookup(iLang)) {
+                if ((id & 0xe0) == 0x20 && (m_rd.selids.find(iLang) != m_rd.selids.end())) {
                     if (hasPTS) {
                         SubPos sb;
                         sb.filepos = m_sub.GetPosition();
@@ -729,7 +728,7 @@ bool CVobSubFileRipper::Create()
                         sb.cellid = (char)cell;
                         sb.celltimestamp = tTotal;
                         sb.bValid = true;
-                        m_langs[iLang].subpos.Add(sb);
+                        m_langs[iLang].subpos.push_back(sb);
                     }
 
                     m_sub.Write(buff, 2048);
@@ -739,7 +738,7 @@ bool CVobSubFileRipper::Create()
 
         if (curchunk.vc != (DWORD)((vob << 16) | cell)) {
             if (curchunk.vc != 0) {
-                foundchunks.Add(curchunk);
+                foundchunks.push_back(curchunk);
             }
             curchunk.start = curchunk.end = curpos;
             curchunk.vc = (vob << 16) | cell;
@@ -765,20 +764,20 @@ bool CVobSubFileRipper::Create()
     Progress(1);
 
     for (size_t i = 0; i < m_langs.size(); i++) {
-        if (m_nLang == SIZE_T_ERROR && !m_langs[i].subpos.IsEmpty()) {
+        if (m_nLang == SIZE_T_ERROR && !m_langs[i].subpos.empty()) {
             m_nLang = i;
         }
         m_langs[i].id = pgc.ids[i];
         m_langs[i].name = m_langs[i].alt = FindLangFromId(m_langs[i].id);
 
-        CAtlArray<SubPos>& sp = m_langs[i].subpos;
-        std::sort(sp.GetData(), sp.GetData() + sp.GetCount());
+        std::vector<SubPos>& sp = m_langs[i].subpos;
+        std::sort(sp.data(), sp.data() + sp.size());
 
         if (m_rd.bForcedOnly) {
             Log(LOG_INFO, _T("Searching for forced subs..."));
             Progress(0);
 
-            for (size_t j = 0, len = sp.GetCount(); j < len; j++) {
+            for (size_t j = 0, len = sp.size(); j < len; j++) {
                 Progress(1.0 * j / len);
 
                 sp[j].bValid = false;
@@ -805,7 +804,7 @@ bool CVobSubFileRipper::Create()
 
     Log(LOG_INFO, _T("Subtitles saved"));
 
-    if (!m_vob.IsDVD() && loadedchunks.IsEmpty()) {
+    if (!m_vob.IsDVD() && loadedchunks.empty()) {
         if (SaveChunks(foundchunks)) {
             Log(LOG_INFO, _T(".chunk file saved"));
         }
@@ -818,81 +817,84 @@ bool CVobSubFileRipper::Create()
 
 static const DWORD s_version = 1;
 
-bool CVobSubFileRipper::LoadChunks(CAtlArray<vcchunk>& chunks)
+bool CVobSubFileRipper::LoadChunks(std::vector<vcchunk>& chunks)
 {
-    CFile f;
-
-    CString fn = m_infn;
+    tstring fn = m_infn;
     TrimExtension(fn);
     fn += _T(".chunks");
 
     DWORD chksum = 0, chunklen, version;
     __int64 voblen = 0;
 
-    if (!f.Open(fn, CFile::modeRead | CFile::typeBinary | CFile::shareDenyNone)) {
-        return false;
+    {
+        FilePtr f = OpenFile(fn, L"rb");
+        if (!f) {
+            return false;
+        }
+        fread(&version, 1, sizeof(version), f.get());
+        if (version == 1) {
+            fread(&chksum, 1, sizeof(chksum), f.get());
+            fread(&voblen, 1, sizeof(voblen), f.get());
+            fread(&chunklen, 1, sizeof(chunklen), f.get());
+            chunks.resize(chunklen);
+            fread(chunks.data(), 1, sizeof(vcchunk) * chunks.size(), f.get());
+        }
     }
-    f.Read(&version, sizeof(version));
-    if (version == 1) {
-        f.Read(&chksum, sizeof(chksum));
-        f.Read(&voblen, sizeof(voblen));
-        f.Read(&chunklen, sizeof(chunklen));
-        chunks.SetCount(chunklen);
-        f.Read(chunks.GetData(), UINT(sizeof(vcchunk)*chunks.GetCount()));
-    }
-    f.Close();
 
     if (voblen != m_vob.GetLength()) {
-        chunks.RemoveAll();
+        chunks.clear();
         return false;
     }
 
-    if (!f.Open(m_infn, CFile::modeRead | CFile::typeBinary | CFile::shareDenyNone)) {
-        return false;
+    DWORD chksum2 = 0;
+    {
+        FilePtr f = OpenFile(m_infn, L"rb");
+        if (!f) {
+            return false;
+        }
+        DWORD dw;
+        while (fread(&dw, 1, sizeof(dw), f.get()) == sizeof(dw)) {
+            chksum2 += dw;
+        }
     }
-    DWORD dw, chksum2 = 0;
-    while (f.Read(&dw, sizeof(dw)) == sizeof(dw)) {
-        chksum2 += dw;
-    }
-    f.Close();
 
     if (chksum != chksum2) {
-        chunks.RemoveAll();
+        chunks.clear();
         return false;
     }
 
     return true;
 }
 
-bool CVobSubFileRipper::SaveChunks(CAtlArray<vcchunk>& chunks)
+bool CVobSubFileRipper::SaveChunks(std::vector<vcchunk>& chunks)
 {
-    CFile f;
-
-    CString fn = m_infn;
+    tstring fn = m_infn;
     TrimExtension(fn);
     fn += _T(".chunks");
 
-    DWORD chksum = 0, chunklen = (DWORD)chunks.GetCount();
+    DWORD chksum = 0, chunklen = (DWORD)chunks.size();
     __int64 voblen = m_vob.GetLength();
 
-    if (!f.Open(m_infn, CFile::modeRead | CFile::typeBinary | CFile::shareDenyNone)) {
-        return false;
+    {
+        FilePtr f = OpenFile(m_infn, L"rb");
+        if (!f) {
+            return false;
+        }
+        DWORD dw;
+        while (fread(&dw, 1, sizeof(dw), f.get()) == sizeof(dw)) {
+            chksum += dw;
+        }
     }
-    DWORD dw;
-    while (f.Read(&dw, sizeof(dw)) == sizeof(dw)) {
-        chksum += dw;
-    }
-    f.Close();
 
-    if (!f.Open(fn, CFile::modeCreate | CFile::modeWrite | CFile::typeBinary | CFile::shareDenyWrite)) {
+    FilePtr f = OpenFile(fn, L"wb", _SH_DENYWR);
+    if (!f) {
         return false;
     }
-    f.Write(&s_version, sizeof(s_version));
-    f.Write(&chksum, sizeof(chksum));
-    f.Write(&voblen, sizeof(voblen));
-    f.Write(&chunklen, sizeof(chunklen));
-    f.Write(chunks.GetData(), sizeof(vcchunk)*chunklen);
-    f.Close();
+    fwrite(&s_version, 1, sizeof(s_version), f.get());
+    fwrite(&chksum, 1, sizeof(chksum), f.get());
+    fwrite(&voblen, 1, sizeof(voblen), f.get());
+    fwrite(&chunklen, 1, sizeof(chunklen), f.get());
+    fwrite(chunks.data(), 1, sizeof(vcchunk) * chunklen, f.get());
 
     return true;
 }
@@ -906,14 +908,14 @@ STDMETHODIMP CVobSubFileRipper::SetCallBack(IVSFRipperCallback* pCallback)
     return S_OK;
 }
 
-STDMETHODIMP CVobSubFileRipper::LoadParamFile(CString fn)
+STDMETHODIMP CVobSubFileRipper::LoadParamFile(tstring fn)
 {
     CAutoLock cAutoLock(&m_csAccessLock);
 
     m_rd.Reset();
 
-    CStdioFile f;
-    if (!f.Open(fn, CFile::modeRead | CFile::typeText)) {
+    CTextFile f;
+    if (!f.Open(fn.c_str())) {
         return E_FAIL;
     }
 
@@ -929,9 +931,9 @@ STDMETHODIMP CVobSubFileRipper::LoadParamFile(CString fn)
     };
     int phase = P_INPUT;
 
-    CString line;
+    tstring line;
     while (f.ReadString(line)) {
-        if (line.Trim().IsEmpty() || line[0] == '#') {
+        if (StringTrim(line).empty() || line[0] == '#') {
             continue;
         }
 
@@ -946,35 +948,35 @@ STDMETHODIMP CVobSubFileRipper::LoadParamFile(CString fn)
             }
             phase = P_PGC;
         } else if (phase == P_PGC) {
-            m_rd.iSelPGC = _tcstol(line, nullptr, 10) - 1;
-            if (m_rd.iSelPGC < 0 || (size_t)m_rd.iSelPGC >= m_rd.pgcs.GetCount()) {
+            m_rd.iSelPGC = _tcstol(line.c_str(), nullptr, 10) - 1;
+            if (m_rd.iSelPGC < 0 || (size_t)m_rd.iSelPGC >= m_rd.pgcs.size()) {
                 break;
             }
             phase = P_ANGLE;
         } else if (phase == 3) {
             PGC& pgc = m_rd.pgcs[m_rd.iSelPGC];
 
-            pgc.iSelAngle = _tcstol(line, nullptr, 10);
+            pgc.iSelAngle = _tcstol(line.c_str(), nullptr, 10);
             if (pgc.iSelAngle < 0 || pgc.iSelAngle > std::max(1, pgc.nAngles) || pgc.iSelAngle > 9) {
                 break;
             }
 
-            CAtlArray<vc_t>& angle = pgc.angles[pgc.iSelAngle];
+            std::vector<vc_t>& angle = pgc.angles[pgc.iSelAngle];
 
-            if (line.Find('v') >= 0) {
+            if (StringFind(line, 'v') >= 0) {
                 int vob = 0, cell = 0;
 
                 line += _T(' ');
 
-                TCHAR* s = (LPTSTR)(LPCTSTR)line;
-                TCHAR* e = s + line.GetLength();
+                TCHAR* s = (LPTSTR)line.c_str();
+                TCHAR* e = s + int(line.size());
                 while (s < e) {
                     if (*s == 'v' || s == e - 1) {
                         s++;
                         if (vob != 0 && cell == 0) {
-                            for (size_t i = 0; i < angle.GetCount(); i++) {
+                            for (size_t i = 0; i < angle.size(); i++) {
                                 if (angle[i].vob == vob) {
-                                    m_rd.selvcs.Add((angle[i].vob << 16) | angle[i].cell);
+                                    m_rd.selvcs.push_back((angle[i].vob << 16) | angle[i].cell);
                                 }
                             }
                         }
@@ -985,9 +987,9 @@ STDMETHODIMP CVobSubFileRipper::LoadParamFile(CString fn)
                         s++;
                         cell = _tcstol(s, &s, 10);
 
-                        for (size_t i = 0; i < angle.GetCount(); i++) {
+                        for (size_t i = 0; i < angle.size(); i++) {
                             if (angle[i].vob == vob && angle[i].cell == cell) {
-                                m_rd.selvcs.Add((vob << 16) | cell);
+                                m_rd.selvcs.push_back((vob << 16) | cell);
                                 break;
                             }
                         }
@@ -996,14 +998,14 @@ STDMETHODIMP CVobSubFileRipper::LoadParamFile(CString fn)
                     }
                 }
             } else {
-                for (size_t i = 0; i < angle.GetCount(); i++) {
-                    m_rd.selvcs.Add((angle[i].vob << 16) | angle[i].cell);
+                for (size_t i = 0; i < angle.size(); i++) {
+                    m_rd.selvcs.push_back((angle[i].vob << 16) | angle[i].cell);
                 }
             }
 
             phase = P_LANGS;
         } else if (phase == 4) {
-            if (!line.CompareNoCase(_T("ALL"))) {
+            if (!StringICompare(line, _T("ALL"))) {
                 for (BYTE i = 0; i < 32; i++) {
                     m_rd.selids[i] = true;
                 }
@@ -1012,25 +1014,25 @@ STDMETHODIMP CVobSubFileRipper::LoadParamFile(CString fn)
             } else {
                 line += _T(' ');
 
-                while (!line.IsEmpty()) {
-                    int n = line.Find(_T(" "));
+                while (!line.empty()) {
+                    int n = StringFind(line, _T(" "));
 
-                    CString lang = line.Left(n);
+                    tstring lang = StringLeft(line, n);
 
-                    line = line.Mid(n);
-                    line.TrimLeft();
+                    line = StringMid(line, n);
+                    StringTrimLeft(line);
 
                     n = 0;
                     if (_istdigit(lang[0])) {
                         int langnum;
-                        n = _stscanf_s(lang, _T("%d"), &langnum);
+                        n = _stscanf_s(lang.c_str(), _T("%d"), &langnum);
                         if (n != 1) {
                             break;
                         }
 
                         m_rd.selids[(BYTE)langnum] = true;
                     } else if (_istalpha(lang[0])) {
-                        n = _stscanf_s(lang, _T("%s"), langid, UINT(_countof(langid)));
+                        n = _stscanf_s(lang.c_str(), _T("%s"), langid, UINT(_countof(langid)));
                         if (n != 1) {
                             break;
                         }
@@ -1048,19 +1050,19 @@ STDMETHODIMP CVobSubFileRipper::LoadParamFile(CString fn)
                     }
                 }
 
-                if ((!m_rd.selids.IsEmpty() || m_rd.bClosedCaption) && line.IsEmpty()) {
+                if ((!m_rd.selids.empty() || m_rd.bClosedCaption) && line.empty()) {
                     phase = P_OPTIONS;
                 }
             }
-        } else if (phase == 5 && !line.CompareNoCase(_T("CLOSE"))) {
+        } else if (phase == 5 && !StringICompare(line, _T("CLOSE"))) {
             m_rd.bClose = true;
-        } else if (phase == 5 && !line.CompareNoCase(_T("BEEP"))) {
+        } else if (phase == 5 && !StringICompare(line, _T("BEEP"))) {
             m_rd.bBeep = true;
-        } else if (phase == 5 && !line.CompareNoCase(_T("RESETTIME"))) {
+        } else if (phase == 5 && !StringICompare(line, _T("RESETTIME"))) {
             m_rd.bResetTime = true;
-        } else if (phase == 5 && !line.CompareNoCase(_T("FORCEDONLY"))) {
+        } else if (phase == 5 && !StringICompare(line, _T("FORCEDONLY"))) {
             m_rd.bForcedOnly = true;
-        } else if (phase == 5 && !line.CompareNoCase(_T("CLOSEIGNOREERRORS"))) {
+        } else if (phase == 5 && !StringICompare(line, _T("CLOSEIGNOREERRORS"))) {
             m_rd.bCloseIgnoreError = true;
         }
 
@@ -1071,7 +1073,7 @@ STDMETHODIMP CVobSubFileRipper::LoadParamFile(CString fn)
     return phase == P_OPTIONS ? S_OK : E_FAIL;
 }
 
-STDMETHODIMP CVobSubFileRipper::SetInput(CString infn)
+STDMETHODIMP CVobSubFileRipper::SetInput(tstring infn)
 {
     CAutoLock cAutoLock(&m_csAccessLock);
 
@@ -1086,7 +1088,7 @@ STDMETHODIMP CVobSubFileRipper::SetInput(CString infn)
     return S_OK;
 }
 
-STDMETHODIMP CVobSubFileRipper::SetOutput(CString outfn)
+STDMETHODIMP CVobSubFileRipper::SetOutput(tstring outfn)
 {
     CAutoLock cAutoLock(&m_csAccessLock);
     m_outfn = outfn;
@@ -1132,17 +1134,17 @@ STDMETHODIMP CVobSubFileRipper::Abort(bool bSavePartial)
 
 void VSFRipperData::Reset()
 {
-    vidsize.SetSize(0, 0);
+    vidsize = MakeSize(0, 0);
     ZeroMemory(&vidinfo, sizeof(vidinfo));
-    pgcs.RemoveAll();
+    pgcs.clear();
     iSelPGC = -1;
     bResetTime = bClosedCaption = true;
     bForcedOnly = false;
     bClose = bBeep = bAuto = false;
     bCloseIgnoreError = false;
 
-    selvcs.RemoveAll();
-    selids.RemoveAll();
+    selvcs.clear();
+    selids.clear();
 }
 
 void VSFRipperData::Copy(VSFRipperData& rd)
@@ -1151,14 +1153,14 @@ void VSFRipperData::Copy(VSFRipperData& rd)
 
     vidsize = rd.vidsize;
     vidinfo = rd.vidinfo;
-    if (size_t len = rd.pgcs.GetCount()) {
-        pgcs.SetCount(len);
+    if (size_t len = rd.pgcs.size()) {
+        pgcs.resize(len);
         for (size_t i = 0; i < len; i++) {
             PGC& src = rd.pgcs[i];
             PGC& dst = pgcs[i];
             dst.nAngles = src.nAngles;
             for (size_t j = 0; j < _countof(dst.angles); j++) {
-                dst.angles[j].Copy(src.angles[j]);
+                dst.angles[j] = src.angles[j];
             }
             dst.iSelAngle = src.iSelAngle;
             memcpy(dst.pal, src.pal, sizeof(src.pal));
@@ -1173,12 +1175,6 @@ void VSFRipperData::Copy(VSFRipperData& rd)
     bBeep = rd.bBeep;
     bAuto = rd.bAuto;
     bCloseIgnoreError = rd.bCloseIgnoreError;
-    selvcs.Copy(rd.selvcs);
-    POSITION pos = rd.selids.GetStartPosition();
-    while (pos) {
-        BYTE key;
-        bool val;
-        rd.selids.GetNextAssoc(pos, key, val);
-        selids[key] = val;
-    }
+    selvcs = rd.selvcs;
+    selids = rd.selids;
 }

@@ -560,7 +560,7 @@ namespace
     };
 };
 
-CString ISOLang::ISO6391ToLanguage(LPCSTR code)
+tstring ISOLang::ISO6391ToLanguage(LPCSTR code)
 {
     CHAR tmp[2 + 1];
     strncpy_s(tmp, code, 2);
@@ -568,10 +568,10 @@ CString ISOLang::ISO6391ToLanguage(LPCSTR code)
     _strlwr_s(tmp);
     for (size_t i = 0, cnt = _countof(s_isolangs); i < cnt; i++) {
         if (!strcmp(s_isolangs[i].iso6391, tmp)) {
-            CString ret = CString(CStringA(s_isolangs[i].name));
-            int k = ret.Find(';');
+            tstring ret = StringToT(s_isolangs[i].name);
+            int k = StringFind(ret, ';');
             if (k > 0) {
-                ret = ret.Left(k);
+                ret = StringLeft(ret, k);
             }
             return ret;
         }
@@ -579,7 +579,7 @@ CString ISOLang::ISO6391ToLanguage(LPCSTR code)
     return _T("");
 }
 
-CString ISOLang::ISO6392ToLanguage(LPCSTR code)
+tstring ISOLang::ISO6392ToLanguage(LPCSTR code)
 {
     CHAR tmp[3 + 1];
     strncpy_s(tmp, code, 3);
@@ -587,21 +587,21 @@ CString ISOLang::ISO6392ToLanguage(LPCSTR code)
     _strlwr_s(tmp);
     for (size_t i = 0, cnt = _countof(s_isolangs); i < cnt; i++) {
         if (!strcmp(s_isolangs[i].iso6392, tmp)) {
-            CString ret = CString(CStringA(s_isolangs[i].name));
-            int k = ret.Find(';');
+            tstring ret = StringToT(s_isolangs[i].name);
+            int k = StringFind(ret, ';');
             if (k > 0) {
-                ret = ret.Left(k);
+                ret = StringLeft(ret, k);
             }
             return ret;
         }
     }
-    return CString(code);
+    return StringToT(code);
 }
 
 bool ISOLang::IsISO639Language(LPCSTR code)
 {
     size_t nLen = strlen(code) + 1;
-    LPSTR tmp = DEBUG_NEW CHAR[nLen];
+    LPSTR tmp = new CHAR[nLen];
     strncpy_s(tmp, nLen, code, nLen);
     _strlwr_s(tmp, nLen);
     tmp[0] = (CHAR)toupper(tmp[0]);
@@ -619,9 +619,9 @@ bool ISOLang::IsISO639Language(LPCSTR code)
     return bFound;
 }
 
-CString ISOLang::ISO639XToLanguage(LPCSTR code, bool bCheckForFullLangName /*= false*/)
+tstring ISOLang::ISO639XToLanguage(LPCSTR code, bool bCheckForFullLangName /*= false*/)
 {
-    CString lang;
+    tstring lang;
 
     switch (size_t nLen = strlen(code)) {
         case 2:
@@ -629,14 +629,14 @@ CString ISOLang::ISO639XToLanguage(LPCSTR code, bool bCheckForFullLangName /*= f
             break;
         case 3:
             lang = ISO6392ToLanguage(code);
-            if (lang == code) { // When it can't find a match, ISO6392ToLanguage returns the input string
-                lang.Empty();
+            if (lang == StringToT(code)) { // When it can't find a match, ISO6392ToLanguage returns the input string
+                lang.clear();
             }
             break;
         default:
             if (bCheckForFullLangName && nLen > 3) {
                 if (IsISO639Language(code)) {
-                    lang = code;
+                    lang = StringToT(code);
                 }
             }
     }
@@ -644,14 +644,14 @@ CString ISOLang::ISO639XToLanguage(LPCSTR code, bool bCheckForFullLangName /*= f
     return lang;
 }
 
-CString ISOLang::LCIDToLanguage(LCID lcid)
+tstring ISOLang::LCIDToLanguage(LCID lcid)
 {
     for (size_t i = 0, cnt = _countof(s_isolangs); i < cnt; i++) {
         if (lcid == s_isolangs[i].lcid) {
-            CString ret = CString(CStringA(s_isolangs[i].name));
-            int k = ret.Find(';');
+            tstring ret = StringToT(s_isolangs[i].name);
+            int k = StringFind(ret, ';');
             if (k > 0) {
-                ret = ret.Left(k);
+                ret = StringLeft(ret, k);
             }
             return ret;
         }
@@ -715,7 +715,7 @@ BOOL ISOLang::IsISO6392(LPCSTR code)
     return false;
 }
 
-CStringA ISOLang::ISO6391To6392(LPCSTR code)
+std::string ISOLang::ISO6391To6392(LPCSTR code)
 {
     CHAR tmp[2 + 1];
     strncpy_s(tmp, code, 2);
@@ -723,13 +723,13 @@ CStringA ISOLang::ISO6391To6392(LPCSTR code)
     _strlwr_s(tmp);
     for (size_t i = 0, cnt = _countof(s_isolangs); i < cnt; i++) {
         if (!strcmp(s_isolangs[i].iso6391, tmp)) {
-            return CStringA(s_isolangs[i].iso6392);
+            return std::string(s_isolangs[i].iso6392);
         }
     }
     return "";
 }
 
-CString ISOLang::ISO6392To6391(LPCSTR code)
+tstring ISOLang::ISO6392To6391(LPCSTR code)
 {
     CHAR tmp[3 + 1];
     strncpy_s(tmp, code, 3);
@@ -737,23 +737,22 @@ CString ISOLang::ISO6392To6391(LPCSTR code)
     _strlwr_s(tmp);
     for (size_t i = 0, cnt = _countof(s_isolangs); i < cnt; i++) {
         if (!strcmp(s_isolangs[i].iso6392, tmp)) {
-            return CString(s_isolangs[i].iso6391);
+            return StringToT(s_isolangs[i].iso6391);
         }
     }
     return _T("");
 }
 
-CString ISOLang::LanguageToISO6392(LPCTSTR lang)
+tstring ISOLang::LanguageToISO6392(LPCTSTR lang)
 {
-    CString str = lang;
-    str.MakeLower();
+    tstring str = lang;
+    StringLower(str);
     for (size_t i = 0, cnt = _countof(s_isolangs); i < cnt; i++) {
-        CAtlList<CString> sl;
-        Explode(CString(s_isolangs[i].name), sl, _T(';'));
-        POSITION pos = sl.GetHeadPosition();
-        while (pos) {
-            if (!str.CompareNoCase(sl.GetNext(pos))) {
-                return CString(s_isolangs[i].iso6392);
+        std::list<tstring> sl;
+        Explode(StringToT(s_isolangs[i].name), sl, _T(';'));
+        for (const tstring& name : sl) {
+            if (!StringICompare(str, name)) {
+                return StringToT(s_isolangs[i].iso6392);
             }
         }
     }
@@ -804,8 +803,8 @@ ISOLang ISOLang::ISO639XToISOLang(LPCSTR code)
     return lang;
 }
 
-CStringW ISOLang::GetLocaleStringCompat(LCID lcid) {
-    CStringW langName;
+std::wstring ISOLang::GetLocaleStringCompat(LCID lcid) {
+    std::wstring langName;
     WCHAR strNameBuffer[LOCALE_NAME_MAX_LENGTH];
     if (0 == LCIDToLocaleName(lcid, strNameBuffer, LOCALE_NAME_MAX_LENGTH, 0)) {
         GetLocaleString(lcid, LOCALE_SISO639LANGNAME2, langName);

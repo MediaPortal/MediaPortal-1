@@ -112,60 +112,19 @@ xcopy %1\..\DirectShowFilters\fontEngine\bin\%2\fontEngine.pdb . /Y /D
 xcopy %1\..\DirectShowFilters\mpc-hc_subs\bin\%2\mpcSubs.pdb . /Y /D
 )
 
-REM bluray.dll - odd source folder is 
+REM bluray.dll and the BD-J jars from the NuGet package MediaPortal.libbluray.
+REM The two jars must stay next to each other: libbluray looks for libbluray-awt-j2se-<version>.jar beside libbluray-j2se-<version>.jar.
+set BLURAY_RT=%1\..\Packages\MediaPortal.libbluray.1.5.1\references\runtimes
 if /I "%3" EQU "x64" (
-  if /I "%2" EQU "RELEASE" (
-    xcopy %1\..\DirectShowFilters\bin_x64\libbluray.dll . /Y /D
-  )
-
-  if /I "%2" EQU "DEBUG" (
-    xcopy %1\..\DirectShowFilters\bin_x64d\libbluray.dll . /Y /D
-  )
+  xcopy "%BLURAY_RT%\x64\bluray.dll" . /Y /D
 ) ELSE (
-  if /I "%2" EQU "RELEASE" (
-    xcopy %1\..\DirectShowFilters\bin_Win32\libbluray.dll . /Y /D
-  )
-
-  if /I "%2" EQU "DEBUG" (
-    xcopy %1\..\DirectShowFilters\bin_Win32d\libbluray.dll . /Y /D
-  )
+  xcopy "%BLURAY_RT%\x86\bluray.dll" . /Y /D
 )
-
-
-ren libbluray.dll bluray.dll
+xcopy "%BLURAY_RT%\libbluray-j2se-1.5.1.jar" . /Y /D
+xcopy "%BLURAY_RT%\libbluray-awt-j2se-1.5.1.jar" . /Y /D
 
 REM Copy one dll from DirectShowFilters folder
 xcopy %1\..\DirectShowFilters\DXErr9\bin\%2\dxerr9.dll . /Y /D
-
-REM Copy bluray dll from DirectShowFilters folder
-xcopy %1\..\DirectShowFilters\BDReader\libbluray\bluray.dll . /Y /D
-xcopy %1\..\libbluray\src\.libs\libbluray-.jar . /Y /D
-ren libbluray-.jar libbluray.jar
-copy libbluray.jar libbluray-j2se-1.1.2.jar /Y
-
-REM Copy bluray awt extension from DirectShowFilters folder
-if not exist .\awt\ mkdir awt
-xcopy %1\..\libbluray\src\.libs\libbluray-awt-.jar .\awt\ /Y /D
-ren .\awt\libbluray-awt-.jar libbluray.jar
-
-REM freetype.dll - odd source folder is 
-if /I "%3" EQU "x64" (
-  if /I "%2" EQU "RELEASE" (
-    xcopy %1\..\libbluray\3rd_party\freetype2\objs\Win64\Release\freetype.dll . /Y /D
-  )
-
-  if /I "%2" EQU "DEBUG" (
-    xcopy %1\..\libbluray\3rd_party\freetype2\objs\Win64\Debug\freetype.dll . /Y /D
-  )
-) ELSE (
-  if /I "%2" EQU "RELEASE" (
-    xcopy %1\..\libbluray\3rd_party\freetype2\objs\Win32\Release\freetype.dll . /Y /D
-  )
-
-  if /I "%2" EQU "DEBUG" (
-    xcopy %1\..\libbluray\3rd_party\freetype2\objs\Win32\Debug\freetype.dll . /Y /D
-  )
-)
 
 REM mpWatchDog
 xcopy %1\WatchDog\bin\%2\WatchDog.exe . /Y /D

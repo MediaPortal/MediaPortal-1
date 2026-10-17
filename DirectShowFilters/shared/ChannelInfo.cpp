@@ -70,6 +70,10 @@ CChannelInfo& CChannelInfo::operator = (const CChannelInfo &info)
 
 void CChannelInfo::Copy(const CChannelInfo &info)
 {
+  PatVersion=info.PatVersion;
+  EIT_schedule_flag=info.EIT_schedule_flag;
+  EIT_present_following_flag=info.EIT_present_following_flag;
+  RunningStatus=info.RunningStatus;
 	LCN=info.LCN;
   NetworkId=info.NetworkId;
   TransportId=info.TransportId;

@@ -21,18 +21,17 @@
 
 #pragma once
 
-#include <atlcoll.h>
 
 struct COutline {
-    CAtlArray<CPoint> pa;
-    CAtlArray<int> da;
+    std::vector<POINT> pa;
+    std::vector<int> da;
     void RemoveAll() {
-        pa.RemoveAll();
-        da.RemoveAll();
+        pa.clear();
+        da.clear();
     }
-    void Add(CPoint p, int d) {
-        pa.Add(p);
-        da.Add(d);
+    void Add(POINT p, int d) {
+        pa.push_back(p);
+        da.push_back(d);
     }
 };
 
@@ -41,7 +40,7 @@ class CVobSubImage
     friend class CVobSubFile;
 
 private:
-    CSize org;
+    SIZE org = {};
     RGBQUAD* lpTemp1;
     RGBQUAD* lpTemp2;
 
@@ -55,7 +54,7 @@ private:
     void Free();
 
     BYTE GetNibble(const BYTE* lpData);
-    void DrawPixels(CPoint p, int length, size_t colorId);
+    void DrawPixels(POINT p, int length, size_t colorId);
     void TrimSubImage();
 
 public:
@@ -63,7 +62,7 @@ public:
     bool bForced, bAnimated;
     int tCurrent;
     __int64 start, delay;
-    CRect rect;
+    RECT rect = {};
     struct SubPal {
         BYTE pal: 4, tr: 4;
     };
@@ -83,14 +82,14 @@ public:
                 bool bTrim);
 
 private:
-    CAutoPtrList<COutline>* GetOutlineList(CPoint& topleft);
+    std::list<std::unique_ptr<COutline>>* GetOutlineList(POINT& topleft);
     int  GrabSegment(int start, const COutline& o, COutline& ret);
     void SplitOutline(const COutline& o, COutline& o1, COutline& o2);
-    void AddSegment(COutline& o, CAtlArray<BYTE>& pathTypes, CAtlArray<CPoint>& pathPoints);
+    void AddSegment(COutline& o, std::vector<BYTE>& pathTypes, std::vector<POINT>& pathPoints);
 
 public:
-    bool Polygonize(CAtlArray<BYTE>& pathTypes, CAtlArray<CPoint>& pathPoints, bool bSmooth, int scale);
-    bool Polygonize(CStringW& assstr, bool bSmooth = true, int scale = 3);
+    bool Polygonize(std::vector<BYTE>& pathTypes, std::vector<POINT>& pathPoints, bool bSmooth, int scale);
+    bool Polygonize(std::wstring& assstr, bool bSmooth = true, int scale = 3);
 
     void Scale2x();
 };

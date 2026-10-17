@@ -179,7 +179,7 @@ bool CBasePmtParser::DecodePmtPidTable(CSection& section)
               pid.Lang[3]=tempPids[i].Lang[3]; // should be null if no extra data is available
               pid.Lang[4]=tempPids[i].Lang[4];
               pid.Lang[5]=tempPids[i].Lang[5];
-              tempPids.pop_back();
+              tempPids.erase(tempPids.begin() + i); // the entry that was used, not the last one
               break;
             }
           }
@@ -222,6 +222,8 @@ bool CBasePmtParser::DecodePmtPidTable(CSection& section)
 
               pidFound=true;
             }
+          }
+
           // Find corresponding subtitle stream by PID, if not found
           // the stream type is be unknown to us
           for(unsigned int i(0); i<m_pidInfo.subtitlePids.size(); i++)
@@ -261,7 +263,7 @@ bool CBasePmtParser::DecodePmtPidTable(CSection& section)
             tempPids.push_back(pid);
           }
         }
-        }
+
         if(indicator==DESCRIPTOR_VBI_TELETEXT)
         {
           //LogDebug("VBI teletext descriptor");
@@ -298,6 +300,8 @@ bool CBasePmtParser::DecodePmtPidTable(CSection& section)
             //}
 
             int teletext_magazine_number = (b3 & 0x07); // last(lsb) 3 bits
+            if (teletext_magazine_number == 0)
+              teletext_magazine_number = 8; // magazine 8 is coded as 0 (ETSI EN 300 468, teletext descriptor)
 
             int teletext_page_number = (section.Data[pointer + varBytes*j + 6]);
 

@@ -23,3 +23,8 @@ Build/Build_Report_*
 # vcpkg (manifest mode, DirectShowFilters\vcpkg.json)
 DirectShowFilters/vcpkg_installed/
 DirectShowFilters/shared/*.pdb
+.ua/
+graphify-out/
+.codegraph/
+CLAUDE.md
+DirectShowFilters/build/

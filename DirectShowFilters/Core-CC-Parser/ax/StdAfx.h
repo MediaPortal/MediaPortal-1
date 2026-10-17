@@ -13,13 +13,12 @@
 #define _countof(array) (sizeof(array)/sizeof(array[0]))
 #endif
 
-#include <AtlColl.h>
+#include <vector>
 
-#define __AFX_H__
 #include <streams.h>
-#undef __AFX_H__
 
 #include <tchar.h>
+#include <process.h>
 
 /////////////////////////////////////////////////////////////////////////////
 // auto_pif

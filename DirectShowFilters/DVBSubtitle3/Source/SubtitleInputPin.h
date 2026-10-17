@@ -24,7 +24,7 @@
 
 #include "DVBSub.h"
 #include "dvbsubs\dvbsubdecoder.h"
-#include "PesDecoder\PacketSync.h"
+#include "..\..\shared\PacketSync.h"
 #include "PesDecoder\PesDecoder.h"
 
 class CSubtitleInputPin : public CBaseInputPin,  

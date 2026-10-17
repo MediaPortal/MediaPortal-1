@@ -49,7 +49,7 @@ bool SetPrivilege(LPCTSTR privilege, bool bEnable)
     return (GetLastError() == ERROR_SUCCESS);
 }
 
-CString GetHiveName(const HKEY hive)
+tstring GetHiveName(const HKEY hive)
 {
     switch ((ULONG_PTR)hive) {
         case (ULONG_PTR)HKEY_CLASSES_ROOT:
@@ -75,13 +75,13 @@ CString GetHiveName(const HKEY hive)
     }
 }
 
-bool ExportRegistryKey(CStdioFile& file, HKEY hKeyRoot, CString keyName)
+bool ExportRegistryKey(FILE* file, HKEY hKeyRoot, tstring keyName)
 {
     // Registry functions don't set GetLastError(), so it needs to be set explicitly
     LSTATUS errorCode = ERROR_SUCCESS;
 
     HKEY hKey = nullptr;
-    errorCode = RegOpenKeyEx(hKeyRoot, keyName, 0, KEY_READ, &hKey);
+    errorCode = RegOpenKeyEx(hKeyRoot, keyName.c_str(), 0, KEY_READ, &hKey);
     if (errorCode != ERROR_SUCCESS) {
         SetLastError(errorCode);
         return false;
@@ -97,20 +97,20 @@ bool ExportRegistryKey(CStdioFile& file, HKEY hKeyRoot, CString keyName)
     maxSubKeyLen += 1;
     maxValueNameLen += 1;
 
-    CString buffer;
+    tstring buffer;
 
-    buffer.Format(_T("[%s\\%s]\n"), GetHiveName(hKeyRoot).GetString(), keyName.GetString());
-    file.WriteString(buffer);
+    buffer = ::Format(_T("[%s\\%s]\n"), GetHiveName(hKeyRoot).c_str(), keyName.c_str());
+    _fputts(buffer.c_str(), file);
 
-    CString valueName;
+    tstring valueName;
     DWORD valueNameLen, valueDataLen, type;
-    BYTE* data = DEBUG_NEW BYTE[maxValueDataLen];
+    BYTE* data = new BYTE[maxValueDataLen];
 
     for (DWORD indexValue = 0; indexValue < valuesCount; indexValue++) {
         valueNameLen = maxValueNameLen;
         valueDataLen = maxValueDataLen;
 
-        errorCode = RegEnumValue(hKey, indexValue, valueName.GetBuffer(maxValueNameLen), &valueNameLen, nullptr, &type, data, &valueDataLen);
+        errorCode = RegEnumValue(hKey, indexValue, StringBuffer(valueName, maxValueNameLen), &valueNameLen, nullptr, &type, data, &valueDataLen);
         if (errorCode != ERROR_SUCCESS) {
             SetLastError(errorCode);
             return false;
@@ -118,31 +118,30 @@ bool ExportRegistryKey(CStdioFile& file, HKEY hKeyRoot, CString keyName)
 
         switch (type) {
             case REG_SZ: {
-                CString str((TCHAR*)data);
-                str.Replace(_T("\\"), _T("\\\\"));
-                str.Replace(_T("\""), _T("\\\""));
-                buffer.Format(_T("\"%s\"=\"%s\"\n"), valueName.GetString(), str.GetString());
-                file.WriteString(buffer);
+                tstring str((TCHAR*)data);
+                StringReplace(str, _T("\\"), _T("\\\\"));
+                StringReplace(str, _T("\""), _T("\\\""));
+                buffer = ::Format(_T("\"%s\"=\"%s\"\n"), valueName.c_str(), str.c_str());
+                _fputts(buffer.c_str(), file);
             }
             break;
             case REG_BINARY:
-                buffer.Format(_T("\"%s\"=hex:%02x"), valueName.GetString(), data[0]);
-                file.WriteString(buffer);
+                buffer = ::Format(_T("\"%s\"=hex:%02x"), valueName.c_str(), data[0]);
+                _fputts(buffer.c_str(), file);
                 for (DWORD i = 1; i < valueDataLen; i++) {
-                    buffer.Format(_T(",%02x"), data[i]);
-                    file.WriteString(buffer);
+                    buffer = ::Format(_T(",%02x"), data[i]);
+                    _fputts(buffer.c_str(), file);
                 }
-                file.WriteString(_T("\n"));
+                _fputts(_T("\n"), file);
                 break;
             case REG_DWORD:
-                buffer.Format(_T("\"%s\"=dword:%08lx\n"), valueName.GetString(), *((DWORD*)data));
-                file.WriteString(buffer);
+                buffer = ::Format(_T("\"%s\"=dword:%08lx\n"), valueName.c_str(), *((DWORD*)data));
+                _fputts(buffer.c_str(), file);
                 break;
             default: {
-                CString msg;
-                msg.Format(_T("The value \"%s\\%s\\%s\" has an unsupported type and has been ignored.\nPlease report this error to the developers."),
-                           GetHiveName(hKeyRoot).GetString(), keyName.GetString(), valueName.GetString());
-                AfxMessageBox(msg, MB_ICONERROR | MB_OK);
+                tstring msg;
+                msg = ::Format(_T("The value \"%s\\%s\\%s\" has an unsupported type and has been ignored.\nPlease report this error to the developers."), GetHiveName(hKeyRoot).c_str(), keyName.c_str(), valueName.c_str());
+                MessageBox(GetActiveWindow(), msg.c_str(), nullptr, MB_ICONERROR | MB_OK);
             }
             delete [] data;
             return false;
@@ -151,21 +150,21 @@ bool ExportRegistryKey(CStdioFile& file, HKEY hKeyRoot, CString keyName)
 
     delete [] data;
 
-    file.WriteString(_T("\n"));
+    _fputts(_T("\n"), file);
 
-    CString subKeyName;
+    tstring subKeyName;
     DWORD subKeyLen;
 
     for (DWORD indexSubKey = 0; indexSubKey < subKeysCount; indexSubKey++) {
         subKeyLen = maxSubKeyLen;
 
-        errorCode = RegEnumKeyEx(hKey, indexSubKey, subKeyName.GetBuffer(maxSubKeyLen), &subKeyLen, nullptr, nullptr, nullptr, nullptr);
+        errorCode = RegEnumKeyEx(hKey, indexSubKey, StringBuffer(subKeyName, maxSubKeyLen), &subKeyLen, nullptr, nullptr, nullptr, nullptr);
         if (errorCode != ERROR_SUCCESS) {
             SetLastError(errorCode);
             return false;
         }
 
-        buffer.Format(_T("%s\\%s"), keyName.GetString(), subKeyName.GetString());
+        buffer = ::Format(_T("%s\\%s"), keyName.c_str(), subKeyName.c_str());
 
         if (!ExportRegistryKey(file, hKeyRoot, buffer)) {
             return false;
@@ -234,8 +233,8 @@ void GetStatusFont(LOGFONT* lf)
 bool IsFontInstalled(LPCTSTR lpszFont)
 {
     // Get the screen DC
-    CDC dc;
-    if (!dc.CreateCompatibleDC(nullptr)) {
+    HDC dc = CreateCompatibleDC(nullptr);
+    if (!dc) {
         return false;
     }
 
@@ -247,7 +246,8 @@ bool IsFontInstalled(LPCTSTR lpszFont)
     _tcscpy_s(lf.lfFaceName, lpszFont);
     LPARAM lParam = 0;
     // Enumerate fonts
-    EnumFontFamiliesEx(dc.GetSafeHdc(), &lf, (FONTENUMPROC)EnumFontFamExProc, (LPARAM)&lParam, 0);
+    EnumFontFamiliesEx(dc, &lf, (FONTENUMPROC)EnumFontFamExProc, (LPARAM)&lParam, 0);
+    DeleteDC(dc);
 
     return lParam ? true : false;
 }
@@ -283,16 +283,16 @@ CoInitializeHelper::~CoInitializeHelper()
     CoUninitialize();
 }
 
-HRESULT FileDelete(CString file, HWND hWnd, bool recycle /*= true*/)
+HRESULT FileDelete(tstring file, HWND hWnd, bool recycle /*= true*/)
 {
     // Strings in SHFILEOPSTRUCT must be double-null terminated
-    file.AppendChar(_T('\0'));
+    file.push_back(_T('\0'));
 
     SHFILEOPSTRUCT fileOpStruct;
     ZeroMemory(&fileOpStruct, sizeof(SHFILEOPSTRUCT));
     fileOpStruct.hwnd = hWnd;
     fileOpStruct.wFunc = FO_DELETE;
-    fileOpStruct.pFrom = file;
+    fileOpStruct.pFrom = file.c_str();
     if (recycle) {
         fileOpStruct.fFlags = FOF_ALLOWUNDO | FOF_WANTNUKEWARNING;
     }
@@ -304,7 +304,7 @@ HRESULT FileDelete(CString file, HWND hWnd, bool recycle /*= true*/)
     return hRes;
 }
 
-BOOL CClipboard::SetText(const CString& text) const
+BOOL CClipboard::SetText(const tstring& text) const
 {
 #ifdef _UNICODE
     const UINT format = CF_UNICODETEXT;
@@ -316,13 +316,13 @@ BOOL CClipboard::SetText(const CString& text) const
 
     if(m_bOpened) {
         // Allocate a global memory object for the text
-        int len = text.GetLength() + 1;
+        int len = int(text.size()) + 1;
         auto hGlob = GlobalAlloc(GMEM_MOVEABLE, len*sizeof(TCHAR));
         if (hGlob) {
             // Lock the handle and copy the text to the buffer
             auto pData = (LPTSTR)GlobalLock(hGlob);
             if (pData) {
-                _tcscpy_s(pData, len, text.GetString());
+                _tcscpy_s(pData, len, text.c_str());
                 GlobalUnlock(hGlob);
 
                 // Place the handle on the clipboard, if the call succeeds

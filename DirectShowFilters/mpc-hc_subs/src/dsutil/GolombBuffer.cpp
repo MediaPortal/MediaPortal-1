@@ -162,7 +162,7 @@ void CGolombBuffer::Reset(const BYTE* pNewBuffer, int nNewSize)
 {
 	if (m_bRemoveMpegEscapes) {
 		SAFE_DELETE_ARRAY(m_pTmpBuffer);
-		m_pTmpBuffer = DEBUG_NEW BYTE[nNewSize];
+		m_pTmpBuffer = new BYTE[nNewSize];
 
 		RemoveMpegEscapeCode(m_pTmpBuffer, pNewBuffer, nNewSize);
 		m_pBuffer = m_pTmpBuffer;

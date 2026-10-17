@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include <atlcoll.h>
 #include "streams.h"
 
 class CNullRenderer : public CBaseRenderer
@@ -86,10 +85,10 @@ class __declspec(uuid("655D7613-C26C-4A25-BBBD-3C9C516122CC"))
         HRESULT CheckMediaType(const CMediaType* pmt);
     };
 
-    CAutoPtr<CTextInputPin> m_pInput;
+    std::unique_ptr<CTextInputPin> m_pInput;
 
 public:
     CNullTextRenderer(LPUNKNOWN pUnk, HRESULT* phr);
     int GetPinCount() { return (int)!!m_pInput; }
-    CBasePin* GetPin(int n) { return n == 0 ? (CBasePin*)m_pInput : nullptr; }
+    CBasePin* GetPin(int n) { return n == 0 ? (CBasePin*)m_pInput.get() : nullptr; }
 };

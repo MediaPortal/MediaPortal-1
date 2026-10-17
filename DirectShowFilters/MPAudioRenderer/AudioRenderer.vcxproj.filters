@@ -69,7 +69,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\dllsetup.h" />
-    <ClInclude Include="source\FilterApp.h" />
     <ClInclude Include="source\MpAudioRenderer.h" />
     <ClInclude Include="source\resource.h" />
     <ClInclude Include="source\SharedInclude.h" />

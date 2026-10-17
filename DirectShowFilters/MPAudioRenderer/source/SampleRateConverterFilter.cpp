@@ -491,7 +491,7 @@ HRESULT CSampleRateConverter::FlushStream()
       }
     }
     else
-      m_pNextOutSample.Release();
+      m_pNextOutSample.Reset();
   }
 
   m_llFramesInput = 0;

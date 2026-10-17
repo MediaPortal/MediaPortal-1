@@ -21,7 +21,6 @@
 #pragma once
 
 #include "Mpeg2Def.h"
-#include <atlcoll.h>
 
 enum BDVM_VideoFormat {
     BDVM_VideoFormat_Unknown = 0,
@@ -93,7 +92,7 @@ public:
     };
 
     struct PlaylistItem {
-        CString m_strFileName;
+        tstring m_strFileName;
         REFERENCE_TIME m_rtIn;
         REFERENCE_TIME m_rtOut;
 
@@ -124,12 +123,12 @@ public:
     HRESULT ReadInfo(LPCTSTR strFile);
     Stream* FindStream(short wPID);
     bool IsHdmv() const { return m_bIsHdmv; };
-    size_t GetStreamNumber() { return m_Streams.GetCount(); };
-    Stream* GetStreamByIndex(size_t nIndex) { return (nIndex < m_Streams.GetCount()) ? &m_Streams[nIndex] : nullptr; };
+    size_t GetStreamNumber() { return m_Streams.size(); };
+    Stream* GetStreamByIndex(size_t nIndex) { return (nIndex < m_Streams.size()) ? &m_Streams[nIndex] : nullptr; };
 
-    HRESULT FindMainMovie(LPCTSTR strFolder, CString& strPlaylistFile, CAtlList<PlaylistItem>& MainPlaylist, CAtlList<PlaylistItem>& MPLSPlaylists);
-    HRESULT ReadPlaylist(CString strPlaylistFile, REFERENCE_TIME& rtDuration, CAtlList<PlaylistItem>& Playlist);
-    HRESULT ReadChapters(CString strPlaylistFile, CAtlList<CHdmvClipInfo::PlaylistItem>& PlaylistItems, CAtlList<PlaylistChapter>& Chapters);
+    HRESULT FindMainMovie(LPCTSTR strFolder, tstring& strPlaylistFile, std::list<PlaylistItem>& MainPlaylist, std::list<PlaylistItem>& MPLSPlaylists);
+    HRESULT ReadPlaylist(tstring strPlaylistFile, REFERENCE_TIME& rtDuration, std::list<PlaylistItem>& Playlist);
+    HRESULT ReadChapters(tstring strPlaylistFile, std::list<CHdmvClipInfo::PlaylistItem>& PlaylistItems, std::list<PlaylistChapter>& Chapters);
 
 private:
     DWORD SequenceInfo_start_address;
@@ -137,7 +136,7 @@ private:
 
     HANDLE m_hFile;
 
-    CAtlArray<Stream> m_Streams;
+    std::vector<Stream> m_Streams;
     bool m_bIsHdmv;
 
     DWORD ReadDword();

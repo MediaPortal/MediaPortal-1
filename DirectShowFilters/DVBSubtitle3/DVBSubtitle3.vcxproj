@@ -37,14 +37,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
-    <UseOfAtl>Static</UseOfAtl>
+    <UseOfAtl>false</UseOfAtl>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
-    <UseOfAtl>Static</UseOfAtl>
+    <UseOfAtl>false</UseOfAtl>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
   </PropertyGroup>
@@ -142,6 +142,10 @@
     <LibraryPath>$(LibraryPath);$(DXSDK_DIR)lib\$(PlatformTarget)</LibraryPath>
     <OutDir>.\bin\Release\</OutDir>
     <IntDir>.\obj\Release\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>.\bin\Debug\</OutDir>
+    <IntDir>.\obj\Debug\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Template|Win32'">
     <IncludePath>$(LibraryPath);$(DXSDK_DIR)lib\$(PlatformTarget);$(IncludePath)</IncludePath>
@@ -330,7 +334,7 @@
       <AdditionalOptions>/D "_WIN32_WINNT=0x0501" /D "WINVER=0x0501" /D "NTDDI_VERSION=NTDDI_WINXPSP2" %(AdditionalOptions)</AdditionalOptions>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>DBG=1;DEBUG;_DEBUG;INC_OLE2;STRICT;_WIN32_WINNT=0x0400;WIN32;_WIN32;_MT;_DLL;_X86_=1;WINVER=0x0400;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DBG=1;DEBUG;_DEBUG;INC_OLE2;STRICT;_WIN32_WINNT=0x0400;WIN32;_WIN32;_MT;_DLL;WINVER=0x0400;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeaderOutputFile>.\obj\Debug\DVBSub3.pch</PrecompiledHeaderOutputFile>
@@ -382,7 +386,6 @@
       <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <ImageHasSafeExceptionHandlers>true</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -391,7 +394,7 @@
     <ClCompile Include="source\dvbsubs\DVBSubDecoder.cpp" />
     <ClCompile Include="source\dvbsubs\subtitle.cpp" />
     <ClCompile Include="source\SubtitleInputPin.cpp" />
-    <ClCompile Include="Source\PesDecoder\PacketSync.cpp" />
+    <ClCompile Include="..\DvbCoreUtils\PacketSync.cpp" />
     <ClCompile Include="Source\PesDecoder\PesDecoder.cpp" />
     <ClCompile Include="Source\PesDecoder\TsHeader.cpp" />
   </ItemGroup>
@@ -408,7 +411,7 @@
     <ClInclude Include="Source\SubStructs.h" />
     <ClInclude Include="source\dvbsubs\subtitle.h" />
     <ClInclude Include="source\SubtitleInputPin.h" />
-    <ClInclude Include="Source\PesDecoder\PacketSync.h" />
+    <ClInclude Include="..\shared\PacketSync.h" />
     <ClInclude Include="Source\PesDecoder\PesDecoder.h" />
     <ClInclude Include="Source\PesDecoder\TsHeader.h" />
   </ItemGroup>

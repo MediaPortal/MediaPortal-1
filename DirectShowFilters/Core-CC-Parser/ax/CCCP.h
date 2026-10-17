@@ -224,7 +224,7 @@ private:
 	COutputQueue* m_pLine21Queue;
 
 	CCcDataProcessor m_proc;
-	CAtlArray<WORD> m_rgCCData;
+	std::vector<WORD> m_rgCCData;
 	
   GUID m_guidPassThroughMediaSubtype;
   

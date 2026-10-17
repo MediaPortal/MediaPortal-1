@@ -41,7 +41,7 @@ enum {
 class CMemSubPicAllocator;
 class CMemSubPic : public CSubPicImpl
 {
-    CComPtr<CMemSubPicAllocator> m_pAllocator;
+    ComPtr<CMemSubPicAllocator> m_pAllocator;
 
     SubPicDesc m_spd;
     std::unique_ptr<SubPicDesc> m_resizedSpd;
@@ -67,7 +67,7 @@ public:
 class CMemSubPicAllocator : public CSubPicAllocatorImpl, public CCritSec
 {
     int m_type;
-    CSize m_maxsize;
+    SIZE m_maxsize = {};
 
     std::vector<std::pair<size_t, BYTE*>> m_freeMemoryChunks;
 

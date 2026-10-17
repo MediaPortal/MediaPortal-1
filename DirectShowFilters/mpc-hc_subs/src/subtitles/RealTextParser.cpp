@@ -543,7 +543,7 @@ std::wstring CRealTextParser::RenderTags(const std::list<Tag>& p_crlTags)
                 bEmpty = false;
             }
         } else {
-            //AfxMessageBox(CString(_T("Unknown RealText-tag: ")) + oTag.m_szName.c_str());
+            //AfxMessageBox(tstring(_T("Unknown RealText-tag: ")) + oTag.m_szName.c_str());
         }
     }
 

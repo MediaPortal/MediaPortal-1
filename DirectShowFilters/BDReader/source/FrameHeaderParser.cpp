@@ -1963,9 +1963,9 @@ bool CFrameHeaderParser::Read(vc1hdr& h, int len, CMediaType* pmt)
 
 		if(!h.sar.num) h.sar.num = 1;
 		if(!h.sar.den) h.sar.den = 1;
-		CSize aspect = CSize(h.width * h.sar.num, h.height * h.sar.den);
+		SIZE aspect = { (LONG)(h.width * h.sar.num), (LONG)(h.height * h.sar.den) };
 		if(h.width == h.sar.num && h.height == h.sar.den) {
-			aspect = CSize(h.width, h.height);
+			aspect = { (LONG)h.width, (LONG)h.height };
 		}
 		int lnko = LNKO(aspect.cx, aspect.cy);
 		if(lnko > 1) {

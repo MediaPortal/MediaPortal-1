@@ -29,7 +29,6 @@
 #include "../SubPic/ISubPic.h"
 #include <ft2build.h>
 #include <freetype/ftoutln.h>
-#include <freetype/internal/ftobjs.h>
 #include FT_FREETYPE_H
 #include FT_SYNTHESIS_H
 
@@ -46,7 +45,7 @@
         std::ostringstream ss; \
         ss << "\n"; \
         ss << std::chrono::time_point_cast<std::chrono::microseconds>(end##a).time_since_epoch().count(); \
-        ss << ": "##ref1 << "(" << CW2A(ref2) << ") = "; \
+        ss << ": "##ref1 << "(" << StringToA(ref2).c_str() << ") = "; \
         ss << std::chrono::duration_cast<std::chrono::microseconds>(end##a - begin##a).count() << "[µs]" << std::endl; \
         TRACE("%s\n", ss.str().c_str()); \
     }
@@ -119,7 +118,7 @@ void Rasterizer::_ReallocEdgeBuffer(unsigned int edges)
         mpEdgeBuffer = pNewEdgeBuffer;
         mEdgeHeapSize = edges;
     } else {
-        AfxThrowMemoryException();
+        throw std::bad_alloc();
     }
 }
 
@@ -361,8 +360,8 @@ bool Rasterizer::PartialEndPath(HDC hdc, long dx, long dy)
 
         bool resizeSuccess = ResizePath(nPoints);
 
-        BYTE* pTypes = DEBUG_NEW BYTE[nPoints];
-        POINT* pPoints = DEBUG_NEW POINT[nPoints];
+        BYTE* pTypes = new BYTE[nPoints];
+        POINT* pPoints = new POINT[nPoints];
 
         if (resizeSuccess && nPoints == GetPath(hdc, pPoints, pTypes, nPoints)) {
             for (ptrdiff_t i = 0; i < nPoints; ++i) {
@@ -459,7 +458,7 @@ bool Rasterizer::ScanConvert()
         }
 
         // Initialize scanline list.
-        mpScanBuffer = DEBUG_NEW unsigned int[m_pOutlineData->mHeight];
+        mpScanBuffer = new unsigned int[m_pOutlineData->mHeight];
         ZeroMemory(mpScanBuffer, m_pOutlineData->mHeight * sizeof(unsigned int));
 
         // Scan convert the outline.  Yuck, Bezier curves....
@@ -585,11 +584,10 @@ bool Rasterizer::ScanConvert()
 
         // All done!
         return true;
-    } catch (CMemoryException* e) {
+    } catch (const std::bad_alloc&) {
         TRACE(_T("Rasterizer::ScanConvert: Memory allocation failed\n"));
         free(mpEdgeBuffer);
         delete[] mpScanBuffer;
-        e->Delete();
         return false;
     }
 }
@@ -751,7 +749,7 @@ bool Rasterizer::CreateWidenedRegion(int rx, int ry)
 
 void Rasterizer::CreateWidenedRegionFast(int rx, int ry)
 {
-    CAtlList<CEllipseCenterGroup> centerGroups;
+    std::list<CEllipseCenterGroup> centerGroups;
     std::vector<SpanEndPoint> wideSpanEndPoints;
 
     wideSpanEndPoints.reserve(10);
@@ -759,13 +757,12 @@ void Rasterizer::CreateWidenedRegionFast(int rx, int ry)
 
     auto flushLines = [&](int yStart, int yStop, tSpanBuffer & dst) {
         for (int y = yStart; y < yStop; y++) {
-            POSITION pos = centerGroups.GetHeadPosition();
-            while (pos) {
-                POSITION curPos = pos;
-                auto& group = centerGroups.GetNext(pos);
-                group.FlushLine(y, wideSpanEndPoints);
-                if (group.IsEmpty()) {
-                    centerGroups.RemoveAt(curPos);
+            for (auto groupIt = centerGroups.begin(); groupIt != centerGroups.end();) {
+                groupIt->FlushLine(y, wideSpanEndPoints);
+                if (groupIt->IsEmpty()) {
+                    groupIt = centerGroups.erase(groupIt);
+                } else {
+                    ++groupIt;
                 }
             }
 
@@ -799,7 +796,7 @@ void Rasterizer::CreateWidenedRegionFast(int rx, int ry)
     };
 
     int yPrec = unsigned int(m_pOutlineData->mOutline.front().first >> 32);
-    POSITION pos = centerGroups.GetHeadPosition();
+    auto pos = centerGroups.begin();
     for (const auto& span : m_pOutlineData->mOutline) {
         int y = int(span.first >> 32);
         int xLeft = int(span.first);
@@ -808,24 +805,25 @@ void Rasterizer::CreateWidenedRegionFast(int rx, int ry)
         if (y != yPrec) {
             flushLines(yPrec - ry, y - ry, m_pOutlineData->mWideOutline);
             yPrec = y;
-            pos = centerGroups.GetHeadPosition();
+            pos = centerGroups.begin();
         }
 
-        while (pos) {
-            int position = centerGroups.GetAt(pos).GetRelativePosition(xLeft, y);
+        while (pos != centerGroups.end()) {
+            int position = pos->GetRelativePosition(xLeft, y);
             if (position == CEllipseCenterGroup::INSIDE) {
                 break;
             } else if (position == CEllipseCenterGroup::BEFORE) {
-                pos = centerGroups.InsertBefore(pos, CEllipseCenterGroup(m_pEllipse));
+                pos = centerGroups.insert(pos, CEllipseCenterGroup(m_pEllipse));
                 break;
             } else {
-                centerGroups.GetNext(pos);
+                ++pos;
             }
         }
-        if (!pos) {
-            pos = centerGroups.AddTail(CEllipseCenterGroup(m_pEllipse));
+        if (pos == centerGroups.end()) {
+            centerGroups.push_back(CEllipseCenterGroup(m_pEllipse));
+            pos = std::prev(centerGroups.end());
         }
-        centerGroups.GetNext(pos).AddSpan(y, xLeft, xRight);
+        (pos++)->AddSpan(y, xLeft, xRight);
     }
     // Flush the remaining of the lines
     flushLines(yPrec - ry, yPrec + ry + 1, m_pOutlineData->mWideOutline);
@@ -964,7 +962,7 @@ bool Rasterizer::Rasterize(int xsub, int ysub, int fBlur, double fGaussianBlur)
         if (m_pOverlayData->mOverlayWidth >= 3 && m_pOverlayData->mOverlayHeight >= 3) {
             int pitch = m_pOverlayData->mOverlayPitch;
 
-            byte* tmp = DEBUG_NEW byte[pitch * m_pOverlayData->mOverlayHeight];
+            byte* tmp = new byte[pitch * m_pOverlayData->mOverlayHeight];
             if (!tmp) {
                 return false;
             }
@@ -1767,18 +1765,18 @@ namespace
 //    switchpts[i*2] contains a colour and switchpts[i*2+1] contains the coordinate to use that colour from
 // fBody tells whether to render the body of the subs.
 // fBorder tells whether to render the border of the subs.
-CRect Rasterizer::Draw(SubPicDesc& spd, CRect& clipRect, byte* pAlphaMask, int xsub, int ysub,
+RECT Rasterizer::Draw(SubPicDesc& spd, RECT& clipRect, byte* pAlphaMask, int xsub, int ysub,
                        const DWORD* switchpts, bool fBody, bool fBorder) const
 {
-    CRect bbox(0, 0, 0, 0);
+    RECT bbox = MakeRect(0, 0, 0, 0);
 
     if (!m_pOverlayData || !switchpts || (!fBody && !fBorder)) {
         return bbox;
     }
 
     // Limit drawn area to intersection of rendering surface and rectangular clip area
-    CRect r(0, 0, spd.w, spd.h);
-    r &= clipRect;
+    RECT r = MakeRect(0, 0, spd.w, spd.h);
+    r = RectIntersect(r, clipRect);
 
     // Remember that all subtitle coordinates are specified in 1/8 pixels
     // (x+4)>>3 rounds to nearest whole pixel.
@@ -1812,8 +1810,8 @@ CRect Rasterizer::Draw(SubPicDesc& spd, CRect& clipRect, byte* pAlphaMask, int x
         return bbox;
     }
 
-    bbox.SetRect(x, y, x + w, y + h);
-    bbox &= CRect(0, 0, spd.w, spd.h);
+    ::SetRect(&bbox, x, y, x + w, y + h);
+    bbox = RectIntersect(bbox, MakeRect(0, 0, spd.w, spd.h));
 
     BYTE* srcBody = m_pOverlayData->mpOverlayBufferBody + m_pOverlayData->mOverlayPitch * yo + xo;
     BYTE* srcBorder = m_pOverlayData->mpOverlayBufferBorder + m_pOverlayData->mOverlayPitch * yo + xo;
@@ -1926,16 +1924,16 @@ static FT_Error ft_cubic_to(const FT_Vector* control_1, const FT_Vector* control
     return 0;
 }
 
-FT_DEFINE_OUTLINE_FUNCS(
-    ft_decompose_funcs,
-    (FT_Outline_MoveTo_Func)ft_move_to,   /* move_to  */
-    (FT_Outline_LineTo_Func)ft_line_to,   /* line_to  */
-    (FT_Outline_ConicTo_Func)ft_conic_to,  /* conic_to */
-    (FT_Outline_CubicTo_Func)ft_cubic_to,  /* cubic_to */
+static const FT_Outline_Funcs ft_decompose_funcs = {
+    (FT_Outline_MoveToFunc)ft_move_to,   /* move_to  */
+    (FT_Outline_LineToFunc)ft_line_to,   /* line_to  */
+    (FT_Outline_ConicToFunc)ft_conic_to,  /* conic_to */
+    (FT_Outline_CubicToFunc)ft_cubic_to,  /* cubic_to */
     0,                                      /* shift    */
     0                                       /* delta    */
-)
-bool Rasterizer::GetPathFreeType(HDC hdc, bool bClearPath, CStringW fontName, wchar_t ch, int size, int dx, int dy) {
+};
+
+bool Rasterizer::GetPathFreeType(HDC hdc, bool bClearPath, std::wstring fontName, wchar_t ch, int size, int dx, int dy) {
     BEGIN_PERF_TIMER(GetPathFreeType);
     if (bClearPath) {
         _TrashPath();
@@ -1949,7 +1947,7 @@ bool Rasterizer::GetPathFreeType(HDC hdc, bool bClearPath, CStringW fontName, wc
 
 
     if (ftInitialized) {
-        std::wstring fontNameK = CW2W(fontName);
+        std::wstring fontNameK = StringToW(fontName);
         fontNameK += std::to_wstring(size);
         LONG tmAscent;
         if (faceCache.count(fontNameK)>0) {
@@ -1960,7 +1958,7 @@ bool Rasterizer::GetPathFreeType(HDC hdc, bool bClearPath, CStringW fontName, wc
             DWORD fontSize = GetFontData(hdc, 0, 0, NULL, 0);
             FT_Byte* fontData = nullptr;
             try {
-                fontData = DEBUG_NEW FT_Byte[fontSize];
+                fontData = new FT_Byte[fontSize];
             } catch (...) {
                 return false;
             }
@@ -2013,7 +2011,7 @@ bool Rasterizer::GetPathFreeType(HDC hdc, bool bClearPath, CStringW fontName, wc
                     }
                     mPathPoints += nPoints;
                 } else {
-                    error = nPoints > 0 || !CStringW::StrTraits::IsSpace(ch);
+                    error = nPoints > 0 || !iswspace(ch);
                 }
 #if 0
                 for (int a = mPathPoints - nPoints; a < mPathPoints; a++) {
@@ -2023,7 +2021,7 @@ bool Rasterizer::GetPathFreeType(HDC hdc, bool bClearPath, CStringW fontName, wc
             }
         }
         if (!error) {
-            END_PERF_TIMER(GetPathFreeType, "function", CW2A(fontName));
+            END_PERF_TIMER(GetPathFreeType, "function", StringToA(fontName).c_str());
             return true;
         }
     }

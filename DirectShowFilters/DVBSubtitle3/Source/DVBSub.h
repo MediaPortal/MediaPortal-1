@@ -27,7 +27,6 @@
 #include <streams.h>
 #include <bdaiface.h>
 #include <initguid.h>
-#include <atlcomcli.h>
 #include "dvbsubs\dvbsubdecoder.h"
 #include "SubdecoderObserver.h"
 #include <vector>

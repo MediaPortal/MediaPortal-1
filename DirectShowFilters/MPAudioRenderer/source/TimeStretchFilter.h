@@ -129,6 +129,10 @@ protected:
 
 // Internal implementation
 private:
+  // clear() for the processing thread, which runs before any format is set (refused connection, flush right after
+  // connecting) and after the filter has been reset: there is no stream to empty then, which clear() asserts against.
+  void clearIfConfigured();
+
   vector<HANDLE> m_hSampleEvents;
   vector<DWORD>  m_dwSampleWaitObjects;
 

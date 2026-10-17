@@ -66,7 +66,7 @@ protected:
   int m_nInBytesPerSample;  // Bytes in a sample. Can be 1 to 4. This is the "container" size
 
   // Input queue
-  std::vector<CComPtr<IMediaSample>> m_InSampleQueue;
+  std::vector<Microsoft::WRL::ComPtr<IMediaSample>> m_InSampleQueue;
   CCritSec m_InSampleQueueLock;
 
   // Output buffer layout
@@ -76,7 +76,7 @@ protected:
   size_t m_nSampleSize; //size of one sample; ie. soundtouch::SAMPLETYPE * channels
 
   // Output queue
-  std::vector<CComPtr<IMediaSample>> m_OutSampleQueue;
+  std::vector<Microsoft::WRL::ComPtr<IMediaSample>> m_OutSampleQueue;
   CCritSec m_OutSampleQueueLock;
 
   // Temporary input buffer

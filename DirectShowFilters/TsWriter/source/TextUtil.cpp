@@ -83,7 +83,7 @@ int CTextUtil::OneThreeCopy(BYTE *buf, int bufLen, char *text, int textLen)
     //It isn't using the default character encoding table, so process the encoding byte(s)
     if (c == 0x10) // three byte encoding
     {      
-      if ((textLen >= 3) && (buf[2] >= 0x1) && (buf[2] <= 0xF))
+      if ((bufLen >= 3) && (buf[2] >= 0x1) && (buf[2] <= 0xF))
       {
         text[textIndex++] = c;
         text[textIndex++] = 0x20; //Make 2nd output byte non-zero

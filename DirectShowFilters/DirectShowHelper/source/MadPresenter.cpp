@@ -32,7 +32,7 @@
 #include <mutex>
 
 static HWND g_hWnd;
-static CComPtr<IGraphBuilder> mediaControlGraph;
+static Com::SmartPtr<IGraphBuilder> mediaControlGraph;
 bool StopEvent = false;
 std::mutex mtx;
 
@@ -144,8 +144,6 @@ MPMadPresenter::~MPMadPresenter()
       DeInitMadvrWindow();
     }
 
-    DestroyWindow(reinterpret_cast<HWND>(pWnd));
-    DestroyWindow(reinterpret_cast<HWND>(m_pVideoWnd));
 
     Log("MPMadPresenter::Destructor() - instance 0x%x", this);
   }
@@ -460,7 +458,7 @@ IBaseFilter* MPMadPresenter::Initialize()
   {
     if (Com::SmartQIPtr<IBaseFilter> baseFilter = m_pMad)
     {
-      HRESULT hr = mediaControlGraph->AddFilter(baseFilter, _T("madVR"));
+      HRESULT hr = mediaControlGraph->AddFilter(baseFilter, L"madVR");
       if (FAILED(hr))
       {
         return nullptr;
@@ -539,7 +537,7 @@ STDMETHODIMP MPMadPresenter::SetGrabEvent(HANDLE pGrabEvent)
   // Create a madVR Window
   m_pKodiWindowUse ? g_hWnd = reinterpret_cast<HWND>(m_hParent) : g_hWnd = nullptr;
   m_pKodiWindowUse ? InitMadvrWindow(m_hWnd) : m_hWnd = reinterpret_cast<HWND>(m_hParent);
-  m_pVideoWnd = CWnd::FromHandle(m_hWnd);
+  m_pVideoWnd = m_hWnd;
   IVideoWindow *m_pControl = nullptr;
   if (mediaControlGraph && (SUCCEEDED(mediaControlGraph->QueryInterface(__uuidof(IVideoWindow), reinterpret_cast<LPVOID*>(&m_pControl)))) && (m_pControl))
   {
@@ -554,10 +552,10 @@ STDMETHODIMP MPMadPresenter::SetGrabEvent(HANDLE pGrabEvent)
   // release m_pControl
   m_pControl->Release();
 
-  for (pWnd = m_pVideoWnd->GetWindow(GW_CHILD); pWnd; pWnd = pWnd->GetNextWindow()) {
+  for (pWnd = GetWindow(m_pVideoWnd, GW_CHILD); pWnd; pWnd = GetWindow(pWnd, GW_HWNDNEXT)) {
     // 1. lets WM_SETCURSOR through (not needed as of now)
     // 2. allows CMouse::CursorOnWindow() to work with m_pVideoWnd
-    pWnd->EnableWindow(FALSE);
+    EnableWindow(pWnd, FALSE);
   }
 
   if (m_pKodiWindowUse)
@@ -892,7 +890,7 @@ void MPMadPresenter::SetDsWndVisible(bool bVisible)
 
 UINT CALLBACK MediaControlThreadProc()
 {
-  CComPtr<IMediaControl> m_pControl = nullptr;
+  Com::SmartPtr<IMediaControl> m_pControl = nullptr;
   if ((mediaControlGraph) && (SUCCEEDED(mediaControlGraph->QueryInterface(__uuidof(IMediaControl), reinterpret_cast<LPVOID*>(&m_pControl)))) && (m_pControl))
   if (m_pControl)
   {
@@ -1014,7 +1012,7 @@ HRESULT MPMadPresenter::Stopping()
     //}
 
     // Stop in current thread
-    CComPtr<IMediaControl> m_pControl = nullptr;
+    Com::SmartPtr<IMediaControl> m_pControl = nullptr;
     if ((mediaControlGraph) && (SUCCEEDED(mediaControlGraph->QueryInterface(__uuidof(IMediaControl), reinterpret_cast<LPVOID*>(&m_pControl)))) && (m_pControl))
     {
       if (m_pControl)
@@ -1186,7 +1184,7 @@ HRESULT MPMadPresenter::ClearBackground(LPCSTR name, REFERENCE_TIME frameStart, 
   //DWORD videoHeight = activeVideoRect->bottom - activeVideoRect->top;
   //DWORD videoWidth = activeVideoRect->right - activeVideoRect->left;
 
-  CSize szVideoFrame;
+  SIZE szVideoFrame = {};
   if (Com::SmartQIPtr<IMadVRInfo> m_pMVRI = m_pMad)
   {
     if (m_pMVRI) {
@@ -1298,7 +1296,7 @@ HRESULT MPMadPresenter::RenderOsd(LPCSTR name, REFERENCE_TIME frameStart, RECT* 
   //DWORD videoHeight = activeVideoRect->bottom - activeVideoRect->top;
   //DWORD videoWidth = activeVideoRect->right - activeVideoRect->left;
 
-  CSize szVideoFrame;
+  SIZE szVideoFrame = {};
   if (Com::SmartQIPtr<IMadVRInfo> m_pMVRI = m_pMad)
   {
     if (m_pMVRI) {
@@ -1583,22 +1581,22 @@ void MPMadPresenter::ReinitOSD(bool type)
       EnableOriginalDisplayMode(true);
 
       m_pReInitOSD = false;
-      m_pMPTextureGui = nullptr;
-      m_pMPTextureOsd = nullptr;
-      m_pMadGuiVertexBuffer = nullptr;
-      m_pMadOsdVertexBuffer = nullptr;
-      m_pRenderTextureGui = nullptr;
-      m_pRenderTextureOsd = nullptr;
+      m_pMPTextureGui.Release();
+      m_pMPTextureOsd.Release();
+      m_pMadGuiVertexBuffer.Release();
+      m_pMadOsdVertexBuffer.Release();
+      m_pRenderTextureGui.Release();
+      m_pRenderTextureOsd.Release();
       m_hSharedGuiHandle = nullptr;
       m_hSharedOsdHandle = nullptr;
-      m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureGui.p, &m_hSharedGuiHandle);
-      m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureOsd.p, &m_hSharedOsdHandle);
+      m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureGui.m_ptr, &m_hSharedGuiHandle);
+      m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureOsd.m_ptr, &m_hSharedOsdHandle);
       if (m_pMadD3DDev)
       {
-        m_pMadD3DDev->CreateVertexBuffer(sizeof(VID_FRAME_VERTEX) * 4, D3DUSAGE_WRITEONLY, D3DFVF_VID_FRAME_VERTEX, D3DPOOL_DEFAULT, &m_pMadGuiVertexBuffer.p, NULL);
-        m_pMadD3DDev->CreateVertexBuffer(sizeof(VID_FRAME_VERTEX) * 4, D3DUSAGE_WRITEONLY, D3DFVF_VID_FRAME_VERTEX, D3DPOOL_DEFAULT, &m_pMadOsdVertexBuffer.p, NULL);
-        m_pMadD3DDev->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureGui.p, &m_hSharedGuiHandle);
-        m_pMadD3DDev->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureOsd.p, &m_hSharedOsdHandle);
+        m_pMadD3DDev->CreateVertexBuffer(sizeof(VID_FRAME_VERTEX) * 4, D3DUSAGE_WRITEONLY, D3DFVF_VID_FRAME_VERTEX, D3DPOOL_DEFAULT, &m_pMadGuiVertexBuffer.m_ptr, NULL);
+        m_pMadD3DDev->CreateVertexBuffer(sizeof(VID_FRAME_VERTEX) * 4, D3DUSAGE_WRITEONLY, D3DFVF_VID_FRAME_VERTEX, D3DPOOL_DEFAULT, &m_pMadOsdVertexBuffer.m_ptr, NULL);
+        m_pMadD3DDev->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureGui.m_ptr, &m_hSharedGuiHandle);
+        m_pMadD3DDev->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTextureOsd.m_ptr, &m_hSharedOsdHandle);
       }
       Log("%s : ReinitOSD for : %d x %d", __FUNCTION__, m_dwGUIWidth, m_dwGUIHeight);
     }
@@ -1613,32 +1611,32 @@ void MPMadPresenter::ReinitD3DDevice()
     if (m_pMPTextureGui)
     {
       m_pMPTextureGui.Release();
-      m_pMPTextureGui = nullptr;
+      m_pMPTextureGui.Release();
     }
     if (m_pMPTextureOsd)
     {
       m_pMPTextureOsd.Release();
-      m_pMPTextureOsd = nullptr;
+      m_pMPTextureOsd.Release();
     }
     if (m_pMadGuiVertexBuffer)
     {
       m_pMadGuiVertexBuffer.Release();
-      m_pMadGuiVertexBuffer = nullptr;
+      m_pMadGuiVertexBuffer.Release();
     }
     if (m_pMadOsdVertexBuffer)
     {
       m_pMadOsdVertexBuffer.Release();
-      m_pMadOsdVertexBuffer = nullptr;
+      m_pMadOsdVertexBuffer.Release();
     }
     if (m_pRenderTextureGui)
     {
       m_pRenderTextureGui.Release();
-      m_pRenderTextureGui = nullptr;
+      m_pRenderTextureGui.Release();
     }
     if (m_pRenderTextureOsd)
     {
       m_pRenderTextureOsd.Release();
-      m_pRenderTextureOsd = nullptr;
+      m_pRenderTextureOsd.Release();
     }
     m_hSharedGuiHandle = nullptr;
     m_hSharedOsdHandle = nullptr;
@@ -1704,8 +1702,8 @@ HRESULT MPMadPresenter::SetDeviceOsd(IDirect3DDevice9* pD3DDev)
     if (m_pMadD3DDev && m_pCallback)
     {
       m_deviceState.SetDevice(m_pMadD3DDev);
-      if (SUCCEEDED(hr = m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureGui.p, &m_hSharedGuiHandle)))
-        if (SUCCEEDED(hr = m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureOsd.p, &m_hSharedOsdHandle)))
+      if (SUCCEEDED(hr = m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureGui.m_ptr, &m_hSharedGuiHandle)))
+        if (SUCCEEDED(hr = m_pDevice->CreateTexture(m_dwGUIWidth, m_dwGUIHeight, 0, D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pMPTextureOsd.m_ptr, &m_hSharedOsdHandle)))
         {
           //=============================================
           // TODO disable OSD delay for now (used to force IVideoWindow on C# side)
@@ -1730,7 +1728,7 @@ HRESULT MPMadPresenter::SetDeviceOsd(IDirect3DDevice9* pD3DDev)
 
 STDMETHODIMP MPMadPresenter::ChangeDevice(IUnknown* pDev)
 {
-  CComQIPtr<IDirect3DDevice9Ex> pD3DDev = pDev;
+  Com::SmartQIPtr<IDirect3DDevice9Ex> pD3DDev = pDev;
   CheckPointer(pD3DDev, E_NOINTERFACE);
 
   //CAutoLock cAutoLock(this);

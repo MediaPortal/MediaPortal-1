@@ -26,9 +26,6 @@
 #include "text.h"
 #include "vd.h"
 #include "streams.h"
-#include <atlcoll.h>
-#include <atlpath.h>
-#include "MFCHelper.h"
 #include "Utils.h"
 
 #define LCID_NOSUBTITLES -1
@@ -51,26 +48,26 @@ extern void  NukeDownstream(IPin* pPin, IFilterGraph* pFG);
 extern IBaseFilter* FindFilter(LPCWSTR clsid, IFilterGraph* pFG);
 extern IBaseFilter* FindFilter(const CLSID& clsid, IFilterGraph* pFG);
 extern IPin* FindPin(IBaseFilter* pBF, PIN_DIRECTION direction, const AM_MEDIA_TYPE* pRequestedMT);
-extern CStringW GetFilterName(IBaseFilter* pBF);
-extern CStringW GetPinName(IPin* pPin);
+extern std::wstring GetFilterName(IBaseFilter* pBF);
+extern std::wstring GetPinName(IPin* pPin);
 extern IFilterGraph* GetGraphFromFilter(IBaseFilter* pBF);
 extern IBaseFilter*  GetFilterFromPin(IPin* pPin);
-extern IPin* AppendFilter(IPin* pPin, CString DisplayName, IGraphBuilder* pGB);
-extern IPin* InsertFilter(IPin* pPin, CString DisplayName, IGraphBuilder* pGB);
-extern void  ExtractMediaTypes(IPin* pPin, CAtlArray<GUID>& types);
-extern void  ExtractMediaTypes(IPin* pPin, CAtlList<CMediaType>& mts);
-extern void  ShowPPage(CString DisplayName, HWND hParentWnd);
+extern IPin* AppendFilter(IPin* pPin, tstring DisplayName, IGraphBuilder* pGB);
+extern IPin* InsertFilter(IPin* pPin, tstring DisplayName, IGraphBuilder* pGB);
+extern void  ExtractMediaTypes(IPin* pPin, std::vector<GUID>& types);
+extern void  ExtractMediaTypes(IPin* pPin, std::list<CMediaType>& mts);
+extern void  ShowPPage(tstring DisplayName, HWND hParentWnd);
 extern void  ShowPPage(IUnknown* pUnknown, HWND hParentWnd);
 extern CLSID GetCLSID(IBaseFilter* pBF);
 extern CLSID GetCLSID(IPin* pPin);
-extern CString CLSIDToString(CLSID& clsid);
+extern tstring CLSIDToString(CLSID& clsid);
 extern bool  IsCLSIDRegistered(LPCTSTR clsid);
 extern bool  IsCLSIDRegistered(const CLSID& clsid);
-extern CString GetFilterPath(LPCTSTR clsid);
-extern CString GetFilterPath(const CLSID& clsid);
-extern void  CStringToBin(CString str, CAtlArray<BYTE>& data);
-extern CString BinToCString(const BYTE* ptr, size_t len);
-extern void FindFiles(CString fn, CAtlList<CString>& files);
+extern tstring GetFilterPath(LPCTSTR clsid);
+extern tstring GetFilterPath(const CLSID& clsid);
+extern void  CStringToBin(tstring str, std::vector<BYTE>& data);
+extern tstring BinToCString(const BYTE* ptr, size_t len);
+extern void FindFiles(tstring fn, std::list<tstring>& files);
 enum OpticalDiskType_t {
     OpticalDisk_NotFound,
     OpticalDisk_Audio,
@@ -79,11 +76,10 @@ enum OpticalDiskType_t {
     OpticalDisk_BD,
     OpticalDisk_Unknown
 };
-extern OpticalDiskType_t GetOpticalDiskType(TCHAR drive, CAtlList<CString>& files);
-extern CString GetDriveLabel(TCHAR drive);
-extern CString GetDriveLabel(CPath path);
-bool IsDriveVirtual(CString drive);
-extern bool GetKeyFrames(CString fn, CUIntArray& kfs);
+extern OpticalDiskType_t GetOpticalDiskType(TCHAR drive, std::list<tstring>& files);
+extern tstring GetDriveLabel(TCHAR drive);
+extern tstring GetDriveLabel(tstring path);
+bool IsDriveVirtual(tstring drive);
 extern DVD_HMSF_TIMECODE RT2HMSF(REFERENCE_TIME rt, double fps = 0.0); // used to remember the current position
 extern DVD_HMSF_TIMECODE RT2HMS(REFERENCE_TIME rt);
 extern DVD_HMSF_TIMECODE RT2HMS_r(REFERENCE_TIME rt);                  // used only to display information with rounding to nearest second
@@ -94,42 +90,53 @@ extern bool ExtractBIH(const AM_MEDIA_TYPE* pmt, BITMAPINFOHEADER* bih);
 extern bool ExtractBIH(IMediaSample* pMS, BITMAPINFOHEADER* bih);
 extern bool ExtractAvgTimePerFrame(const AM_MEDIA_TYPE* pmt, REFERENCE_TIME& rtAvgTimePerFrame);
 extern bool ExtractDim(const AM_MEDIA_TYPE* pmt, int& w, int& h, int& arx, int& ary);
-extern bool CreateFilter(CStringW DisplayName, IBaseFilter** ppBF, CStringW& FriendlyName);
+extern bool CreateFilter(std::wstring DisplayName, IBaseFilter** ppBF, std::wstring& FriendlyName);
 extern IBaseFilter* AppendFilter(IPin* pPin, IMoniker* pMoniker, IGraphBuilder* pGB);
-extern CStringW GetFriendlyName(CStringW DisplayName);
+extern std::wstring GetFriendlyName(std::wstring DisplayName);
 extern HRESULT LoadExternalObject(LPCTSTR path, REFCLSID clsid, REFIID iid, void** ppv);
 extern HRESULT LoadExternalFilter(LPCTSTR path, REFCLSID clsid, IBaseFilter** ppBF);
 extern HRESULT LoadExternalPropertyPage(IPersist* pP, REFCLSID clsid, IPropertyPage** ppPP);
 extern bool UnloadUnusedExternalObjects();
-extern void ExtendMaxPathLengthIfNeeded(CString& path, int max_length = MAX_PATH, bool no_url = false);
-extern bool ContainsWildcard(CString& path);
-extern void ShortenLongPath(CString& path);
-extern CString MakeFullPath(LPCTSTR path);
-extern bool GetMediaTypeFourCC(const GUID& guid, CString& fourCC);
-extern CString GetMediaTypeName(const GUID& guid);
-extern GUID GUIDFromCString(CString str);
-extern HRESULT GUIDFromCString(CString str, GUID& guid);
-extern CString CStringFromGUID(const GUID& guid);
-extern CStringW UTF8To16(LPCSTR utf8);
-extern CStringA UTF16To8(LPCWSTR utf16);
-extern CStringW UTF8ToStringW(const char* S);
-extern CStringW LocalToStringW(const char* S);
-extern BOOL CFileGetStatus(LPCTSTR lpszFileName, CFileStatus& status);
+extern void ExtendMaxPathLengthIfNeeded(tstring& path, int max_length = MAX_PATH, bool no_url = false);
+extern bool ContainsWildcard(tstring& path);
+extern void ShortenLongPath(tstring& path);
+extern tstring MakeFullPath(LPCTSTR path);
+extern bool GetMediaTypeFourCC(const GUID& guid, tstring& fourCC);
+extern tstring GetMediaTypeName(const GUID& guid);
+extern GUID GUIDFromCString(tstring str);
+extern HRESULT GUIDFromCString(tstring str, GUID& guid);
+extern tstring CStringFromGUID(const GUID& guid);
+extern std::wstring UTF8To16(LPCSTR utf8);
+extern std::string UTF16To8(LPCWSTR utf16);
+extern std::wstring UTF8ToStringW(const char* S);
+extern std::wstring LocalToStringW(const char* S);
 extern bool DeleteRegKey(LPCTSTR pszKey, LPCTSTR pszSubkey);
 extern bool SetRegKeyValue(LPCTSTR pszKey, LPCTSTR pszSubkey, LPCTSTR pszValueName, LPCTSTR pszValue);
 extern bool SetRegKeyValue(LPCTSTR pszKey, LPCTSTR pszSubkey, LPCTSTR pszValue);
+inline bool SetRegKeyValue(const tstring& key, const tstring& subkey, const tstring& valueName, const tstring& value)
+{
+    return SetRegKeyValue(key.c_str(), subkey.c_str(), valueName.c_str(), value.c_str());
+}
+inline bool SetRegKeyValue(const tstring& key, const tstring& subkey, LPCTSTR valueName, const tstring& value)
+{
+    return SetRegKeyValue(key.c_str(), subkey.c_str(), valueName, value.c_str());
+}
+inline bool SetRegKeyValue(const tstring& key, const tstring& subkey, LPCTSTR valueName, LPCTSTR value)
+{
+    return SetRegKeyValue(key.c_str(), subkey.c_str(), valueName, value);
+}
 extern void RegisterSourceFilter(const CLSID& clsid, const GUID& subtype2, LPCTSTR chkbytes, LPCTSTR ext = nullptr, ...);
-extern void RegisterSourceFilter(const CLSID& clsid, const GUID& subtype2, const CAtlList<CString>& chkbytes, LPCTSTR ext = nullptr, ...);
+extern void RegisterSourceFilter(const CLSID& clsid, const GUID& subtype2, const std::list<tstring>& chkbytes, LPCTSTR ext = nullptr, ...);
 extern void UnRegisterSourceFilter(const GUID& subtype);
 extern LPCTSTR GetDXVAMode(const GUID* guidDecoder);
-extern CString ReftimeToString(const REFERENCE_TIME& rtVal);
-extern CString ReftimeToString2(const REFERENCE_TIME& rtVal);
-extern CString DVDtimeToString(const DVD_HMSF_TIMECODE& rtVal, bool bAlwaysShowHours = false);
+extern tstring ReftimeToString(const REFERENCE_TIME& rtVal);
+extern tstring ReftimeToString2(const REFERENCE_TIME& rtVal);
+extern tstring DVDtimeToString(const DVD_HMSF_TIMECODE& rtVal, bool bAlwaysShowHours = false);
 extern REFERENCE_TIME StringToReftime(LPCTSTR strVal);
 extern void SetThreadName(DWORD dwThreadID, LPCSTR szThreadName);
-extern CString FindCoverArt(const CString& path, const CString& author);
-extern CString NormalizeUnicodeStrForSearch(CString srcStr, LANGID langid);
-extern bool FindStringInList(const CAtlList<CString>& list, CString& value);
+extern tstring FindCoverArt(const tstring& path, const tstring& author);
+extern tstring NormalizeUnicodeStrForSearch(tstring srcStr, LANGID langid);
+extern bool FindStringInList(const std::list<tstring>& list, tstring& value);
 
 extern inline const LONGLONG GetPerfCounter();
 
@@ -168,31 +175,31 @@ public:
 
 #define BeginEnumFilters(pFilterGraph, pEnumFilters, pBaseFilter)                                                      \
 {                                                                                                                      \
-    CComPtr<IEnumFilters> pEnumFilters;                                                                                \
+    ComPtr<IEnumFilters> pEnumFilters;                                                                                \
     if (pFilterGraph && SUCCEEDED(pFilterGraph->EnumFilters(&pEnumFilters))) {                                         \
-        for (CComPtr<IBaseFilter> pBaseFilter; S_OK == pEnumFilters->Next(1, &pBaseFilter, 0); pBaseFilter = nullptr) {
+        for (ComPtr<IBaseFilter> pBaseFilter; S_OK == pEnumFilters->Next(1, &pBaseFilter, 0); pBaseFilter = nullptr) {
 
 #define EndEnumFilters }}}
 
 #define BeginEnumCachedFilters(pGraphConfig, pEnumFilters, pBaseFilter)                                                \
 {                                                                                                                      \
-    CComPtr<IEnumFilters> pEnumFilters;                                                                                \
+    ComPtr<IEnumFilters> pEnumFilters;                                                                                \
     if (pGraphConfig && SUCCEEDED(pGraphConfig->EnumCacheFilter(&pEnumFilters))) {                                     \
-        for (CComPtr<IBaseFilter> pBaseFilter; S_OK == pEnumFilters->Next(1, &pBaseFilter, 0); pBaseFilter = nullptr) {
+        for (ComPtr<IBaseFilter> pBaseFilter; S_OK == pEnumFilters->Next(1, &pBaseFilter, 0); pBaseFilter = nullptr) {
 
 #define EndEnumCachedFilters }}}
 
 #define BeginEnumPins(pBaseFilter, pEnumPins, pPin)                                     \
 {                                                                                       \
-    CComPtr<IEnumPins> pEnumPins;                                                       \
+    ComPtr<IEnumPins> pEnumPins;                                                       \
     if (pBaseFilter && SUCCEEDED(pBaseFilter->EnumPins(&pEnumPins))) {                  \
-        for (CComPtr<IPin> pPin; S_OK == pEnumPins->Next(1, &pPin, 0); pPin = nullptr) {
+        for (ComPtr<IPin> pPin; S_OK == pEnumPins->Next(1, &pPin, 0); pPin = nullptr) {
 
 #define EndEnumPins }}}
 
 #define BeginEnumMediaTypes(pPin, pEnumMediaTypes, pMediaType)                                                             \
 {                                                                                                                          \
-    CComPtr<IEnumMediaTypes> pEnumMediaTypes;                                                                              \
+    ComPtr<IEnumMediaTypes> pEnumMediaTypes;                                                                              \
     if (pPin && SUCCEEDED(pPin->EnumMediaTypes(&pEnumMediaTypes))) {                                                       \
         AM_MEDIA_TYPE* pMediaType = nullptr;                                                                               \
         for (; S_OK == pEnumMediaTypes->Next(1, &pMediaType, nullptr); DeleteMediaType(pMediaType), pMediaType = nullptr) {
@@ -207,17 +214,17 @@ public:
 
 #define BeginEnumSysDev(clsid, pMoniker)                                                                            \
 {                                                                                                                   \
-    CComPtr<ICreateDevEnum> pDevEnum4$##clsid;                                                                      \
-    if (SUCCEEDED(pDevEnum4$##clsid.CoCreateInstance(CLSID_SystemDeviceEnum))) {                                    \
-        CComPtr<IEnumMoniker> pClassEnum4$##clsid;                                                                  \
+    ComPtr<ICreateDevEnum> pDevEnum4$##clsid;                                                                      \
+    if (SUCCEEDED(pDevEnum4$##CoCreateInstance(CLSID_SystemDeviceEnum, nullptr, CLSCTX_ALL, IID_PPV_ARGS(&clsid)))) {                                    \
+        ComPtr<IEnumMoniker> pClassEnum4$##clsid;                                                                  \
         if (SUCCEEDED(pDevEnum4$##clsid->CreateClassEnumerator(clsid, &pClassEnum4$##clsid, 0))                     \
             && pClassEnum4$##clsid) {                                                                               \
-            for (CComPtr<IMoniker> pMoniker; pClassEnum4$##clsid->Next(1, &pMoniker, 0) == S_OK; pMoniker = nullptr) {
+            for (ComPtr<IMoniker> pMoniker; pClassEnum4$##clsid->Next(1, &pMoniker, 0) == S_OK; pMoniker = nullptr) {
 
 #define EndEnumSysDev }}}}
 
 #define PauseGraph                                                                                              \
-    CComQIPtr<IMediaControl> _pMC(m_pGraph);                                                                    \
+    auto _pMC = ComQuery<IMediaControl>(m_pGraph);                                                                    \
     OAFilterState _fs = -1;                                                                                     \
     if (_pMC)                                                                                                   \
         _pMC->GetState(1000, &_fs);                                                                             \
@@ -225,7 +232,7 @@ public:
         _pMC->Pause();                                                                                          \
                                                                                                                 \
     HRESULT _hr = E_FAIL;                                                                                       \
-    CComQIPtr<IMediaSeeking> _pMS((IUnknown*)(INonDelegatingUnknown*)m_pGraph);                                 \
+    auto _pMS = ComQuery<IMediaSeeking>((IUnknown*)(INonDelegatingUnknown*)m_pGraph);                                 \
     REFERENCE_TIME _rtNow = 0;                                                                                  \
     if (_pMS)                                                                                                   \
         _hr = _pMS->GetCurrentPosition(&_rtNow);
@@ -253,7 +260,7 @@ public:
 #define EXIT_ON_ERROR(hres)  { if (FAILED(hres)) return hres; }
 
 #define StrRes(id)  MAKEINTRESOURCE((id))
-#define ResStr(id)  CString(StrRes((id)))
+#define ResStr(id)  tstring(StrRes((id)))
 
 #define UNREACHABLE_CODE()  \
     do {                    \
@@ -265,7 +272,7 @@ template <class T>
 static CUnknown* WINAPI CreateInstance(LPUNKNOWN lpunk, HRESULT* phr)
 {
     *phr = S_OK;
-    CUnknown* punk = DEBUG_NEW T(lpunk, phr);
+    CUnknown* punk = new T(lpunk, phr);
     if (punk == nullptr) {
         *phr = E_OUTOFMEMORY;
     }
@@ -336,13 +343,13 @@ constexpr typename std::enable_if <std::is_floating_point<T>::value, int>::type 
 namespace CStringUtils
 {
     struct IgnoreCaseLess {
-        bool operator()(const CString& str1, const CString& str2) const {
-            return str1.CompareNoCase(str2) < 0;
+        bool operator()(const tstring& str1, const tstring& str2) const {
+            return StringICompare(str1, str2) < 0;
         }
     };
     struct LogicalLess {
-        bool operator()(const CString& str1, const CString& str2) const {
-            return StrCmpLogicalW(str1, str2) < 0;
+        bool operator()(const tstring& str1, const tstring& str2) const {
+            return StrCmpLogicalW(str1.c_str(), str2.c_str()) < 0;
         }
     };
 }

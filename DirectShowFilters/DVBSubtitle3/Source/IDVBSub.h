@@ -23,7 +23,6 @@
 #include <xprtdefs.h>
 #include <bdaiface.h>
 #include <initguid.h>
-#include <atlcomcli.h>
 #include "SubStructs.h"
 
 #pragma once

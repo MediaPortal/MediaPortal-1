@@ -47,6 +47,7 @@
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
+#include "../../shared/TcharConv.h"
 
 //These are global variables, and can be shared between multiple TsReader instances !
 DWORD m_tGTStartTime = 0;
@@ -2286,8 +2287,8 @@ void CTsReaderFilter::ThreadProc()
 // Adds a filter graph to the Running Object Table
 HRESULT CTsReaderFilter::AddGraphToRot(IUnknown *pUnkGraph)
 {
-  CComPtr <IMoniker>              pMoniker;
-  CComPtr <IRunningObjectTable>   pROT;
+  Microsoft::WRL::ComPtr<IMoniker>              pMoniker;
+  Microsoft::WRL::ComPtr<IRunningObjectTable>   pROT;
   WCHAR wsz[128];
   HRESULT hr;
 
@@ -2299,7 +2300,7 @@ HRESULT CTsReaderFilter::AddGraphToRot(IUnknown *pUnkGraph)
   hr = CreateItemMoniker(L"!", wsz, &pMoniker);
   if (SUCCEEDED(hr))
   {
-    hr = pROT->Register(ROTFLAGS_REGISTRATIONKEEPSALIVE, pUnkGraph, pMoniker, &m_dwGraphRegister);
+    hr = pROT->Register(ROTFLAGS_REGISTRATIONKEEPSALIVE, pUnkGraph, pMoniker.Get(), &m_dwGraphRegister);
   }
   return hr;
 }
@@ -2309,7 +2310,7 @@ HRESULT CTsReaderFilter::AddGraphToRot(IUnknown *pUnkGraph)
 void CTsReaderFilter::RemoveGraphFromRot()
 {
   if (m_dwGraphRegister==0) return;
-  CComPtr <IRunningObjectTable> pROT;
+  Microsoft::WRL::ComPtr<IRunningObjectTable> pROT;
 
   if (SUCCEEDED(GetRunningObjectTable(0, &pROT)))
       pROT->Revoke(m_dwGraphRegister);
@@ -2714,7 +2715,6 @@ CLSID CTsReaderFilter::GetCLSIDFromPin(IPin* pPin)
 
 void CTsReaderFilter::ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data)
 {
-  USES_CONVERSION;
   DWORD dwSize = sizeof(DWORD);
   DWORD dwType = REG_DWORD;
   LONG error = RegQueryValueEx(hKey, lpSubKey, NULL, &dwType, (PBYTE)&data, &dwSize);
@@ -2722,34 +2722,32 @@ void CTsReaderFilter::ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& 
   {
     if (error == ERROR_FILE_NOT_FOUND)
     {
-      LogDebug("Create default value for: %s", T2A(lpSubKey));
+      LogDebug("Create default value for: %s", ToAnsi(lpSubKey).c_str());
       WriteRegistryKeyDword(hKey, lpSubKey, data);
     }
     else
     {
-      LogDebug("Faíled to create default value for: %s", T2A(lpSubKey));
+      LogDebug("Faíled to create default value for: %s", ToAnsi(lpSubKey).c_str());
     }
   }
 }
 
 void CTsReaderFilter::WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data)
 {  
-  USES_CONVERSION;
   DWORD dwSize = sizeof(DWORD);
   LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_DWORD, (LPBYTE)&data, dwSize);
   if (result == ERROR_SUCCESS) 
   {
-    LogDebug("Success writing to Registry: %s", T2A(lpSubKey));
+    LogDebug("Success writing to Registry: %s", ToAnsi(lpSubKey).c_str());
   } 
   else 
   {
-    LogDebug("Error writing to Registry - subkey: %s error: %d", T2A(lpSubKey), result);
+    LogDebug("Error writing to Registry - subkey: %s error: %d", ToAnsi(lpSubKey).c_str(), result);
   }
 }
 
 LONG CTsReaderFilter::ReadOnlyRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data)
 {
-  USES_CONVERSION;
   DWORD dwSize = sizeof(DWORD);
   DWORD dwType = REG_DWORD;
   LONG error = RegQueryValueEx(hKey, lpSubKey, NULL, &dwType, (PBYTE)&data, &dwSize);
@@ -2758,7 +2756,6 @@ LONG CTsReaderFilter::ReadOnlyRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWO
 
 void CTsReaderFilter::ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
 {
-  USES_CONVERSION;
 
   DWORD dwSize = MAX_REG_LENGTH;
   DWORD dwType = REG_SZ;
@@ -2768,25 +2765,24 @@ void CTsReaderFilter::ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTST
   {
     if (error == ERROR_FILE_NOT_FOUND)
     {
-      LogDebug("   create default value for %s", T2A(lpSubKey));
+      LogDebug("   create default value for %s", ToAnsi(lpSubKey).c_str());
       WriteRegistryKeyString(hKey, lpSubKey, data);
     }
     else if (error == ERROR_MORE_DATA)
-      LogDebug("   too much data, corrupted registry setting(?):  %s", T2A(lpSubKey));
+      LogDebug("   too much data, corrupted registry setting(?):  %s", ToAnsi(lpSubKey).c_str());
     else
-      LogDebug("   error: %d subkey: %s", error, T2A(lpSubKey));
+      LogDebug("   error: %d subkey: %s", error, ToAnsi(lpSubKey).c_str());
   }
 }
 
 void CTsReaderFilter::WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
 {  
-  USES_CONVERSION;
 
   LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, (DWORD)(_tcslen(data) * sizeof(TCHAR)));
   if (result == ERROR_SUCCESS) 
-    LogDebug("Success writing to Registry: %s", T2A(lpSubKey));
+    LogDebug("Success writing to Registry: %s", ToAnsi(lpSubKey).c_str());
   else 
-    LogDebug("Error writing to Registry - subkey: %s error: %d", T2A(lpSubKey), result);
+    LogDebug("Error writing to Registry - subkey: %s error: %d", ToAnsi(lpSubKey).c_str(), result);
 }
 
 
@@ -2809,7 +2805,7 @@ void CTsReaderFilter::SetErrorAbort()
 
 void CTsReaderFilter::CheckForMPAR()
 {
-  CComPtr<IBaseFilter> pBaseFilter;
+  Microsoft::WRL::ComPtr<IBaseFilter> pBaseFilter;
 
   if (GetFilterGraph() && SUCCEEDED(GetFilterGraph()->FindFilterByName(L"MediaPortal - Audio Renderer", &pBaseFilter)))
   {

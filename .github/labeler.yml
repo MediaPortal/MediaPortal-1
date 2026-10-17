@@ -39,3 +39,6 @@ Skin:
 
 grabber:
   - '/(\s|^)(grabbers?)(\s|$)/i'
+
+Jira:
+  - '/(\s|^)(MP1-\d+?)(:|\s|$)/i'

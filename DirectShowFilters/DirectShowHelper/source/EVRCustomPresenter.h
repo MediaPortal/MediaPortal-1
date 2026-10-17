@@ -333,11 +333,11 @@ protected:
   int            MeasureScanLines(LONGLONG startTime, double *times, double *scanLines, int n, UINT* maxScanLine);
   BOOL           EstimateRefreshTimings(int numFrames, int threadPriority);
   void           ReleaseSurfaces();
-  HRESULT        Paint(CComPtr<IDirect3DSurface9> pSurface);
-  HRESULT        SetMediaType(CComPtr<IMFMediaType> pType, BOOL* pbHasChanged);
+  HRESULT        Paint(Com::SmartPtr<IDirect3DSurface9> pSurface);
+  HRESULT        SetMediaType(Com::SmartPtr<IMFMediaType> pType, BOOL* pbHasChanged);
   void           ReAllocSurfaces();
   HRESULT        LogOutputTypes();
-  HRESULT        GetAspectRatio(CComPtr<IMFMediaType> pType, int* piARX, int* piARY);
+  HRESULT        GetAspectRatio(Com::SmartPtr<IMFMediaType> pType, int* piARX, int* piARY);
   HRESULT        CreateProposedOutputType(IMFMediaType* pMixerType, IMFMediaType** pType);
   HRESULT        RenegotiateMediaOutputType();
   BOOL           CheckForEndOfStream();
@@ -381,17 +381,17 @@ protected:
   HRESULT EnumFilters(IFilterGraph *pGraph);
   bool GetFilterNames();
 
-  CComPtr<IDirect3DDevice9>         m_pD3DDev;
+  Com::SmartPtr<IDirect3DDevice9>         m_pD3DDev;
   IVMR9Callback*                    m_pCallback;
-  CComPtr<IDirect3DDeviceManager9>  m_pDeviceManager;
-  CComPtr<IMediaEventSink>          m_pEventSink;
-  CComPtr<IMFClock>                 m_pClock;
-  CComPtr<IMFTransform>             m_pMixer;
-  CComPtr<IMFMediaType>             m_pMediaType;
-  CComPtr<IMediaSeeking>            m_pMediaSeeking;
-  CComPtr<IDirect3DTexture9>        textures[MAX_SURFACES];
-  CComPtr<IDirect3DSurface9>        surfaces[MAX_SURFACES];
-  CComPtr<IMFSample>                samples[MAX_SURFACES];
+  Com::SmartPtr<IDirect3DDeviceManager9>  m_pDeviceManager;
+  Com::SmartPtr<IMediaEventSink>          m_pEventSink;
+  Com::SmartPtr<IMFClock>                 m_pClock;
+  Com::SmartPtr<IMFTransform>             m_pMixer;
+  Com::SmartPtr<IMFMediaType>             m_pMediaType;
+  Com::SmartPtr<IMediaSeeking>            m_pMediaSeeking;
+  Com::SmartPtr<IDirect3DTexture9>        textures[MAX_SURFACES];
+  Com::SmartPtr<IDirect3DSurface9>        surfaces[MAX_SURFACES];
+  Com::SmartPtr<IMFSample>                samples[MAX_SURFACES];
 
   CCritSec                          m_lockSamples;
   CCritSec                          m_lockRasterData;

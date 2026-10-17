@@ -18,8 +18,6 @@
  *  http://www.gnu.org/copyleft/gpl.html
  *
  */
-#include <afx.h>
-#include <afxwin.h>
 
 #include <winsock2.h>
 #include <ws2tcpip.h>

@@ -7,7 +7,7 @@
 //
 // Von der Ressource TEXTINCLUDE 2 generiert.
 //
-#include "afxres.h"
+#include "winres.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -40,7 +40,6 @@ BEGIN
 	"LANGUAGE 7, 1\r\n"
 	"#pragma code_page(1252)\r\n"
     "#include ""res\\dvblib.rc2""  // Nicht mit Microsoft Visual C++ bearbeitete Ressourcen\r\n"
-    "#include ""afxres.rc""  	// Standardkomponenten\r\n"
     "#endif\r\n"
     "\0"
 END
@@ -107,7 +106,6 @@ END
 LANGUAGE 7, 1
 #pragma code_page(1252)
 #include "res\\dvblib.rc2"  //  Nicht mit Microsoft Visual C++ bearbeitete Ressourcen
-#include "afxres.rc"  	// Standardkomponenten
 #endif
 
 /////////////////////////////////////////////////////////////////////////////

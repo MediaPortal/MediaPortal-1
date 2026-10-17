@@ -22,9 +22,9 @@
 #include "RenderingCache.h"
 #include "RTS.h"
 
-CTextDimsKey::CTextDimsKey(const CStringW& str, const STSStyle& style)
+CTextDimsKey::CTextDimsKey(const std::wstring& str, const STSStyle& style)
     : m_str(str)
-    , m_style(DEBUG_NEW STSStyle(style))
+    , m_style(new STSStyle(style))
 {
     UpdateHash();
 }
@@ -32,17 +32,17 @@ CTextDimsKey::CTextDimsKey(const CStringW& str, const STSStyle& style)
 CTextDimsKey::CTextDimsKey(const CTextDimsKey& textDimsKey)
     : m_hash(textDimsKey.m_hash)
     , m_str(textDimsKey.m_str)
-    , m_style(DEBUG_NEW STSStyle(*textDimsKey.m_style))
+    , m_style(new STSStyle(*textDimsKey.m_style))
 {
 }
 
 void CTextDimsKey::UpdateHash()
 {
-    m_hash  = CStringElementTraits<CString>::Hash(m_str);
+    m_hash  = HashString(m_str.c_str(), int(m_str.size()));
     m_hash += m_hash << 5;
     m_hash += m_style->charSet;
     m_hash += m_hash << 5;
-    m_hash += CStringElementTraits<CString>::Hash(m_style->fontName);
+    m_hash += static_cast<ULONG>(std::hash<tstring>()(m_style->fontName));
     m_hash += m_hash << 5;
     m_hash += int(m_style->fontSize);
     m_hash += m_hash << 5;
@@ -70,7 +70,7 @@ bool CTextDimsKey::operator==(const CTextDimsKey& textDimsKey) const
            && m_style->fStrikeOut == textDimsKey.m_style->fStrikeOut;
 }
 
-CPolygonPathKey::CPolygonPathKey(const CStringW& str, double scalex, double scaley)
+CPolygonPathKey::CPolygonPathKey(const std::wstring& str, double scalex, double scaley)
     : m_str(str)
     , m_scalex(scalex)
     , m_scaley(scaley)
@@ -88,7 +88,7 @@ CPolygonPathKey::CPolygonPathKey(const CPolygonPathKey& polygonPathKey)
 
 void CPolygonPathKey::UpdateHash()
 {
-    m_hash = CStringElementTraits<CStringW>::Hash(m_str);
+    m_hash = static_cast<ULONG>(std::hash<std::wstring>()(m_str));
     m_hash += m_hash << 5;
     m_hash += int(m_scalex * 1e6);
     m_hash += m_hash << 5;
@@ -102,7 +102,7 @@ bool CPolygonPathKey::operator==(const CPolygonPathKey& polygonPathKey) const
            && IsNearlyEqual(m_scaley, polygonPathKey.m_scaley, 1e-6);
 }
 
-COutlineKey::COutlineKey(const CWord* word, CPoint org)
+COutlineKey::COutlineKey(const CWord* word, POINT org)
     : CTextDimsKey(word->m_str, word->m_style)
     , m_scalex(word->m_scalex)
     , m_scaley(word->m_scaley)
@@ -178,9 +178,9 @@ bool COutlineKey::operator==(const COutlineKey& outLineKey) const
            && IsNearlyEqual(m_style->outlineWidthY, outLineKey.m_style->outlineWidthY, 1e-6);
 }
 
-COverlayKey::COverlayKey(const CWord* word, CPoint p, CPoint org)
-    : COutlineKey(word, CPoint(org.x - p.x, org.y - p.y))
-    , m_subp(p.x & 7, p.y & 7)
+COverlayKey::COverlayKey(const CWord* word, POINT p, POINT org)
+    : COutlineKey(word, MakePoint(org.x - p.x, org.y - p.y))
+    , m_subp(MakePoint(p.x & 7, p.y & 7))
 {
     UpdateHash();
 }

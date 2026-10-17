@@ -20,25 +20,32 @@
 
 #include "stdafx.h"
 #include "ScreenUtil.h"
-#include "../mpc-hc/Monitors.h"
+#include <vector>
 
-CSize GetDesktopSize()
+namespace
 {
-    return CSize(GetSystemMetrics(SM_CXVIRTUALSCREEN), GetSystemMetrics(SM_CYVIRTUALSCREEN));
+    BOOL CALLBACK MonitorRectProc(HMONITOR, HDC, LPRECT rc, LPARAM param)
+    {
+        reinterpret_cast<std::vector<RECT>*>(param)->push_back(*rc);
+        return TRUE;
+    }
 }
 
-CSize GetLargestScreenSize(CSize fallback)
+SIZE GetDesktopSize()
 {
-    CSize result = CSize(0, 0);
-    CSize desktop = GetDesktopSize();
+    return MakeSize(GetSystemMetrics(SM_CXVIRTUALSCREEN), GetSystemMetrics(SM_CYVIRTUALSCREEN));
+}
 
-    CMonitors monitors;
-    if (monitors.GetCount() > 1) {
+SIZE GetLargestScreenSize(SIZE fallback)
+{
+    SIZE result = MakeSize(0, 0);
+    SIZE desktop = GetDesktopSize();
+
+    std::vector<RECT> monitors;
+    EnumDisplayMonitors(nullptr, nullptr, MonitorRectProc, reinterpret_cast<LPARAM>(&monitors));
+    if (monitors.size() > 1) {
         // this includes virtual screens
-        for (int i = 0; i < monitors.GetCount(); i++) {
-            CMonitor monitor = monitors.GetMonitor(i);
-            RECT rc;
-            monitor.GetMonitorRect(&rc);
+        for (const RECT& rc : monitors) {
             LONG w = rc.right - rc.left;
             LONG h = rc.bottom - rc.top;
             if (w > result.cx) {
@@ -74,17 +81,17 @@ CSize GetLargestScreenSize(CSize fallback)
     return result;
 }
 
-CSize GetBackBufferSize(CSize currentScreen, CSize largestScreen, bool use_desktop_size)
+SIZE GetBackBufferSize(SIZE currentScreen, SIZE largestScreen, bool use_desktop_size)
 {
     if (use_desktop_size) {
-        CSize desktop = GetDesktopSize();
+        SIZE desktop = GetDesktopSize();
         if (desktop.cx > 0 && desktop.cy > 0) {
             ASSERT(desktop.cx >= currentScreen.cx && desktop.cy >= currentScreen.cy);
             return desktop;
         }
     }
 
-    CSize result = largestScreen;
+    SIZE result = largestScreen;
 
     if (currentScreen.cx > result.cx) {
         result.cx = currentScreen.cx;

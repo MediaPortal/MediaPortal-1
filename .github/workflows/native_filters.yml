@@ -5,6 +5,7 @@ on:
     paths:
       - 'DirectShowFilters/**'
       - 'Build/Check-NativeHardening.ps1'
+      - 'Build/Check-NoMfcAtl.ps1'
       - '.github/actions/setup-vcpkg/**'
       - '.github/workflows/native_filters.yml'
 
@@ -15,6 +16,7 @@ on:
     paths:
       - 'DirectShowFilters/**'
       - 'Build/Check-NativeHardening.ps1'
+      - 'Build/Check-NoMfcAtl.ps1'
       - '.github/actions/setup-vcpkg/**'
       - '.github/workflows/native_filters.yml'
 
@@ -98,3 +100,51 @@ jobs:
             DirectShowFilters/**/Release/*.dll
             DirectShowFilters/**/Release/*.pdb
           retention-days: 7
+
+  no-mfc-atl:
+    name: No MFC or ATL in DirectShowFilters
+
+    runs-on: windows-2022
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v6
+
+      - name: Check for MFC and ATL
+        run: pwsh -NoProfile -File Build/Check-NoMfcAtl.ps1 -Path DirectShowFilters
+
+  tests:
+    name: Tests of DirectShowFilters (CMake, x64 Unicode)
+
+    # The first runs on the hosted runner are not trusted yet: the presets for Visual Studio 2022 were not run
+    # locally (Visual Studio 2026 was), so a failure here does not block the pull request.
+    continue-on-error: true
+
+    runs-on: windows-2022
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Setup vcpkg
+        uses: ./.github/actions/setup-vcpkg
+        with:
+          triplets: x64-windows-mp
+
+      - name: Configure
+        working-directory: DirectShowFilters
+        run: >-
+          cmake --preset vs2022-x64-unicode
+          -DMP_BUILD_TESTS=ON -DVCPKG_MANIFEST_FEATURES=tests
+
+      - name: Build
+        working-directory: DirectShowFilters
+        run: >-
+          cmake --build --preset vs2022-x64-unicode-release --parallel
+          --target mp_unit_tests mp_integration_tests mp_tsmuxer_tests mp_tsreader_tests mp_tswriter_tests mpcSubs MPAudioSwitcher
+
+      - name: Run tests
+        working-directory: DirectShowFilters
+        run: ctest --test-dir build/vs2022-x64-unicode -C Release -LE local --output-on-failure

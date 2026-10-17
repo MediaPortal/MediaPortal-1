@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include <atlcoll.h>
 
 class CMediaTypeEx : public CMediaType
 {
@@ -32,11 +31,11 @@ public:
         CMediaType::operator = (mt);
     }
 
-    CString ToString(IPin* pPin = nullptr);
+    tstring ToString(IPin* pPin = nullptr);
 
-    static CString GetVideoCodecName(const GUID& subtype, DWORD biCompression);
-    static CString GetAudioCodecName(const GUID& subtype, WORD wFormatTag);
-    static CString GetSubtitleCodecName(const GUID& subtype);
+    static tstring GetVideoCodecName(const GUID& subtype, DWORD biCompression);
+    static tstring GetAudioCodecName(const GUID& subtype, WORD wFormatTag);
+    static tstring GetSubtitleCodecName(const GUID& subtype);
 
-    void Dump(CAtlList<CString>& sl);
+    void Dump(std::list<tstring>& sl);
 };

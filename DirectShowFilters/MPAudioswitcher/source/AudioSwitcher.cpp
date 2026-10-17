@@ -24,7 +24,6 @@
 #include <shlobj.h>
 #include "Shlwapi.h"
 #include <math.h>
-#include <atlpath.h>
 #include <mmreg.h>
 #include <ks.h>
 #include <ksmedia.h>
@@ -76,10 +75,6 @@ STDAPI DllUnregisterServer()
 {
 	return AMovieDllRegisterServer2(FALSE);
 }
-
-#include "FilterApp.h"
-
-CFilterApp theApp;
 
 #endif
 
@@ -295,7 +290,7 @@ HRESULT CAudioSwitcherFilter::Transform(IMediaSample* pIn, IMediaSample* pOut)
 
 	if(m_fCustomChannelMapping)
 	{
-		if(m_chs[wfe->nChannels-1].GetCount() > 0)
+		if(m_chs[wfe->nChannels-1].size() > 0)
 		{
 			for(int i = 0; i < wfeout->nChannels; i++)
 			{
@@ -370,6 +365,11 @@ HRESULT CAudioSwitcherFilter::Transform(IMediaSample* pIn, IMediaSample* pOut)
 	&& wfe->nSamplesPerSec > 44100 && wfeout->nSamplesPerSec == 44100 
 	&& wfe->wBitsPerSample <= 16 && fPCM)
 	{
+		// room for the output: CreateNewOutputMediaType allows a sample or two more than lenout
+		int maxout = min(lenout + 2, len);
+		if(maxout*bps*wfeout->nChannels > pOut->GetSize())
+			maxout = lenout;
+
 		if(BYTE* buff = new BYTE[len*bps])
 		{
 			for(int ch = 0; ch < wfeout->nChannels; ch++)
@@ -379,10 +379,15 @@ HRESULT CAudioSwitcherFilter::Transform(IMediaSample* pIn, IMediaSample* pOut)
 				for(int i = 0; i < len; i++)
 					memcpy(buff + i*bps, (char*)pDataOut + (ch + i*wfeout->nChannels)*bps, bps);
 
-				m_pResamplers[ch]->Downsample(buff, len, buff, lenout);
+				// The resampler keeps the fraction between the buffers, so a buffer holds lenout or a sample more; with room for
+				// that it uses all of the input (anything left over would be lost, a jump in the sound).
+				long produced = m_pResamplers[ch]->Downsample(buff, len, buff, maxout);
 
-				for(int i = 0; i < lenout; i++)
+				for(int i = 0; i < produced; i++)
 					memcpy((char*)pDataOut + (ch + i*wfeout->nChannels)*bps, buff + i*bps, bps);
+
+				if(ch == 0)
+					lenout = produced;
 			}
 
 			delete [] buff;
@@ -460,7 +465,7 @@ CMediaType CAudioSwitcherFilter::CreateNewOutputMediaType(CMediaType mt, long& c
 
 	if(m_fCustomChannelMapping)
 	{
-		m_chs[wfe->nChannels-1].RemoveAll();
+		m_chs[wfe->nChannels-1].clear();
 
 		DWORD mask = DWORD((__int64(1)<<wfe->nChannels)-1);
 		for(int i = 0; i < 18; i++)
@@ -468,11 +473,11 @@ CMediaType CAudioSwitcherFilter::CreateNewOutputMediaType(CMediaType mt, long& c
 			if(m_pSpeakerToChannelMap[wfe->nChannels-1][i]&mask)
 			{
 				ChMap cm = {1<<i, m_pSpeakerToChannelMap[wfe->nChannels-1][i]};
-				m_chs[wfe->nChannels-1].Add(cm);
+				m_chs[wfe->nChannels-1].push_back(cm);
 			}
 		}
 
-		if(m_chs[wfe->nChannels-1].GetCount() > 0)
+		if(m_chs[wfe->nChannels-1].size() > 0)
 		{
 			mt.ReallocFormatBuffer(sizeof(WAVEFORMATEXTENSIBLE));
 			WAVEFORMATEXTENSIBLE* wfex = (WAVEFORMATEXTENSIBLE*)mt.pbFormat;
@@ -486,10 +491,10 @@ CMediaType CAudioSwitcherFilter::CreateNewOutputMediaType(CMediaType mt, long& c
 				KSDATAFORMAT_SUBTYPE_PCM; // can't happen
 
 			wfex->dwChannelMask = 0;
-			for(int i = 0; i < m_chs[wfe->nChannels-1].GetCount(); i++)
+			for(int i = 0; i < m_chs[wfe->nChannels-1].size(); i++)
 				wfex->dwChannelMask |= m_chs[wfe->nChannels-1][i].Speaker;
 
-			wfex->Format.nChannels = (WORD)m_chs[wfe->nChannels-1].GetCount();
+			wfex->Format.nChannels = (WORD)m_chs[wfe->nChannels-1].size();
 			wfex->Format.nBlockAlign = wfex->Format.nChannels*wfex->Format.wBitsPerSample>>3;
 			wfex->Format.nAvgBytesPerSec = wfex->Format.nBlockAlign*wfex->Format.nSamplesPerSec;
 		}
@@ -509,6 +514,8 @@ CMediaType CAudioSwitcherFilter::CreateNewOutputMediaType(CMediaType mt, long& c
 	int bps = wfe->wBitsPerSample>>3;
 	int len = cbBuffer / (bps*wfe->nChannels);
 	int lenout = len * wfeout->nSamplesPerSec / wfe->nSamplesPerSec;
+	if(wfeout->nSamplesPerSec < wfe->nSamplesPerSec)
+		lenout += 2; // the down sampling delivers lenout or a sample more per buffer, see Transform
 	cbBuffer = lenout*bps*wfeout->nChannels;
 
 //	mt.lSampleSize = (ULONG)max(mt.lSampleSize, wfe->nAvgBytesPerSec * rtLen / 10000000i64);
@@ -522,12 +529,10 @@ void CAudioSwitcherFilter::OnNewOutputMediaType(const CMediaType& mtIn, const CM
 	const WAVEFORMATEX* wfe = (WAVEFORMATEX*)mtIn.pbFormat;
 	const WAVEFORMATEX* wfeout = (WAVEFORMATEX*)mtOut.pbFormat;
 
-	m_pResamplers.RemoveAll();
+	m_pResamplers.clear();
 	for(int i = 0; i < wfeout->nChannels; i++)
 	{
-		CAutoPtr<AudioStreamResampler> pResampler;
-		pResampler.Attach(new AudioStreamResampler(wfeout->wBitsPerSample>>3, wfe->nSamplesPerSec, wfeout->nSamplesPerSec, true));
-		m_pResamplers.Add(pResampler);
+		m_pResamplers.emplace_back(new AudioStreamResampler(wfeout->wBitsPerSample>>3, wfe->nSamplesPerSec, wfeout->nSamplesPerSec, true));
 	}
 
 	TRACE(_T("CAudioSwitcherFilter::OnNewOutputMediaType\n"));
