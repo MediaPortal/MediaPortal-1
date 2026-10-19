@@ -2221,8 +2221,8 @@ public class Script
         <Id />
         <MinVersion>
           <Major>1</Major>
-          <Minor>36</Minor>
-          <Build>100</Build>
+          <Minor>39</Minor>
+          <Build>0</Build>
           <Revision>0</Revision>
         </MinVersion>
         <MaxVersion>
@@ -2251,8 +2251,8 @@ public class Script
     <Version>
       <Major>2</Major>
       <Minor>2</Minor>
-      <Build>31</Build>
-      <Revision>9256</Revision>
+      <Build>32</Build>
+      <Revision>9788</Revision>
     </Version>
     <ExtensionDescription>The MediaPortal IPTV filter and url source splitter is a directshow source filter that enables direct playback for many protocols and filetypes used in online video sources in the internet.
 Supported protocols:
@@ -2264,10 +2264,10 @@ Supported protocols:
 - Adobe HTTP Dynamic Streaming (HDS, F4M manifest)
 - Microsoft Smooth Streaming
 - Apple HTTP live streaming (M3U8 playlists)</ExtensionDescription>
-    <VersionDescription>- Fixed arirang stream</VersionDescription>
+    <VersionDescription>- Fixed installer script</VersionDescription>
     <DevelopmentStatus>Stable</DevelopmentStatus>
     <OnlineLocation>https://www.team-mediaportal.com/index.php?option=com_mtree&amp;task=att_download&amp;link_id=327&amp;cf_id=24</OnlineLocation>
-    <ReleaseDate>2025-05-05T20:21:47</ReleaseDate>
+    <ReleaseDate>2026-10-19T20:21:47</ReleaseDate>
     <Tags>codec</Tags>
     <PlatformCompatibility>AnyCPU</PlatformCompatibility>
     <Location>.\MediaPortalUrlSourceSplitter[Version].mpe1</Location>
@@ -2652,7 +2652,7 @@ Supported protocols:
         <Param1 />
         <UpdateOption>OverwriteIfOlder</UpdateOption>
         <LocalFileName>MPUrlSourceSplitter.png</LocalFileName>
-        <ZipFileName>Installer{CopyFile}\{f60f791f-e880-4dcb-b745-c9e134e55537}-MPUrlSourceSplitter.png</ZipFileName>
+        <ZipFileName>Installer{CopyFile}\{cf318237-7d84-4d32-aa1b-53416efb46b5}-MPUrlSourceSplitter.png</ZipFileName>
         <DestinationFilename />
       </FileItem>
     </Items>
