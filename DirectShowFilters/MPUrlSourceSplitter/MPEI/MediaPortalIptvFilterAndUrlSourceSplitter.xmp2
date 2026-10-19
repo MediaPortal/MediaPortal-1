@@ -880,9 +880,9 @@ public class Script
                 }
             }
 
-            for (int i = 0; i &lt; MpeInstaller.InstalledExtensions.Items.Count; i++)
+            for (int i = 0; i &lt; MpeCore.MpeInstaller.InstalledExtensions.Items.Count; i++)
             {
-                PackageClass installedPackage = MpeInstaller.InstalledExtensions.Items[i];
+                PackageClass installedPackage = MpeCore.MpeInstaller.InstalledExtensions.Items[i];
 
                 if (installedPackage.GeneralInfo.Id == "b3e6e01a-4fa3-4cf0-8d2a-b0b8c1eba78b")
                 {
@@ -1125,7 +1125,7 @@ public class Script
 
     public static void RegisterFilter(String filterPath)
     {
-        String processPath = Path.Combine(MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
+        String processPath = Path.Combine(MpeCore.MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
 
         using (Process process = new Process())
         {
@@ -1153,7 +1153,7 @@ public class Script
 
     public static void UnregisterFilter(String filterPath)
     {
-        String processPath = Path.Combine(MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
+        String processPath = Path.Combine(MpeCore.MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
 
         using (Process process = new Process())
         {
@@ -1218,16 +1218,16 @@ public class Script
                 packageClass.Groups["TvServerStarted"].Checked = true;
             }
 
-            for (int i = 0; i &lt; MpeInstaller.InstalledExtensions.Items.Count; i++)
+            for (int i = 0; i &lt; MpeCore.MpeInstaller.InstalledExtensions.Items.Count; i++)
             {
-                PackageClass installedPackage = MpeInstaller.InstalledExtensions.Items[i];
+                PackageClass installedPackage = MpeCore.MpeInstaller.InstalledExtensions.Items[i];
 
                 if (installedPackage.GeneralInfo.Id == "b3e6e01a-4fa3-4cf0-8d2a-b0b8c1eba78b")
                 {
-                    UnregisterFilter(Path.Combine(MpeInstaller.TransformInRealPath("%Base%"), "MPUrlSourceSplitter\\MPUrlSourceSplitter.ax"));
+                    UnregisterFilter(Path.Combine(MpeCore.MpeInstaller.TransformInRealPath("%Base%"), "MPUrlSourceSplitter\\MPUrlSourceSplitter.ax"));
 
                     installedPackage.UnInstall();
-                    Directory.Delete(Path.Combine(MpeInstaller.TransformInRealPath("%Base%"), "MPUrlSourceSplitter"), true);
+                    Directory.Delete(Path.Combine(MpeCore.MpeInstaller.TransformInRealPath("%Base%"), "MPUrlSourceSplitter"), true);
                 }
             }
         }
@@ -1336,7 +1336,7 @@ public class Script
 
     public static void RegisterFilter(String filterPath)
     {
-        String processPath = Path.Combine(MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
+        String processPath = Path.Combine(MpeCore.MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
 
         using (Process process = new Process())
         {
@@ -1364,7 +1364,7 @@ public class Script
 
     public static void UnregisterFilter(String filterPath)
     {
-        String processPath = Path.Combine(MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
+        String processPath = Path.Combine(MpeCore.MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
 
         using (Process process = new Process())
         {
@@ -1809,7 +1809,7 @@ public class Script
 
     public static void RegisterFilter(String filterPath)
     {
-        String processPath = Path.Combine(MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
+        String processPath = Path.Combine(MpeCore.MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
 
         using (Process process = new Process())
         {
@@ -1837,7 +1837,7 @@ public class Script
 
     public static void UnregisterFilter(String filterPath)
     {
-        String processPath = Path.Combine(MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
+        String processPath = Path.Combine(MpeCore.MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
 
         using (Process process = new Process())
         {
@@ -1931,7 +1931,7 @@ public class Script
             }
 
             // register filter
-            RegisterFilter(Path.Combine(MpeInstaller.TransformInRealPath(tvServiceInstalled ? "%TvServerBase%" : "%Base%"), "MPUrlSourceSplitter\\MPUrlSourceSplitter.ax"));
+            RegisterFilter(Path.Combine(MpeCore.MpeInstaller.TransformInRealPath(tvServiceInstalled ? "%TvServerBase%" : "%Base%"), "MPUrlSourceSplitter\\MPUrlSourceSplitter.ax"));
 
             if (tvServiceStarted)
             {
@@ -2051,7 +2051,7 @@ public class Script
 
     public static void RegisterFilter(String filterPath)
     {
-        String processPath = Path.Combine(MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
+        String processPath = Path.Combine(MpeCore.MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
 
         using (Process process = new Process())
         {
@@ -2079,7 +2079,7 @@ public class Script
 
     public static void UnregisterFilter(String filterPath)
     {
-        String processPath = Path.Combine(MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
+        String processPath = Path.Combine(MpeCore.MpeInstaller.TransformInRealPath("%System%"), "regsvr32.exe");
 
         using (Process process = new Process())
         {
@@ -2145,11 +2145,11 @@ public class Script
             }
 
             // unregister filter
-            UnregisterFilter(Path.Combine(MpeInstaller.TransformInRealPath(tvServiceInstalled ? "%TvServerBase%" : "%Base%"), "MPUrlSourceSplitter\\MPUrlSourceSplitter.ax"));
+            UnregisterFilter(Path.Combine(MpeCore.MpeInstaller.TransformInRealPath(tvServiceInstalled ? "%TvServerBase%" : "%Base%"), "MPUrlSourceSplitter\\MPUrlSourceSplitter.ax"));
 
             if (tvServiceInstalled)
             {
-                RegisterFilter(Path.Combine(MpeInstaller.TransformInRealPath("%TvServerBase%"), "MPIPTVSource.ax"));
+                RegisterFilter(Path.Combine(MpeCore.MpeInstaller.TransformInRealPath("%TvServerBase%"), "MPIPTVSource.ax"));
             }
         }
         catch (Exception ex)
