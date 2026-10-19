@@ -2231,8 +2231,8 @@ public class Script
           <Build>*</Build>
           <Revision>*</Revision>
         </MaxVersion>
-        <WarnOnly>true</WarnOnly>
-        <Message>Requires MediaPortal 1.36.100.0 or higher!</Message>
+        <WarnOnly>false</WarnOnly>
+        <Message>Requires MediaPortal 1.39.0.0 or higher!</Message>
         <Name>MediaPortal</Name>
         <Condition>None</Condition>
       </DependencyItem>
