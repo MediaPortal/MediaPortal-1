@@ -37,6 +37,7 @@
       <width>1198</width>
       <height>676</height>
       <texture>imageframe.png</texture>
+	  <visible>!skin.hassetting(#skin.music.nowplaying.fullscreen)</visible>
     </control>
     <control>
       <description>DEFAULT FANART IMAGE</description>
@@ -48,7 +49,7 @@
       <height>672</height>
       <colordiffuse>ffffffff</colordiffuse>
       <texture mask="musicfanart_mask.png">DefaultFanart.gif</texture>
-      <visible>!control.isvisible(91919294)</visible>
+      <visible>!control.isvisible(91919294)+!skin.hassetting(#skin.music.nowplaying.fullscreen)</visible>
       <animation effect="fade" time="300">visible</animation>
       <animation effect="fade" time="300">hidden</animation>
     </control>
@@ -62,7 +63,7 @@
       <height>672</height>
       <colordiffuse>ffffffff</colordiffuse>
       <texture mask="musicfanart_mask.png">#fanarthandler.music.backdrop1.play</texture>
-      <visible>control.isvisible(91919295)+control.isvisible(91919294)</visible>
+      <visible>control.isvisible(91919295)+control.isvisible(91919294)+!skin.hassetting(#skin.music.nowplaying.fullscreen)</visible>
       <animation effect="fade" time="300">visible</animation>
       <animation effect="fade" time="300">hidden</animation>
     </control>
@@ -76,7 +77,7 @@
       <height>672</height>
       <colordiffuse>ffffffff</colordiffuse>
       <texture mask="musicfanart_mask.png">#fanarthandler.music.backdrop2.play</texture>
-      <visible>control.isvisible(91919296)+control.isvisible(91919294)</visible>
+      <visible>control.isvisible(91919296)+control.isvisible(91919294)+!skin.hassetting(#skin.music.nowplaying.fullscreen)</visible>
       <animation effect="fade" time="300">visible</animation>
       <animation effect="fade" time="300">hidden</animation>
     </control>

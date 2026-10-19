@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2023 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2023 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -770,6 +770,10 @@ namespace MediaPortal.Util
               filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackRadio.png");
               filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackBigRadio.png");
               break;
+            case (int)GUIWindow.Window.WINDOW_RECORDEDTV:
+              filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackBigTVrecordings.png");
+              filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBackBigTVrecordings.png");
+              break;
           }
 
           if (File.Exists(filename) && File.Exists(filenameBig))
@@ -940,6 +944,10 @@ namespace MediaPortal.Util
                 case (int)GUIWindow.Window.WINDOW_RADIO:
                   filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderRadio.png");
                   filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\defaultFolderBigRadio.png");
+                  break;
+                case (int)GUIWindow.Window.WINDOW_RECORDEDTV:
+                  filename = GUIGraphicsContext.GetThemedSkinFile(@"\media\DefaultFolderBigTVrecordings.png");
+                  filenameBig = GUIGraphicsContext.GetThemedSkinFile(@"\media\DefaultFolderBigTVrecordings.png");
                   break;
               }
 
@@ -1131,8 +1139,10 @@ namespace MediaPortal.Util
     /// <returns>true: paths are equal, false: paths do not match</returns>
     public static bool AreEqual(string dir1, string dir2)
     {
-      if (dir1 == string.Empty | dir2 == string.Empty)
+      if (string.IsNullOrEmpty(dir1) || string.IsNullOrEmpty(dir2))
+      {
         return false;
+      }
 
       try
       {
@@ -5985,7 +5995,7 @@ namespace MediaPortal.Util
       {
         // Convert DIB to Bitmap
         // pTargetmadVrDib is a DIB
-        Win32API.BITMAPINFOHEADER bmih = (Win32API.BITMAPINFOHEADER) Marshal.PtrToStructure(pTargetmadVrDib, typeof (Win32API.BITMAPINFOHEADER));
+        Win32API.BITMAPINFOHEADER bmih = Marshal.PtrToStructure<Win32API.BITMAPINFOHEADER>(pTargetmadVrDib);
         IntPtr pixels = IntPtr.Add(pTargetmadVrDib, bmih.biSize);
 
         using (Bitmap b = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth*4, PixelFormat.Format32bppRgb, pixels))

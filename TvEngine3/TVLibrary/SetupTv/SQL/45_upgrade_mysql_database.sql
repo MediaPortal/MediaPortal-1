@@ -1,4 +1,4 @@
-﻿USE %TvLibrary%;
+USE %TvLibrary%;
 
 ALTER TABLE "Recording"
   MODIFY COLUMN "fileName" VARCHAR(255) NOT NULL,

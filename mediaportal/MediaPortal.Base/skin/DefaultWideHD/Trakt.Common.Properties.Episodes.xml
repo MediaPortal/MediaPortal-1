@@ -29,10 +29,10 @@
       <description>Episode image</description>
       <type>image</type>
       <id>0</id>
-      <posX>1567</posX>
-      <posY>316</posY>
-      <width>292</width>
-      <height>156</height>
+      <posX>1563</posX> 
+      <posY>310</posY> 
+      <width>303</width> 
+      <height>168</height> 
       <keepaspectratio>yes</keepaspectratio>
       <zoom>yes</zoom>
       <texture>#selectedthumb</texture>

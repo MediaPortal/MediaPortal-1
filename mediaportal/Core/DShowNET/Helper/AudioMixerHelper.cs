@@ -393,7 +393,7 @@ namespace DShowNET.AudioMixer
         CheckErr(mixerGetLineControlsA(hmixer, ref mxlc,
                                        MIXER_GETLINECONTROLSF_ONEBYTYPE));
         // Copy the control into the destination structure 
-        mxc = (MIXERCONTROL)Marshal.PtrToStructure(mxlc.pamxctrl, typeof (MIXERCONTROL));
+        mxc = Marshal.PtrToStructure<MIXERCONTROL>(mxlc.pamxctrl);
       }
       catch (Exception e)
       {
@@ -419,8 +419,7 @@ namespace DShowNET.AudioMixer
       {
         CheckErr(mixerGetControlDetailsA(hmixer, ref pmxcd,
                                          MIXER_GETCONTROLDETAILSF_VALUE));
-        du =
-          (MIXERCONTROLDETAILS_UNSIGNED)Marshal.PtrToStructure(pmxcd.paDetails, typeof (MIXERCONTROLDETAILS_UNSIGNED));
+        du = Marshal.PtrToStructure<MIXERCONTROLDETAILS_UNSIGNED>(pmxcd.paDetails);
       }
       catch (Exception e)
       {

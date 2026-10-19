@@ -572,7 +572,6 @@ namespace MediaPortal.Configuration.Sections
       int SV_TYPE_WORKSTATION = 1;
       int SV_TYPE_SERVER = 2;
       IntPtr buffer = IntPtr.Zero;
-      IntPtr tmpBuffer = IntPtr.Zero;
       int entriesRead = 0;
       int totalEntries = 0;
       int resHandle = 0;
@@ -586,11 +585,10 @@ namespace MediaPortal.Configuration.Sections
         if (ret == 0)
         {
           //Loop through all SV_TYPE_WORKSTATION and SV_TYPE_SERVER PC's
-          for (int i = 0; i < totalEntries; i++)
+          IntPtr tmpBuffer = buffer;
+          for (int i = 0; i < totalEntries; i++, tmpBuffer = IntPtr.Add(tmpBuffer, sizeofINFO))
           {
-            //Get Pointer to the buffer that received the data
-            tmpBuffer = new IntPtr((int)buffer + (i * sizeofINFO));
-            _SERVER_INFO_100 svrInfo = (_SERVER_INFO_100)Marshal.PtrToStructure(tmpBuffer, typeof(_SERVER_INFO_100));
+            _SERVER_INFO_100 svrInfo = Marshal.PtrToStructure<_SERVER_INFO_100>(tmpBuffer);
 
             // Check if the PC is a MP TV server
             string hostname = svrInfo.sv100_name.ToLower(CultureInfo.CurrentCulture);

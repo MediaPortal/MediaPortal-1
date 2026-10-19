@@ -70,6 +70,13 @@
     <X64 />
   </VCRedist2015>
 
+  <VCRedist2022>
+    <URL>https://install.team-mediaportal.com/VcRedist2022</URL>
+    <FILE>vcredist2022_x86.exe</FILE>
+    <TYPE>Automatic</TYPE>
+    <X64 />
+  </VCRedist2022>
+
   <!-- Section used by 1.2.0 beta installer -->
   
   <DirectXRedist2010>

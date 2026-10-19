@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<window>
+  <id>2022</id>
+  <defaultcontrol>10</defaultcontrol>
+  <allowoverlay>yes</allowoverlay>
+  <controls>
+		<import>common.dialog.xml</import>
+		<control>
+      <id>100</id>
+      <description>1 Star</description>
+      <type>checkmark</type>
+      <posX>700</posX>
+      <posY>766</posY>
+      <width>53</width>
+      <height>41</height>
+      <textureCheckmark>starblue_rating.png</textureCheckmark>
+      <textureCheckmarkNoFocus>starblack_rating.png</textureCheckmarkNoFocus>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+    	<animation effect="fade" time="0">WindowClose</animation>
+    </control>
+		<control>
+      <id>101</id>
+      <description>2 Star</description>
+      <type>checkmark</type>
+      <posX>750</posX>
+      <posY>766</posY>
+      <width>53</width>
+      <height>41</height>
+      <textureCheckmark>starblue_rating.png</textureCheckmark>
+      <textureCheckmarkNoFocus>starblack_rating.png</textureCheckmarkNoFocus>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+    	<animation effect="fade" time="0">WindowClose</animation>
+    </control>
+    <control>
+      <id>102</id>
+      <description>3 Star</description>
+      <type>checkmark</type>
+      <posX>800</posX>
+      <posY>766</posY>
+      <width>53</width>
+      <height>41</height>
+      <textureCheckmark>starblue_rating.png</textureCheckmark>
+      <textureCheckmarkNoFocus>starblack_rating.png</textureCheckmarkNoFocus>
+			<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+    	<animation effect="fade" time="0">WindowClose</animation>
+    </control>
+    <control>
+      <id>103</id>
+      <description>4 Star</description>
+      <type>checkmark</type>
+      <posX>850</posX>
+      <posY>766</posY>
+      <width>53</width>
+      <height>41</height>
+      <textureCheckmark>starblue_rating.png</textureCheckmark>
+      <textureCheckmarkNoFocus>starblack_rating.png</textureCheckmarkNoFocus>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+    	<animation effect="fade" time="0">WindowClose</animation>
+    </control>
+    <control>
+      <id>104</id>
+      <description>5 Star</description>
+      <type>checkmark</type>
+      <posX>900</posX>
+      <posY>766</posY>
+      <width>53</width>
+      <height>41</height>
+      <textureCheckmark>starblue_rating.png</textureCheckmark>
+			<textureCheckmarkNoFocus>starblack_rating.png</textureCheckmarkNoFocus>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+    	<animation effect="fade" time="0">WindowClose</animation>
+    </control>
+    <control>
+      <id>105</id>
+      <description>6 Star</description>
+      <type>checkmark</type>
+      <posX>950</posX>
+      <posY>766</posY>
+      <width>53</width>
+      <height>41</height>
+      <textureCheckmark>starblue_rating.png</textureCheckmark>
+      <textureCheckmarkNoFocus>starblack_rating.png</textureCheckmarkNoFocus>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+    	<animation effect="fade" time="0">WindowClose</animation>
+    </control>
+    <control>
+      <id>106</id>
+      <description>7 Star</description>
+      <type>checkmark</type>
+      <posX>1000</posX>
+      <posY>766</posY>
+      <width>53</width>
+      <height>41</height>
+      <textureCheckmark>starblue_rating.png</textureCheckmark>
+      <textureCheckmarkNoFocus>starblack_rating.png</textureCheckmarkNoFocus>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+    	<animation effect="fade" time="0">WindowClose</animation>
+    </control>
+    <control>
+      <id>107</id>
+      <description>8 Star</description>
+      <type>checkmark</type>
+      <posX>1050</posX>
+      <posY>766</posY>
+      <width>53</width>
+      <height>41</height>
+      <textureCheckmark>starblue_rating.png</textureCheckmark>
+      <textureCheckmarkNoFocus>starblack_rating.png</textureCheckmarkNoFocus>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+    	<animation effect="fade" time="0">WindowClose</animation>
+    </control>
+    <control>
+      <id>108</id>
+      <description>9 Star</description>
+      <type>checkmark</type>
+      <posX>1100</posX>
+      <posY>766</posY>
+      <width>53</width>
+      <height>41</height>
+      <textureCheckmark>starblue_rating.png</textureCheckmark>
+      <textureCheckmarkNoFocus>starblack_rating.png</textureCheckmarkNoFocus>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+    	<animation effect="fade" time="0">WindowClose</animation>
+    </control>
+    <control>
+      <id>109</id>
+      <description>10 Star</description>
+      <type>checkmark</type>
+      <posX>1150</posX>
+      <posY>766</posY>
+      <width>53</width>
+      <height>41</height>
+      <textureCheckmark>starblue_rating.png</textureCheckmark>
+      <textureCheckmarkNoFocus>starblack_rating.png</textureCheckmarkNoFocus>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+    	<animation effect="fade" time="0">WindowClose</animation>
+    </control>
+    <control>
+      <id>7</id>
+      <description>Selected Rating</description>
+      <type>label</type>
+      <posX>575</posX>
+      <posY>866</posY>
+      <width>768</width>
+      <align>center</align>
+      <textcolor>ff393939</textcolor>
+    	<animation effect="fade" time="250">WindowOpen</animation>
+    	<animation effect="slide" start="0,150" end="0,0" tween="quadratic" easing="in" time="200" delay="0">WindowOpen</animation>
+    	<animation effect="fade" time="0">WindowClose</animation>
+    </control>
+  </controls>
+</window>

@@ -845,7 +845,7 @@ namespace MediaPortal.Player
             DateTime.Now.Minute, DateTime.Now.Second);
 
           // Save screenshot from DIB
-          Win32API.BITMAPINFOHEADER bmih = (Win32API.BITMAPINFOHEADER)Marshal.PtrToStructure(pdib, typeof(Win32API.BITMAPINFOHEADER));
+          Win32API.BITMAPINFOHEADER bmih = Marshal.PtrToStructure<Win32API.BITMAPINFOHEADER>(pdib);
           IntPtr pixels = IntPtr.Add(pdib, bmih.biSize);
           Bitmap result = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth * 4, PixelFormat.Format32bppRgb, pixels);
           result.RotateFlip(RotateFlipType.RotateNoneFlipY);
@@ -898,7 +898,7 @@ namespace MediaPortal.Player
           // pTargetmadVrDib is a DIB
           if (pTargetmadVrDib != IntPtr.Zero)
           {
-            Win32API.BITMAPINFOHEADER bmih = (Win32API.BITMAPINFOHEADER)Marshal.PtrToStructure(pTargetmadVrDib, typeof(Win32API.BITMAPINFOHEADER));
+            Win32API.BITMAPINFOHEADER bmih = Marshal.PtrToStructure<Win32API.BITMAPINFOHEADER>(pTargetmadVrDib);
             IntPtr pixels = IntPtr.Add(pTargetmadVrDib, bmih.biSize);
 
             using (Bitmap b = new Bitmap(bmih.biWidth, bmih.biHeight, bmih.biWidth * 4, PixelFormat.Format32bppRgb, pixels))

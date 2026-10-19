@@ -40,7 +40,7 @@ using namespace std;
 #define SERVICE_TYPE_AUDIO_MPEG1		0x3
 #define SERVICE_TYPE_AUDIO_MPEG2		0x4
 #define SERVICE_TYPE_AUDIO_AC3			0x81 //fake
-#define SERVICE_TYPE_AUDIO_E_AC3		0x84 //fake
+#define SERVICE_TYPE_AUDIO_E_AC3		0x87 //fake
 #define SERVICE_TYPE_AUDIO_DD_PLUS  0x84 
 #define SERVICE_TYPE_AUDIO_AAC			0x0f
 #define SERVICE_TYPE_AUDIO_LATM_AAC	0x11 //LATM AAC audio

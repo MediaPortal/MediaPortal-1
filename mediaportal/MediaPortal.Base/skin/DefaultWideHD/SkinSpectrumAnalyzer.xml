@@ -3,14 +3,26 @@
   <section name="Enabled">
     <entry name="Spectrum">yes</entry>
     <entry name="SpectrumPeak">yes</entry>
-    <entry name="SpectrumVUMeter">no</entry>
+    <entry name="SpectrumVUMeter">yes</entry>
   </section>
   <section name="SpectrumAnalyzer">
     <entry name="SpectrumImage">Spectrum\Spectrum.png</entry>
     <entry name="SpectrumPeakImage">Spectrum\SpectrumPeak.png</entry>
     <entry name="SpectrumSpacing">5</entry>
     <entry name="SpectrumCount">16</entry>
-    <entry name="SpectrumMax">22</entry>
-    <entry name="SpectrumShow">Single</entry>
+    <entry name="SpectrumMax">15</entry>
+    <entry name="SpectrumPeakFall">500</entry>
+    <entry name="SpectrumProvider">Mediaportal</entry>
+    <entry name="SpectrumDebug">no</entry>
+    <entry name="SpectrumPeakCalculation">Average</entry>
+    <entry name="SpectrumUpdate">20</entry>
+    <entry name="SpectrumVUMeterMax">15</entry>
+    <entry name="SpectrumVUMeterUpdate">20</entry>
+    <entry name="SpectrumVUMeterPeakFall">500</entry>
+    <entry name="SpectrumVUMeterImage">Spectrum\VUMeter.png</entry>
+    <entry name="SpectrumVUMeterPeakImage">Spectrum\VUMeterPeak.png</entry>
+    <entry name="SpectrumVUMeterSpacing">5</entry>
+    <entry name="SpectrumShow">Both</entry>
+    <entry name="VUMeterShow">Both</entry>
   </section>
 </profile>

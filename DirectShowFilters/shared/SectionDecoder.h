@@ -32,8 +32,8 @@ public:
   CSectionDecoder(void);
   ~CSectionDecoder(void);
 	void SetCallBack(ISectionCallback* callback);
-	void OnTsPacket(byte* tsPacket);
-	void OnTsPacket(CTsHeader& header,byte* tsPacket);
+	void OnTsPacket(const byte* tsPacket);
+	void OnTsPacket(CTsHeader& header,const byte* tsPacket);
   void SetPid(int pid);
   int  GetPid();
 	void Reset();
@@ -42,9 +42,9 @@ public:
   virtual void OnNewSection(CSection& section);
 protected:
 private:
-	int StartNewSection(byte* tsPacket,int index,int sectionLen);
-	int AppendSection(byte* tsPacket, int index, int sectionLen);
-	int SnapshotSectionLength(byte* tsPacket,int start);
+	int StartNewSection(const byte* tsPacket,int index,int sectionLen);
+	int AppendSection(const byte* tsPacket, int index, int sectionLen);
+	int SnapshotSectionLength(const byte* tsPacket,int start);
 
   bool        m_bLog;
   bool        m_bCrcCheck;

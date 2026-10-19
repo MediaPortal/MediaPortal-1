@@ -173,7 +173,7 @@
           <backgroundHeight>150</backgroundHeight>
           <backgroundWidth>2049</backgroundWidth>
           <backgroundX>0</backgroundX>
-          <backgroundY>600</backgroundY>
+          <backgroundY>650</backgroundY>
           <backgroundDiffuse>60000000</backgroundDiffuse>
           <background>roof.png</background>
           <showBackground>yes</showBackground>

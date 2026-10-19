@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Grabber>
+	<Info availableDays="3" timezone="W. Europe Standard Time" version="2.0" />
+	<Channels>
+		<Channel siteId="100_nl_tv" id="100% NL TV" />
+		<Channel siteId="192tv" id="192TV" />
+		<Channel siteId="24kitchen" id="24Kitchen" />
+		<Channel siteId="2m" id="2M" />
+		<Channel siteId="3sat" id="3sat" />
+		<Channel siteId="6ter" id="6ter" />
+		<Channel siteId="8_mont-blanc" id="8 Mont-Blanc" />
+		<Channel siteId="aljazeera" id="Aljazeera" />
+		<Channel siteId="animal_planet" id="Animal Planet" />
+		<Channel siteId="ard" id="ARD" />
+		<Channel siteId="arte" id="ARTE" />
+		<Channel siteId="at5" id="AT5" />
+		<Channel siteId="atv_avrupa" id="ATV Avrupa" />
+		<Channel siteId="babytv" id="BabyTV" />
+		<Channel siteId="bbc_1" id="BBC 1" />
+		<Channel siteId="bbc_2" id="BBC 2" />
+		<Channel siteId="bbc_3" id="BBC 3" />
+		<Channel siteId="bbc_4" id="BBC 4" />
+		<Channel siteId="bbc_alba" id="BBC Alba" />
+		<Channel siteId="bbc_first" id="BBC First" />
+		<Channel siteId="bbc_news" id="BBC News" />
+		<Channel siteId="bfm_tv" id="BFM TV" />
+		<Channel siteId="br" id="BR" />
+		<Channel siteId="c8" id="C8" />
+		<Channel siteId="canvas" id="Canvas" />
+		<Channel siteId="cartoon_network" id="Cartoon Network" />
+		<Channel siteId="cartoonito" id="Cartoonito" />
+		<Channel siteId="cbbc" id="CBBC" />
+		<Channel siteId="cbeebies" id="CBeebies" />
+		<Channel siteId="channel_4" id="Channel 4" />
+		<Channel siteId="channel_5" id="Channel 5" />
+		<Channel siteId="cnbc" id="CNBC" />
+		<Channel siteId="cnn" id="CNN" />
+		<Channel siteId="comedy_central" id="Comedy Central" />
+		<Channel siteId="crime_investigation" id="Crime + Investigation" />
+		<Channel siteId="cstar" id="CSTAR" />
+		<Channel siteId="curiosity_channel" id="Curiosity Channel" />
+		<Channel siteId="dancetelevision" id="DanceTelevision" />
+		<Channel siteId="discovery_channel" id="Discovery Channel" />
+		<Channel siteId="discovery_science" id="Discovery Science" />
+		<Channel siteId="disney_channel" id="Disney Channel" />
+		<Channel siteId="disney_xd" id="Disney XD" />
+		<Channel siteId="dmax" id="DMAX" />
+		<Channel siteId="ducktv" id="ducktv" />
+		<Channel siteId="e" id="e" />
+		<Channel siteId="espn" id="ESPN" />
+		<Channel siteId="espn_2" id="ESPN 2" />
+		<Channel siteId="espn_3" id="ESPN 3" />
+		<Channel siteId="espn_4" id="ESPN 4" />
+		<Channel siteId="euro_d" id="Euro D" />
+		<Channel siteId="euro_star" id="Euro Star" />
+		<Channel siteId="euronews" id="Euronews" />
+		<Channel siteId="eurosport_1" id="Eurosport 1" />
+		<Channel siteId="eurosport_2" id="Eurosport 2" />
+		<Channel siteId="family7" id="Family7" />
+		<Channel siteId="fashiontv" id="FashionTV" />
+		<Channel siteId="film1_action" id="Film1 Action" />
+		<Channel siteId="film1_drama" id="Film1 Drama" />
+		<Channel siteId="film1_family" id="Film1 Family" />
+		<Channel siteId="film1_premiere" id="Film1 Premiere" />
+		<Channel siteId="filmbox" id="Filmbox" />
+		<Channel siteId="france_2" id="France 2" />
+		<Channel siteId="france_24" id="France 24" />
+		<Channel siteId="france_3" id="France 3" />
+		<Channel siteId="france_4" id="France 4" />
+		<Channel siteId="france_5" id="France 5" />
+		<Channel siteId="gulli" id="Gulli" />
+		<Channel siteId="haberturk" id="Haberturk" />
+		<Channel siteId="history_channel" id="History Channel" />
+		<Channel siteId="horse_country_tv" id="Horse &amp; Country TV" />
+		<Channel siteId="hr" id="HR" />
+		<Channel siteId="id" id="ID" />
+		<Channel siteId="itv" id="ITV" />
+		<Channel siteId="itv_2" id="ITV 2" />
+		<Channel siteId="itv_3" id="ITV 3" />
+		<Channel siteId="itv_4" id="ITV 4" />
+		<Channel siteId="kabel_eins" id="kabel eins" />
+		<Channel siteId="ketnet" id="Ketnet" />
+		<Channel siteId="kika" id="KiKA" />
+		<Channel siteId="kto" id="KTO" />
+		<Channel siteId="l1" id="L1" />
+		<Channel siteId="la_trois" id="La Trois" />
+		<Channel siteId="la_une" id="La Une" />
+		<Channel siteId="lci" id="LCI" />
+		<Channel siteId="love_nature" id="Love Nature" />
+		<Channel siteId="m6" id="M6" />
+		<Channel siteId="mdr" id="MDR" />
+		<Channel siteId="mediaset_italia" id="Mediaset Italia" />
+		<Channel siteId="mezzo" id="Mezzo" />
+		<Channel siteId="moonbug" id="Moonbug" />
+		<Channel siteId="mtv" id="MTV" />
+		<Channel siteId="mtv_80s" id="MTV 80s" />
+		<Channel siteId="myzen_tv" id="MyZen TV" />
+		<Channel siteId="nat_geo_wild" id="Nat Geo Wild" />
+		<Channel siteId="national_geographic" id="National Geographic" />
+		<Channel siteId="ndr_fernsehen" id="NDR Fernsehen" />
+		<Channel siteId="net5" id="Net5" />
+		<Channel siteId="nh" id="NH" />
+		<Channel siteId="nick_jr_" id="Nick Jr." />
+		<Channel siteId="nick_music" id="Nick Music" />
+		<Channel siteId="nick_toons" id="Nick Toons" />
+		<Channel siteId="nickelodeon" id="Nickelodeon" />
+		<Channel siteId="nitro" id="NITRO" />
+		<Channel siteId="njam" id="Njam!" />
+		<Channel siteId="npo_1" id="NPO 1" />
+		<Channel siteId="npo_1_extra" id="NPO 1 Extra" />
+		<Channel siteId="npo_2" id="NPO 2" />
+		<Channel siteId="npo_2_extra" id="NPO 2 Extra" />
+		<Channel siteId="npo_3" id="NPO 3" />
+		<Channel siteId="npo_politiek_en_nieuws" id="NPO Politiek en Nieuws" />
+		<Channel siteId="omroep_brabant" id="Omroep Brabant" />
+		<Channel siteId="omroep_flevoland" id="Omroep Flevoland" />
+		<Channel siteId="omroep_gelderland" id="Omroep Gelderland" />
+		<Channel siteId="omroep_west" id="Omroep West" />
+		<Channel siteId="omroep_zeeland" id="Omroep Zeeland" />
+		<Channel siteId="omrop_fryslan" id="Omrop Fryslân" />
+		<Channel siteId="ons" id="ons" />
+		<Channel siteId="paramount_network" id="Paramount Network" />
+		<Channel siteId="phoenix" id="PHOENIX" />
+		<Channel siteId="play4" id="Play4" />
+		<Channel siteId="play5" id="Play5" />
+		<Channel siteId="play6" id="Play6" />
+		<Channel siteId="play7" id="Play7" />
+		<Channel siteId="prosieben" id="ProSieben" />
+		<Channel siteId="prosieben_maxx" id="ProSieben MAXX" />
+		<Channel siteId="quest" id="Quest" />
+		<Channel siteId="quest_red" id="Quest Red" />
+		<Channel siteId="rai_uno" id="Rai Uno" />
+		<Channel siteId="rbb" id="RBB" />
+		<Channel siteId="rtl" id="RTL" />
+		<Channel siteId="rtl_4" id="RTL 4" />
+		<Channel siteId="rtl_5" id="RTL 5" />
+		<Channel siteId="rtl_7" id="RTL 7" />
+		<Channel siteId="rtl_8" id="RTL 8" />
+		<Channel siteId="rtl_club" id="RTL club" />
+		<Channel siteId="rtl_crime" id="RTL Crime" />
+		<Channel siteId="rtl_lounge" id="RTL Lounge" />
+		<Channel siteId="rtl_telekids" id="RTL Telekids" />
+		<Channel siteId="rtl_tvi" id="RTL tvi" />
+		<Channel siteId="rtl_z" id="RTL Z" />
+		<Channel siteId="rtlup" id="RTLup" />
+		<Channel siteId="rtlzwei" id="RTLZWEI" />
+		<Channel siteId="rtv_drenthe" id="RTV Drenthe" />
+		<Channel siteId="rtv_noord" id="RTV Noord" />
+		<Channel siteId="rtv_oost" id="RTV Oost" />
+		<Channel siteId="rtv_rijnmond" id="RTV Rijnmond" />
+		<Channel siteId="rtv_utrecht" id="RTV Utrecht" />
+		<Channel siteId="rtv-7" id="RTV-7" />
+		<Channel siteId="sat_1" id="Sat.1" />
+		<Channel siteId="sat_1_gold" id="Sat.1 Gold" />
+		<Channel siteId="sbs6" id="SBS6" />
+		<Channel siteId="shortstv" id="ShortsTV" />
+		<Channel siteId="showturk" id="ShowTurk" />
+		<Channel siteId="sixx" id="sixx" />
+		<Channel siteId="sky_arts" id="Sky Arts" />
+		<Channel siteId="sky_atlantic" id="Sky Atlantic" />
+		<Channel siteId="sky_comedy" id="Sky Comedy" />
+		<Channel siteId="sky_crime" id="Sky Crime" />
+		<Channel siteId="sky_documentaries" id="Sky Documentaries" />
+		<Channel siteId="sky_history" id="Sky History" />
+		<Channel siteId="sky_nature" id="Sky Nature" />
+		<Channel siteId="sky_news" id="Sky News" />
+		<Channel siteId="sky_one" id="Sky One" />
+		<Channel siteId="sky_sports_action" id="Sky Sports Action" />
+		<Channel siteId="sky_sports_arena" id="Sky Sports Arena" />
+		<Channel siteId="sky_sports_cricket" id="Sky Sports Cricket" />
+		<Channel siteId="sky_sports_f1" id="Sky Sports F1" />
+		<Channel siteId="sky_sports_football" id="Sky Sports Football" />
+		<Channel siteId="sky_sports_golf" id="Sky Sports Golf" />
+		<Channel siteId="sky_sports_main_event" id="Sky Sports Main Event" />
+		<Channel siteId="sky_sports_news" id="Sky Sports News" />
+		<Channel siteId="sky_two" id="Sky Two" />
+		<Channel siteId="sky_witness" id="Sky Witness" />
+		<Channel siteId="slamtv" id="SLAM!TV" />
+		<Channel siteId="star_channel" id="STAR Channel" />
+		<Channel siteId="stingray_classica" id="Stingray Classica" />
+		<Channel siteId="stingray_djazz" id="Stingray DJAZZ" />
+		<Channel siteId="stingray_litetv" id="Stingray LiteTV" />
+		<Channel siteId="super_rtl" id="Super RTL" />
+		<Channel siteId="swr" id="SWR" />
+		<Channel siteId="tf1" id="TF1" />
+		<Channel siteId="tf1_series_films" id="TF1 Series Films" />
+		<Channel siteId="tfx" id="TFX" />
+		<Channel siteId="tipik" id="Tipik" />
+		<Channel siteId="tlc" id="TLC" />
+		<Channel siteId="tmc" id="TMC" />
+		<Channel siteId="top_40_tv" id="Top 40 TV" />
+		<Channel siteId="trt_cocuk" id="TRT Cocuk" />
+		<Channel siteId="trt_turk" id="TRT Turk" />
+		<Channel siteId="trt-muzik" id="TRT-Muzik" />
+		<Channel siteId="tv_oranje" id="TV Oranje" />
+		<Channel siteId="tv538" id="TV538" />
+		<Channel siteId="tv5monde" id="TV5MONDE" />
+		<Channel siteId="tv8_int" id="TV8 Int" />
+		<Channel siteId="tve" id="TVE" />
+		<Channel siteId="utsav_gold" id="Utsav Gold" />
+		<Channel siteId="utsav_plus" id="Utsav Plus" />
+		<Channel siteId="veronica" id="Veronica" />
+		<Channel siteId="viaplay_tv" id="Viaplay TV" />
+		<Channel siteId="vox" id="VOX" />
+		<Channel siteId="voxup" id="VOXup" />
+		<Channel siteId="vrt_1" id="VRT 1" />
+		<Channel siteId="vtm" id="VTM" />
+		<Channel siteId="vtm2" id="VTM2" />
+		<Channel siteId="vtm3" id="VTM3" />
+		<Channel siteId="vtm4" id="VTM4" />
+		<Channel siteId="w9" id="W9" />
+		<Channel siteId="wdr_fernsehen" id="WDR Fernsehen" />
+		<Channel siteId="welt" id="WELT" />
+		<Channel siteId="xite" id="XITE" />
+		<Channel siteId="zdf" id="ZDF" />
+		<Channel siteId="zdfinfo" id="ZDFinfo" />
+		<Channel siteId="zdfneo" id="ZDFneo" />
+		<Channel siteId="zee_cinema" id="Zee Cinema" />
+		<Channel siteId="zee_tv" id="Zee TV" />
+		<Channel siteId="ziggo_sport" id="Ziggo Sport" />
+		<Channel siteId="ziggo_sport_2" id="Ziggo Sport 2" />
+		<Channel siteId="ziggo_sport_3" id="Ziggo Sport 3" />
+		<Channel siteId="ziggo_sport_4" id="Ziggo Sport 4" />
+		<Channel siteId="ziggo_sport_5" id="Ziggo Sport 5" />
+		<Channel siteId="ziggo_sport_6" id="Ziggo Sport 6" />
+	</Channels>
+	<Listing type="Html">
+		<Site url="https://www.tvgids24.nl/zender/[ID]/[DAY_NAME]" post="" external="false" encoding="" />
+    <Search startOffset="0" maxlistings="0" startPage="0">
+      <DayNames>
+        <Day>vandaag</Day>
+        <Day>morgen</Day>
+        <Day>overmorgen</Day>
+      </DayNames>
+    </Search>
+		<Html>
+			<Template name="default">
+				<SectionTemplate tags="LMS">
+					<TemplateText>
+						&lt;li itemscope itemtype=&quot;https://schema.org/BroadcastEvent&quot;&gt;
+
+						&lt;meta itemprop=&quot;name&quot; content=&quot;&quot;&gt;
+						&lt;meta itemprop=&quot;startDate&quot; content=&quot;&quot;&gt;
+						&lt;meta itemprop=&quot;endDate&quot; content=&quot;&quot;&gt;
+						&lt;span class=&quot;one&quot; itemprop=&quot;publishedOn&quot; itemscope itemtype=&quot;https://schema.org/BroadcastService&quot;&gt;
+						&lt;meta itemprop=&quot;name&quot; content=&quot;&quot;&gt;
+						&lt;a href=&quot;zender&quot;&gt;
+						&lt;img class=&quot;minilogo&quot; src=&quot;images/trans.png&quot; alt=&quot;&quot; title=&quot;&quot;&gt;
+						&lt;/a&gt;
+						&lt;/span&gt;
+						&lt;span class=&quot;two&quot;&gt;&lt;#START&gt;
+						&lt;/span&gt;
+						&lt;a class=&quot;prog&quot; href=&quot;48087416/socutera&quot;&gt;&lt;#TITLE&gt;
+						&lt;/a&gt;
+						&lt;/li&gt;
+					</TemplateText>
+				</SectionTemplate>
+			</Template>
+			<Template name="Details" start="&lt;li&gt;Uitzending&lt;/li&gt;" end="&lt;aside class=&quot;right&quot;&gt;">
+				<SectionTemplate tags="MHPD">
+					<TemplateText>
+					<![CDATA[
+							&lt;meta itemprop=&quot;genre&quot; content=&quot;&quot;&gt;&lt;h3&gt;Omschrijving&lt;/h3&gt;&lt;p itemprop=&quot;description&quot;&gt;&lt;#DESCRIPTION&gt;&lt;/p&gt;
+					]]>
+					</TemplateText>
+				</SectionTemplate>
+			</Template>
+			<Sublinks>
+				<Sublink search="\d+/" template="Details">
+					<Link url="https://www.tvgids24.nl/[1]" external="false" encoding="utf-8"/>
+				</Sublink>
+			</Sublinks>
+		</Html>
+	</Listing>
+</Grabber>

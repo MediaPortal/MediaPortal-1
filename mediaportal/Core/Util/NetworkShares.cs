@@ -421,20 +421,18 @@ namespace MediaPortal.Util
 
         if (NO_ERROR == nRet && entriesRead > 0)
         {
-          Type t = (2 == level) ? typeof(SHARE_INFO_2) : typeof(SHARE_INFO_1);
-          int offset = Marshal.SizeOf(t);
-
-          for (int i = 0; i < entriesRead; i++)
+          int offset = (level == 2) ? Marshal.SizeOf(typeof(SHARE_INFO_2)) : Marshal.SizeOf(typeof(SHARE_INFO_1));
+          var lpItem = pBuffer;
+          for (int i = 0; i < entriesRead; i++, lpItem = IntPtr.Add(lpItem, offset))
           {
-            IntPtr pItem = IntPtr.Add(pBuffer, i * offset);
             if (1 == level)
             {
-              SHARE_INFO_1 si = (SHARE_INFO_1)Marshal.PtrToStructure(pItem, t);
+              SHARE_INFO_1 si = Marshal.PtrToStructure<SHARE_INFO_1>(lpItem);
               netShares.Add(si.NetName, string.Empty, si.ShareType, si.Remark);
             }
             else
             {
-              SHARE_INFO_2 si = (SHARE_INFO_2)Marshal.PtrToStructure(pItem, t);
+              SHARE_INFO_2 si = Marshal.PtrToStructure<SHARE_INFO_2>(lpItem);
               netShares.Add(si.NetName, si.Path, si.ShareType, si.Remark);
             }
           }
@@ -460,8 +458,7 @@ namespace MediaPortal.Util
       int nRet = 0;
       ushort entriesRead, totalEntries;
 
-      Type t = typeof(SHARE_INFO_50);
-      int size = Marshal.SizeOf(t);
+      int size = Marshal.SizeOf(typeof(SHARE_INFO_50));
       ushort cbBuffer = (ushort)(MAX_SI50_ENTRIES * size);
       //On Win9x, must allocate buffer before calling API
       IntPtr pBuffer = Marshal.AllocHGlobal(cbBuffer);
@@ -474,27 +471,24 @@ namespace MediaPortal.Util
         if (ERROR_WRONG_LEVEL == nRet)
         {
           level = 1;
-          t = typeof(SHARE_INFO_1_9x);
-          size = Marshal.SizeOf(t);
-
+          size = Marshal.SizeOf(typeof(SHARE_INFO_1_9x));
           nRet = NetShareEnum(server, level, pBuffer, cbBuffer,
             out entriesRead, out totalEntries);
         }
 
         if (NO_ERROR == nRet || ERROR_MORE_DATA == nRet)
         {
-          for (int i = 0; i < entriesRead; i++)
+          IntPtr pItem = pBuffer;
+          for (int i = 0; i < entriesRead; i++, pItem = IntPtr.Add(pItem, size))
           {
-            IntPtr pItem = IntPtr.Add(pBuffer, i * size);
-
             if (1 == level)
             {
-              SHARE_INFO_1_9x si = (SHARE_INFO_1_9x)Marshal.PtrToStructure(pItem, t);
+              SHARE_INFO_1_9x si = Marshal.PtrToStructure<SHARE_INFO_1_9x>(pItem);
               netShares.Add(si.NetName, string.Empty, si.ShareType, si.Remark);
             }
             else
             {
-              SHARE_INFO_50 si = (SHARE_INFO_50)Marshal.PtrToStructure(pItem, t);
+              SHARE_INFO_50 si = Marshal.PtrToStructure<SHARE_INFO_50>(pItem);
               netShares.Add(si.NetName, si.Path, si.ShareType, si.Remark);
             }
           }
@@ -591,8 +585,7 @@ namespace MediaPortal.Util
 
           if (NO_ERROR == nRet)
           {
-            rni = (UNIVERSAL_NAME_INFO)Marshal.PtrToStructure(pBuffer,
-              typeof(UNIVERSAL_NAME_INFO));
+            rni = Marshal.PtrToStructure<UNIVERSAL_NAME_INFO>(pBuffer);
           }
         }
         finally

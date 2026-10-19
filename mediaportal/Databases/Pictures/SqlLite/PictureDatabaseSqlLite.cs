@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -314,6 +314,7 @@ namespace MediaPortal.Picture.Database
             "  DELETE FROM focallength WHERE idFocalLength NOT IN (SELECT DISTINCT idFocalLength FROM exifdata); " +
             "  DELETE FROM focallength35mm WHERE idFocalLength35mm NOT IN (SELECT DISTINCT idFocalLength35mm FROM exifdata); " +
             "END;");
+
       DatabaseUtility.AddTrigger(m_db, "Delete_ExtraKeywords",
             "CREATE TRIGGER Delete_ExtraKeywords AFTER DELETE ON keywordslinkpicture " +
             "BEGIN " +
@@ -321,9 +322,20 @@ namespace MediaPortal.Picture.Database
             "END;");
       #endregion
 
+      #region Ratings
+      if (!DatabaseUtility.TableExists(m_db, "rating"))
+      {
+        DatabaseUtility.DeleteView(m_db, "picturedata");
+      }
+      DatabaseUtility.AddTable(m_db, "rating",
+                               "CREATE TABLE rating (idPicture INTEGER PRIMARY KEY REFERENCES picture(idPicture) ON DELETE CASCADE, " + 
+                               "Favorite BOOLEAN NOT NULL DEFAULT 0, Rating INTEGER NOT NULL DEFAULT 0, Views INTEGER NOT NULL DEFAULT 0);");
+      #endregion
+
       #region Exif Views
       DatabaseUtility.AddView(m_db, "picturedata", "CREATE VIEW picturedata AS " +
                                                           "SELECT picture.idPicture, strFile, strDateTaken, iImageWidth, iImageHeight, iImageXReso, iImageYReso, " +
+                                                          "Favorite, Rating, Views, " +
                                                           "strCamera, strCameraMake, strLens, strISO, strExposureTime, strExposureCompensation, strFStop, strShutterSpeed, " +
                                                           "strFocalLength, strFocalLength35mm, " +
                                                           "strOrientation, strFlash, strMeteringMode, " +
@@ -331,6 +343,7 @@ namespace MediaPortal.Picture.Database
                                                           "strSceneCaptureType, strWhiteBalance, strAuthor, strByLine, strSoftware, strUserComment, strCopyright, strCopyrightNotice, " +
                                                           "gpslocation.Latitude, gpslocation.Longitude, gpslocation.Altitude, exifdata.* " +
                                                           "FROM picture " +
+                                                          "LEFT JOIN rating USING (idPicture) " +
                                                           "LEFT JOIN exifdata USING (idPicture) " +
                                                           "LEFT JOIN camera USING (idCamera) " +
                                                           "LEFT JOIN lens USING (idLens) " +
@@ -366,6 +379,10 @@ namespace MediaPortal.Picture.Database
                                                        "SELECT picture.*, keyword.strKeyword FROM picture " +
                                                        "JOIN keywordslinkpicture USING (idPicture) " +
                                                        "JOIN keyword USING (idKeyword);");
+
+      DatabaseUtility.AddView(m_db, "pictureratings", "CREATE VIEW pictureratings AS " +
+                                                       "SELECT picture.*, Favorite, Rating, Views FROM picture " +
+                                                       "LEFT JOIN rating USING (idPicture);");
       #endregion
 
       return true;
@@ -1136,6 +1153,239 @@ namespace MediaPortal.Picture.Database
       }
     }
 
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public bool GetFavorite(string strPicture)
+    {
+      if (m_db == null)
+      {
+        return false;
+      }
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
+      {
+        return false;
+      }
+
+      try
+      {
+        string strPic = strPicture;
+        DatabaseUtility.RemoveInvalidChars(ref strPic);
+
+        SQLiteResultSet results = m_db.Execute(String.Format("SELECT Favorite FROM picturedata WHERE strFile = '{0}'", strPic));
+        if (results != null && results.Rows.Count > 0)
+        {
+          return DatabaseUtility.GetAsInt(results, 0, "Favorite") == 1;
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Picture.DB.SQLite: {0} stack:{1}", ex.Message, ex.StackTrace);
+      }
+      return false;
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public void SetFavorite(string strPicture, bool Favorite)
+    {
+      if (m_db == null)
+      {
+        return;
+      }
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
+      {
+        return;
+      }
+
+      try
+      {
+        string strPic = strPicture;
+        DatabaseUtility.RemoveInvalidChars(ref strPic);
+        SQLiteResultSet results = m_db.Execute(String.Format("SELECT idPicture FROM picture WHERE strFile = '{0}'", strPic));
+        if (results != null && results.Rows.Count > 0)
+        {
+          int idPicture = DatabaseUtility.GetAsInt(results, 0, "idPicture");
+          m_db.Execute(String.Format("INSERT OR REPLACE INTO rating (idPicture, Favorite, Rating, Views) " + 
+                                     "VALUES (" + idPicture.ToString() + ", " +
+                                              (Favorite ? "1" : "0") + ", " +
+                                              "(SELECT Rating FROM rating WHERE idPicture = " + idPicture.ToString() + " ), " +
+                                              "(SELECT Views FROM rating WHERE idPicture = " + idPicture.ToString() + " ) " +
+                                             ");"));
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Picture.DB.SQLite: {0} stack:{1}", ex.Message, ex.StackTrace);
+      }
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public int GetRating(string strPicture)
+    {
+      if (m_db == null)
+      {
+        return -1;
+      }
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
+      {
+        return -1;
+      }
+
+      try
+      {
+        string strPic = strPicture;
+        DatabaseUtility.RemoveInvalidChars(ref strPic);
+
+        SQLiteResultSet results = m_db.Execute(String.Format("SELECT Rating FROM picturedata WHERE strFile = '{0}'", strPic));
+        if (results != null && results.Rows.Count > 0)
+        {
+          return DatabaseUtility.GetAsInt(results, 0, "Rating");
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Picture.DB.SQLite: {0} stack:{1}", ex.Message, ex.StackTrace);
+      }
+      return -1;
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public void SetRating(string strPicture, int Rating)
+    {
+      if (m_db == null)
+      {
+        return;
+      }
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
+      {
+        return;
+      }
+
+      try
+      {
+        string strPic = strPicture;
+        DatabaseUtility.RemoveInvalidChars(ref strPic);
+        SQLiteResultSet results = m_db.Execute(String.Format("SELECT idPicture FROM picture WHERE strFile = '{0}'", strPic));
+        if (results != null && results.Rows.Count > 0)
+        {
+          int idPicture = DatabaseUtility.GetAsInt(results, 0, "idPicture");
+          m_db.Execute(String.Format("INSERT OR REPLACE INTO rating (idPicture, Favorite, Rating, Views) " + 
+                                     "VALUES (" + idPicture.ToString() + ", " +
+                                              "(SELECT Favorite FROM rating WHERE idPicture = " + idPicture.ToString() + " ), " +
+                                              Rating.ToString() + ", " +
+                                              "(SELECT Views FROM rating WHERE idPicture = " + idPicture.ToString() + " ) " +
+                                             ");"));
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Picture.DB.SQLite: {0} stack:{1}", ex.Message, ex.StackTrace);
+      }
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public int GetViews(string strPicture)
+    {
+      if (m_db == null)
+      {
+        return -1;
+      }
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
+      {
+        return -1;
+      }
+
+      try
+      {
+        string strPic = strPicture;
+        DatabaseUtility.RemoveInvalidChars(ref strPic);
+
+        SQLiteResultSet results = m_db.Execute(String.Format("SELECT Views FROM picturedata WHERE strFile = '{0}'", strPic));
+        if (results != null && results.Rows.Count > 0)
+        {
+          return DatabaseUtility.GetAsInt(results, 0, "Views");
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Picture.DB.SQLite: {0} stack:{1}", ex.Message, ex.StackTrace);
+      }
+      return -1;
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public void SetViews(string strPicture, int Views)
+    {
+      if (m_db == null)
+      {
+        return;
+      }
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
+      {
+        return;
+      }
+
+      try
+      {
+        string strPic = strPicture;
+        DatabaseUtility.RemoveInvalidChars(ref strPic);
+        SQLiteResultSet results = m_db.Execute(String.Format("SELECT idPicture FROM picture WHERE strFile = '{0}'", strPic));
+        if (results != null && results.Rows.Count > 0)
+        {
+          int idPicture = DatabaseUtility.GetAsInt(results, 0, "idPicture");
+          m_db.Execute(String.Format("INSERT OR REPLACE INTO rating (idPicture, Favorite, Rating, Views) " + 
+                                     "VALUES (" + idPicture.ToString() + ", " +
+                                              "(SELECT Favorite FROM rating WHERE idPicture = " + idPicture.ToString() + " ), " +
+                                              "(SELECT Rating FROM rating WHERE idPicture = " + idPicture.ToString() + " ), " +
+                                              Views.ToString() + " ) " +
+                                             ");"));
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Picture.DB.SQLite: {0} stack:{1}", ex.Message, ex.StackTrace);
+      }
+    }
+
+    [MethodImpl(MethodImplOptions.Synchronized)]
+    public void AddViews(string strPicture)
+    {
+      if (m_db == null)
+      {
+        return;
+      }
+      // Continue only if it's a picture files
+      if (!Util.Utils.IsPicture(strPicture))
+      {
+        return;
+      }
+
+      try
+      {
+        string strPic = strPicture;
+        DatabaseUtility.RemoveInvalidChars(ref strPic);
+        SQLiteResultSet results = m_db.Execute(String.Format("SELECT idPicture FROM picture WHERE strFile = '{0}'", strPic));
+        if (results != null && results.Rows.Count > 0)
+        {
+          int idPicture = DatabaseUtility.GetAsInt(results, 0, "idPicture");
+          m_db.Execute(String.Format("INSERT OR REPLACE INTO rating (idPicture, Favorite, Rating, Views) " +
+                                     "VALUES (" + idPicture.ToString() + ", " +
+                                              "(SELECT Favorite FROM rating WHERE idPicture = " + idPicture.ToString() + " ), " +
+                                              "(SELECT Rating FROM rating WHERE idPicture = " + idPicture.ToString() + " ), " +
+                                              "(SELECT Views + 1 FROM rating WHERE idPicture = " + idPicture.ToString() + " ) " +
+                                             ");"));
+        }
+      }
+      catch (Exception ex)
+      {
+        Log.Error("Picture.DB.SQLite: {0} stack:{1}", ex.Message, ex.StackTrace);
+      }
+    }
+
     public void DeletePicture(string strPicture)
     {
       // Continue only if it's a picture files
@@ -1364,7 +1614,6 @@ namespace MediaPortal.Picture.Database
         return resultList;
       }
 
-      int Count = 0;
       lock (typeof(PictureDatabase))
       {
         string strSQL = (_filterPrivate ? "SELECT DISTINCT strKeyword FROM picturekeywords WHERE strKeyword <> 'Private' AND " +
@@ -1376,9 +1625,9 @@ namespace MediaPortal.Picture.Database
           SQLiteResultSet result = m_db.Execute(strSQL);
           if (result != null)
           {
-            for (Count = 0; Count < result.Rows.Count; Count++)
+            for (int count = 0; count < result.Rows.Count; count++)
             {
-              resultList.Add(DatabaseUtility.Get(result, Count, 0));
+              resultList.Add(DatabaseUtility.Get(result, count, 0));
             }
           }
         }
@@ -1398,7 +1647,6 @@ namespace MediaPortal.Picture.Database
         return resultList;
       }
 
-      int Count = 0;
       lock (typeof(PictureDatabase))
       {
         string strSQL = "SELECT strFile FROM picturekeywords WHERE strKeyword = '" + DatabaseUtility.RemoveInvalidChars(Keyword) + "'" +
@@ -1409,9 +1657,9 @@ namespace MediaPortal.Picture.Database
           SQLiteResultSet result = m_db.Execute(strSQL);
           if (result != null)
           {
-            for (Count = 0; Count < result.Rows.Count; Count++)
+            for (int count = 0; count < result.Rows.Count; count++)
             {
-              resultList.Add(DatabaseUtility.Get(result, Count, 0));
+              resultList.Add(DatabaseUtility.Get(result, count, 0));
             }
           }
         }
@@ -1460,7 +1708,6 @@ namespace MediaPortal.Picture.Database
         return resultList;
       }
 
-      int Count = 0;
       lock (typeof(PictureDatabase))
       {
         string strSQL = GetSelect("strFile", Keyword);
@@ -1469,9 +1716,9 @@ namespace MediaPortal.Picture.Database
           SQLiteResultSet result = m_db.Execute(strSQL);
           if (result != null)
           {
-            for (Count = 0; Count < result.Rows.Count; Count++)
+            for (int count = 0; count < result.Rows.Count; count++)
             {
-              resultList.Add(DatabaseUtility.Get(result, Count, 0));
+              resultList.Add(DatabaseUtility.Get(result, count, 0));
             }
           }
         }
@@ -1524,7 +1771,6 @@ namespace MediaPortal.Picture.Database
         return resultList;
       }
 
-      int Count = 0;
       lock (typeof(PictureDatabase))
       {
         try
@@ -1536,9 +1782,9 @@ namespace MediaPortal.Picture.Database
           SQLiteResultSet result = m_db.Execute(strSQL);
           if (result != null)
           {
-            for (Count = 0; Count < result.Rows.Count; Count++)
+            for (int count = 0; count < result.Rows.Count; count++)
             {
-              resultList.Add(DatabaseUtility.Get(result, Count, 0));
+              resultList.Add(DatabaseUtility.Get(result, count, 0));
             }
           }
         }
@@ -1749,7 +1995,6 @@ namespace MediaPortal.Picture.Database
         return resultList;
       }
 
-      int Count = 0;
       lock (typeof(PictureDatabase))
       {
         string strSQL = "SELECT DISTINCT " + Name + " FROM picturedata WHERE " + Name + " IS NOT NULL" +
@@ -1761,9 +2006,9 @@ namespace MediaPortal.Picture.Database
           result = m_db.Execute(strSQL);
           if (result != null)
           {
-            for (Count = 0; Count < result.Rows.Count; Count++)
+            for (int count = 0; count < result.Rows.Count; count++)
             {
-              resultList.Add(DatabaseUtility.Get(result, Count, 0));
+              resultList.Add(DatabaseUtility.Get(result, count, 0));
             }
           }
         }
@@ -1812,7 +2057,6 @@ namespace MediaPortal.Picture.Database
         return resultList;
       }
 
-      int Count = 0;
       lock (typeof(PictureDatabase))
       {
         string strValue = Name.Contains("Altitude") ? Value : "'" + DatabaseUtility.RemoveInvalidChars(Value) + "'";
@@ -1825,9 +2069,9 @@ namespace MediaPortal.Picture.Database
           result = m_db.Execute(strSQL);
           if (result != null)
           {
-            for (Count = 0; Count < result.Rows.Count; Count++)
+            for (int count = 0; count < result.Rows.Count; count++)
             {
-              resultList.Add(DatabaseUtility.Get(result, Count, 0));
+              resultList.Add(DatabaseUtility.Get(result, count, 0));
             }
           }
         }
@@ -1864,6 +2108,173 @@ namespace MediaPortal.Picture.Database
         catch (Exception ex)
         {
           Log.Error("Picture.DB.SQLite: Getting Count by Metadata Value err: {0} stack:{1}", ex.Message, ex.StackTrace);
+        }
+        return Count;
+      }
+    }
+
+    public List<string> ListFavorites()
+    {
+      List<string> resultList = new List<string>();
+      if (m_db == null)
+      {
+        return resultList;
+      }
+
+      lock (typeof(PictureDatabase))
+      {
+        string strSQL = (_filterPrivate ? "SELECT DISTINCT '♥' as Rating FROM rating WHERE Favorite AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private') " +
+                                          "UNION ALL " +
+                                          "SELECT DISTINCT Rating FROM rating WHERE idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private') "
+                                        :
+                                          "SELECT DISTINCT '♥' as Rating FROM rating WHERE Favorite " +
+                                          "UNION ALL " +
+                                          "SELECT DISTINCT Rating FROM rating "
+                                      ) + "ORDER BY 1";
+        try
+        {
+          SQLiteResultSet result = m_db.Execute(strSQL);
+          if (result != null)
+          {
+            for (int count = 0; count < result.Rows.Count; count++)
+            {
+              resultList.Add(DatabaseUtility.Get(result, count, 0));
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Picture.DB.SQLite: Getting Favorites err: {0} stack:{1}", ex.Message, ex.StackTrace);
+        }
+        return resultList;
+      }
+    }
+
+    public List<string> ListPicsByFavorites(string Value)
+    {
+      List<string> resultList = new List<string>();
+      if (m_db == null)
+      {
+        return resultList;
+      }
+
+      lock (typeof(PictureDatabase))
+      {
+        string Name = Value == "♥" ? "Favorite" : "Rating";
+        string strValue = Value == "♥" ? "1" : "'" + DatabaseUtility.RemoveInvalidChars(Value) + "'";
+        string strSQL = "SELECT strFile FROM picturedata WHERE " + Name + " = " + strValue +
+                                (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) +
+                                " ORDER BY strDateTaken";
+        SQLiteResultSet result;
+        try
+        {
+          result = m_db.Execute(strSQL);
+          if (result != null)
+          {
+            for (int count = 0; count < result.Rows.Count; count++)
+            {
+              resultList.Add(DatabaseUtility.Get(result, count, 0));
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Picture.DB.SQLite: Getting Pictures by Favorite err: {0} stack:{1}", ex.Message, ex.StackTrace);
+        }
+        return resultList;
+      }
+    }
+
+    public int CountPicsByFavorites(string Value)
+    {
+      if (m_db == null)
+      {
+        return 0;
+      }
+
+      int Count = 0;
+      lock (typeof(PictureDatabase))
+      {
+        string Name = Value == "♥" ? "Favorite" : "Rating";
+        string strValue = Value == "♥" ? "1" : "'" + DatabaseUtility.RemoveInvalidChars(Value) + "'";
+        string strSQL = "SELECT COUNT(strFile) FROM picturedata WHERE " + Name + " = " + strValue +
+                                (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty);
+        SQLiteResultSet result;
+        try
+        {
+          result = m_db.Execute(strSQL);
+          if (result != null && result.Rows.Count > 0)
+          {
+            Count = DatabaseUtility.GetAsInt(result, 0, 0);
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Picture.DB.SQLite: Getting Count by Favorite err: {0} stack:{1}", ex.Message, ex.StackTrace);
+        }
+        return Count;
+      }
+    }
+
+    public List<string> ListPicsByMostViews()
+    {
+      List<string> resultList = new List<string>();
+      if (m_db == null)
+      {
+        return resultList;
+      }
+
+      lock (typeof(PictureDatabase))
+      {
+        string strSQL = "SELECT strFile FROM picturedata WHERE Views > (SELECT AVG(Views) FROM picturedata " + // SELECT AVG(CASE WHEN Views THEN Views ELSE 0 END) FROM picturedata
+                                (_filterPrivate ? " WHERE idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) + ") " +
+                                (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) +
+                                " ORDER BY strDateTaken";
+        SQLiteResultSet result;
+        try
+        {
+          result = m_db.Execute(strSQL);
+          if (result != null)
+          {
+            for (int count = 0; count < result.Rows.Count; count++)
+            {
+              resultList.Add(DatabaseUtility.Get(result, count, 0));
+            }
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Picture.DB.SQLite: Getting Pictures by Most Views err: {0} stack:{1}", ex.Message, ex.StackTrace);
+        }
+        return resultList;
+      }
+    }
+
+    public int CountPicsByMostViews()
+    {
+      if (m_db == null)
+      {
+        return 0;
+      }
+
+      int Count = 0;
+      lock (typeof(PictureDatabase))
+      {
+        string strSQL = "SELECT COUNT(strFile) FROM picturedata WHERE Views > (SELECT AVG(Views) FROM picturedata " +  // SELECT AVG(CASE WHEN Views THEN Views ELSE 0 END) FROM picturedata
+                                (_filterPrivate ? " WHERE idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty) + ") " +
+                                (_filterPrivate ? " AND idPicture NOT IN (SELECT DISTINCT idPicture FROM picturekeywords WHERE strKeyword = 'Private')" : string.Empty);
+        SQLiteResultSet result;
+        try
+        {
+          result = m_db.Execute(strSQL);
+          if (result != null && result.Rows.Count > 0)
+          {
+            Count = DatabaseUtility.GetAsInt(result, 0, 0);
+          }
+        }
+        catch (Exception ex)
+        {
+          Log.Error("Picture.DB.SQLite: Getting Count by Most Views err: {0} stack:{1}", ex.Message, ex.StackTrace);
         }
         return Count;
       }

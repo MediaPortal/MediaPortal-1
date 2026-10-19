@@ -856,8 +856,7 @@ namespace TvLibrary.Implementations.DVB
       }
 
       // cast ptr back to struct and handle it in c#
-      FIRESAT_CA_DATA caDataReturned =
-        (FIRESAT_CA_DATA)Marshal.PtrToStructure(_ptrDataReturned, typeof (FIRESAT_CA_DATA));
+      FIRESAT_CA_DATA caDataReturned = Marshal.PtrToStructure<FIRESAT_CA_DATA>(_ptrDataReturned);
 
       short manufacturer_code = BitConverter.ToInt16(caDataReturned.uData, 0);
       short application_manufacturer = BitConverter.ToInt16(caDataReturned.uData, 2);
@@ -1377,8 +1376,7 @@ namespace TvLibrary.Implementations.DVB
               else
               {
                 // cast ptr back to struct and handle it in c#
-                FIRESAT_CA_DATA caDataReturned =
-                  (FIRESAT_CA_DATA)Marshal.PtrToStructure(_ptrDataCiHandler, typeof (FIRESAT_CA_DATA));
+                FIRESAT_CA_DATA caDataReturned = Marshal.PtrToStructure<FIRESAT_CA_DATA>(_ptrDataCiHandler);
 
                 Int32 caDataLength = caDataReturned.uLength2 << 8 | caDataReturned.uLength1;
                 MMI.HandleMMI(caDataReturned.uData, caDataLength);

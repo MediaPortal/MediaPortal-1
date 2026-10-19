@@ -135,9 +135,7 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
+    <Reference Include="System.Core" />
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
@@ -217,6 +215,7 @@
     <Compile Include="Dialogs\GUIDialogText.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Dialogs\GUIDialogUserRating.cs" />
     <Compile Include="Dialogs\GUIDialogWindow.cs" />
     <Compile Include="Dialogs\GUIDialogYesNo.cs">
       <SubType>Code</SubType>

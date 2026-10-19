@@ -113,6 +113,11 @@
       <id>10</id>
       <posX>525</posX>
       <height>450</height>
+      <textXOff2>1210</textXOff2>
+      <PinIconXOff>1230</PinIconXOff>
+      <PinIconYOff>4</PinIconYOff>
+      <PinIconWidth>40</PinIconWidth>
+      <PinIconHeight>40</PinIconHeight>
     </control>
     <control>
       <description>scheduler recordings listcontrol</description>
@@ -120,6 +125,11 @@
       <id>11</id>
       <posX>525</posX>
       <height>450</height>
+      <textXOff2>1210</textXOff2>
+      <PinIconXOff>1230</PinIconXOff>
+      <PinIconYOff>4</PinIconYOff>
+      <PinIconWidth>40</PinIconWidth>
+      <PinIconHeight>40</PinIconHeight>
     </control>
     <control>
       <description>Seperator</description>

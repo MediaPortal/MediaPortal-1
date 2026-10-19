@@ -298,6 +298,15 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to MariaDB 10.
+        /// </summary>
+        internal static string DBMSType_rbMariaDB {
+            get {
+                return ResourceManager.GetString("DBMSType_rbMariaDB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Microsoft SQL-Server Express 2005.
         /// </summary>
         internal static string DBMSType_rbMSSQL {
@@ -316,7 +325,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to MySQL.
+        ///   Looks up a localized string similar to MySQL 8.
         /// </summary>
         internal static string DBMSType_rbMySQL {
             get {
@@ -325,11 +334,11 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to MariaDB.
+        ///   Looks up a localized string similar to MySQL 5.6.
         /// </summary>
-        internal static string DBMSType_rbMariaDB {
+        internal static string DBMSType_rbMySQLOutdated {
             get {
-                return ResourceManager.GetString("DBMSType_rbMariaDB", resourceCulture);
+                return ResourceManager.GetString("DBMSType_rbMySQLOutdated", resourceCulture);
             }
         }
         
@@ -1090,7 +1099,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Check above value if you want to upgrade your current MySQL 5.1, 5.6, 5.7 to 8.3 (old db will not be lost).
+        ///   Looks up a localized string similar to Check above value if you want to upgrade your current MySQL 5.1 to 5.6 (old db will not be lost).
         /// </summary>
         internal static string MySQLChoice_Information {
             get {
@@ -1108,7 +1117,7 @@ namespace MediaPortal.DeployTool {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to MySQL Upgrade 5.1, 5.6, 5.7 to 8.3
+        ///   Looks up a localized string similar to MySQL Upgrade 5.1 to 5.6.
         /// </summary>
         internal static string MySQLChoice_Title {
             get {

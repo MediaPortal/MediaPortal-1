@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2017 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2017 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -791,10 +791,10 @@ namespace MediaPortal.GUI.Library
 
   public enum GUIListItemProperty
   {
-    None   = 0x00, // 00000000 in binary
-    Is3D   = 0x01, // 00000001 in binary
-    IsHDR  = 0x02, // 00000010 in binary
-    //     = 0x04, // 00000100 in binary
+    None     = 0x00, // 00000000 in binary
+    Is3D     = 0x01, // 00000001 in binary
+    IsHDR    = 0x02, // 00000010 in binary
+    Favorite = 0x04, // 00000100 in binary
     //     = 0x08  // 00001000 in binary
   }
 

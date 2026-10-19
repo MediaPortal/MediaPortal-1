@@ -133,7 +133,8 @@
         <type>button</type>
         <id>100</id>
         <label>300120</label>
-        <width>600</width><textureFocus>setting_button_medium.png</textureFocus><textureFocus>setting_button_medium.png</textureFocus>
+        <width>600</width>
+		<textureFocus>setting_button_medium.png</textureFocus>
         <onup>127</onup>
         <hyperlink>705</hyperlink>
         <onleft>9992</onleft>
@@ -143,7 +144,8 @@
         <type>button</type>
         <id>200</id>
         <label>101016</label>
-        <width>600</width><textureFocus>setting_button_medium.png</textureFocus>
+        <width>600</width>
+		<textureFocus>setting_button_medium.png</textureFocus>
         <hyperlink>1022</hyperlink>
         <onleft>9992</onleft>
       </control>
@@ -152,7 +154,8 @@
         <type>button</type>
         <id>300</id>
         <label>131</label>
-        <width>600</width><textureFocus>setting_button_medium.png</textureFocus>
+        <width>600</width>
+		<textureFocus>setting_button_medium.png</textureFocus>
         <hyperlink>9</hyperlink>
         <onleft>9992</onleft>
       </control>
@@ -161,7 +164,8 @@
         <type>button</type>
         <id>400</id>
         <label>102900</label>
-        <width>600</width><textureFocus>setting_button_medium.png</textureFocus>
+        <width>600</width>
+		<textureFocus>setting_button_medium.png</textureFocus>
         <hyperlink>1020</hyperlink>
         <onleft>9992</onleft>
       </control>
@@ -170,7 +174,8 @@
         <type>button</type>
         <id>500</id>
         <label>101005</label>
-        <width>600</width><textureFocus>setting_button_medium.png</textureFocus>
+        <width>600</width>
+		<textureFocus>setting_button_medium.png</textureFocus>
         <hyperlink>1005</hyperlink>
         <onleft>9992</onleft>
       </control>
@@ -179,7 +184,8 @@
         <type>button</type>
         <id>600</id>
         <label>300121</label>
-        <width>600</width><textureFocus>setting_button_medium.png</textureFocus>
+        <width>600</width>
+		<textureFocus>setting_button_medium.png</textureFocus>
         <hyperlink>1006</hyperlink>
         <onleft>9992</onleft>
       </control>
@@ -188,7 +194,8 @@
         <type>button</type>
         <id>700</id>
         <label>6024</label>
-        <width>600</width><textureFocus>setting_button_medium.png</textureFocus>
+        <width>600</width>
+		<textureFocus>setting_button_medium.png</textureFocus>
         <hyperlink>708</hyperlink>
         <onleft>9992</onleft>
         <ondown>16</ondown>
@@ -200,7 +207,8 @@
         <posX>99</posX>
         <posY>368</posY>
         <label>500</label>
-        <width>600</width><textureFocus>setting_button_medium.png</textureFocus>
+        <width>600</width>
+		<textureFocus>setting_button_medium.png</textureFocus>
         <onleft>9992</onleft>
         <ondown>18</ondown>
       </control>
@@ -209,7 +217,8 @@
         <type>button</type>
         <id>18</id>
         <label>300059</label>
-        <width>600</width><textureFocus>setting_button_medium.png</textureFocus>
+        <width>600</width>
+		<textureFocus>setting_button_medium.png</textureFocus>
         <ondown>100</ondown>
         <onleft>9992</onleft>
       </control>

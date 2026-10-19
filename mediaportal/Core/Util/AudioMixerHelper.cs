@@ -187,7 +187,7 @@ namespace MediaPortal.Util
           retValue = true;
 
           // Copy the control into the destination structure 
-          mxc = (MIXERCONTROL)Marshal.PtrToStructure(mxlc.pamxctrl, typeof (MIXERCONTROL));
+          mxc = Marshal.PtrToStructure<MIXERCONTROL>(mxlc.pamxctrl);
         }
         else
         {
@@ -205,8 +205,7 @@ namespace MediaPortal.Util
 
         rc = mixerGetControlDetailsA(hmixer, ref pmxcd, MIXER_GETCONTROLDETAILSF_VALUE);
 
-        du =
-          (MIXERCONTROLDETAILS_UNSIGNED)Marshal.PtrToStructure(pmxcd.paDetails, typeof (MIXERCONTROLDETAILS_UNSIGNED));
+        du = Marshal.PtrToStructure<MIXERCONTROLDETAILS_UNSIGNED>(pmxcd.paDetails);
 
         vCurrentVol = du.dwValue;
 

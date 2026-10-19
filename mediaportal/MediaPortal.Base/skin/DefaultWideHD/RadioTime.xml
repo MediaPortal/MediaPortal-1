@@ -58,6 +58,36 @@
       <shadowDistance>2</shadowDistance>
       <shadowColor>ff000000</shadowColor>
     </control>
+	 <control>
+      <description>Itemcount</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1869</posX>
+      <posY>16</posY>
+      <label>#selectedindex/#itemcount</label> 
+      <align>right</align>
+      <font>font10</font>
+      <textcolor>lightgray</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <visible>!string.contains(#selectedindex, )+[facadeview.list|facadeview.playlist|facadeview.filmstrip|facadeview.smallicons|facadeview.largeicons]+![control.hasfocus(2)|control.hasfocus(3)|control.hasfocus(5)|control.hasfocus(6)|control.hasfocus(7)|control.hasfocus(8)|control.hasfocus(9)|control.hasfocus(10)|control.hasfocus(11)]+!topbar.focused</visible>
+    </control>
+	 <control>
+      <description>Itemcount first position</description>
+      <type>label</type>
+      <id>0</id>
+      <posX>1869</posX> 
+      <posY>16</posY>
+      <label>--/#itemcount</label> 
+      <align>right</align>
+      <font>font10</font>
+      <textcolor>lightgray</textcolor>
+      <shadowAngle>10</shadowAngle>
+      <shadowDistance>2</shadowDistance>
+      <shadowColor>ff000000</shadowColor>
+      <visible>string.contains(#selectedindex, )+[facadeview.list|facadeview.playlist|facadeview.filmstrip|facadeview.smallicons|facadeview.largeicons]+![control.hasfocus(2)|control.hasfocus(3)|control.hasfocus(5)|control.hasfocus(6)|control.hasfocus(7)|control.hasfocus(8)|control.hasfocus(9)|control.hasfocus(10)|control.hasfocus(11)]+!topbar.focused</visible>
+    </control>
     <control>
       <description>group element</description>
       <type>group</type>
@@ -146,32 +176,59 @@
         <ondown>90</ondown>
       </control>
     </control>
+	
+	
     <control>
-      <description>station logo</description>
+      <description>default radio logo background</description>
       <type>image</type>
       <id>0</id>
-      <posX>1519</posX>
+      <posX>1519</posX> 
       <posY>270</posY>
-      <width>313</width>
-      <height>238</height>
-      <texture>musicfanart_mask.png</texture>
-      <colordiffuse>90ffffff</colordiffuse>
-      <visible>facadeview.list</visible>
+      <width>323</width> 
+      <height>248</height>
+      <texture>musicfanart_mask_framed_opaque.png</texture>
+      <colordiffuse>80ffffff</colordiffuse>
+      <visible>facadeview.list+!control.hasthumb(51)</visible>
+    </control>
+	 <control>
+      <description>default stream radio logo </description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1580</posX> 
+      <posY>280</posY>
+      <width>200</width> 
+      <height>200</height>
+      <texture>DefaultMyradioStreamBig.png</texture>
+	  <colordiffuse>ccffffff</colordiffuse>
+      <visible>facadeview.list+!control.hasthumb(51)</visible>
+    </control>
+	 <control>
+      <description>station logo background</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1519</posX> 
+      <posY>270</posY>
+      <width>323</width> 
+      <height>248</height>
+      <texture>musicfanart_mask_framed_50.png</texture>
+      <colordiffuse>ffffffff</colordiffuse>
+      <visible>facadeview.list+control.hasthumb(51)</visible> 
     </control>
     <control>
       <description>station logo</description>
       <type>image</type>
       <id>51</id>
-      <posX>1519</posX>
-      <posY>270</posY>
-      <width>313</width>
-      <height>238</height>
+      <posX>1570</posX> 
+      <posY>307</posY> 
+      <width>220</width>
+      <height>169</height>
       <texture />
       <keepaspectratio>yes</keepaspectratio>
-      <centered>yes</centered>
+      <align>center</align>
+      <valign>middle</valign>
       <visible>facadeview.list</visible>
     </control>
-    <control>
+    <!--<control>
       <type>image</type>
       <description>image border</description>
       <id>1</id>
@@ -181,66 +238,98 @@
       <height>238</height>
       <texture>picturethumbframe.png</texture>
       <visible>control.hasthumb(51)+facadeview.list</visible>
-    </control>
-    <control>
-      <description>meta label</description>
-      <type>label</type>
-      <id>47</id>
-      <posX>1519</posX>
-      <posY>519</posY>
-      <label>#Play.Current.Title</label>
-      <font>font12</font>
-      <align>left</align>
-      <textcolor>ffffffff</textcolor>
-      <visible>facadeview.list</visible>
-    </control>
-    <control>
-      <description>meta label</description>
-      <type>fadelabel</type>
-      <id>47</id>
-      <posX>1519</posX>
-      <posY>576</posY>
-      <label>#Play.Current.Artist</label>
-      <font>font12</font>
-      <align>left</align>
-      <width>364</width>
-      <textcolor>ffffffff</textcolor>
-      <visible>facadeview.list</visible>
-    </control>
-    <control>
-      <description>meta label</description>
-      <type>fadelabel</type>
-      <id>47</id>
-      <posX>1519</posX>
-      <posY>631</posY>
-      <label>#RadioTime.Selected.Format</label>
-      <font>font12</font>
-      <align>left</align>
-      <width>364</width>
-      <textcolor>ffffffff</textcolor>
-      <visible>facadeview.list</visible>
-    </control>
-    <control>
+    </control>-->
+	
+	 <control>
       <id>81</id>
       <description>existent rating2</description>
       <type>imagelist</type>
-      <visible>no</visible>
-      <posX>3372</posX>
-      <posY>108</posY>
+      <posX>1533</posX>
+      <posY>534</posY> 
       <width>336</width>
       <height>34</height>
       <textureWidth>30</textureWidth>
       <textureHeight>30</textureHeight>
       <percentage>#RadioTime.Selected.Reliability</percentage>
-      <imagesToDraw>5</imagesToDraw>
-      <orientation>HORIZONTAL</orientation>
+      <imagesToDraw>10</imagesToDraw>
+      <orientation>horizontal</orientation>
       <align>LEFT</align>
       <subitems>
-        <subitem>starbad.png</subitem>
-        <subitem>stargood.png</subitem>
+        <subitem>starbad_small.png</subitem>
+        <subitem>star_small.png</subitem>
       </subitems>
+     <visible>facadeview.list+!string.equals(#RadioTime.Selected.Reliability,0)</visible>
+    </control>
+    <control>
+      <description>meta label title</description>
+      <type>fadelabel</type>
+      <id>47</id>
+      <posX>1519</posX>
+      <posY>581</posY>
+      <label>#Play.Current.Title</label>
+	  <scrollStartDelaySec>10</scrollStartDelaySec>
+      <font>font12</font>
+      <align>left</align>
+	  <width>364</width>
+      <textcolor>ffffffff</textcolor>
       <visible>facadeview.list</visible>
     </control>
+    <control>
+      <description>meta label artist</description>
+      <type>fadelabel</type>
+      <id>47</id>
+      <posX>1519</posX>
+      <posY>638</posY>
+      <label>#Play.Current.Artist</label>
+	  <scrollStartDelaySec>10</scrollStartDelaySec>
+      <font>font12</font>
+      <align>left</align>
+      <width>364</width>
+      <textcolor>ffffffff</textcolor>
+      <visible>facadeview.list</visible>
+    </control>
+    <control>
+      <description>meta label format</description>
+      <type>fadelabel</type>
+      <id>47</id>
+      <posX>1519</posX>
+      <posY>695</posY>
+      <label>#RadioTime.Selected.Format</label>
+	  <scrollStartDelaySec>10</scrollStartDelaySec>
+      <font>font12</font>
+      <align>left</align>
+      <width>364</width>
+      <textcolor>ffffffff</textcolor>
+      <visible>facadeview.list</visible>
+    </control>
+	 <control>
+      <description>divider horizontal</description>
+      <type>image</type>
+      <id>0</id>
+      <posX>1500</posX>
+      <posY>760</posY>
+      <width>350</width>
+      <height>1</height>
+      <texture>horizontalbar.png</texture>
+      <colordiffuse>lightgray</colordiffuse>
+	  <visible>facadeview.list+!string.equals(#RadioTime.Play.Description,)</visible> 
+    </control>
+	 <control>
+      <description>meta label description</description>
+      <type>textboxscrollup</type>
+      <id>47</id>
+      <posX>1519</posX>
+      <posY>787</posY> 
+      <label>#RadioTime.Play.Description</label>
+      <font>font12</font>
+      <align>left</align>
+      <width>364</width>
+	  <height>123</height>
+      <textcolor>ffffffff</textcolor>
+      <visible>facadeview.list</visible>
+    </control>
+   
+	
     <control>
       <type>group</type>
       <description>group element</description>
@@ -261,7 +350,7 @@
           <onright>11</onright>
           <spinPosX>3912</spinPosX>
           <spinPosY>955</spinPosY>
-        </control>
+		</control>
         <control>
           <description>Thumbnail Panel</description>
           <type>thumbnailpanel</type>
@@ -270,34 +359,34 @@
           <posY>270</posY>
           <width>1275</width>
           <height>720</height>
-          <textureWidthBig>232</textureWidthBig>
-          <textureHeightBig>232</textureHeightBig>
+          <textureWidthBig>232</textureWidthBig> 
+          <textureHeightBig>232</textureHeightBig> 
           <itemWidthBig>255</itemWidthBig>
           <itemHeightBig>292</itemHeightBig>
           <itemWidth>180</itemWidth>
           <itemHeight>217</itemHeight>
-          <thumbWidthBig>232</thumbWidthBig>
-          <thumbHeightBig>232</thumbHeightBig>
+          <thumbWidthBig>232</thumbWidthBig> 
+          <thumbHeightBig>232</thumbHeightBig> 
           <thumbPosXBig>0</thumbPosXBig>
           <thumbPosYBig>0</thumbPosYBig>
-          <thumbWidth>165</thumbWidth>
-          <thumbHeight>165</thumbHeight>
+          <thumbWidth>167</thumbWidth> 
+          <thumbHeight>167</thumbHeight> 
           <thumbPosX>0</thumbPosX>
           <thumbPosY>0</thumbPosY>
           <thumbZoom>no</thumbZoom>
           <enableFocusZoom>no</enableFocusZoom>
-          <zoomXPixels>40</zoomXPixels>
-          <zoomYPixels>40</zoomYPixels>
-          <hideUnfocusTexture>yes</hideUnfocusTexture>
-          <renderFocusText>no</renderFocusText>
-          <renderUnfocusText>no</renderUnfocusText>
+          <zoomXPixels>20</zoomXPixels> 
+          <zoomYPixels>20</zoomYPixels>  
+          <hideUnfocusTexture>yes</hideUnfocusTexture> 
+          <renderFocusText>no</renderFocusText> 
+          <renderUnfocusText>no</renderUnfocusText> 
           <showFrame>true</showFrame>
           <imageFolder>-</imageFolder>
           <imageFolderFocus>-</imageFolderFocus>
-          <textureMask>musicfanart_mask.png</textureMask>
-          <frameNoFocus>Picturethumbframe.png</frameNoFocus>
-          <frameFocus>Picturethumbframe.png</frameFocus>
-          <keepaspectratio>no</keepaspectratio>
+          <textureMask>square_mask.png</textureMask> 
+          <frameNoFocus>square_frame3px.png</frameNoFocus> 
+          <frameFocus>square_frame3px.png</frameFocus> 
+          <keepaspectratio>yes</keepaspectratio>
           <font>font10</font>
           <spinCanFocus>no</spinCanFocus>
           <dimColor>80ffffff</dimColor>

@@ -95,10 +95,7 @@
         <posY>487</posY>
         <width>700</width>
         <height>487</height>
-        <onleft>2</onleft>
         <onright>2</onright>
-        <onup>2</onup>
-        <ondown>2</ondown>
         <spinPosX>1546</spinPosX>
         <spinPosY>933</spinPosY>
         <spinWidth>42</spinWidth>

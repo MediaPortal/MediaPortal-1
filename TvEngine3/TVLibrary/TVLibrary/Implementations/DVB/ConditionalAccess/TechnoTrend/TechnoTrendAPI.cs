@@ -283,7 +283,7 @@ namespace TvLibrary.Implementations.DVB
 
       /// Context pointer for PCBFCN_CI_OnLscTransmitBuffer
       public IntPtr p14Context;
-    } ;
+    };
 
     /// <summary>
     /// Technotrend: Callback structures
@@ -693,7 +693,7 @@ namespace TvLibrary.Implementations.DVB
     public void OpenCI()
     {
       m_hBdaApi = bdaapiOpenHWIdx(m_deviceType, m_deviceID);
-      if (m_hBdaApi.ToInt32() == -1)
+      if (m_hBdaApi == new IntPtr(-1))
       {
         Log.Log.Debug("TechnoTrend: unable to open the device");
         return;
@@ -751,7 +751,7 @@ namespace TvLibrary.Implementations.DVB
       if (m_deviceType != TTApiDeviceCat.UNKNOWN)
       {
         // if hw was opened before, close it now
-        if (m_hBdaApi.ToInt32() != -1)
+        if (m_hBdaApi != new IntPtr(-1))
         {
           if (m_ciSlotAvailable)
           {
@@ -834,12 +834,11 @@ namespace TvLibrary.Implementations.DVB
           RegPinMedium rpm;
 
           // Load it all
-          for (int i = 0, s = Marshal.SizeOf(typeof (RegPinMedium)); i < countRecPin; i++)
+          IntPtr current = IntPtr.Add(raw, 8);
+          for (int i = 0; i < countRecPin; i++, current = IntPtr.Add(current, Marshal.SizeOf(typeof(RegPinMedium))))
           {
-            // Get the reference
-            IntPtr addr = new IntPtr(raw.ToInt32() + 8 + s * i);
             // Reconstruct
-            rpm = (RegPinMedium)Marshal.PtrToStructure(addr, typeof (RegPinMedium));
+            rpm = Marshal.PtrToStructure<RegPinMedium>(current);
             m_deviceID = (uint)rpm.dw1;
           }
           // Report
@@ -973,7 +972,7 @@ namespace TvLibrary.Implementations.DVB
             exists = true;
         }
         if (!exists && context.ServiceId != 0 && context.Channel.FreeToAir == false)
-          // also check for sid != 0, otherwise TT API fails
+        // also check for sid != 0, otherwise TT API fails
         {
           filteredChannels.Add(context);
         }
@@ -988,7 +987,7 @@ namespace TvLibrary.Implementations.DVB
       }
 
       if (m_slotStatus == TTCiSlotStatus.SlotCaOk || m_slotStatus == TTCiSlotStatus.SlotModuleOk)
-        // || m_slotStatus==CI_SLOT_DBG_MSG)
+      // || m_slotStatus==CI_SLOT_DBG_MSG)
       {
         result = bdaapiCIMultiDecode(m_hBdaApi, ptrPmt, (short)filteredChannels.Count);
         if (result == TTApiResult.Success)
@@ -1253,7 +1252,7 @@ namespace TvLibrary.Implementations.DVB
         byte charChode;
         for (int i = 0; i < wLength - 1; ++i) // wLength-1 --> last char is a 0, avoid one additional loop and callback
         {
-          charChode = Marshal.ReadByte((IntPtr)(pStringArray.ToInt32() + i));
+          charChode = Marshal.ReadByte(IntPtr.Add(pStringArray, i));
           if (Entries[idx] == null) Entries[idx] = new StringBuilder();
           if (charChode != 0) // we don't need \0 at end of string
           {

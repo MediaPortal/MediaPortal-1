@@ -160,7 +160,7 @@ namespace MediaPortal.Devices
       IntPtr deviceHandle = CreateFile(devicePath, FileAccess.Read, FileShare.ReadWrite, 0, FileMode.Open,
                                        FileFlag.Overlapped, 0);
 
-      if (deviceHandle.ToInt32() == -1)
+      if (deviceHandle == new IntPtr(-1))
         throw new Exception(string.Format("Failed to open remote ({0})", GetLastError()));
 
       _notifyWindow.RegisterDeviceRemoval(deviceHandle);
@@ -193,7 +193,7 @@ namespace MediaPortal.Devices
         // begin another asynchronous read from the device
         _deviceStream.BeginRead(_deviceBuffer, 0, _deviceBuffer.Length, new AsyncCallback(OnReadComplete), null);
       }
-      catch (Exception) {}
+      catch (Exception) { }
     }
 
     private void OnSettingsChanged()
@@ -281,8 +281,8 @@ namespace MediaPortal.Devices
     {
       try
       {
-        byte[] packet1 = new byte[] {0x9F, 0x0C, 0x0F, 0xA0};
-        byte[] packet2 = new byte[] {0x9F, 0x14, 0x01};
+        byte[] packet1 = new byte[] { 0x9F, 0x0C, 0x0F, 0xA0 };
+        byte[] packet2 = new byte[] { 0x9F, 0x14, 0x01 };
 
         lock (_deviceSingleton) _deviceSingleton._packetArray = new ArrayList();
 
@@ -330,7 +330,7 @@ namespace MediaPortal.Devices
       IntPtr deviceHandle = CreateFile(devicePath, FileAccess.ReadWrite, FileShare.ReadWrite, 0, FileMode.Open,
                                        FileFlag.Overlapped, 0);
 
-      if (deviceHandle.ToInt32() == -1)
+      if (deviceHandle == new IntPtr(-1))
         throw new Exception(string.Format("Failed to open blaster ({0})", GetLastError()));
 
       _notifyWindow.RegisterDeviceRemoval(deviceHandle);
@@ -553,12 +553,12 @@ namespace MediaPortal.Devices
       IntPtr handle = SetupDiGetClassDevs(ref classGuid, 0, 0, 0x12);
       string devicePath = null;
 
-      if (handle.ToInt32() == -1)
+      if (handle == new IntPtr(-1))
       {
         throw new Exception(string.Format("Failed in call to SetupDiGetClassDevs ({0})", GetLastError()));
       }
 
-      for (int deviceIndex = 0;; deviceIndex++)
+      for (int deviceIndex = 0; ; deviceIndex++)
       {
         DeviceInfoData deviceInfoData = new DeviceInfoData();
         deviceInfoData.Size = Marshal.SizeOf(deviceInfoData);
@@ -847,11 +847,11 @@ namespace MediaPortal.Devices
         switch (m.WParam.ToInt32())
         {
           case DBT_DEVICEARRIVAL:
-            OnDeviceArrival((DeviceBroadcastHeader)Marshal.PtrToStructure(m.LParam, typeof (DeviceBroadcastHeader)),
+            OnDeviceArrival(Marshal.PtrToStructure<DeviceBroadcastHeader>(m.LParam),
                             m.LParam);
             break;
           case DBT_DEVICEREMOVECOMPLETE:
-            OnDeviceRemoval((DeviceBroadcastHeader)Marshal.PtrToStructure(m.LParam, typeof (DeviceBroadcastHeader)),
+            OnDeviceRemoval(Marshal.PtrToStructure<DeviceBroadcastHeader>(m.LParam),
                             m.LParam);
             break;
         }
@@ -918,8 +918,7 @@ namespace MediaPortal.Devices
     {
       if (dbh.DeviceType == 0x05)
       {
-        DeviceBroadcastInterface dbi =
-          (DeviceBroadcastInterface)Marshal.PtrToStructure(ptr, typeof (DeviceBroadcastInterface));
+        DeviceBroadcastInterface dbi = Marshal.PtrToStructure<DeviceBroadcastInterface>(ptr);
 
         if (dbi.ClassGuid == _deviceClass && DeviceArrival != null) DeviceArrival();
       }
@@ -929,7 +928,7 @@ namespace MediaPortal.Devices
     {
       if (header.DeviceType == 0x06)
       {
-        DeviceBroadcastHandle dbh = (DeviceBroadcastHandle)Marshal.PtrToStructure(ptr, typeof (DeviceBroadcastHandle));
+        DeviceBroadcastHandle dbh = Marshal.PtrToStructure<DeviceBroadcastHandle>(ptr);
 
         if (dbh.Handle != _deviceHandle) return;
 

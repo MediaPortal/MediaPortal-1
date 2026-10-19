@@ -72,7 +72,6 @@
       <posY>260</posY>
       <width>800</width>
       <height>487</height>
-      <onup>2</onup>
       <onleft>10</onleft>
       <onright>10</onright>
       <spinPosX>1590</spinPosX>
@@ -100,7 +99,7 @@
       <textYOff>0</textYOff>
       <posX>570</posX>
       <posY>740</posY>
-      <onleft>3</onleft>
+      <onleft>11</onleft>
       <onright>11</onright>
       <onup>3</onup>
       <ondown>3</ondown>
@@ -117,7 +116,7 @@
       <posX>950</posX>
       <posY>740</posY>
       <onleft>10</onleft>
-      <onright>3</onright>
+      <onright>10</onright>
       <onup>3</onup>
       <ondown>3</ondown>
       <textureFocus>button_focus.png</textureFocus>

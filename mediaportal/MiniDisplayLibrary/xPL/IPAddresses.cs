@@ -42,13 +42,11 @@ namespace MediaPortal.ProcessPlugins.MiniDisplayPlugin.xPL
         GetIpAddrTable(zero, ref pdwSize, false);
         zero = Marshal.AllocHGlobal(pdwSize);
         GetIpAddrTable(zero, ref pdwSize, false);
-        int num3 = (int)Marshal.PtrToStructure(zero, typeof (int));
-        for (int i = 0; i < num3; i++)
+        int num3 = Marshal.PtrToStructure<int>(zero);
+        IntPtr current = IntPtr.Add(zero, 4);
+        for (int i = 0; i < num3; i++, current = IntPtr.Add(current, Marshal.SizeOf(typeof(_MIB_IPADDRROW))))
         {
-          _MIB_IPADDRROW _mib_ipaddrrow =
-            (_MIB_IPADDRROW)
-            Marshal.PtrToStructure(IntPtr.Add(zero, 4 + (i * Marshal.SizeOf(typeof (_MIB_IPADDRROW)))),
-                                   typeof (_MIB_IPADDRROW));
+          _MIB_IPADDRROW _mib_ipaddrrow = Marshal.PtrToStructure<_MIB_IPADDRROW>(current);
           newAddress = long.Parse(_mib_ipaddrrow.dwAddr.ToString());
           list.Add(new IPAddress(newAddress).ToString());
         }

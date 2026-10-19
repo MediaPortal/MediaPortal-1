@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2020 Team MediaPortal
+#region Copyright (C) 2005-2025 Team MediaPortal
 
-// Copyright (C) 2005-2020 Team MediaPortal
+// Copyright (C) 2005-2025 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -278,6 +278,25 @@ namespace MediaPortal.Database
       catch (SQLiteException ex)
       {
         Log.Error("DatabaseUtility exception err:{0} stack:{1} sql:{2}", ex.Message, ex.StackTrace, strSQL);
+      }
+      return;
+    }
+
+    /// <summary>
+    /// Helper function to delete a view in the database
+    /// </summary>
+    /// <param name="viewName">name of view</param>
+    /// <returns>true if view is deleted</returns>
+    public static void DeleteView(SQLiteClient dbHandle, string viewName)
+    {
+      SQLiteResultSet results;
+      try
+      {
+        dbHandle.Execute("DROP VIEW IF EXISTS " + viewName + ";");
+      }
+      catch (SQLiteException ex)
+      {
+        Log.Error("DatabaseUtility exception err:{0} stack:{1}", ex.Message, ex.StackTrace);
       }
       return;
     }

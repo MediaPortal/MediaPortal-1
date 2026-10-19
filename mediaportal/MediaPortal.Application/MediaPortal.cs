@@ -551,6 +551,8 @@ public class MediaPortalApp : D3D, IRender
     WindowedOverride     = false;
     FullscreenOverride   = false;
     ScreenNumberOverride = -1;
+    AlwaysOnTopOverride = false;
+    var ShowSkinProperties = false;
 
     if (args.Length > 0)
     {
@@ -615,6 +617,14 @@ public class MediaPortalApp : D3D, IRender
         if (arg == "/Debug")
         {
           Log.SetLogLevel(Level.Debug);
+        }
+
+        if (arg == "/SkinProperties")
+        {
+          ShowSkinProperties = true;
+          AlwaysOnTopOverride = true;
+          WindowedOverride = true;
+          HIDOverride.SuppressHID = true;
         }
 
         #if !DEBUG
@@ -1030,6 +1040,12 @@ public class MediaPortalApp : D3D, IRender
           Log.Debug("Main: Initializing DirectX");
 
           var app = new MediaPortalApp();
+          if (ShowSkinProperties)
+          {
+            app._hidKeyboard = false;
+            app.Shown += (s,e) => { new SkinProperties().Show(); };
+          }
+
           if (app.Init())
           {
             try
@@ -2109,7 +2125,7 @@ public class MediaPortalApp : D3D, IRender
 
         // A change in the power status of the computer is detected
         case (int)PBT_EVENT.PBT_POWERSETTINGCHANGE:
-          var ps = (POWERBROADCAST_SETTING)Marshal.PtrToStructure(msg.LParam, typeof(POWERBROADCAST_SETTING));
+          var ps = Marshal.PtrToStructure<POWERBROADCAST_SETTING>(msg.LParam);
 
           if (ps.PowerSetting == GUID_SYSTEM_AWAYMODE && ps.DataLength == Marshal.SizeOf(typeof(Int32)))
           {
@@ -2251,16 +2267,16 @@ public class MediaPortalApp : D3D, IRender
     RemovableDriveHelper.HandleDeviceChangedMessage(msg);
 
     // process additional data if available
-    if (msg.LParam.ToInt32() != 0)
+    if (msg.LParam != IntPtr.Zero)
     {
-      var hdr = (DEV_BROADCAST_HDR)Marshal.PtrToStructure(msg.LParam, typeof(DEV_BROADCAST_HDR));
+      var hdr = Marshal.PtrToStructure<DEV_BROADCAST_HDR>(msg.LParam);
       if (hdr.dbcc_devicetype != DBT_DEVTYP_DEVICEINTERFACE)
       {
         Log.Debug("Main: Device type is {0}", Enum.GetName(typeof(DBT_DEV_TYPE), hdr.dbcc_devicetype));
       }
       else
       {
-        var deviceInterface = (DEV_BROADCAST_DEVICEINTERFACE)Marshal.PtrToStructure(msg.LParam, typeof(DEV_BROADCAST_DEVICEINTERFACE));
+        var deviceInterface = Marshal.PtrToStructure<DEV_BROADCAST_DEVICEINTERFACE>(msg.LParam);
 
         // get friendly device name
         string deviceName = String.Empty;
@@ -2580,7 +2596,7 @@ public class MediaPortalApp : D3D, IRender
       GUIGraphicsContext.DeviceLost -= OnDeviceLost;
     }
 
-    var mmi = (MINMAXINFO)Marshal.PtrToStructure(msg.LParam, typeof(MINMAXINFO));
+    var mmi = Marshal.PtrToStructure<MINMAXINFO>(msg.LParam);
     Log.Debug("Main: WM_GETMINMAXINFO Start (MaxSize: {0}x{1} - MaxPostion: {2},{3} - MinTrackSize: {4}x{5} - MaxTrackSize: {6}x{7})",
               mmi.ptMaxSize.x, mmi.ptMaxSize.y, mmi.ptMaxPosition.x, mmi.ptMaxPosition.y, mmi.ptMinTrackSize.x, mmi.ptMinTrackSize.y, mmi.ptMaxTrackSize.x, mmi.ptMaxTrackSize.y);
 
@@ -2709,7 +2725,7 @@ public class MediaPortalApp : D3D, IRender
   private void OnSizing(ref Message msg)
   {
     Log.Debug("Main: WM_SIZING");
-    var rc           = (RECT) Marshal.PtrToStructure(msg.LParam, typeof (RECT));
+    var rc           = Marshal.PtrToStructure<RECT>(msg.LParam);
     var border       = new Size(Width - ClientSize.Width, Height - ClientSize.Height);
     int width        = rc.right - rc.left - border.Width;
     int height       = rc.bottom - rc.top - border.Height;
@@ -2878,7 +2894,7 @@ public class MediaPortalApp : D3D, IRender
   /// <param name="msg"></param>
   private void OnMoving(ref Message msg)
   {
-    var rc = (RECT)Marshal.PtrToStructure(msg.LParam, typeof(RECT));
+    var rc = Marshal.PtrToStructure<RECT>(msg.LParam);
     Log.Debug("Main: WM_MOVING (TopLeft: {0},{1} - BottomRight: {2},{3})", rc.left, rc.top, rc.right, rc.bottom);
     msg.Result = (IntPtr)1;
   }
@@ -4299,7 +4315,8 @@ public class MediaPortalApp : D3D, IRender
               // As long as we're e.g. listening to music on "Playing Now" screen
               // we might not want to slow things down here.
               // This feature is mainly intended to save energy on idle 24/7 rigs.
-              if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
+              if (GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW &&
+                  GUIWindowManager.ActiveWindow != (int)GUIWindow.Window.WINDOW_RADIO_PLAYING_NOW)
               {
                 if (!GUIGraphicsContext.SaveRenderCycles)
                 {
@@ -4403,7 +4420,10 @@ public class MediaPortalApp : D3D, IRender
         case Action.ActionType.ACTION_PREV_CHANNEL:
           if (!GUIWindowManager.IsRouted)
           {
-            window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
+            if (g_Player.Playing && g_Player.IsRadio)
+              window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_RADIO);
+            else
+              window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
             window.OnAction(action);
             return;
           }
@@ -4413,7 +4433,10 @@ public class MediaPortalApp : D3D, IRender
         case Action.ActionType.ACTION_NEXT_CHANNEL:
           if (!GUIWindowManager.IsRouted)
           {
-            window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
+            if (g_Player.Playing && g_Player.IsRadio)
+              window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_RADIO);
+            else
+              window = GUIWindowManager.GetWindow((int)GUIWindow.Window.WINDOW_TV);
             window.OnAction(action);
             return;
           }
@@ -4824,10 +4847,21 @@ public class MediaPortalApp : D3D, IRender
               if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW)
               {
                 GUIWindowManager.ShowPreviousWindow();
-            }
+              }
               else
               {
                 GUIWindowManager.ActivateWindow((int) GUIWindow.Window.WINDOW_MUSIC_PLAYING_NOW);
+              }
+            }
+            if (g_Player.IsRadio && GUIWindowManager.CanLoad((int)GUIWindow.Window.WINDOW_RADIO_PLAYING_NOW))
+            {
+              if (GUIWindowManager.ActiveWindow == (int)GUIWindow.Window.WINDOW_RADIO_PLAYING_NOW)
+              {
+                GUIWindowManager.ShowPreviousWindow();
+              }
+              else
+              {
+                GUIWindowManager.ActivateWindow((int)GUIWindow.Window.WINDOW_RADIO_PLAYING_NOW);
               }
             }
             break;

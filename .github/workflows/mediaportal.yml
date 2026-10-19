@@ -30,21 +30,21 @@ jobs:
 
     name: Build Mediaportal
 
-    runs-on: windows-2019
+    runs-on: windows-2022
 
     steps:
-      - name: Setup Visual Studio 2019
-        uses: microsoft/setup-msbuild@v2
-        with:
-          vs-version: 16.11
+      - name: Folder for Visual Studio 2019 Community
+        run: |
+          mkdir "C:\Program Files (x86)\Microsoft Visual Studio\2019\"
+        shell: cmd
 
       - name: Link to Visual Studio 2019 Community
         run: |
-          mklink /J "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community" "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise"
+          mklink /J "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community" "C:\Program Files\Microsoft Visual Studio\2022\Enterprise"
         shell: cmd
 
       - name: Setup Java JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           java-version: 8
           architecture: x86
@@ -52,10 +52,10 @@ jobs:
 
       - name: Setup NSIS
         run: |
-          choco install --yes nsis --version=3.10 --force
+          choco install --yes nsis --version=3.11 --force
 
       - name: Git Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Git Submodule Update
         run: |
@@ -67,8 +67,23 @@ jobs:
         working-directory: ${{ github.workspace }}\Build
         shell: cmd
 
+      - name: Display Build logs on failure
+        if: ${{ failure() }}
+        shell: pwsh
+        run: |
+          $logPath = "${{ github.workspace }}\Build"
+          if (Test-Path $logPath) {
+            Get-ChildItem -Path "$logPath\*.log" -ErrorAction SilentlyContinue | ForEach-Object {
+                Write-Host "--- Contents of $($_.Name) ---"
+                Get-Content $_.FullName
+                Write-Host "`n"
+            }
+          } else {
+            Write-Host "Directory $logPath not found. Nothing to display."
+          }
+
       - name: Upload Artifact / Build result file
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: ${{ always() }}
         with:
           name: Build result file ${{ matrix.architecture }}
@@ -77,7 +92,7 @@ jobs:
           retention-days: ${{ inputs.retention-logs || 3 }}
 
       - name: Upload Artifact / Mediaportal setup file
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: ${{ success() }}
         with:
           name: Mediaportal setup file ${{ matrix.architecture }}

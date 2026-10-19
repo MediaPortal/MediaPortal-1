@@ -12,9 +12,10 @@ jobs:
 
     steps:
       - name: Add labels to Pull Request
-        uses: github/issue-labeler@v3.4
+        uses: github/issue-labeler@v3.5
         with:
           repo-token: "${{ secrets.GITHUB_TOKEN }}"
           configuration-path: .github/labeler.yml
           enable-versioned-regex: 0
           include-title: 1
+          include-body: 0

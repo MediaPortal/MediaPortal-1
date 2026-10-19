@@ -97,15 +97,12 @@ namespace TvEngine.PowerScheduler
         }
 
         int entries = Marshal.ReadInt32(buffer);
-        IntPtr currentBuffer = new IntPtr(buffer.ToInt64() + sizeof (int));
+        IntPtr currentBuffer = IntPtr.Add(buffer, sizeof(int));
         table = new MIB_IPNETROW[entries];
 
-        for (int i = 0; i < entries; i++)
+        for (int i = 0; i < entries; i++, currentBuffer = IntPtr.Add(currentBuffer, Marshal.SizeOf(typeof(MIB_IPNETROW))))
         {
-          table[i] = (MIB_IPNETROW)Marshal.PtrToStructure(
-            new IntPtr(currentBuffer.ToInt64() + (i * Marshal.SizeOf(typeof (MIB_IPNETROW)))),
-            typeof (MIB_IPNETROW)
-                                     );
+           table[i] = Marshal.PtrToStructure<MIB_IPNETROW>(currentBuffer);
         }
       }
       finally

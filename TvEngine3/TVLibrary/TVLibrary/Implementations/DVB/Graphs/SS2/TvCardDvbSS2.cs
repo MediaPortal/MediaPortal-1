@@ -1108,7 +1108,7 @@ namespace TvLibrary.Implementations.DVB
         Log.Log.Error("ss2: Tuner Type failed:0x{0:X}", hr);
         return;
       }
-      tTunerCapabilities tc = (tTunerCapabilities)Marshal.PtrToStructure(ptCaps, typeof (tTunerCapabilities));
+      tTunerCapabilities tc = Marshal.PtrToStructure<tTunerCapabilities>(ptCaps);
       switch (tc.eModulation)
       {
         case TunerType.ttSat:

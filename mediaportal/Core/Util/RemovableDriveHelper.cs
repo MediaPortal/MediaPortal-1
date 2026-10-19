@@ -54,14 +54,11 @@ namespace MediaPortal.Util
     /// <returns>true, if the message was handled</returns>
     public static bool HandleDeviceChangedMessage(Message msg)
     {
-      DEV_BROADCAST_HDR hdr = new DEV_BROADCAST_HDR();
-      DEV_BROADCAST_VOLUME vol = new DEV_BROADCAST_VOLUME();
-
       try
       {
         if (msg.LParam != IntPtr.Zero)
         {
-          var deviceInterface = (DEV_BROADCAST_DEVICEINTERFACE) Marshal.PtrToStructure(msg.LParam, typeof (DEV_BROADCAST_DEVICEINTERFACE));
+          var deviceInterface = Marshal.PtrToStructure<DEV_BROADCAST_DEVICEINTERFACE>(msg.LParam);
 
           // get friendly device name
           string deviceName = String.Empty;
@@ -113,20 +110,20 @@ namespace MediaPortal.Util
         if (msg.WParam.ToInt32() == DBT_DEVICEARRIVAL)
         {
           // new device
-          hdr = (DEV_BROADCAST_HDR)Marshal.PtrToStructure(msg.LParam, hdr.GetType());
+          DEV_BROADCAST_HDR hdr = Marshal.PtrToStructure<DEV_BROADCAST_HDR>(msg.LParam);
           if (hdr.devicetype == DBT_DEVTYPE_VOLUME)
           {
-            vol = (DEV_BROADCAST_VOLUME)Marshal.PtrToStructure(msg.LParam, vol.GetType());
+            DEV_BROADCAST_VOLUME vol = Marshal.PtrToStructure<DEV_BROADCAST_VOLUME>(msg.LParam);
             return DeviceNew(vol);
           }
         }
         else if (msg.WParam.ToInt32() == DBT_DEVICEREMOVECOMPLETE)
         {
           // device remove
-          hdr = (DEV_BROADCAST_HDR)Marshal.PtrToStructure(msg.LParam, hdr.GetType());
+          DEV_BROADCAST_HDR hdr = Marshal.PtrToStructure<DEV_BROADCAST_HDR>(msg.LParam);
           if (hdr.devicetype == DBT_DEVTYPE_VOLUME)
           {
-            vol = (DEV_BROADCAST_VOLUME)Marshal.PtrToStructure(msg.LParam, vol.GetType());
+            DEV_BROADCAST_VOLUME vol = Marshal.PtrToStructure<DEV_BROADCAST_VOLUME>(msg.LParam);
             return DeviceRemoved(vol);
           }
         }
@@ -411,7 +408,7 @@ namespace MediaPortal.Util
         if (DeviceIoControl(h, IOCTL_STORAGE_GET_DEVICE_NUMBER, null, 0, ptrSdn, nBytes, out requiredSize,
                             IntPtr.Zero))
         {
-          Sdn = (STORAGE_DEVICE_NUMBER)Marshal.PtrToStructure(ptrSdn, typeof (STORAGE_DEVICE_NUMBER));
+          Sdn = Marshal.PtrToStructure<STORAGE_DEVICE_NUMBER>(ptrSdn);
           // just my way of combining the relevant parts of the
           // STORAGE_DEVICE_NUMBER into a single number
           ans = (Sdn.DeviceType << 8) + Sdn.DeviceNumber;

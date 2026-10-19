@@ -68,6 +68,7 @@
         <type>group</type>
         <animation effect="slide" time="70" start="-300,0" reversible="false">visible</animation>
         <animation effect="slide" time="70" end="-300,0" reversible="false">hidden</animation>
+		<visible>!Control.HasFocus(11)+!Control.HasFocus(10)</visible>
         <layout>StackLayout(0, Vertical, true)</layout>
         <posX>75</posX>
         <posY>181</posY>
@@ -150,11 +151,15 @@
       <description>upcoming episodes listcontrol</description>
       <type>listcontrol</type>
       <id>10</id>
-      <posX>525</posX>
+      <posX>120</posX>
       <height>450</height>
-      <textXOff2>1260</textXOff2>
-      <PinIconXOff>1280</PinIconXOff>
-      <PinIconYOff>13</PinIconYOff>
+      <width>1600</width>
+      <textXOff2>1580</textXOff2>
+      <PinIconXOff>1600</PinIconXOff>
+      <PinIconYOff>4</PinIconYOff>
+      <PinIconWidth>40</PinIconWidth>
+      <PinIconHeight>40</PinIconHeight>
+      <scrollbarXOff>85</scrollbarXOff>
     </control>
     <control>
       <description>Seperator</description>

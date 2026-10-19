@@ -18,8 +18,8 @@
 
     <Message Text="Found the following 'packages.config'-files: @(PackagesConfigs->'%(FullPath)')"/>
 
-	<Exec Command='"$(NuGetExePath)" install "%(PackagesConfigs.FullPath)" -Source "https://www.myget.org/F/mediaportal/"'/>
-	<!-- <Exec Command='"$(NuGetExePath)" install "%(PackagesConfigs.FullPath)" -Source "https://www.myget.org/F/mediaportal/" -DisableParallel'/>  -->
+	<Exec Command='"$(NuGetExePath)" install "%(PackagesConfigs.FullPath)" -Source "https://www.myget.org/F/mediaportal/api/v3/index.json"' ContinueOnError="WarnAndContinue" />
+	<Exec Command='"$(NuGetExePath)" install "%(PackagesConfigs.FullPath)" -Source "https://nuget.pkg.github.com/Mediaportal-Plugin-Team/index.json"' ContinueOnError="WarnAndContinue" />
     <Exec Command='"$(NuGetExePath)" install "%(PackagesConfigs.FullPath)"'/>
   </Target>
 </Project>

@@ -13,9 +13,9 @@
         <onright>50</onright>
         <scrollOffset>2</scrollOffset>
         <posX>115</posX>
-        <posY>240</posY>
+        <posY>248</posY>
         <width>1650</width>
-        <height>700</height>
+        <height>550</height>
         <spinPosX>3750</spinPosX>
         <spinPosY>830</spinPosY>
         <textXOff>250</textXOff>

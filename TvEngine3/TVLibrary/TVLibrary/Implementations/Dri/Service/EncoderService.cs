@@ -139,7 +139,7 @@ namespace TvLibrary.Implementations.Dri.Service
           for (int i = 1; i < expectedByteCount; i += audioProfileSize)
           {
             GCHandle handle = GCHandle.Alloc(bytes[i], GCHandleType.Pinned);
-            audioProfile.Add((DriEncoderAudioProfile)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(DriEncoderAudioProfile)));
+            audioProfile.Add(Marshal.PtrToStructure<DriEncoderAudioProfile>(handle.AddrOfPinnedObject()));
             handle.Free();
           }
         }
@@ -160,7 +160,7 @@ namespace TvLibrary.Implementations.Dri.Service
           for (int i = 1; i < expectedByteCount; i += videoProfileSize)
           {
             GCHandle handle = GCHandle.Alloc(bytes[i], GCHandleType.Pinned);
-            videoProfile.Add((DriEncoderVideoProfile)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(DriEncoderVideoProfile)));
+            videoProfile.Add(Marshal.PtrToStructure<DriEncoderVideoProfile>(handle.AddrOfPinnedObject()));
             handle.Free();
           }
         }

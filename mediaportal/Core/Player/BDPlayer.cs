@@ -268,7 +268,7 @@ namespace MediaPortal.Player
         try
         {
           _nativePtr = reader.GetTitleInfo(index);
-          _nativeTitle = (BDTitleInfo) Marshal.PtrToStructure(_nativePtr, typeof (BDTitleInfo));
+          _nativeTitle = Marshal.PtrToStructure<BDTitleInfo>(_nativePtr);
         }
         catch (Exception ex)
         {

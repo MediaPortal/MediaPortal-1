@@ -17,10 +17,10 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>990</posX>
-      <posY>637</posY>
-      <width>900</width>
-      <height>427</height>
+      <posX>420</posX>
+      <posY>349</posY>
+      <width>1077</width>
+      <height>500</height>
       <texture>dialog_background.png</texture>
       <colordiffuse>ffffffff</colordiffuse>
       <visible>!window.isvisible(602)+!window.isvisible(2005)</visible>
@@ -28,125 +28,128 @@
     <control>
       <type>image</type>
       <id>0</id>
-      <posX>990</posX>
-      <posY>637</posY>
-      <width>900</width>
-      <height>427</height>
+      <posX>420</posX>
+      <posY>349</posY>
+      <width>1077</width>
+      <height>500</height>
       <texture>dialog_background.png</texture>
       <colordiffuse>bbffffff</colordiffuse>
       <visible>window.isvisible(602)|window.isvisible(2005)</visible>
     </control>
     <control>
       <description>dialog Heading</description>
-      <type>fadelabel</type>
+      <type>label</type>
       <id>1</id>
-      <posX>1065</posX>
-      <posY>697</posY>
-      <width>735</width>
+      <posX>514</posX>
+      <posY>418</posY>
+      <width>786</width>
       <label>0</label>
-      <font>font13</font>
-      <textcolor>ffffffff</textcolor>
+      <font>MenuHeader</font>
+      <textcolor>lightgray</textcolor>
     </control>
     <control>
       <description>dialog line 1</description>
       <type>fadelabel</type>
       <id>2</id>
-      <posX>1065</posX>
-      <posY>765</posY>
-      <width>592</width>
-      <font>font11</font>
+      <posX>559</posX>
+      <posY>480</posY>
+      <width>665</width>
+      <font>font13</font>
       <textcolor>ffffffff</textcolor>
+	  <scrollStartDelaySec>4</scrollStartDelaySec>
     </control>
     <control>
       <description>dialog line 2</description>
-      <type>label</type>
+      <type>fadelabel</type>
       <id>3</id>
-      <posX>1065</posX>
-      <posY>802</posY>
+      <posX>559</posX>
+      <posY>522</posY>
       <label>0</label>
-      <width>592</width>
-      <font>font11</font>
+      <width>665</width>
+      <font>font13</font>
       <textcolor>ffffffff</textcolor>
+	  <scrollStartDelaySec>4</scrollStartDelaySec>
     </control>
     <control>
       <description>dialog line 3</description>
-      <type>label</type>
+      <type>fadelabel</type>
       <id>4</id>
-      <posX>1065</posX>
-      <posY>840</posY>
+      <posX>559</posX>
+      <posY>564</posY>
       <label>0</label>
-      <width>592</width>
-      <font>font11</font>
+      <width>665</width>
+      <font>font13</font>
       <textcolor>ffffffff</textcolor>
+	  <scrollStartDelaySec>4</scrollStartDelaySec>
     </control>
     <control>
       <description>dialog line 4</description>
-      <type>label</type>
+      <type>fadelabel</type>
       <id>5</id>
-      <posX>1065</posX>
-      <posY>877</posY>
+      <posX>559</posX>
+      <posY>606</posY>
       <label>0</label>
-      <width>592</width>
-      <font>font11</font>
+      <width>665</width>
+      <font>font13</font>
       <textcolor>ffffffff</textcolor>
+	  <scrollStartDelaySec>4</scrollStartDelaySec>
     </control>
-    <control>
+   <control>
       <description>No button</description>
       <type>button</type>
       <id>10</id>
-      <posX>1485</posX>
-      <posY>930</posY>
+      <posX>1012</posX>
+      <posY>680</posY>
       <textalign>center</textalign>
-      <textXOff>0</textXOff>
-      <textYOff>0</textYOff>
       <width>279</width>
       <height>70</height>
-      <textureFocus>button_focus.png</textureFocus>
+      <textureFocus>dialogue_button.png</textureFocus>
       <textureNoFocus>button_nofocus.png</textureNoFocus>
       <label>106</label>
       <onleft>11</onleft>
       <onright>11</onright>
       <onup>10</onup>
       <ondown>10</ondown>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>Yes button</description>
       <type>button</type>
       <id>11</id>
-      <posX>1128</posX>
-      <posY>930</posY>
-      <textXOff>0</textXOff>
-      <textYOff>0</textYOff>
+      <posX>612</posX>
+      <posY>680</posY>
       <textalign>center</textalign>
       <width>279</width>
       <height>70</height>
-      <textureFocus>button_focus.png</textureFocus>
+      <textureFocus>dialogue_button.png</textureFocus>
       <textureNoFocus>button_nofocus.png</textureNoFocus>
       <label>107</label>
       <onleft>10</onleft>
       <onright>10</onright>
       <onup>11</onup>
       <ondown>11</ondown>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
     </control>
     <control>
       <description>logo</description>
       <type>image</type>
       <id>12</id>
-      <posX>1672</posX>
-      <posY>772</posY>
-      <width>87</width>
-      <height>87</height>
+      <posX>1260</posX>
+      <posY>495</posY>
+      <width>100</width> 
+      <height>100</height> 
       <texture>-</texture>
       <colorkey>FFFF00FF</colorkey>
       <colordiffuse>FFFFFFFF</colordiffuse>
       <keepaspectratio>yes</keepaspectratio>
       <centered>yes</centered>
-      <animation effect="fade" time="250">WindowOpen</animation>
-      <animation effect="fade" time="250">WindowClose</animation>
+    </control>
+	 <control>
+      <id>0</id>
+      <type>image</type>
+      <posX>1373</posX>
+      <posY>410</posY>
+      <width>45</width>
+      <height>45</height>
+      <texture>warning-icon_small.png</texture>
     </control>
   </controls>
 </window>

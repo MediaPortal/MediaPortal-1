@@ -424,7 +424,7 @@ namespace TvLibrary.Implementations
       {
         for (int i = 0; i < packetCount; ++i)
         {
-          IntPtr packetPtr = new IntPtr(data.ToInt32() + i * 188);
+          IntPtr packetPtr = IntPtr.Add(data, i * 188);
           ProcessPacket(packetPtr);
         }
       }

@@ -129,10 +129,10 @@ namespace DirectShowLib
     {
       Guid[] retval = new Guid[this.cElems];
 
-      for (int i = 0; i < this.cElems; i++)
+      IntPtr current = this.pElems;
+      for (int i = 0; i < this.cElems; i++, current = IntPtr.Add(current, Marshal.SizeOf(typeof(Guid))))
       {
-        IntPtr ptr = new IntPtr(this.pElems.ToInt64() + (Marshal.SizeOf(typeof (Guid))*i));
-        retval[i] = (Guid) Marshal.PtrToStructure(ptr, typeof (Guid));
+        retval[i] = Marshal.PtrToStructure<Guid>(current);
       }
 
       return retval;
@@ -1003,7 +1003,7 @@ namespace DirectShowLib
           DsError.ThrowExceptionForHR(hr);
 
           // Marshal it to the return variable
-          guidRet = (Guid) Marshal.PtrToStructure(ipOut, typeof (Guid));
+          guidRet = Marshal.PtrToStructure<Guid>(ipOut);
         }
       }
       finally
@@ -1827,13 +1827,14 @@ namespace DirectShowLib
     {
       AMMediaType[] emt = m_obj as AMMediaType[];
 
-      for (int x = 0; x < emt.Length; x++)
+      IntPtr current = pNativeData;
+      for (int x = 0; x < emt.Length; x++, current = IntPtr.Add(current, IntPtr.Size))
       {
         // Copy in the value, and advance the pointer
-        IntPtr p = Marshal.ReadIntPtr(pNativeData, x*IntPtr.Size);
+        IntPtr p = Marshal.ReadIntPtr(current);
         if (p != IntPtr.Zero)
         {
-          emt[x] = (AMMediaType) Marshal.PtrToStructure(p, typeof (AMMediaType));
+          emt[x] = Marshal.PtrToStructure<AMMediaType>(p);
         }
         else
         {
@@ -1892,23 +1893,22 @@ namespace DirectShowLib
 
       // Copy in the value, and advance the pointer
       dta.AppMode = (DvdTitleAppMode) Marshal.ReadInt32(pNativeData);
-      pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (int)));
+      pNativeData = IntPtr.Add(pNativeData, Marshal.SizeOf(typeof(int)));
 
       // Copy in the value, and advance the pointer
-      dta.VideoAttributes = (DvdVideoAttributes) Marshal.PtrToStructure(pNativeData, typeof (DvdVideoAttributes));
-      pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (DvdVideoAttributes)));
+      dta.VideoAttributes = Marshal.PtrToStructure<DvdVideoAttributes>(pNativeData);
+      pNativeData = IntPtr.Add(pNativeData, Marshal.SizeOf(typeof(DvdVideoAttributes)));
 
       // Copy in the value, and advance the pointer
       dta.ulNumberOfAudioStreams = (int) Marshal.ReadInt32(pNativeData);
-      pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (int)));
+      pNativeData = IntPtr.Add(pNativeData, Marshal.SizeOf(typeof(int)));
 
       // Allocate a large enough array to hold all the returned structs.
       dta.AudioAttributes = new DvdAudioAttributes[8];
-      for (int x = 0; x < 8; x++)
+      for (int x = 0; x < 8; x++, pNativeData = IntPtr.Add(pNativeData, Marshal.SizeOf(typeof(DvdAudioAttributes))))
       {
         // Copy in the value, and advance the pointer
-        dta.AudioAttributes[x] = (DvdAudioAttributes) Marshal.PtrToStructure(pNativeData, typeof (DvdAudioAttributes));
-        pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (DvdAudioAttributes)));
+        dta.AudioAttributes[x] = Marshal.PtrToStructure<DvdAudioAttributes>(pNativeData);
       }
 
       // Allocate a large enough array to hold all the returned structs.
@@ -1919,27 +1919,23 @@ namespace DirectShowLib
 
         dta.MultichannelAudioAttributes[x].Info = new DvdMUAMixingInfo[8];
 
-        for (int y = 0; y < 8; y++)
+        for (int y = 0; y < 8; y++, pNativeData = IntPtr.Add(pNativeData, Marshal.SizeOf(typeof(DvdMUAMixingInfo))))
         {
           // Copy in the value, and advance the pointer
-          dta.MultichannelAudioAttributes[x].Info[y] =
-            (DvdMUAMixingInfo) Marshal.PtrToStructure(pNativeData, typeof (DvdMUAMixingInfo));
-          pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (DvdMUAMixingInfo)));
+          dta.MultichannelAudioAttributes[x].Info[y] = Marshal.PtrToStructure<DvdMUAMixingInfo>(pNativeData);
         }
 
         dta.MultichannelAudioAttributes[x].Coeff = new DvdMUACoeff[8];
 
-        for (int y = 0; y < 8; y++)
+        for (int y = 0; y < 8; y++, pNativeData = IntPtr.Add(pNativeData, Marshal.SizeOf(typeof(DvdMUACoeff))))
         {
           // Copy in the value, and advance the pointer
-          dta.MultichannelAudioAttributes[x].Coeff[y] =
-            (DvdMUACoeff) Marshal.PtrToStructure(pNativeData, typeof (DvdMUACoeff));
-          pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (DvdMUACoeff)));
+          dta.MultichannelAudioAttributes[x].Coeff[y] = Marshal.PtrToStructure<DvdMUACoeff>(pNativeData);
         }
       }
 
       // The DvdMultichannelAudioAttributes needs to be 16 byte aligned
-      pNativeData = (IntPtr) (pNativeData.ToInt64() + 4);
+      pNativeData = IntPtr.Add(pNativeData, 4);
 
       // Copy in the value, and advance the pointer
       dta.ulNumberOfSubpictureStreams = (int) Marshal.ReadInt32(pNativeData);
@@ -1947,12 +1943,10 @@ namespace DirectShowLib
 
       // Allocate a large enough array to hold all the returned structs.
       dta.SubpictureAttributes = new DvdSubpictureAttributes[32];
-      for (int x = 0; x < 32; x++)
+      for (int x = 0; x < 32; x++, pNativeData = IntPtr.Add(pNativeData, Marshal.SizeOf(typeof(DvdSubpictureAttributes))))
       {
         // Copy in the value, and advance the pointer
-        dta.SubpictureAttributes[x] =
-          (DvdSubpictureAttributes) Marshal.PtrToStructure(pNativeData, typeof (DvdSubpictureAttributes));
-        pNativeData = (IntPtr) (pNativeData.ToInt64() + Marshal.SizeOf(typeof (DvdSubpictureAttributes)));
+        dta.SubpictureAttributes[x] = Marshal.PtrToStructure<DvdSubpictureAttributes>(pNativeData);
       }
 
       // Note that 4 bytes (more alignment) are unused at the end

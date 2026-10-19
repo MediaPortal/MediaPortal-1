@@ -58,10 +58,7 @@
       <posY>262</posY>
       <height>620</height>
       <width>913</width>
-      <onleft>2</onleft>
       <onright>2</onright>
-      <onup>2</onup>
-      <ondown>2</ondown>
       <text>6</text>
       <textcolor>lightgray</textcolor>
       <font>font10</font>

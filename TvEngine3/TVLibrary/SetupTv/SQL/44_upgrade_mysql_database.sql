@@ -1,4 +1,4 @@
-﻿USE %TvLibrary%;
+USE %TvLibrary%;
 
 ALTER TABLE "Program"
  ADD COLUMN "episodeName" text NOT NULL,
