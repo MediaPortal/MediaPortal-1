@@ -1368,6 +1368,8 @@
     <String id="2168">MAJ Exif</String>
     <String id="2169">Aller au dossier</String>
     <String id="2170">Metadata</String>
+    <String id="2171">Favoris</String>
+    <String id="2172">Les plus vus</String>
     <String id="2200" prefix="Mon ">Explorateur</String>
     <String id="2201">Sélectionner une source</String>
     <String id="2202">Sélectionner une destination</String>
@@ -1921,6 +1923,17 @@
     <String id="34062">Entrez un artiste...</String>
     <String id="34063">Aucun artiste sélectionné</String>
     <String id="34064">Une connection Internet est requise\nFor Last.FM Radio</String>
+
+    <!-- myNotifier -->
+    <String id="35000">Lire tout</String>
+    <String id="35001">Supprimer</String>
+    <String id="35002">Supprimer tout</String>
+    <String id="35003">Sortie</String>
+    <String id="35004">Niveau : </String>
+    <String id="35005">Classe : </String>
+    <String id="35006">Visite source</String>
+    <String id="35007">Mode lecture Media : </String>
+
     <String id="40001">Attente de mise en veille</String>
     <String id="40002">MediaPortal ne répond pas car il est encore occupé</String>
     <String id="40003">Quand toutes les tâches seront terminées, MediaPortal passera en veille.</String>
@@ -2034,6 +2047,7 @@
     <String id="100761">Guide TV</String>
     <String id="100762">Guide radio</String>
     <String id="100763">Radio enregistrée</String>
+    <String id="100764">Radio/Lecture en cours</String>
     <String id="100800" prefix="Mes ">Extensions</String>
     <String id="101000">Clavier</String>
     <String id="101001">Les extensions de fichiers</String>
@@ -2090,6 +2104,7 @@
     <String id="103009" prefix="Mon ">TV/Mini EPG</String>
     <String id="103011" prefix="Mes ">TV/Réglages Crop</String>
     <String id="103012">Détails des réglages TV</String>
+    <String id="103013" prefix="Ma ">Notification</String>
     <String id="104711" prefix="Mon ">Wikipedia</String>
     <String id="105000">Image - Metadata</String>
     <String id="106666">Attente de mise en veille</String>
@@ -2213,6 +2228,8 @@
     <String id="200093">Montage Disque/ISO (Temps d'attente atteint)!</String>
     <String id="200094">Essayer pendant encore 60 secondes ?</String>
     <String id="200095">Flux Vidéo</String>
+    <String id="200096">Pixel Shaders</String>
+    <String id="200097">Sélectionner Pixel Shader</String>
     <String id="300000">Utiliser la correction du format des pixels</String>
     <String id="300001">Mode de correction</String>
     <String id="300002">Mode d'affichage</String>
@@ -2450,6 +2467,8 @@
     <String id="300239">MadVR</String>
     <String id="300240">Un fichier video est en cours de lecture</String>
     <String id="300241">Voulez-vous arrêter la lecture video ?</String>
+    <String id="300242">Ne pas afficher le dossier jpg si le code PIN est activé</String>
+    <String id="300243">Méthode de détection d'hôte</String>
     <String id="350001">Appuyez sur Info/F9 pour les réglages rapides...</String>
     <String id="350002">Films</String>
     <String id="350003">Lecteur de Disque</String>
