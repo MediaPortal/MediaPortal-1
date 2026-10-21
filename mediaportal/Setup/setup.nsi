@@ -842,8 +842,10 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Base"
   !if "${Architecture}" == "x64"
     File "${git_MP}\MediaPortal.Base\Lame\x64\lame_enc.dll"
+    File "${git_MP}\MediaPortal.Base\Lame\x64\libmpg123-0.dll"
   !else
-    File "${git_MP}\MediaPortal.Base\Lame\x64\lame_enc.dll"
+    File "${git_MP}\MediaPortal.Base\Lame\x86\lame_enc.dll"
+    File "${git_MP}\MediaPortal.Base\Lame\x86\libmpg123-0.dll"
   !endif
 
   #---------------------------------------------------------------------------
