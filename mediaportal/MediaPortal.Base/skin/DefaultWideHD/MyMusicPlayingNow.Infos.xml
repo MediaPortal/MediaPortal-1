@@ -24,6 +24,16 @@
       <onleft>555</onleft>
     </control>
 	<control>
+      <type>image</type>
+      <id>1</id>
+	  <posX>0</posX>
+      <posY>-90</posY> 
+      <width>140</width>
+      <height>984</height>
+      <texture>Action_nofocus.png</texture> 
+	  <visible>Control.HasFocus(333)</visible> 
+    </control>
+	<control>
       <type>actiongroup</type>
       <description>action menu</description>
       <defaultcontrol>555</defaultcontrol>
@@ -33,7 +43,7 @@
       <buttonwidth>140</buttonwidth> 
       <buttonheight>984</buttonheight> 
       <textureFocus>-</textureFocus>
-      <textureNoFocus>Action_nofocus.png</textureNoFocus>
+      <textureNoFocus>-</textureNoFocus> 
       <width>168</width>
       <height>798</height>
       <dimColor>00ffffff</dimColor>
