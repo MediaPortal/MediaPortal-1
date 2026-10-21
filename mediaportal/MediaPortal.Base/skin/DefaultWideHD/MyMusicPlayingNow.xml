@@ -1050,6 +1050,16 @@
         <animation effect="Fade" time="200">WindowClose</animation>
       </control>
       <!-- CDArt + Vinyl LP -->
+	  <control>
+         <type>image</type>
+         <id>1</id>
+         <posX>0</posX>
+         <posY>-90</posY> 
+         <width>140</width>
+         <height>984</height>
+         <texture>Action_nofocus.png</texture> 
+         <visible>Control.HasFocus(333)</visible>
+      </control>	
       <control>
         <id>1</id>
         <description>Vinyl LP Image</description>
