@@ -18,7 +18,7 @@
       <colordiffuse>ffffffff</colordiffuse>
       <visible>!control.hasfocus(1237)+!control.hasfocus(1238)</visible>
     </control>
-    <control>
+	<control>
       <description>Time Info</description>
       <type>label</type>
       <id>110</id>
@@ -215,8 +215,20 @@
       <height>513</height>
       <width>2020</width>
       <texture>TV_Tab_OSD_big.png</texture>
-      <!--<colordiffuse>ff00061c</colordiffuse>-->
+      <colordiffuse>ffffffff</colordiffuse>
     <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
+  </control>
+  <control>
+      <description>color stroke</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>-100</posX>
+      <posY>864</posY>
+      <height>72</height>
+      <width>2020</width>
+      <texture>white.png</texture> 
+      <colordiffuse>0D00bfff</colordiffuse> 
+      <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
   </control>
   <control>
     <description>TV Logo Background</description>
@@ -297,9 +309,9 @@
     <description>divider horizontal</description>
     <type>image</type>
     <id>0</id>
-    <posX>75</posX>
+    <posX>180</posX> 
     <posY>677</posY>
-    <width>1790</width>
+    <width>1680</width>
     <height>1</height>
     <texture>horizontalbar.png</texture>
     <colordiffuse>aa87cefa</colordiffuse>
@@ -309,9 +321,9 @@
     <description>divider horizontal</description>
     <type>image</type>
     <id>0</id>
-    <posX>75</posX>
+    <posX>-100</posX> 
     <posY>862</posY>
-    <width>1790</width>
+    <width>2120</width> 
     <height>1</height>
     <texture>horizontalbar.png</texture>
     <colordiffuse>aa87cefa</colordiffuse>
@@ -321,9 +333,9 @@
     <description>divider horizontal</description>
     <type>image</type>
     <id>0</id>
-    <posX>75</posX>
+    <posX>-50</posX>
     <posY>937</posY>
-    <width>1790</width>
+    <width>2120</width>
     <height>1</height>
     <texture>horizontalbar.png</texture>
     <colordiffuse>aa87cefa</colordiffuse>
@@ -378,7 +390,7 @@
     <type>button</type>
     <id>1238</id>
     <posX>1740</posX>
-    <posY>870</posY> 898
+    <posY>870</posY> 
     <width>38</width>
     <height>38</height>
     <textureFocus>tb_extend3b.png</textureFocus>
