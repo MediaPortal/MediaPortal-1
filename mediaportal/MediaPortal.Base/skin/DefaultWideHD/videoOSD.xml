@@ -181,6 +181,18 @@
       <texture>Video_Tab_OSD_big.png</texture>
       <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
     </control>
+	<control>
+      <description>color stroke</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>-100</posX>
+      <posY>864</posY>
+      <height>72</height>
+      <width>2020</width>
+      <texture>white.png</texture> 
+      <colordiffuse>0D00bfff</colordiffuse> 
+      <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
+    </control>
     <control>
       <description>Movie thumb</description>
       <type>image</type>

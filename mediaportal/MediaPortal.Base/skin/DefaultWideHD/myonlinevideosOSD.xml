@@ -172,17 +172,29 @@
       <visible>!control.hasfocus(1237)</visible>
     </control>
     <!-- ***************************************************************************************************** -->
-    <!-- *****************************         INFO DISPLAY ON TV NOW/NEXT      ****************************** -->
+    <!-- *****************************         INFO DISPLAY ONLINEVIDEOS      ******************************** -->
     <!-- ***************************************************************************************************** -->
     <control>
       <description>background</description>
       <type>image</type>
       <id>1236</id>
       <posX>-100</posX>
-      <posY>547</posY>613
+      <posY>547</posY>
       <height>513</height>
       <width>2020</width>
       <texture>Video_Tab_OSD_big.png</texture>
+      <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
+    </control>
+	<control>
+      <description>color gradient</description>
+      <type>image</type>
+      <id>1</id>
+      <posX>-100</posX>
+      <posY>864</posY>
+      <height>72</height>
+      <width>2020</width>
+      <texture>gradient_infodisplay.png</texture> 
+      <colordiffuse>0D00bfff</colordiffuse> 
       <visible>control.hasfocus(1237)|control.hasfocus(1238)</visible>
     </control>
     <control>
