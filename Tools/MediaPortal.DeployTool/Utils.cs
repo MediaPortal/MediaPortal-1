@@ -798,8 +798,8 @@ namespace MediaPortal.DeployTool
           break;
         case "max":
           major = 1;
-          minor = 38;
-          revision = 3;
+          minor = 39;
+          revision = 0;
           break;
       }
       Version ver = new Version(major, minor, revision);
