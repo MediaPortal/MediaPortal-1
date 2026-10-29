@@ -1,4 +1,4 @@
-name:  Workflow / Update Git Submodules to Latest Tag
+name: Workflow / Update Git Submodules to Latest Tag
 
 on:
   workflow_dispatch:
