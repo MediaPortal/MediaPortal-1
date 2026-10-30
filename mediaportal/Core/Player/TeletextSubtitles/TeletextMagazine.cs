@@ -148,7 +148,7 @@ namespace MediaPortal.Player.Subtitles
     public void SetLine(int l, byte[] line_data)
     {
       assert(line_data.Length == TELETEXT_WIDTH, "Line data length not equal to TELETEXT_WIDTH : " + line_data.Length);
-      Array.Copy(line_data, 0, pageContent, Math.Max(l - 1, 0) * TELETEXT_WIDTH, TELETEXT_WIDTH);
+      Array.Copy(line_data, 0, pageContent, l * TELETEXT_WIDTH, TELETEXT_WIDTH);
     }
 
     public void EndPage()
@@ -296,7 +296,7 @@ namespace MediaPortal.Player.Subtitles
     {
       SanityCheck();
       byte[] line_data = new byte[TELETEXT_WIDTH];
-      Array.Copy(pageContent, Math.Max(l - 1, 0) * TELETEXT_WIDTH, line_data, 0, TELETEXT_WIDTH);
+      Array.Copy(pageContent, l * TELETEXT_WIDTH, line_data, 0, TELETEXT_WIDTH);
       return line_data;
     }
 
