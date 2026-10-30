@@ -151,6 +151,14 @@ jobs:
           -Source https://www.myget.org/F/mediaportal/api/v3/index.json
           -NonInteractive
 
+      # Assembler sources of Kasumi and system (MPC-HC subtitle engine)
+      - name: Install NASM
+        shell: pwsh
+        run: |
+          choco install nasm --yes --no-progress
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          "C:\Program Files\NASM" >> $env:GITHUB_PATH
+
       - name: Configure
         working-directory: DirectShowFilters
         run: >-
