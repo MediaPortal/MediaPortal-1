@@ -133,6 +133,24 @@ jobs:
         with:
           triplets: x64-windows-mp
 
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v2
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: Packages
+          key: nuget-native-${{ hashFiles('DirectShowFilters/**/packages.config') }}
+
+      # DirectX 9 SDK (d3dx9, dxguid, DxErr) and libbluray come from NuGet
+      - name: Restore NuGet packages
+        run: >-
+          nuget restore DirectShowFilters\Filters.sln
+          -PackagesDirectory Packages
+          -Source https://api.nuget.org/v3/index.json
+          -Source https://www.myget.org/F/mediaportal/api/v3/index.json
+          -NonInteractive
+
       - name: Configure
         working-directory: DirectShowFilters
         run: >-
