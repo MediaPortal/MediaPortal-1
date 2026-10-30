@@ -1,10 +1,11 @@
-name:  Workflow / Update Git Submodules to Latest Tag
+name: Workflow / Update Git Submodules to Latest Tag
 
 on:
   workflow_dispatch:
 
 jobs:
   update-submodules:
+    name: Update Git Submodules to Latest Tag
     runs-on: ubuntu-latest
 
     steps:

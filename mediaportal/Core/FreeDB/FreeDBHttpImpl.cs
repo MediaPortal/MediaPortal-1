@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -36,7 +36,7 @@ namespace MediaPortal.Freedb
   public class FreeDBHttpImpl //: IFreeDB
   {
     private const string APPNAME = "MediaPortal";
-    private const string APPVERSION = "1.0";
+    private const string APPVERSION = "v1.0";
     private FreeDBSite m_server = null;
     private string m_serverURL = null;
     private string m_idStr = null;
@@ -58,21 +58,23 @@ namespace MediaPortal.Freedb
 
       StringBuilder buff = new StringBuilder(512);
       buff.Append("&hello=");
-      buff.Append(Environment.UserName.Replace(" ", "_"));
+      // buff.Append(Environment.UserName.Replace(" ", "_"));
+      buff.Append("contact");
       buff.Append('+');
-      buff.Append(Environment.MachineName);
+      // buff.Append(Environment.MachineName.Replace(" ", "_"));
+      buff.Append("team-mediaportal.com");
       buff.Append('+');
       buff.Append(APPNAME);
       buff.Append('+');
       buff.Append(APPVERSION);
       buff.Append('+');
-      buff.Append("&proto=5");
+      buff.Append("&proto=6");
       m_idStr = buff.ToString();
     }
 
     public bool Connect()
     {
-      m_server = new FreeDBSite("freedb.freedb.org", FreeDBSite.FreeDBProtocol.HTTP, 80, "/~cddb/cddb.cgi",
+      m_server = new FreeDBSite("gnudb.gnudb.org", FreeDBSite.FreeDBProtocol.HTTP, 80, "/~cddb/cddb.cgi",
                                 "N000.00", "W000.00", "Random freedb server");
 
       m_serverURL = "http://" + m_server.Host + ":" + m_server.Port + m_server.URI;
@@ -372,8 +374,7 @@ namespace MediaPortal.Freedb
         req.Proxy.Credentials = CredentialCache.DefaultCredentials;
       }
       catch (Exception) {}
-      StreamReader urlRdr = new StreamReader(new StreamReader(req.GetResponse().GetResponseStream()).BaseStream,
-                                             Encoding.GetEncoding(0));
+      StreamReader urlRdr = new StreamReader(new StreamReader(req.GetResponse().GetResponseStream()).BaseStream, Encoding.UTF8);
 
       return urlRdr;
     }

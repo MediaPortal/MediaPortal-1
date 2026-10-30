@@ -825,7 +825,7 @@ Section "MediaPortal core files (required)" SecCore
        !endif
      !endif
   !endif
-  
+
   ; LibWebP
   File /oname=libwebp.dll "${git_MP}\MediaPortal.Base\3rd_party\libwebp_${Architecture}.dll"
 
@@ -837,6 +837,16 @@ Section "MediaPortal core files (required)" SecCore
   ; libbluray
   ;SetOutPath "$MPdir.Base\lib"
   ;File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\lib\*"
+
+  ; Lame
+  SetOutPath "$MPdir.Base"
+  !if "${Architecture}" == "x64"
+    File "${git_MP}\MediaPortal.Base\Lame\x64\lame_enc.dll"
+    File "${git_MP}\MediaPortal.Base\Lame\x64\libmpg123-0.dll"
+  !else
+    File "${git_MP}\MediaPortal.Base\Lame\x86\lame_enc.dll"
+    File "${git_MP}\MediaPortal.Base\Lame\x86\libmpg123-0.dll"
+  !endif
 
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION
