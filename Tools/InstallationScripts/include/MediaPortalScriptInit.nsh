@@ -50,8 +50,6 @@
 !define git_Common_MP_TVE3 "${git_ROOT}\Common-MP-TVE3"
 !define git_DeployTool "${git_ROOT}\Tools\MediaPortal.DeployTool"
 !define git_DirectShowFilters "${git_ROOT}\DirectShowFilters"
-!define git_Libbluray "${git_ROOT}\libbluray"
-!define LibblurayJAR "${git_ROOT}\libbluray\src\libbluray\bdj"
 !define git_NugetPackages "${git_ROOT}\Packages"
 
 !define git_TvEngine2 "${git_ROOT}\TvEngine2"

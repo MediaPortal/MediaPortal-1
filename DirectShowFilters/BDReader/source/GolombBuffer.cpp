@@ -43,7 +43,7 @@ UINT64 CGolombBuffer::BitRead(int nBits, bool fPeek)
 	{
 		m_bitbuff <<= 8;
 
-		if (m_nBitPos >= m_nSize) return 0;
+		if (m_nBitPos < 0 || m_nBitPos >= m_nSize) return 0;
 
 		*(BYTE*)&m_bitbuff = m_pBuffer[m_nBitPos++];
 		m_bitlen += 8;
@@ -93,7 +93,7 @@ void CGolombBuffer::ReadBuffer(BYTE* pDest, int nSize)
 {
 	ASSERT (m_nBitPos + nSize <= m_nSize);
 	ASSERT (m_bitlen == 0);
-	nSize = min (nSize, m_nSize - m_nBitPos);
+	nSize = (int)max((INT64)0, min((INT64)nSize, m_nSize - m_nBitPos));
 	
 	memcpy (pDest, m_pBuffer+m_nBitPos, nSize);
 	m_nBitPos += nSize;
@@ -123,6 +123,6 @@ void CGolombBuffer::SkipBytes(int nCount)
 
 HRESULT CGolombBuffer::ByteRead(BYTE* pData, __int64 len)
 {
-	ReadBuffer(pData,len);
+	ReadBuffer(pData, (int)max((__int64)0, min(len, (__int64)INT_MAX)));
 	return 0;
 }

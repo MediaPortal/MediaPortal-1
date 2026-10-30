@@ -13,10 +13,6 @@ rem %DeployVersionGIT% /git="%GIT_ROOT%" /path="%MediaPortal%" >> %log%
 %DeployVersionGIT% /git="%GIT_ROOT%" /path="%CommonMPTV%" >> %log%
 
 echo.
-echo Building Libbluray Java...
-call .\Build_BD_Java.bat
-
-echo.
 echo Building native components...
 call VS_Rebuild_Release_DirectShowFilters.bat %ARCH%
 

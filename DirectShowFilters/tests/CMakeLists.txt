@@ -39,11 +39,16 @@ add_executable(mp_unit_tests
   unit/Crc32Tests.cpp
   unit/BitstreamReaderTests.cpp
   unit/BdPacketTests.cpp
+  unit/BdParserTests.cpp
   unit/StrUtilsTests.cpp
   unit/RectUtilsTests.cpp
   unit/ResamplerTests.cpp
   ../shared/HEVC/BitstreamReader.cpp
   ../BDReader/source/Packet.cpp
+  ../BDReader/source/GolombBuffer.cpp
+  ../BDReader/source/FrameHeaderParser.cpp
+  ../shared/HEVC/Hevc.cpp
+  ../shared/HEVC/HevcNalDecode.cpp
   ../MPAudioswitcher/source/Audio.cpp
 )
 # The helpers of the MPC-HC code (RectUtils.h, StrUtils.h) and the files of MPAudioSwitcher that include SharedInclude.h
@@ -54,7 +59,7 @@ set_source_files_properties(unit/DirectShowHelperTests.cpp ../DirectShowHelper/s
   ../DirectShowHelper/source/threads/SystemClock.cpp PROPERTIES
   INCLUDE_DIRECTORIES "${CMAKE_CURRENT_LIST_DIR}/../DirectShowHelper/source")
 target_include_directories(mp_unit_tests PRIVATE ../shared ../BDReader/source)
-target_link_libraries(mp_unit_tests PRIVATE mp_common DvbCoreUtils BaseClasses winmm strmiids GTest::gtest GTest::gtest_main)
+target_link_libraries(mp_unit_tests PRIVATE mp_common DvbCoreUtils BaseClasses winmm strmiids wmcodecdspuuid uuid GTest::gtest GTest::gtest_main)
 
 # ---------------------------------------------------------------------------
 # Integration tests

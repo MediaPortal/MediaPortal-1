@@ -48,6 +48,7 @@ Small pure code, no DirectShow needed.
 | `DirectShowHelperTests` | DirectShowHelper: `cMulDiv64` (128 bit multiply and divide) against exact integer vectors made with Python (`MulDivVectors.inc`), `GetCurrentTimestamp`, `SystemClockMillis` and `EndTime`, `CMyQueue`, `CAutoInt` |
 | `TransformMatrixTests` | fontEngine `TransformMatrix`: translation, scaling, rotations, products, alpha, inverse |
 | `BdPacketTests` | BDReader `Packet` and `PacketList`/`PopHead` |
+| `BdParserTests` | BDReader `CGolombBuffer` and `CFrameHeaderParser` (H.264 SPS, H.265 NAL lengths) on streams with bad lengths and sizes (guard page) |
 | `TcharConvTests` | `shared/TcharConv.h` (`ToAnsi`, `ToWide`, `ToTchar`) |
 | `WStringUtilTests` | `shared/WStringUtil.h` (`ReplaceAll`) |
 
@@ -186,6 +187,24 @@ read past the end of a buffer without ASan.
 * `shared/HEVC/BitstreamReader.cpp`: `getBit()` and `skipBits()` looked at `m_ptr[m_posBase]` for the emulation
   prevention byte after the last byte had been consumed, one byte behind the buffer (heap buffer overflow, read of 1
   byte). Fixed with `m_posBase < m_size`; the guard page tests fail without the fix.
+
+* `BDReader/source` parsers (`BdParserTests`, `BdReaderTests`): the compiler warnings C4244/C4267 pointed at these defects,
+  all with data from the disc or the caller:
+  - `FrameHeaderParser.cpp` (H.265): the 32 bit NAL length went into an `int` and to `processNALUnit` and `malloc`, 2 GB
+    read past the buffer; (H.264) the same length moved the read position backwards or far beyond the end. Both reject a
+    length of 0 or beyond the buffer now.
+  - `FrameHeaderParser.cpp` (H.264 SPS): `num_units_in_tick == 0` divided by zero; the frame size was not limited
+    (`pic_width_in_mbs_minus1` up to 2^32); the length of the SPS/PPS went into 16 bits without a check.
+  - `FrameHeaderParser.cpp` (PES): a PES header longer than the packet made the `WORD` length wrap around.
+  - `GolombBuffer.cpp`: `ReadBuffer` after a `Seek` past the end gave a negative size to `memcpy`; `Seek(-1)` read the byte
+    before the buffer; `ByteRead` with a length beyond `int`.
+  - `StreamParser.cpp`: the frame rate `1000 / (AvgTimePerFrame / 10000)` divided by zero for a frame time below 1 ms
+    (no test: the file includes `bluray.h`).
+  - `BDReader.cpp` `Load()`: `wcscpy` into `m_fileName[1024]` and `strncpy` into `m_pathToBD[MAX_PATH]` without a length
+    check, and the result of `WideCharToMultiByte` was not looked at.
+  The new tests fail without the fixes (checked); `ZeroNalLengthIsRejected` and `ReadsASimpleSps` pass either way and
+  guard the behavior that must not change. The two `CGolombBuffer` tests that read past the end are skipped in Debug
+  (`ReadBuffer` has an `ASSERT` for that case).
 
 * `MPAudioRenderer/source/dllmain.cpp` `CopyWaveFormatEx` copied `sizeof(WAVEFORMATEXTENSIBLE) + cbSize` (62 bytes) from a
   format block that is 40 bytes (heap over-read, found with ASan). Fixed: it copies `sizeof(WAVEFORMATEX) + cbSize` into a

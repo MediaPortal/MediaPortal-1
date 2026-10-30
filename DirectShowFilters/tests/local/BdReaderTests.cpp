@@ -73,6 +73,20 @@ TEST_F(BdReader, ADiscThatIsNotThereIsNotFound)
   EXPECT_EQ(file->Load((folder.Path() + L"\\BDMV\\index.bdmv").c_str(), nullptr), static_cast<HRESULT>(VFW_E_NOT_FOUND));
 }
 
+TEST_F(BdReader, ANameThatDoesNotFitTheFilterIsRefused)
+{
+  // the filter keeps 1023 characters of the name: a longer one used to be copied past the end of the buffer
+  const std::wstring name = L"C:\\" + std::wstring(1500, L'a') + L"\\BDMV\\index.bdmv";
+  EXPECT_EQ(file->Load(name.c_str(), nullptr), S_FALSE);
+}
+
+TEST_F(BdReader, AFolderPathLongerThanMaxPathIsNotCopiedIntoAShortBuffer)
+{
+  // 900 characters before \BDMV: more than MAX_PATH, it fits the buffers of the filter and the disc is simply not there
+  const std::wstring name = L"C:\\" + std::wstring(900, L'a') + L"\\BDMV\\index.bdmv";
+  EXPECT_EQ(file->Load(name.c_str(), nullptr), static_cast<HRESULT>(VFW_E_NOT_FOUND));
+}
+
 TEST_F(BdReader, LoadsTheSampleDisc)
 {
   if (!HasLibbluray())

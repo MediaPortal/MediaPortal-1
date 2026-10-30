@@ -200,7 +200,7 @@ int CDeMultiplexer::GetAudioStreamCount()
   }
   else
   {
-    return m_audioStreams.size();
+    return (int)m_audioStreams.size();
   }
 }
 
@@ -870,7 +870,7 @@ bool CDeMultiplexer::ParseVideoFormat(Packet* p)
 {
   if (!m_bVideoFormatParsed)
   {
-    m_bVideoFormatParsed = m_videoParser->OnTsPacket(p->data(), p->size(), m_videoServiceType);
+    m_bVideoFormatParsed = m_videoParser->OnTsPacket(p->data(), (int)p->size(), m_videoServiceType);
     if (!m_bVideoFormatParsed)
       LogDebug("demux: ParseVideoFormat - failed to parse video format!");
     else
@@ -892,7 +892,7 @@ bool CDeMultiplexer::ParseAudioFormat(Packet* p)
 {
   if (!m_bAudioFormatParsed)
   {
-    m_bAudioFormatParsed = m_audioParser->OnTsPacket(p->data(), p->size(), m_AudioStreamType);
+    m_bAudioFormatParsed = m_audioParser->OnTsPacket(p->data(), (int)p->size(), m_AudioStreamType);
     if (!m_bAudioFormatParsed)
       LogDebug("demux: ParseAudioFormat - failed to parse audio format!");
     else
@@ -934,7 +934,7 @@ void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader* header, std::unique_ptr<P
   {
     BYTE* next =  start + (m_loopLastSearch==0 ? 1 : m_loopLastSearch);
     while(next <= end - 4 && *(DWORD*)next != 0x01000000) next++;
-    m_loopLastSearch = next - start;
+    m_loopLastSearch = (int)(next - start);
     if (next >= end - 4)
     {
       if (pFlushBuffers)
@@ -942,7 +942,7 @@ void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader* header, std::unique_ptr<P
       else 
         break;
     }
-    int size = next - start;
+    int size = (int)(next - start);
     CH264Nalu	nalu;
     nalu.SetBuffer(start, size, 0);
     std::unique_ptr<Packet> p2(new Packet());
@@ -1101,7 +1101,7 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader* header, std::unique_ptr<Pa
       next++;
     }
 
-    m_loopLastSearch = next - start;
+    m_loopLastSearch = (int)(next - start);
 
     if (next >= end - 4) 
     {
@@ -1111,13 +1111,13 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader* header, std::unique_ptr<Pa
         break;
     }
 
-    int size = next - start - 4;
+    int size = (int)(next - start - 4);
     UNUSED_ALWAYS(size);
 
     std::unique_ptr<Packet> p2(new Packet());
     p2->reserve(PACKET_GRANULARITY);
     p2->CopyProperties(*m_p);
-    p2->SetData(start, next - start);
+    p2->SetData(start, (DWORD)(next - start));
 
     PacketDelivery(std::move(p2));
    
@@ -1169,7 +1169,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader* header, byte* tsPacket)
     //LogDebug("demux: FillVideoH264 PayLoad Unit Start");
 #endif
     
-    m_WaitHeaderPES = m_pBuild->size();
+    m_WaitHeaderPES = (int)m_pBuild->size();
 
     if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_VC1 && m_pBuild->size() > 0)
     {
@@ -1202,7 +1202,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader* header, byte* tsPacket)
 
   if (m_WaitHeaderPES >= 0)
   {
-    int AvailablePESlength = m_pBuild->size() - m_WaitHeaderPES;
+    int AvailablePESlength = (int)m_pBuild->size() - m_WaitHeaderPES;
     BYTE* start = m_pBuild->data() + m_WaitHeaderPES;
     
     if (AvailablePESlength < 9)
@@ -1311,7 +1311,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
   
     if (header->PayloadUnitStart)
     {
-      m_WaitHeaderPES = m_p->size();
+      m_WaitHeaderPES = (int)m_p->size();
 
 #ifdef LOG_DEMUXER_VIDEO_SAMPLES
       //LogDebug("demux FillVideoMPEG2 PayLoad Unit Start");
@@ -1333,7 +1333,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
 
     if (m_WaitHeaderPES >= 0)
     {
-      int AvailablePESlength = m_p->size() - m_WaitHeaderPES;
+      int AvailablePESlength = (int)m_p->size() - m_WaitHeaderPES;
       BYTE* start = m_p->data() + m_WaitHeaderPES;
     
       if (AvailablePESlength < 9)
@@ -1435,11 +1435,11 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
         next = end;
 
       if ((next >= end - 4) && !pFlushBuffers)
-        m_lastStart = next - m_p->data();
+        m_lastStart = (DWORD)(next - m_p->data());
       else
       {
         m_bInBlock = false;
-        int size = next - start;
+        int size = (int)(next - start);
 
         std::unique_ptr<Packet> p2(new Packet());
         p2->resize(size);
@@ -1514,11 +1514,11 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
    	    }
       
         start = next;
-        m_lastStart = start - m_p->data() + 1;
+        m_lastStart = (DWORD)(start - m_p->data() + 1);
       }
       if (start > m_p->data())
       {
-        m_lastStart -= (start - m_p->data());
+        m_lastStart -= (DWORD)(start - m_p->data());
         m_p->erase(m_p->begin() + (0), m_p->begin() + (0) + (start - m_p->data()));
       }
     }

@@ -22,4 +22,4 @@ jobs:
         with:
           # Optional pattern used to limit paths.
           # See https://git-scm.com/docs/gitglossary#Documentation/gitglossary.txt-aiddefpathspecapathspec
-          git-pathspec: "':!Build/**' ':!**/TuningParameters/**' ':!libbluray'"
+          git-pathspec: "':!Build/**' ':!**/TuningParameters/**'"
