@@ -189,15 +189,24 @@ if(MP_BUILD_LOCAL_TESTS)
       add_dependencies(mp_local_tests ${_f})
     endif()
   endforeach()
-  # BDReader loads libbluray as bluray.dll from its own folder; the NuGet package has the 32 bit build only
-  if(TARGET BDReader AND CMAKE_SIZEOF_VOID_P EQUAL 4)
-    file(GLOB _mp_bluray_dll "${CMAKE_CURRENT_LIST_DIR}/../../Packages/MediaPortal.libbluray.*/references/runtimes/Release/libbluray.dll")
+  # BDReader loads libbluray as bluray.dll from its own folder; the NuGet package MediaPortal.libbluray has both builds.
+  # The BD-J jars go next to it (libbluray finds libbluray-awt-j2se-<version>.jar beside libbluray-j2se-<version>.jar).
+  if(TARGET BDReader)
+    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+      set(_mp_bluray_arch x64)
+    else()
+      set(_mp_bluray_arch x86)
+    endif()
+    file(GLOB _mp_bluray_dll "${CMAKE_CURRENT_LIST_DIR}/../../Packages/MediaPortal.libbluray.*/references/runtimes/${_mp_bluray_arch}/bluray.dll")
     if(_mp_bluray_dll)
+      list(SORT _mp_bluray_dll)
       list(GET _mp_bluray_dll -1 _mp_bluray_dll)
       get_filename_component(_mp_bluray_dir "${_mp_bluray_dll}" DIRECTORY)
+      get_filename_component(_mp_bluray_dir "${_mp_bluray_dir}/.." ABSOLUTE)
+      file(GLOB _mp_bluray_jars "${_mp_bluray_dir}/libbluray-*.jar")
       add_custom_command(TARGET mp_local_tests POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_if_different "${_mp_bluray_dll}" "$<TARGET_FILE_DIR:mp_local_tests>/bluray.dll"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${_mp_bluray_dir}/freetype.dll" "$<TARGET_FILE_DIR:mp_local_tests>/freetype.dll")
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${_mp_bluray_jars} "$<TARGET_FILE_DIR:mp_local_tests>")
     endif()
   endif()
   set_target_properties(mp_local_tests PROPERTIES FOLDER "Tests")

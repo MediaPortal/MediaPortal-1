@@ -114,10 +114,11 @@ time); by default `<repository>/../MP-MediaInfo.Samples` when it exists. `MP_MPC
   stream, float and 5.1, stop while samples wait, flush, volume and balance, `IMediaSeeking` passed on to the upstream
   filter, settings (`IMPAudioRendererConfig`) and refused out-of-range values. `LocalSupport.cpp` starts a watcher that
   closes the Debug build's modal ASSERT box and turns it into a failure of the running test.
-* `BdReaderTests` (**BDReader**): path checks of `Load()` (no BD, wrong case, missing disc) and the sample disc
-  `BD\BDMV\index.bdmv` (loads, title count, angle, output pins). BDReader loads libbluray as `bluray.dll` from its own
-  folder and the NuGet package has the 32 bit build only: the x86 build copies `bluray.dll` and `freetype.dll` next to the
-  test; in the x64 build the disc test skips.
+* `BdReaderTests` (**BDReader**): path checks of `Load()` (no BD, wrong case, missing disc), the sample disc
+  `BD\BDMV\index.bdmv` (loads, title count, angle, output pins) and playback: BDReader in a graph with a sink on every output
+  pin, run for a few seconds, samples with time stamps arrive. BDReader loads libbluray as `bluray.dll` from its own folder; the
+  build copies `bluray.dll` (x86 or x64) and the BD-J jars next to the test from the NuGet package `MediaPortal.libbluray`
+  1.5.1. Both builds ran against the HDMV sample disc; a disc with BD-J menus is not tested yet.
 * `LiveMediaPesToTs` (**LiveMedia555**): `MPMPEG2TransportStreamFromPESSource` converts `Video\a52_dvb_remuxed.m2p` to
   transport packets: 188 byte multiples, sync bytes, PAT present, at least 3 PIDs.
 * `FontEngineTests` (**fontEngine.dll**): on a real Direct3D 9 device: slots of the texture table, a texture drawn as a quad

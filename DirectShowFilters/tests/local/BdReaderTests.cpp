@@ -1,10 +1,13 @@
-// BDReader (Blu-ray source filter) with a real disc structure. The filter loads bluray.dll (libbluray, 32 bit only) from the
-// folder of BDReader.ax, so these tests run in the x86 build; elsewhere they skip. The sample is a BD folder:
+// BDReader (Blu-ray source filter) with a real disc structure. The filter loads bluray.dll (libbluray) from the
+// folder of BDReader.ax; the build copies it, and the BD-J jars, from the NuGet package MediaPortal.libbluray (x86 and x64). The sample is a BD folder:
 // <samples>\BD\BDMV\index.bdmv.
 #include <gtest/gtest.h>
 #include <streams.h>
+#include <chrono>
+#include <thread>
 #include "FilterHost.h"
 #include "LocalSupport.h"
+#include "TestSinkFilter.h"
 
 namespace
 {
@@ -73,7 +76,7 @@ TEST_F(BdReader, ADiscThatIsNotThereIsNotFound)
 TEST_F(BdReader, LoadsTheSampleDisc)
 {
   if (!HasLibbluray())
-    GTEST_SKIP() << "bluray.dll (32 bit libbluray) is not next to BDReader.ax; run the x86 build";
+    GTEST_SKIP() << "bluray.dll is not next to BDReader.ax (NuGet package MediaPortal.libbluray is missing)";
   REQUIRE_SAMPLE(index, L"BD\\BDMV\\index.bdmv");
 
   const HRESULT loaded = file->Load(index.c_str(), nullptr);
@@ -95,4 +98,77 @@ TEST_F(BdReader, LoadsTheSampleDisc)
   UINT8 angle = 255;
   EXPECT_EQ(bd->GetAngle(&angle), S_OK);
   EXPECT_LT(angle, 9);
+}
+
+// Plays the sample disc: BDReader in a graph, a sink on every output pin. libbluray reads the playlist, BDReader demultiplexes it and
+// the video pin has to deliver samples with time stamps.
+TEST_F(BdReader, PlaysTheSampleDisc)
+{
+  if (!HasLibbluray())
+    GTEST_SKIP() << "bluray.dll is not next to BDReader.ax (NuGet package MediaPortal.libbluray is missing)";
+  REQUIRE_SAMPLE(index, L"BD\\BDMV\\index.bdmv");
+
+  Ptr<IGraphBuilder> graph;
+  ASSERT_EQ(CreateGraph(&graph), S_OK);
+  ASSERT_EQ(graph->AddFilter(filter.Get(), L"BDReader"), S_OK);
+  ASSERT_TRUE(SUCCEEDED(file->Load(index.c_str(), nullptr)));
+
+  std::vector<CTestSinkFilter*> sinks;
+  Ptr<IEnumPins> pins;
+  ASSERT_EQ(filter->EnumPins(&pins), S_OK);
+  Ptr<IPin> pin;
+  while (pins->Next(1, &pin, nullptr) == S_OK)
+  {
+    PIN_DIRECTION dir;
+    pin->QueryDirection(&dir);
+    if (dir == PINDIR_OUTPUT)
+    {
+      HRESULT hr = S_OK;
+      auto* sink = new CTestSinkFilter(&hr);
+      sink->AddRef();
+      ASSERT_EQ(hr, S_OK);
+      ASSERT_TRUE(SUCCEEDED(graph->AddFilter(sink, L"Sink")));   // VFW_S_DUPLICATE_NAME for the second one is a success
+      if (graph->ConnectDirect(pin.Get(), sink->Pin(), nullptr) == S_OK)
+        sinks.push_back(sink);
+      else
+      {
+        graph->RemoveFilter(sink);
+        sink->Release();
+      }
+    }
+    pin.Reset();
+  }
+  ASSERT_FALSE(sinks.empty()) << "no output pin of BDReader accepted a connection";
+
+  Ptr<IMediaControl> mc;
+  ASSERT_EQ(graph.As(mc), S_OK);
+  ASSERT_TRUE(SUCCEEDED(mc->Run()));
+
+  size_t bytes = 0, samples = 0;
+  const auto until = std::chrono::steady_clock::now() + std::chrono::seconds(8);
+  while (std::chrono::steady_clock::now() < until && bytes == 0)
+  {
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    for (auto* s : sinks)
+    {
+      bytes += s->Pin()->Bytes();
+      samples += s->Pin()->Samples().size();
+    }
+  }
+  mc->Stop();
+
+  EXPECT_GT(samples, 0u);
+  EXPECT_GT(bytes, 0u);
+  size_t timed = 0;
+  for (auto* s : sinks)
+    for (const auto& r : s->Pin()->Samples())
+      timed += r.hasTime ? 1 : 0;
+  EXPECT_GT(timed, 0u) << "no sample carries a time stamp";
+
+  for (auto* s : sinks)
+  {
+    graph->RemoveFilter(s);
+    s->Release();
+  }
+  graph->RemoveFilter(filter.Get());
 }
