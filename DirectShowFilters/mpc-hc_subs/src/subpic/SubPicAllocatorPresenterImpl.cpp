@@ -23,7 +23,7 @@
 #include "SubPicAllocatorPresenterImpl.h"
 #include "../DSUtil/DSUtil.h"
 #include "../filters/renderer/VideoRenderers/RenderersSettings.h"
-#include "../mpc-hc/VersionInfo.h"
+#include "../dsutil/VersionInfo.h"
 #include <cmath>
 #include "XySubPicQueueImpl.h"
 #include "XySubPicProvider.h"

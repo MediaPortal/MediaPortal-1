@@ -1,7 +1,7 @@
 #pragma once
 #include "Subresync.h"
 #include "../filters/renderer/VideoRenderers/RenderersSettings.h"
-#include "..\mpc-hc\RegexUtil.h"
+#include "..\dsutil\RegexUtil.h"
 
 class CRenderedTextSubtitle;
 

@@ -20,7 +20,6 @@ $ErrorActionPreference = 'Stop'
 
 $root = (Resolve-Path -LiteralPath $Path).Path
 $skipDirs = @('build', 'vcpkg_installed', 'obj', 'bin')
-$skipPrefixes = @('mpc-hc_subs\src\mpc-hc\')
 $skipFiles = @('DirectShowHelper\source\StdString.h')
 
 $codeRule = '#\s*include\s*[<"](afx|atl)[A-Za-z0-9_]*\.h[>"]|\b(CString[AW]?|CComPtr|CComQIPtr|CRect|CPoint|CSize|CAtl[A-Za-z]+)\b'

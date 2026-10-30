@@ -33,8 +33,8 @@
 #include  <comutil.h>
 #include <regex>
 #include "SSASub.h"
-#include "../mpc-hc/RegexUtil.h"
-#include "../mpc-hc/SubtitlesProvidersUtils.h"
+#include "../dsutil/RegexUtil.h"
+#include "../dsutil/SubtitlesProvidersUtils.h"
 #include "../DSUtil/ISOLang.h"
 
 
