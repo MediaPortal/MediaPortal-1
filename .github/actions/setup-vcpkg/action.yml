@@ -8,6 +8,10 @@ inputs:
     description: "Space separated vcpkg triplets to install (see DirectShowFilters/vcpkg-triplets)"
     required: false
     default: "x86-windows-mp x64-windows-mp"
+  features:
+    description: "Space separated features of DirectShowFilters/vcpkg.json to install (e.g. tests)"
+    required: false
+    default: ""
 
 runs:
   using: composite
@@ -40,7 +44,8 @@ runs:
       shell: pwsh
       working-directory: DirectShowFilters
       run: |
+        $features = @('${{ inputs.features }}'.Split(' ', [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object { "--x-feature=$_" })
         foreach ($triplet in '${{ inputs.triplets }}'.Split(' ', [StringSplitOptions]::RemoveEmptyEntries)) {
-          & "$env:VCPKG_ROOT\vcpkg.exe" install --triplet $triplet --x-install-root=vcpkg_installed\$triplet --disable-metrics
+          & "$env:VCPKG_ROOT\vcpkg.exe" install --triplet $triplet --x-install-root=vcpkg_installed\$triplet @features --disable-metrics
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
         }

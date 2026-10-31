@@ -132,6 +132,7 @@ jobs:
         uses: ./.github/actions/setup-vcpkg
         with:
           triplets: x64-windows-mp
+          features: tests
 
       - name: Setup NuGet
         uses: nuget/setup-nuget@v2
