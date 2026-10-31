@@ -160,10 +160,19 @@ jobs:
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           "C:\Program Files\NASM" >> $env:GITHUB_PATH
 
+      # Temporary: GTest is installed but find_package(GTest CONFIG) does not see it on the hosted runner
+      - name: Where is GTest
+        shell: pwsh
+        working-directory: DirectShowFilters
+        run: |
+          Get-ChildItem vcpkg_installed -Recurse -Filter 'GTest*.cmake' | Select-Object -ExpandProperty FullName
+          & "$env:VCPKG_ROOT\vcpkg.exe" list --x-install-root=vcpkg_installed\x64-windows-mp
+        continue-on-error: true
+
       - name: Configure
         working-directory: DirectShowFilters
         run: >-
-          cmake --preset vs2022-x64-unicode
+          cmake --preset vs2022-x64-unicode --debug-find-pkg=GTest
           -DMP_BUILD_TESTS=ON -DVCPKG_MANIFEST_FEATURES=tests
 
       - name: Build
