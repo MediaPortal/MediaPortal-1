@@ -21,3 +21,16 @@ Variable name = WINDOWS_SDK         Value = C:\Program Files\Microsoft SDKs\Wind
 Variable name = DXSDK_DIR           Value = C:\Program Files\Microsoft DirectX SDK (YYYYYYY XXXX)\
 
 Variable name = DSHOW_BASE          Value = C:\Program Files\Microsoft SDKs\Windows\vX.X\Samples\Multimedia\DirectShow\BaseClasses\
+
+6. Third-party libraries (zlib, unrar, freetype, live555, libsamplerate, SoundTouch) come from vcpkg
+   in manifest mode (vcpkg.json, vcpkg-configuration.json and vcpkg-triplets\ in this folder).
+
+    a. Install vcpkg: https://learn.microsoft.com/vcpkg/get_started/get-started-msbuild
+
+    b. Set the environment variable (your path may vary):
+
+Variable name = VCPKG_ROOT          Value = C:\vcpkg
+
+    c. Build Filters.sln as usual: the first build installs the libraries into
+       DirectShowFilters\vcpkg_installed (triplets x86-windows-mp / x64-windows-mp:
+       static libraries with the dynamic CRT, except unrar.dll which is copied next to mpcSubs.dll).

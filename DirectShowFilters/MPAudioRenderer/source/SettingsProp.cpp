@@ -15,6 +15,8 @@
 // along with MediaPortal. If not, see <http://www.gnu.org/licenses/>.
 
 #include "SettingsProp.h"
+#include <commctrl.h>
+#pragma comment(lib, "comctl32.lib")
 #include "resource.h"
 
 #include "alloctracing.h"
@@ -207,9 +209,9 @@ HRESULT CSettingsProp::OnActivate()
       SendDlgItemMessage(m_Dlg, IDC_SPEAKER_SETUP, CB_SETCURSEL, i, 0);
   }
 
-  CComPtr<IMMDeviceEnumerator> enumerator;
+  Microsoft::WRL::ComPtr<IMMDeviceEnumerator> enumerator;
   IMMDeviceCollection* devices = NULL;
-  HRESULT hr = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator));
+  HRESULT hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_ALL, IID_PPV_ARGS(&enumerator));
 
   if (SUCCEEDED(hr))
     m_pSettings->GetAvailableAudioDevices(&devices, m_Dlg, false);

@@ -41,7 +41,7 @@
 #define METHOD_RUN_NAME                                           _T("Run()")
 
 CMPIPTVSourceStream::CMPIPTVSourceStream(HRESULT *phr, CSource *pFilter, CParameterCollection *configuration)
-  : CSourceStream(NAME(_T("MediaPortal IPTV Stream")), phr, pFilter, L"Out")
+  : CSourceStream(NAME("MediaPortal IPTV Stream"), phr, pFilter, L"Out")
 {
   this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
 

@@ -29,7 +29,9 @@ MPRTSPServer* MPRTSPServer::createNew(UsageEnvironment& env,
                                       UserAuthenticationDatabase* authDatabase,
                                       unsigned reclamationTimeSeconds)
 {
-  int ourSocket = setUpOurSocket(env, ourPort);
+  // IPv4 only: RTSPServer::createNew() would also listen on all IPv6 interfaces, while
+  // the TV Server binds the stream server to one configured IPv4 address.
+  int ourSocket = setUpOurSocket(env, ourPort, AF_INET);
   if (ourSocket < 0)
   {
     return NULL;
@@ -75,11 +77,11 @@ bool MPRTSPServer::RemoveSessionById(u_int32_t sessionId)
 }
 
 MPRTSPServer::MPRTSPServer(UsageEnvironment& env,
-                            int ourSocket,
+                            int ourSocketIPv4,
                             Port ourPort,
                             UserAuthenticationDatabase* authDatabase,
                             unsigned reclamationTimeSeconds)
-  : RTSPServer(env, ourSocket, ourPort, authDatabase, reclamationTimeSeconds)
+  : RTSPServer(env, ourSocketIPv4, -1, ourPort, authDatabase, reclamationTimeSeconds)
 {
 }
 
@@ -88,7 +90,7 @@ MPRTSPServer::~MPRTSPServer()
   m_clientSessions.clear();
 }
 
-GenericMediaServer::ClientConnection* MPRTSPServer::createNewClientConnection(int clientSocket, struct sockaddr_in clientAddr)
+GenericMediaServer::ClientConnection* MPRTSPServer::createNewClientConnection(int clientSocket, struct sockaddr_storage const& clientAddr)
 {
   return new MPRTSPClientConnection(*this, clientSocket, clientAddr);
 }
@@ -103,7 +105,7 @@ GenericMediaServer::ClientSession* MPRTSPServer::createNewClientSession(u_int32_
 
 ////////// MPRTSPServer::MPRTSPClientConnection //////////
 
-MPRTSPServer::MPRTSPClientConnection::MPRTSPClientConnection(MPRTSPServer& ourServer, int clientSocket, struct sockaddr_in clientAddr)
+MPRTSPServer::MPRTSPClientConnection::MPRTSPClientConnection(MPRTSPServer& ourServer, int clientSocket, struct sockaddr_storage const& clientAddr)
   : RTSPClientConnection(ourServer, clientSocket, clientAddr)
 {
 }
@@ -141,8 +143,9 @@ void MPRTSPServer::MPRTSPClientSession::handleCmd_PLAY(RTSPClientConnection* our
 }
 
 void MPRTSPServer::MPRTSPClientSession::handleCmd_PAUSE(RTSPClientConnection* ourClientConnection,
-                                                        ServerMediaSubsession* subsession)
+                                                        ServerMediaSubsession* subsession,
+                                                        const char* fullRequestStr)
 {
-  RTSPClientSession::handleCmd_PAUSE(ourClientConnection, subsession);
+  RTSPClientSession::handleCmd_PAUSE(ourClientConnection, subsession, fullRequestStr);
   m_isPaused = true;
 }

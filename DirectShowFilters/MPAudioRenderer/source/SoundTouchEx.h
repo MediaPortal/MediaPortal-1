@@ -24,7 +24,7 @@
 
 #include <MMReg.h>  //must be before other Wasapi headers
 
-#include "../SoundTouch/Include/SoundTouch.h"
+#include <soundtouch/SoundTouch.h> // vcpkg
 
 //#undef INTEGER_SAMPLES
 
@@ -40,6 +40,10 @@ public:
 
   bool StartResampling();
   bool StopResampling();
+
+  // Pushes the last samples out of the processing pipeline by feeding silence;
+  // returns the number of injected silent samples (was a MediaPortal patch of SoundTouch)
+  uint flushEx();
 
   virtual void putBuffer(const BYTE *pInBuffer, int numSamples);
   virtual void putMediaSample(IMediaSample *pMediaSample);
@@ -62,7 +66,7 @@ protected:
   int m_nInBytesPerSample;  // Bytes in a sample. Can be 1 to 4. This is the "container" size
 
   // Input queue
-  std::vector<CComPtr<IMediaSample>> m_InSampleQueue;
+  std::vector<Microsoft::WRL::ComPtr<IMediaSample>> m_InSampleQueue;
   CCritSec m_InSampleQueueLock;
 
   // Output buffer layout
@@ -72,7 +76,7 @@ protected:
   size_t m_nSampleSize; //size of one sample; ie. soundtouch::SAMPLETYPE * channels
 
   // Output queue
-  std::vector<CComPtr<IMediaSample>> m_OutSampleQueue;
+  std::vector<Microsoft::WRL::ComPtr<IMediaSample>> m_OutSampleQueue;
   CCritSec m_OutSampleQueueLock;
 
   // Temporary input buffer

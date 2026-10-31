@@ -4,7 +4,7 @@
 #include "..\subtitles\RTS.h"
 #include "SubManager.h"
 
-static CAutoPtr<CSubManager> g_subManager;
+static std::unique_ptr<CSubManager> g_subManager;
 
 // SetDevice stores device pointer here in case the sub manager is not yet instantiated
 static IDirect3DDevice9* g_d3DDev;
@@ -62,15 +62,15 @@ BOOL SetDevice(IDirect3DDevice9* d3DDev)
 
 BOOL LoadSubtitles(IDirect3DDevice9* d3DDev, SIZE size, const wchar_t* fn, IGraphBuilder* pGB, const wchar_t* paths, LCID lcidci)
 {
-	g_subManager.Free();
+	g_subManager.reset();
 	HRESULT hr = S_OK;
-  CAutoPtr<CSubManager> subManager(new CSubManager(g_d3DDev ? g_d3DDev : d3DDev, size, hr));
+  std::unique_ptr<CSubManager> subManager(new CSubManager(g_d3DDev ? g_d3DDev : d3DDev, size, hr));
 	if (FAILED(hr))
 	{
 		return FALSE;
 	}
 	subManager->LoadSubtitlesForFile(fn, pGB, paths, lcidci);
-	g_subManager.Attach(subManager.Detach());
+	g_subManager.reset(subManager.release());
 	return TRUE;
 }
 
@@ -171,7 +171,7 @@ void FreeSubtitles()
     if (g_subManager)
     {
       g_subManager->SetDevice(nullptr);
-      g_subManager.Free();
+      g_subManager.reset();
     }
   }
   catch (...)

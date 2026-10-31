@@ -17,11 +17,12 @@
 #include "stdafx.h"
 #include "Settings.h"
 #include "resource.h"
-#include "..\libresample\src\samplerate.h"
+#include <samplerate.h> // vcpkg (libsamplerate)
 
 #include <FunctionDiscoveryKeys_devpkey.h>
 
 #include "alloctracing.h"
+#include "../../shared/TcharConv.h"
 
 unsigned int gAllowedAC3bitrates[9]         = {192, 224, 256, 320, 384, 448, 512, 576, 640};
 unsigned int gAllowedSampleRates[7]         = {22050, 32000, 44100, 48000, 88200, 96000, 192000};
@@ -123,7 +124,7 @@ AudioRendererSettings::AudioRendererSettings(Logger* pLogger) :
   m_dMinBias(0.9),
   m_lAudioDelay(0),
   m_WASAPIShareMode(AUDCLNT_SHAREMODE_EXCLUSIVE),
-  m_wWASAPIPreferredDeviceId(NULL),
+  m_wWASAPIPreferredDeviceId(new WCHAR[MAX_REG_LENGTH]()),   // empty = default audio device; SetAudioDevice() writes into it
   m_nForceSamplingRate(0),
   m_nForceBitDepth(0),
   m_nResamplingQuality(4),
@@ -406,15 +407,14 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
     delete[] m_wWASAPIPreferredDeviceId;
     m_wWASAPIPreferredDeviceId = new WCHAR[MAX_REG_LENGTH];
     
-    _tcsncpy(m_wWASAPIPreferredDeviceId, WASAPIPreferredDeviceData, MAX_REG_LENGTH);
+    wcsncpy(m_wWASAPIPreferredDeviceId, ToWide(WASAPIPreferredDeviceData).c_str(), MAX_REG_LENGTH);
 
     delete[] WASAPIPreferredDeviceData;
   }
   else // no settings in registry, create default values
   {
-    USES_CONVERSION;
 
-    Log("Failed to open %s", T2A(folder));
+    Log("Failed to open %s", ToAnsi(folder).c_str());
     Log("Initializing registry with default settings");
 
     LONG result = RegCreateKeyEx(HKEY_CURRENT_USER, folder, 0, NULL, REG_OPTION_NON_VOLATILE,
@@ -454,7 +454,7 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
 
       delete[] m_wWASAPIPreferredDeviceId;
       m_wWASAPIPreferredDeviceId = new WCHAR[MAX_REG_LENGTH];
-      _tcsncpy(m_wWASAPIPreferredDeviceId, WASAPIPreferredDeviceData, MAX_REG_LENGTH);
+      wcsncpy(m_wWASAPIPreferredDeviceId, ToWide(WASAPIPreferredDeviceData).c_str(), MAX_REG_LENGTH);
 
       WriteRegistryKeyString(hKey, WASAPIPreferredDevice, WASAPIPreferredDeviceData);
     } 
@@ -468,7 +468,6 @@ void AudioRendererSettings::LoadSettingsFromRegistry()
 
 void AudioRendererSettings::SaveSettingsToRegistry(HKEY hKey)
 {
-  USES_CONVERSION;
 
   if (!hKey)
   {
@@ -505,7 +504,8 @@ void AudioRendererSettings::SaveSettingsToRegistry(HKEY hKey)
   quality_SEEKWINDOW_MSData = m_lQuality_SEEKWINDOW_MS;
   quality_OVERLAP_MSData = m_lQuality_OVERLAP_MS;
   
-  LPCTSTR WASAPIPreferredDeviceData = W2T(m_wWASAPIPreferredDeviceId);
+  tstring WASAPIPreferredDeviceStr = ToTchar(m_wWASAPIPreferredDeviceId);
+  LPCTSTR WASAPIPreferredDeviceData = WASAPIPreferredDeviceStr.c_str();
 
   WriteRegistryKeyDword(hKey, enableTimestretching, enableTimestretchingData);
   WriteRegistryKeyDword(hKey, WASAPIExclusive, WASAPIExclusiveData);
@@ -541,7 +541,6 @@ void AudioRendererSettings::SaveSettingsToRegistry(HKEY hKey)
 
 void AudioRendererSettings::ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data)
 {
-  USES_CONVERSION;
 
   DWORD dwSize = sizeof(DWORD);
   DWORD dwType = REG_DWORD;
@@ -550,29 +549,27 @@ void AudioRendererSettings::ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, D
   {
     if (error == ERROR_FILE_NOT_FOUND)
     {
-      Log("   create default value for %s", T2A(lpSubKey));
+      Log("   create default value for %s", ToAnsi(lpSubKey).c_str());
       WriteRegistryKeyDword(hKey, lpSubKey, data);
     }
     else
-      Log("   faíled to create default value for %s", T2A(lpSubKey));
+      Log("   faíled to create default value for %s", ToAnsi(lpSubKey).c_str());
   }
 }
 
 void AudioRendererSettings::WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data)
 {
-  USES_CONVERSION;
 
   DWORD dwSize = sizeof(DWORD);
   LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_DWORD, (LPBYTE)&data, dwSize);
   if (result == ERROR_SUCCESS) 
-    Log("Success writing to Registry: %s", T2A(lpSubKey));
+    Log("Success writing to Registry: %s", ToAnsi(lpSubKey).c_str());
   else 
-    Log("Error writing to Registry - subkey: %s error: %d", T2A(lpSubKey), result);
+    Log("Error writing to Registry - subkey: %s error: %d", ToAnsi(lpSubKey).c_str(), result);
 }
 
 void AudioRendererSettings::ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
 {
-  USES_CONVERSION;
 
   DWORD dwSize = MAX_REG_LENGTH;
   DWORD dwType = REG_SZ;
@@ -582,25 +579,24 @@ void AudioRendererSettings::ReadRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, 
   {
     if (error == ERROR_FILE_NOT_FOUND)
     {
-      Log("   create default value for %s", T2A(lpSubKey));
+      Log("   create default value for %s", ToAnsi(lpSubKey).c_str());
       WriteRegistryKeyString(hKey, lpSubKey, data);
     }
     else if (error == ERROR_MORE_DATA)
-      Log("   too much data, corrupted registry setting(?):  %s", T2A(lpSubKey));
+      Log("   too much data, corrupted registry setting(?):  %s", ToAnsi(lpSubKey).c_str());
     else
-      Log("   error: %d subkey: %s", error, T2A(lpSubKey));
+      Log("   error: %d subkey: %s", error, ToAnsi(lpSubKey).c_str());
   }
 }
 
 void AudioRendererSettings::WriteRegistryKeyString(HKEY hKey, LPCTSTR& lpSubKey, LPCTSTR& data)
 {  
-  USES_CONVERSION;
 
   LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_SZ, (LPBYTE)data, _tcslen(data) * sizeof(TCHAR));
   if (result == ERROR_SUCCESS) 
-    Log("Success writing to Registry: %s", T2A(lpSubKey));
+    Log("Success writing to Registry: %s", ToAnsi(lpSubKey).c_str());
   else 
-    Log("Error writing to Registry - subkey: %s error: %d", T2A(lpSubKey), result);
+    Log("Error writing to Registry - subkey: %s error: %d", ToAnsi(lpSubKey).c_str(), result);
 }
 
 bool AudioRendererSettings::AllowedValue(unsigned int allowedValues[], unsigned int size, unsigned int value)
@@ -675,9 +671,9 @@ HRESULT AudioRendererSettings::GetAudioDevice(IMMDevice** ppMMDevice)
 {
   Log("CWASAPIRenderFilter::GetAudioDevice");
 
-  CComPtr<IMMDeviceEnumerator> enumerator;
+  Microsoft::WRL::ComPtr<IMMDeviceEnumerator> enumerator;
   IMMDeviceCollection* devices = NULL;
-  HRESULT hr = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator));
+  HRESULT hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_ALL, IID_PPV_ARGS(&enumerator));
 
   if (FAILED(hr))
   {
@@ -778,13 +774,12 @@ HRESULT AudioRendererSettings::GetAudioDevice(IMMDevice** ppMMDevice)
 
 HRESULT AudioRendererSettings::GetAvailableAudioDevices(IMMDeviceCollection** ppMMDevices, HWND hDialog, bool pLog)
 {
-  USES_CONVERSION;
 
   HRESULT hr = S_OK;
 
-  CComPtr<IMMDeviceEnumerator> enumerator;
+  Microsoft::WRL::ComPtr<IMMDeviceEnumerator> enumerator;
   Log("CWASAPIRenderFilter::GetAvailableAudioDevices");
-  hr = enumerator.CoCreateInstance(__uuidof(MMDeviceEnumerator));
+  hr = CoCreateInstance(__uuidof(MMDeviceEnumerator), NULL, CLSCTX_ALL, IID_PPV_ARGS(&enumerator));
 
   if (FAILED(hr))
   {
@@ -834,7 +829,7 @@ HRESULT AudioRendererSettings::GetAvailableAudioDevices(IMMDeviceCollection** pp
       
       if (hDialog)
       {
-        SendDlgItemMessage(hDialog, IDC_AUDIO_DEVICE, CB_ADDSTRING, 0, (LPARAM)W2T(varName.pwszVal));
+        SendDlgItemMessage(hDialog, IDC_AUDIO_DEVICE, CB_ADDSTRING, 0, (LPARAM)ToTchar(varName.pwszVal).c_str());
         if (m_wWASAPIPreferredDeviceId && wcscmp(pwszID, m_wWASAPIPreferredDeviceId) == 0)
           SendDlgItemMessage(hDialog, IDC_AUDIO_DEVICE, CB_SETCURSEL, i + 1, 0);
       }
@@ -916,12 +911,6 @@ void AudioRendererSettings::SetAudioDevice(LPWSTR setting)
   CAutoLock settingLock(&m_csSettings);
   IMMDeviceCollection* devices = NULL;
   HRESULT hr = S_OK;
-
-  if (FAILED(hr))
-  {
-    Log("SetAudioDevice failed (0x%08x)", hr);
-    return;
-  }
 
   if (!setting || wcscmp(setting, L"") == 0) // default audio device
   {
@@ -1513,6 +1502,8 @@ HRESULT AudioRendererSettings::SetInt(MPARSetting setting, int value)
       else
         hr = E_INVALIDARG;
 
+      break;
+
     case USE_FILTERS:
       if (IsValidUseFilters(value))
         m_nUseFilters = value;
@@ -1530,8 +1521,32 @@ HRESULT AudioRendererSettings::SetInt(MPARSetting setting, int value)
 
 STDMETHODIMP AudioRendererSettings::GetString(MPARSetting setting, LPWSTR* ppValue)
 {
-  CheckPointer(*ppValue, E_POINTER);
-  return E_NOTIMPL;
+  CheckPointer(ppValue, E_POINTER);
+  *ppValue = NULL;
+
+  switch (setting)
+  {
+    case SETTING_AUDIO_DEVICE:
+    {
+      // The end point id that SetString() takes; an empty string means the default audio device.
+      // The caller frees the string with CoTaskMemFree().
+      CAutoLock settingLock(&m_csSettings);
+      const WCHAR* id = m_wWASAPIPreferredDeviceId ? m_wWASAPIPreferredDeviceId : L"";
+      const size_t length = wcsnlen(id, MAX_REG_LENGTH - 1);
+
+      LPWSTR copy = (LPWSTR)CoTaskMemAlloc((length + 1) * sizeof(WCHAR));
+      if (!copy)
+        return E_OUTOFMEMORY;
+
+      memcpy(copy, id, length * sizeof(WCHAR));
+      copy[length] = 0;
+      *ppValue = copy;
+      return S_OK;
+    }
+
+    default:
+      return E_NOTIMPL;
+  }
 }
 
 STDMETHODIMP AudioRendererSettings::SetString(MPARSetting setting, LPWSTR pValue)

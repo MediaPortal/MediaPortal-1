@@ -20,7 +20,6 @@
 #include "StreamSwitcher.h"
 
 #include "Shlwapi.h"
-#include <atlpath.h>
 #include <mmreg.h>
 #include <ks.h>
 #include <ksmedia.h>
@@ -61,11 +60,11 @@ HRESULT GetPeer(CStreamSwitcherFilter* pFilter, T** ppT)
 	CBasePin* pPin = pFilter->GetInputPin();
 	if(!pPin) return E_NOTIMPL;
 
-    CComPtr<IPin> pConnected;
+    ComPtr<IPin> pConnected;
     if(FAILED(pPin->ConnectedTo(&pConnected))) 
 		return E_NOTIMPL;
 
-	if(CComQIPtr<T> pT = pConnected)
+	if(auto pT = ComQuery<T>(pConnected))
 	{
 		*ppT = pT.Detach();
 		return S_OK;
@@ -75,25 +74,23 @@ HRESULT GetPeer(CStreamSwitcherFilter* pFilter, T** ppT)
 }
 
 #define CallPeerSeeking(call) \
-	CComPtr<IMediaSeeking> pMS; \
-	if(FAILED(GetPeer(m_pFilter, &pMS))) return E_NOTIMPL; \
+	ComPtr<IMediaSeeking> pMS; \
+	if(FAILED(GetPeer(m_pFilter, pMS.GetAddressOf()))) return E_NOTIMPL; \
 	return pMS->##call; \
 
 #define CallPeer(call) \
-	CComPtr<IMediaPosition> pMP; \
-	if(FAILED(GetPeer(m_pFilter, &pMP))) return E_NOTIMPL; \
+	ComPtr<IMediaPosition> pMP; \
+	if(FAILED(GetPeer(m_pFilter, pMP.GetAddressOf()))) return E_NOTIMPL; \
 	return pMP->##call; \
 
 #define CallPeerSeekingAll(call) \
 	HRESULT hr = E_NOTIMPL; \
-	POSITION pos = m_pFilter->m_pInputs.GetHeadPosition(); \
-	while(pos) \
+	for(CBasePin* pPin : m_pFilter->m_pInputs) \
 	{ \
-		CBasePin* pPin = m_pFilter->m_pInputs.GetNext(pos); \
-		CComPtr<IPin> pConnected; \
+		ComPtr<IPin> pConnected; \
 	    if(FAILED(pPin->ConnectedTo(&pConnected))) \
 			continue; \
-		if(CComQIPtr<IMediaSeeking> pMS = pConnected) \
+		if(auto pMS = ComQuery<IMediaSeeking>(pConnected)) \
 		{ \
 			HRESULT hr2 = pMS->call; \
 			if(pPin == m_pFilter->GetInputPin()) \
@@ -104,14 +101,12 @@ HRESULT GetPeer(CStreamSwitcherFilter* pFilter, T** ppT)
 
 #define CallPeerAll(call) \
 	HRESULT hr = E_NOTIMPL; \
-	POSITION pos = m_pFilter->m_pInputs.GetHeadPosition(); \
-	while(pos) \
+	for(CBasePin* pPin : m_pFilter->m_pInputs) \
 	{ \
-		CBasePin* pPin = m_pFilter->m_pInputs.GetNext(pos); \
-		CComPtr<IPin> pConnected; \
+		ComPtr<IPin> pConnected; \
 	    if(FAILED(pPin->ConnectedTo(&pConnected))) \
 			continue; \
-		if(CComQIPtr<IMediaPosition> pMP = pConnected) \
+		if(auto pMP = ComQuery<IMediaPosition>(pConnected)) \
 		{ \
 			HRESULT hr2 = pMP->call; \
 			if(pPin == m_pFilter->GetInputPin()) \
@@ -346,7 +341,7 @@ HRESULT CStreamSwitcherInputPin::QueryAcceptDownstream(const AM_MEDIA_TYPE* pmt)
 
 	if(pOut && pOut->IsConnected())
 	{
-		if(CComPtr<IPinConnection> pPC = pOut->CurrentPinConnection())
+		if(ComPtr<IPinConnection> pPC = pOut->CurrentPinConnection())
 		{
 			hr = pPC->DynamicQueryAccept(pmt);
 			if(hr == S_OK) return S_OK;
@@ -372,7 +367,7 @@ HRESULT CStreamSwitcherInputPin::InitializeOutputSample(IMediaSample* pInSample,
 	CStreamSwitcherOutputPin* pOut = ((CStreamSwitcherFilter*)m_pFilter)->GetOutputPin();
 	ASSERT(pOut->GetConnected());
 
-    CComPtr<IMediaSample> pOutSample;
+    ComPtr<IMediaSample> pOutSample;
 
 	DWORD dwFlags = m_bSampleSkipped ? AM_GBF_PREVFRAMESKIPPED : 0;
 
@@ -390,7 +385,7 @@ HRESULT CStreamSwitcherInputPin::InitializeOutputSample(IMediaSample* pInSample,
 	if(!pOutSample) 
 		return E_FAIL;
 
-    if(CComQIPtr<IMediaSample2> pOutSample2 = pOutSample)
+    if(auto pOutSample2 = ComQuery<IMediaSample2>(pOutSample))
 	{
         AM_SAMPLE2_PROPERTIES OutProps;
 		EXECUTE_ASSERT(SUCCEEDED(pOutSample2->GetProperties(FIELD_OFFSET(AM_SAMPLE2_PROPERTIES, tStart), (PBYTE)&OutProps)));
@@ -457,8 +452,8 @@ HRESULT CStreamSwitcherInputPin::CompleteConnect(IPin* pReceivePin)
 	m_fCanBlock = false;
 	bool fForkedSomewhere = false;
 
-	CStringW fileName;
-	CStringW pinName;
+	std::wstring fileName;
+	std::wstring pinName;
 
     IPin* pPin = (IPin*)this;
 	IBaseFilter* pBF = (IBaseFilter*)m_pFilter;
@@ -478,7 +473,7 @@ HRESULT CStreamSwitcherInputPin::CompleteConnect(IPin* pReceivePin)
 		CountPins(pBF, nIn, nOut, nInC, nOutC);
 		fForkedSomewhere = fForkedSomewhere || nIn > 1 || nOut > 1;
 
-		if(CComQIPtr<IFileSourceFilter> pFSF = pBF)
+		if(auto pFSF = ComQuery<IFileSourceFilter>(pBF))
 		{
 			WCHAR* pszName = NULL;
 			AM_MEDIA_TYPE mt;
@@ -487,18 +482,18 @@ HRESULT CStreamSwitcherInputPin::CompleteConnect(IPin* pReceivePin)
 				fileName = pszName;
 				CoTaskMemFree(pszName);
 
-				fileName.Replace('\\', '/');
-				CStringW fn = fileName.Mid(fileName.ReverseFind('/')+1);
-				if(!fn.IsEmpty()) fileName = fn;
+				StringReplace(fileName, '\\', '/');
+				std::wstring fn = StringMid(fileName, StringRFind(fileName, '/')+1);
+				if(!fn.empty()) fileName = fn;
 
 				// Haali & LAVFSplitter return only one "Audio" pin name, cause CMainFrame::OnInitMenuPopup lookup find the wrong popmenu,
 				// add space at the end to prevent this, internal filter never return "Audio" only.
-				if(!pinName.IsEmpty()) fileName = pinName + L" "; 
+				if(!pinName.empty()) fileName = pinName + L" "; 
 
-				WCHAR* pName = new WCHAR[fileName.GetLength()+1];
+				WCHAR* pName = new WCHAR[int(fileName.size())+1];
 				if(pName)
 				{
-					wcscpy(pName, fileName);
+					wcscpy(pName, fileName.c_str());
 					if(m_pName) delete [] m_pName;
 					m_pName = pName;
 				}
@@ -712,7 +707,7 @@ STDMETHODIMP CStreamSwitcherInputPin::Receive(IMediaSample* pSample)
 		m_SampleProps.dwSampleFlags |= AM_SAMPLE_TYPECHANGED/*|AM_SAMPLE_DATADISCONTINUITY|AM_SAMPLE_TIMEDISCONTINUITY*/;
 
 /*
-		if(CComQIPtr<IPinConnection> pPC = pOut->CurrentPinConnection())
+		if(auto pPC = ComQuery<IPinConnection>(pOut->CurrentPinConnection()))
 		{
 			HANDLE hEOS = CreateEvent(NULL, FALSE, FALSE, NULL);
 			hr = pPC->NotifyEndOfStream(hEOS);
@@ -742,7 +737,7 @@ STDMETHODIMP CStreamSwitcherInputPin::Receive(IMediaSample* pSample)
 		}
 	}
 
-	CComPtr<IMediaSample> pOutSample;
+	ComPtr<IMediaSample> pOutSample;
 	if(FAILED(InitializeOutputSample(pSample, &pOutSample)))
 		return E_FAIL;
 
@@ -766,13 +761,13 @@ STDMETHODIMP CStreamSwitcherInputPin::Receive(IMediaSample* pSample)
 
 	// Transform
 
-	hr = ((CStreamSwitcherFilter*)m_pFilter)->Transform(pSample, pOutSample);
+	hr = ((CStreamSwitcherFilter*)m_pFilter)->Transform(pSample, pOutSample.Get());
 
 	//
 
     if(S_OK == hr)
 	{
-		hr = pOut->Deliver(pOutSample);
+		hr = pOut->Deliver(pOutSample.Get());
 		if (FAILED(hr))
 		{
 			//sample was not delivered (usually becouse of flushing)
@@ -799,7 +794,7 @@ STDMETHODIMP CStreamSwitcherInputPin::Receive(IMediaSample* pSample)
     else if(S_FALSE == hr)
 	{
 		hr = S_OK;
-		pOutSample = NULL;
+		pOutSample = nullptr;
 		m_bSampleSkipped = TRUE;
 		
 		if(!m_bQualityChanged)
@@ -875,7 +870,7 @@ HRESULT CStreamSwitcherOutputPin::QueryAcceptUpstream(const AM_MEDIA_TYPE* pmt)
 
 	if(pIn && pIn->IsConnected() && (pIn->IsUsingOwnAllocator() || pIn->CurrentMediaType() == *pmt))
 	{
-		if(CComQIPtr<IPin> pPinTo = pIn->GetConnected())
+		if(auto pPinTo = ComQuery<IPin>(pIn->GetConnected()))
 		{
 			if(S_OK != (hr = pPinTo->QueryAccept(pmt)))
 				return VFW_E_TYPE_NOT_ACCEPTED;
@@ -896,7 +891,7 @@ HRESULT CStreamSwitcherOutputPin::DecideBufferSize(IMemAllocator* pAllocator, AL
 	CStreamSwitcherInputPin* pIn = ((CStreamSwitcherFilter*)m_pFilter)->GetInputPin();
 	if(!pIn || !pIn->IsConnected()) return E_UNEXPECTED;
 
-	CComPtr<IMemAllocator> pAllocatorIn;
+	ComPtr<IMemAllocator> pAllocatorIn;
 	pIn->GetAllocator(&pAllocatorIn);
 	if(!pAllocatorIn) return E_UNEXPECTED;
 
@@ -926,13 +921,13 @@ DEFINE_GUID(CLSID_MPAudioRenderer,
 
 HRESULT CStreamSwitcherOutputPin::CheckConnect(IPin* pPin)
 {
-	CComPtr<IBaseFilter> pBF = GetFilterFromPin(pPin);
+	ComPtr<IBaseFilter> pBF = GetFilterFromPin(pPin);
 	CLSID clsid;
 	bool bAccept = false;
 		
 	if (pBF)
 	{
-		bAccept = IsAudioWaveRenderer(pBF);
+		bAccept = IsAudioWaveRenderer(pBF.Get());
 		if (!bAccept)
 		{
 			clsid = GUID_NULL;
@@ -944,19 +939,19 @@ HRESULT CStreamSwitcherOutputPin::CheckConnect(IPin* pPin)
 	return 
 		bAccept ? __super::CheckConnect(pPin) : E_FAIL;
 
-//	return CComQIPtr<IPinConnection>(pPin) ? CBaseOutputPin::CheckConnect(pPin) : E_NOINTERFACE;
+//	return ComQuery<IPinConnection>(pPin) ? CBaseOutputPin::CheckConnect(pPin) : E_NOINTERFACE;
 //	return CBaseOutputPin::CheckConnect(pPin);
 }
 
 HRESULT CStreamSwitcherOutputPin::BreakConnect()
 {
-	m_pPinConnection = NULL;
+	m_pPinConnection = nullptr;
 	return __super::BreakConnect();
 }
 
 HRESULT CStreamSwitcherOutputPin::CompleteConnect(IPin* pReceivePin)
 {
-	m_pPinConnection = CComQIPtr<IPinConnection>(pReceivePin);
+	m_pPinConnection = ComQuery<IPinConnection>(pReceivePin);
 	return __super::CompleteConnect(pReceivePin);
 }
 
@@ -970,7 +965,7 @@ HRESULT CStreamSwitcherOutputPin::GetMediaType(int iPosition, CMediaType* pmt)
 	CStreamSwitcherInputPin* pIn = ((CStreamSwitcherFilter*)m_pFilter)->GetInputPin();
 	if(!pIn || !pIn->IsConnected()) return E_UNEXPECTED;
 
-	CComPtr<IEnumMediaTypes> pEM;
+	ComPtr<IEnumMediaTypes> pEM;
 	if(FAILED(pIn->GetConnected()->EnumMediaTypes(&pEM)))
 		return VFW_S_NO_MORE_ITEMS;
 
@@ -1015,16 +1010,16 @@ STDMETHODIMP CStreamSwitcherOutputPin::Notify(IBaseFilter* pSender, Quality q)
 
 STDMETHODIMP CStreamSwitcherOutputPin::Render(IPin* ppinOut, IGraphBuilder* pGraph)
 {
-	CComPtr<IBaseFilter> pBF;
-	pBF.CoCreateInstance(CLSID_DSoundRender);
-	if(!pBF || FAILED(pGraph->AddFilter(pBF, L"Default DirectSound Device")))
+	ComPtr<IBaseFilter> pBF;
+	CoCreateInstance(CLSID_DSoundRender, nullptr, CLSCTX_ALL, IID_PPV_ARGS(&pBF));
+	if(!pBF || FAILED(pGraph->AddFilter(pBF.Get(), L"Default DirectSound Device")))
 	{
 		return E_FAIL;
 	}
 
-	if(FAILED(pGraph->ConnectDirect(ppinOut, GetFirstDisconnectedPin(pBF, PINDIR_INPUT), NULL)))
+	if(FAILED(pGraph->ConnectDirect(ppinOut, GetFirstDisconnectedPin(pBF.Get(), PINDIR_INPUT), NULL)))
 	{
-		pGraph->RemoveFilter(pBF);
+		pGraph->RemoveFilter(pBF.Get());
 		return E_FAIL;
 	}
 
@@ -1049,21 +1044,21 @@ CStreamSwitcherFilter::CStreamSwitcherFilter(LPUNKNOWN lpunk, HRESULT* phr, cons
 
 	do
 	{
-		CAutoPtr<CStreamSwitcherInputPin> pInput;
-		CAutoPtr<CStreamSwitcherOutputPin> pOutput;
+		std::unique_ptr<CStreamSwitcherInputPin> pInput;
+		std::unique_ptr<CStreamSwitcherOutputPin> pOutput;
 
 		hr = S_OK;
-        pInput.Attach(new CStreamSwitcherInputPin(this, &hr, L"Channel 1"));
+        pInput.reset(new CStreamSwitcherInputPin(this, &hr, L"Channel 1"));
 		if(!pInput || FAILED(hr)) break;
 
 		hr = S_OK;
-		pOutput.Attach(new CStreamSwitcherOutputPin(this, &hr));
+		pOutput.reset(new CStreamSwitcherOutputPin(this, &hr));
         if(!pOutput || FAILED(hr)) break;
 
 		CAutoLock cAutoLock(&m_csPins);
         
-		m_pInputs.AddHead(m_pInput = pInput.Detach());
-		m_pOutput = pOutput.Detach();
+		m_pInputs.push_front(m_pInput = pInput.release());
+		m_pOutput = pOutput.release();
 
 		return;
 	}
@@ -1076,9 +1071,8 @@ CStreamSwitcherFilter::~CStreamSwitcherFilter()
 {
 	CAutoLock cAutoLock(&m_csPins);
 
-	POSITION pos = m_pInputs.GetHeadPosition();
-	while(pos) delete m_pInputs.GetNext(pos);
-	m_pInputs.RemoveAll();
+	for(CStreamSwitcherInputPin* pPin : m_pInputs) delete pPin;
+	m_pInputs.clear();
 	m_pInput = NULL;
 
 	delete m_pOutput;
@@ -1098,7 +1092,7 @@ int CStreamSwitcherFilter::GetPinCount()
 {
 	CAutoLock cAutoLock(&m_csPins);
 
-	return(1 + (int)m_pInputs.GetCount());
+	return(1 + (int)m_pInputs.size());
 }
 
 CBasePin* CStreamSwitcherFilter::GetPin(int n)
@@ -1107,7 +1101,7 @@ CBasePin* CStreamSwitcherFilter::GetPin(int n)
 
 	if(n < 0 || n >= GetPinCount()) return NULL;
 	else if(n == 0) return m_pOutput;
-	else return m_pInputs.GetAt(m_pInputs.FindIndex(n-1));
+	else return *std::next(m_pInputs.begin(), n-1);
 }
 
 int CStreamSwitcherFilter::GetConnectedInputPinCount()
@@ -1116,10 +1110,9 @@ int CStreamSwitcherFilter::GetConnectedInputPinCount()
 
 	int nConnected = 0;
 
-	POSITION pos = m_pInputs.GetHeadPosition();
-	while(pos)
+	for(CStreamSwitcherInputPin* pPin : m_pInputs)
 	{
-		if(m_pInputs.GetNext(pos)->IsConnected()) 
+		if(pPin->IsConnected())
 			nConnected++;
 	}
 
@@ -1130,10 +1123,7 @@ CStreamSwitcherInputPin* CStreamSwitcherFilter::GetConnectedInputPin(int n)
 {
 	if(n >= 0)
 	{
-		POSITION pos = m_pInputs.GetHeadPosition();
-		while(pos)
-		{
-			CStreamSwitcherInputPin* pPin = m_pInputs.GetNext(pos);
+		for (CStreamSwitcherInputPin*pPin : m_pInputs) {
 			if(pPin->IsConnected())
 			{
 				if(n == 0) return(pPin);
@@ -1170,15 +1160,15 @@ HRESULT CStreamSwitcherFilter::CompleteConnect(PIN_DIRECTION dir, CBasePin* pPin
 			m_pInput = (CStreamSwitcherInputPin*)pPin;
 		}
 
-		if(nConnected == m_pInputs.GetCount())
+		if(nConnected == m_pInputs.size())
 		{
-			CStringW name;
-			name.Format(L"Channel %d", ++m_PinVersion);
+			std::wstring name;
+			name = ::Format(L"Channel %d", ++m_PinVersion);
 
 			HRESULT hr = S_OK;
-			CStreamSwitcherInputPin* pPin = new CStreamSwitcherInputPin(this, &hr, name);
+			CStreamSwitcherInputPin* pPin = new CStreamSwitcherInputPin(this, &hr, name.c_str());
 			if(!pPin || FAILED(hr)) return E_FAIL;
-			m_pInputs.AddTail(pPin);
+			m_pInputs.push_back(pPin);
 		}
 	}
 
@@ -1193,10 +1183,7 @@ void CStreamSwitcherFilter::SelectInput(CStreamSwitcherInputPin* pInput)
 	m_pInput = NULL;
 
 	// release blocked GetBuffer in our own allocator & block all Receive
-	POSITION pos = m_pInputs.GetHeadPosition();
-	while(pos)
-	{
-		CStreamSwitcherInputPin* pPin = m_pInputs.GetNext(pos);
+	for (CStreamSwitcherInputPin*pPin : m_pInputs) {
 		pPin->Block(false);
 		// a few Receive calls can arrive here, but since m_pInput == NULL neighter of them gets delivered
 		pPin->Block(true);

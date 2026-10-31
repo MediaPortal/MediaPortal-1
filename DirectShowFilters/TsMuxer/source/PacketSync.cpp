@@ -28,7 +28,7 @@ extern void LogDebug(const char *fmt, ...) ;
 
 CPacketSync::CPacketSync(void)
 {
-	m_tempBufferPos=-1;
+	m_tempBufferPos=0; // bytes of a packet that wait for the rest
 }
 
 CPacketSync::~CPacketSync(void)
@@ -40,19 +40,25 @@ CPacketSync::~CPacketSync(void)
 // datalen=664
 void CPacketSync::OnRawData(byte* pData, int nDataLen)
 {
+	if (pData==NULL || nDataLen<=0) return;
+
 	int syncOffset=0;
-	if (m_tempBufferPos >=0 )
+	if (m_tempBufferPos > 0)
 	{
-		syncOffset = TS_PACKET_LEN - m_tempBufferPos;
-		memcpy(&m_tempBuffer[m_tempBufferPos], pData, syncOffset);
-		OnTsPacket(m_tempBuffer);
+		// finish the packet that was waiting, with as many bytes as there are
+		int n = TS_PACKET_LEN - m_tempBufferPos;
+		if (n > nDataLen) n = nDataLen;
+		memcpy(&m_tempBuffer[m_tempBufferPos], pData, n);
+		m_tempBufferPos += n;
+		syncOffset = n;
+		if (m_tempBufferPos < TS_PACKET_LEN) return; // still not complete
 		m_tempBufferPos = 0;
+		OnTsPacket(m_tempBuffer);
 	}
 
-	while (syncOffset < nDataLen)
+	while (syncOffset + TS_PACKET_LEN <= nDataLen)
 	{
-		if (syncOffset + TS_PACKET_LEN > nDataLen) break;
-		if (pData[syncOffset] != TS_PACKET_SYNC) 
+		if (pData[syncOffset] != TS_PACKET_SYNC)
 		{
 			syncOffset++;
 			continue;
@@ -61,9 +67,12 @@ void CPacketSync::OnRawData(byte* pData, int nDataLen)
 		syncOffset += TS_PACKET_LEN;
 	}
 
+	// less than a packet is left: keep it from the first sync byte on
+	while (syncOffset < nDataLen && pData[syncOffset] != TS_PACKET_SYNC)
+		syncOffset++;
 	if (syncOffset < nDataLen)
 	{
-		m_tempBufferPos= nDataLen - syncOffset;
+		m_tempBufferPos = nDataLen - syncOffset;
 		memcpy( m_tempBuffer, &pData[syncOffset], m_tempBufferPos );
 	}
 }

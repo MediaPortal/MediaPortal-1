@@ -29,8 +29,8 @@ CBaseAudioSink::CBaseAudioSink(bool bHandleSampleRelease, AudioRendererSettings*
   m_pOutputFormat(NULL),
   m_bOutFormatChanged(false),
   m_bDiscontinuity(false),
-  m_pMemAllocator((IUnknown *)NULL),
-  m_pNextOutSample(NULL),
+  m_pMemAllocator(nullptr),
+  m_pNextOutSample(nullptr),
   m_nSampleNum(0),
   m_bFlushing(false),
   m_chOrder(DS_ORDER),
@@ -134,7 +134,7 @@ HRESULT CBaseAudioSink::EndStop()
   CAutoLock lock (&m_csOutputSample);
   
   if (m_pNextOutSample)
-    m_pNextOutSample.Release();
+    m_pNextOutSample.Reset();
 
   if (m_pNextSink)
     return m_pNextSink->EndStop();
@@ -211,7 +211,7 @@ HRESULT CBaseAudioSink::EndFlush()
   m_nSampleNum = 0;
 
   if (m_bHandleSampleRelease)
-    m_pNextOutSample.Release();
+    m_pNextOutSample.Reset();
   
   if (m_pMemAllocator)
     m_pMemAllocator->Commit();
@@ -297,7 +297,7 @@ HRESULT CBaseAudioSink::InitAllocator()
     return hr;
   }
 
-  hr = pAllocator->QueryInterface(IID_IMemAllocator, (void **)&m_pMemAllocator);
+  hr = pAllocator->QueryInterface(IID_IMemAllocator, (void **)m_pMemAllocator.ReleaseAndGetAddressOf());
 
   if (FAILED(hr))
   {
@@ -311,7 +311,7 @@ HRESULT CBaseAudioSink::InitAllocator()
   if (FAILED(hr))
   {
     Log("CBaseAudioSink: Failed to commit allocator properties (0x%08x)", hr);
-    m_pMemAllocator.Release();
+    m_pMemAllocator.Reset();
   }
 
   return hr;
@@ -402,11 +402,11 @@ HRESULT CBaseAudioSink::OutputNextSample()
       m_pNextOutSample->SetTime(&rtStart, &rtStop);
     }
 
-    hr = m_pNextSink->PutSample(m_pNextOutSample);
+    hr = m_pNextSink->PutSample(m_pNextOutSample.Get());
     if (FAILED(hr))
       Log("CBaseAudioSink: Failed to output next sample: 0x%08x", hr);
   }
-  m_pNextOutSample = NULL;
+  m_pNextOutSample.Reset();
   
   return hr;
 }
@@ -451,7 +451,7 @@ HRESULT CBaseAudioSink::ReleaseAllocator()
   if (m_pMemAllocator)
     hr = m_pMemAllocator->Decommit();
 
-  m_pMemAllocator.Release();
+  m_pMemAllocator.Reset();
 
   return hr;
 }

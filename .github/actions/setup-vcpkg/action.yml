@@ -1,0 +1,51 @@
+name: Setup vcpkg
+description: >-
+  Checks out vcpkg at the builtin-baseline of DirectShowFilters/vcpkg.json, bootstraps it,
+  restores the binary cache and installs the native filter dependencies.
+
+inputs:
+  triplets:
+    description: "Space separated vcpkg triplets to install (see DirectShowFilters/vcpkg-triplets)"
+    required: false
+    default: "x86-windows-mp x64-windows-mp"
+  features:
+    description: "Space separated features of DirectShowFilters/vcpkg.json to install (e.g. tests)"
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    - name: Checkout vcpkg at the manifest baseline
+      shell: pwsh
+      run: |
+        $baseline = (Get-Content DirectShowFilters/vcpkg.json -Raw | ConvertFrom-Json).'builtin-baseline'
+        $root = Join-Path $env:RUNNER_TEMP 'vcpkg'
+        git init --quiet $root
+        git -C $root remote add origin https://github.com/microsoft/vcpkg
+        git -C $root fetch --quiet --depth 1 origin $baseline
+        git -C $root checkout --quiet FETCH_HEAD
+        & (Join-Path $root 'bootstrap-vcpkg.bat') -disableMetrics
+        if ($LASTEXITCODE) { exit $LASTEXITCODE }
+        "VCPKG_ROOT=$root" >> $env:GITHUB_ENV
+        $cache = Join-Path $env:RUNNER_TEMP 'vcpkg-cache'
+        New-Item -ItemType Directory -Force $cache | Out-Null
+        "VCPKG_BINARY_SOURCES=clear;files,$cache,readwrite" >> $env:GITHUB_ENV
+
+    - name: Cache vcpkg binaries
+      uses: actions/cache@v4
+      with:
+        path: ${{ runner.temp }}/vcpkg-cache
+        key: vcpkg-${{ inputs.triplets }}-${{ hashFiles('DirectShowFilters/vcpkg.json', 'DirectShowFilters/vcpkg-configuration.json', 'DirectShowFilters/vcpkg-triplets/**') }}
+        restore-keys: |
+          vcpkg-${{ inputs.triplets }}-
+
+    - name: Install native filter dependencies
+      shell: pwsh
+      working-directory: DirectShowFilters
+      run: |
+        $features = @('${{ inputs.features }}'.Split(' ', [StringSplitOptions]::RemoveEmptyEntries) | ForEach-Object { "--x-feature=$_" })
+        foreach ($triplet in '${{ inputs.triplets }}'.Split(' ', [StringSplitOptions]::RemoveEmptyEntries)) {
+          & "$env:VCPKG_ROOT\vcpkg.exe" install --triplet $triplet --x-install-root=vcpkg_installed\$triplet @features --disable-metrics
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+        }

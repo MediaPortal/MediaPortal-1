@@ -5,7 +5,6 @@
 #include "..\subpic\DX9SubPic.h"
 #include "..\subpic\SubPicQueueImpl.h"
 #include <moreuuids.h>
-#include <atlpath.h>
 #include "..\subtitles\VobSubFile.h"
 #include "..\subtitles\RTS.h"
 #include "..\DSUtil\NullRenderers.h"
@@ -19,7 +18,7 @@
 STSStyle g_style;
 BOOL g_overrideUserStyles;
 int g_subPicsBufferAhead(3);
-CSize g_textureSize(800, 600);
+SIZE g_textureSize = MakeSize(800, 600);
 bool g_pow2tex(true);
 BOOL g_disableAnim(TRUE);
 BOOL g_onlyShowForcedSubs;
@@ -41,9 +40,9 @@ CSubManager::CSubManager(IDirect3DDevice9* d3DDev, SIZE size, HRESULT& hr)
 	m_pAllocator = new CDX9SubPicAllocator(d3DDev, g_textureSize, false);
 	hr = S_OK;
 	if (g_subPicsBufferAhead > 0)
-		m_pSubPicQueue = new CSubPicQueue(SubPicQueueSettings(g_subPicsBufferAhead, 2560, 1440, g_disableAnim, 50, 100, true), m_pAllocator, &hr);
+		m_pSubPicQueue = new CSubPicQueue(SubPicQueueSettings(g_subPicsBufferAhead, 2560, 1440, g_disableAnim, 50, 100, true), m_pAllocator.Get(), &hr);
 	else
-		m_pSubPicQueue = new CSubPicQueueNoThread(SubPicQueueSettings(10, 2560, 1440, g_disableAnim, 50, 100, true), m_pAllocator, &hr);
+		m_pSubPicQueue = new CSubPicQueueNoThread(SubPicQueueSettings(0, 2560, 1440, g_disableAnim, 50, 100, true), m_pAllocator.Get(), &hr);
 	if (FAILED(hr))
 	{
 		ATLTRACE("CSubPicQueue creation error: %x", hr);
@@ -62,19 +61,19 @@ void CSubManager::SetDevice(IDirect3DDevice9* d3DDev)
 		// Release ressource
 		if (m_d3DDev)
 		{
-			m_d3DDev.Release();
+			m_d3DDev.Reset();
 		}
 
 		if (m_pAllocator)
 		{
-			m_pAllocator.Release();
+			m_pAllocator.Reset();
 			m_pAllocator.Detach();
 			m_pAllocator = nullptr;
 		}
 
 		if (m_pSubPicQueue)
 		{
-			m_pSubPicQueue.Release();
+			m_pSubPicQueue.Reset();
 			m_pSubPicQueue.Detach();
 			m_pSubPicQueue = nullptr;
 		}
@@ -84,21 +83,21 @@ void CSubManager::SetDevice(IDirect3DDevice9* d3DDev)
 	// Release ressource
 	if (m_d3DDev)
 	{
-		m_d3DDev.Release();
+		m_d3DDev.Reset();
 	}
 
 	m_d3DDev = d3DDev;
 
 	if (m_pAllocator)
 	{
-		m_pAllocator.Release();
+		m_pAllocator.Reset();
 		m_pAllocator.Detach();
 		m_pAllocator = nullptr;
 	}
 
 	if (m_pSubPicQueue)
 	{
-		m_pSubPicQueue.Release();
+		m_pSubPicQueue.Reset();
 		m_pSubPicQueue.Detach();
 		m_pSubPicQueue = nullptr;
 	}
@@ -107,9 +106,9 @@ void CSubManager::SetDevice(IDirect3DDevice9* d3DDev)
 	HRESULT hr = S_OK;
 
 	if (g_subPicsBufferAhead > 0)
-		m_pSubPicQueue = new CSubPicQueue(SubPicQueueSettings(g_subPicsBufferAhead, 2560, 1440, g_disableAnim, 50, 100, true), m_pAllocator, &hr);
+		m_pSubPicQueue = new CSubPicQueue(SubPicQueueSettings(g_subPicsBufferAhead, 2560, 1440, g_disableAnim, 50, 100, true), m_pAllocator.Get(), &hr);
 	else
-		m_pSubPicQueue = new CSubPicQueueNoThread(SubPicQueueSettings(10, 2560, 1440, g_disableAnim, 50, 100, true), m_pAllocator, &hr);
+		m_pSubPicQueue = new CSubPicQueueNoThread(SubPicQueueSettings(0, 2560, 1440, g_disableAnim, 50, 100, true), m_pAllocator.Get(), &hr);
 
 	if (FAILED(hr))
 	{
@@ -120,20 +119,20 @@ void CSubManager::SetDevice(IDirect3DDevice9* d3DDev)
 void CSubManager::ApplyStyle(CRenderedTextSubtitle* pRTS) {
 	if (g_overrideUserStyles)
 	{
-		if (pRTS->m_styles.GetCount() > 1)
+		if (pRTS->m_styles.size() > 1)
 		{ //remove all styles besides Default
-			CString def = _T("Default");
+			tstring def = _T("Default");
 			STSStyle* defStyle;
-			if (pRTS->m_styles.Lookup(def, defStyle))
+			if (Lookup(pRTS->m_styles, def, defStyle))
 			{
-				pRTS->m_styles.RemoveKey(def);
+				pRTS->m_styles.erase(def);
 			}
 			pRTS->m_styles.Free();
 			pRTS->m_styles[def] = defStyle;
 		}
 		//m_playRes defined by PlayResX, PlayResY params of ass
 		//need to set to MPC default which is 384x288 (CSimpleTextSubtitle::Open)
-		pRTS->m_playRes = CSize(384, 288);
+		pRTS->m_playRes = MakeSize(384, 288);
 		pRTS->SetDefaultStyle(g_style);
 	}
 	else if (pRTS->m_bUsingPlayerDefaultStyle)
@@ -164,7 +163,7 @@ void CSubManager::ToggleForcedOnly(bool onlyShowForcedSubs)
 			return;
 		if (clsid == __uuidof(CVobSubFile))
 		{
-			CVobSubFile* pVSF = (CVobSubFile*)m_pSubStream.p;
+			CVobSubFile* pVSF = (CVobSubFile*)m_pSubStream.Get();
 			pVSF->m_bOnlyShowForcedSubs = onlyShowForcedSubs;
 		}
 	}
@@ -173,7 +172,7 @@ void CSubManager::ToggleForcedOnly(bool onlyShowForcedSubs)
 void CSubManager::SetSubPicProvider(ISubStream* pSubStream)
 {
 	m_pSubStream = pSubStream;
-	m_pSubPicQueue->SetSubPicProvider(CComQIPtr<ISubPicProvider>(pSubStream));
+	m_pSubPicQueue->SetSubPicProvider(ComQuery<ISubPicProvider>(pSubStream).Get());
 	m_delay = 0;
 	m_subresync.RemoveAll();
 }
@@ -190,7 +189,7 @@ void CSubManager::ReplaceSubtitle(ISubStream* pSubStreamOld, ISubStream* pSubStr
 
 void CSubManager::InvalidateSubtitle(ISubStream* pSubStream, REFERENCE_TIME rtInvalidate)
 {
-	if (m_pSubStream == pSubStream && m_iSubtitleSel >= 0)
+	if (m_pSubStream.Get() == pSubStream && m_iSubtitleSel >= 0)
 	{
 		ATLTRACE("InvalidateSubtitle!");
 		if (m_pSubPicQueue)
@@ -200,11 +199,11 @@ void CSubManager::InvalidateSubtitle(ISubStream* pSubStream, REFERENCE_TIME rtIn
 
 bool CSubManager::SelectStream(int i)
 {
-	if (i >= 0 && i < (int)m_intSubs.GetCount())
+	if (i >= 0 && i < (int)m_intSubs.size())
 	{
 		int index = m_intSubs[i];
 		m_isIntSubStreamSelected = true;
-		SetSubPicProvider(m_intSubStream);
+		SetSubPicProvider(m_intSubStream.Get());
 		HRESULT hr = m_pSS->Enable(index, AMSTREAMSELECTENABLE_ENABLE);
 		ATLTRACE("SelectStream %d, result: %s", i, hr == S_OK ? "success" : "failure");
 		return hr == S_OK;
@@ -217,16 +216,18 @@ void CSubManager::UpdateSubtitle()
 	ATLTRACE("UpdateSubtitle");
 	int i = m_iSubtitleSel;
 
-	POSITION pos = m_pSubStreams.GetHeadPosition();
-	while (pos && i >= 0)
+	for (const ComPtr<ISubStream>& pSubStream : m_pSubStreams)
 	{
-		CComPtr<ISubStream> pSubStream = m_pSubStreams.GetNext(pos);
+		if (i < 0)
+		{
+			break;
+		}
 		if (i < pSubStream->GetStreamCount())
 		{
 			CAutoLock cAutoLock(&m_csSubLock);
 			m_isIntSubStreamSelected = false;
 			pSubStream->SetStream(i);
-			SetSubPicProvider(pSubStream);
+			SetSubPicProvider(pSubStream.Get());
 			return;
 		}
 		i -= pSubStream->GetStreamCount();
@@ -242,39 +243,40 @@ void CSubManager::UpdateSubtitle()
 int CSubManager::GetExtCount()
 {
 	int cnt = 0;
-	POSITION pos = m_pSubStreams.GetHeadPosition();
-	while (pos) cnt += m_pSubStreams.GetNext(pos)->GetStreamCount();
+	for (const ComPtr<ISubStream>& pSubStream : m_pSubStreams) cnt += pSubStream->GetStreamCount();
 	return cnt;
 }
 
 int CSubManager::GetCount()
 {
-	return GetExtCount() + m_intSubs.GetCount();
+	return GetExtCount() + m_intSubs.size();
 }
 
 BSTR CSubManager::GetLanguageHelper(int i, bool useTrackName)
 {
-	POSITION pos = m_pSubStreams.GetHeadPosition();
-	while (pos && i >= 0)
+	for (const ComPtr<ISubStream>& pSubStream : m_pSubStreams)
 	{
-		CComPtr<ISubStream> pSubStream = m_pSubStreams.GetNext(pos);
+		if (i < 0)
+		{
+			break;
+		}
 
 		if (i < pSubStream->GetStreamCount())
 		{
 			WCHAR* pName = NULL;
 			if (SUCCEEDED(pSubStream->GetStreamInfo(i, &pName, NULL)))
 			{
-				CComBSTR res(pName);
+				BSTR res = SysAllocString(pName);
 				CoTaskMemFree(pName);
-				return res.Detach();
+				return res;
 			}
 			return 0;
 		}
 		i -= pSubStream->GetStreamCount();
 	}
 
-	return (i >= 0 && i < (int)m_intNames.GetCount()) ?
-		(useTrackName ? m_intTrackNames[i].AllocSysString() : m_intNames[i].AllocSysString()) : NULL;
+	return (i >= 0 && i < (int)m_intNames.size()) ?
+		(useTrackName ? StringAllocSys(m_intTrackNames[i]) : StringAllocSys(m_intNames[i])) : NULL;
 }
 
 BSTR CSubManager::GetLanguage(int i)
@@ -345,31 +347,31 @@ void CSubManager::Render(int x, int y, int width, int height, int xOffsetInPixel
 		m_pSubPicQueue->SetTime(m_rtNow);
 	}
 
-	CSize size(width, height);
+	SIZE size = MakeSize(width, height);
 	if (m_lastSize != size && width > 0 && height > 0)
 	{ //adjust texture size
 		ATLTRACE("Size change from %dx%d to %dx%d", m_lastSize.cx, m_lastSize.cy, size.cx, size.cy);
-		m_pAllocator->ChangeDevice(m_d3DDev);
+		m_pAllocator->ChangeDevice(m_d3DDev.Get());
 		//m_pAllocator->SetMaxTextureSize(g_textureSize);
 		m_pAllocator->SetCurSize(size);
-		m_pAllocator->SetCurVidRect(CRect(CPoint(0, 0), size));
+		m_pAllocator->SetCurVidRect(MakeRect(MakePoint(0, 0), size));
 		m_pSubPicQueue->Invalidate(m_rtNow + 1000000);
 		m_lastSize = size;
 	}
 
-	CRect windowRect, videoRect;
-	windowRect = CRect(CPoint(0, 0), size);
-	videoRect = CRect(windowRect);
+	RECT windowRect, videoRect;
+	windowRect = MakeRect(MakePoint(0, 0), size);
+	videoRect = (windowRect);
 
-	CComPtr<ISubPic> pSubPic;
+	ComPtr<ISubPic> pSubPic;
 	if (m_pSubPicQueue->LookupSubPic(m_rtNow, pSubPic))
 	{
-		CRect rcSource, rcDest;
-		if (SUCCEEDED(pSubPic->GetSourceAndDest(windowRect, videoRect, rcSource, rcDest, 1.0, xOffsetInPixels, 0))) {
+		RECT rcSource, rcDest;
+		if (SUCCEEDED(pSubPic->GetSourceAndDest(windowRect, videoRect, &rcSource, &rcDest, 1.0, xOffsetInPixels, 0))) {
 			//ATLTRACE("m_rtNow %d", (long)(m_rtNow/10000000));
 			//ATLTRACE("src: (%d,%d) - (%d,%d)", rcSource.left, rcSource.top, rcSource.right, rcSource.bottom);
 			//ATLTRACE("dst: (%d,%d) - (%d,%d)\n", rcDest.left, rcDest.top, rcDest.right, rcDest.bottom);
-			rcDest.OffsetRect(x, y);
+			::OffsetRect(&rcDest, x, y);
 			DWORD fvf, alphaTest, colorOp, samplerAddressU, samplerAddressV, samplerFtMag, samplerFtMin, samplerFtMip;
 			m_d3DDev->GetFVF(&fvf);
 			m_d3DDev->GetRenderState(D3DRS_ALPHATESTENABLE, &alphaTest);
@@ -383,7 +385,7 @@ void CSubManager::Render(int x, int y, int width, int height, int xOffsetInPixel
 
 			m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
-			pSubPic->AlphaBlt(rcSource, rcDest, NULL/*pTarget*/);
+			pSubPic->AlphaBlt(&rcSource, &rcDest, NULL/*pTarget*/);
 
 			m_d3DDev->SetFVF(fvf);
 			m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, alphaTest);
@@ -399,11 +401,11 @@ void CSubManager::Render(int x, int y, int width, int height, int xOffsetInPixel
 	}
 }
 
-void AlphaBlt(const CRect& windowRect, const CRect& videoRect, ISubPic* pSubPic, SubPicDesc* pTarget, int xOffsetInPixels/* = 0*/, int yOffsetInPixels/* = 0*/)
+void AlphaBlt(const RECT& windowRect, const RECT& videoRect, ISubPic* pSubPic, SubPicDesc* pTarget, int xOffsetInPixels/* = 0*/, int yOffsetInPixels/* = 0*/)
 {
-	CRect rcSource, rcDest;
-	if (SUCCEEDED(pSubPic->GetSourceAndDest(windowRect, videoRect, rcSource, rcDest, 1.0, xOffsetInPixels, yOffsetInPixels))) {
-		pSubPic->AlphaBlt(rcSource, rcDest, pTarget);
+	RECT rcSource, rcDest;
+	if (SUCCEEDED(pSubPic->GetSourceAndDest(windowRect, videoRect, &rcSource, &rcDest, 1.0, xOffsetInPixels, yOffsetInPixels))) {
+		pSubPic->AlphaBlt(&rcSource, &rcDest, pTarget);
 	}
 }
 
@@ -422,7 +424,7 @@ void CSubManager::RenderEx(RECT viewportRect, RECT croppedVideoRect, int xOffset
 		m_pSubPicQueue->SetTime(m_rtNow);
 	}
 
-	CRect windowRect, videoRect;
+	RECT windowRect, videoRect;
 	windowRect = viewportRect;
 	videoRect = croppedVideoRect;
 
@@ -431,32 +433,32 @@ void CSubManager::RenderEx(RECT viewportRect, RECT croppedVideoRect, int xOffset
 	int x = croppedVideoRect.right + croppedVideoRect.left;
 	int y = croppedVideoRect.bottom + croppedVideoRect.top;
 
-	CSize size(width, height);
+	SIZE size = MakeSize(width, height);
 	if (m_lastSize != size && width > 0 && height > 0)
 	{ //adjust texture size
 		ATLTRACE("Size change from %dx%d to %dx%d", m_lastSize.cx, m_lastSize.cy, size.cx, size.cy);
-		m_pAllocator->ChangeDevice(m_d3DDev);
+		m_pAllocator->ChangeDevice(m_d3DDev.Get());
 		//m_pAllocator->SetMaxTextureSize(g_textureSize);
 		m_pAllocator->SetCurSize(size);
-		m_pAllocator->SetCurVidRect(CRect(CPoint(0, 0), size));
+		m_pAllocator->SetCurVidRect(MakeRect(MakePoint(0, 0), size));
 		m_pSubPicQueue->Invalidate(m_rtNow + 1000000);
 		m_lastSize = size;
 	}
 
-	CComPtr<ISubPic> pSubPic;
+	ComPtr<ISubPic> pSubPic;
 	if (m_pSubPicQueue->LookupSubPic(m_rtNow, pSubPic))
 	{
-		CRect rcWindow(windowRect);
-		CRect rcVideo(videoRect);
+		RECT rcWindow = windowRect;
+		RECT rcVideo = videoRect;
 
 		pSubPic->SetRelativeTo(posRelativeToFrame ? RelativeTo::VIDEO : RelativeTo::WINDOW);
 
 		if (m_iSubpicStereoMode == SUBPIC_STEREO_SIDEBYSIDE)
 		{
-			CRect rcTempWindow(windowRect);
-			rcTempWindow.right -= rcTempWindow.Width() / 2;
-			CRect rcTempVideo(videoRect);
-			rcTempVideo.right -= rcTempVideo.Width() / 2;
+			RECT rcTempWindow = windowRect;
+			rcTempWindow.right -= RectWidth(rcTempWindow) / 2;
+			RECT rcTempVideo = videoRect;
+			rcTempVideo.right -= RectWidth(rcTempVideo) / 2;
 
 			xOffsetInPixels = -DefaultStereoOffsetInPixels;
 			DWORD fvf, alphaTest, colorOp, samplerAddressU, samplerAddressV;
@@ -468,7 +470,7 @@ void CSubManager::RenderEx(RECT viewportRect, RECT croppedVideoRect, int xOffset
 
 			m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
-			AlphaBlt(rcTempWindow, rcTempVideo, pSubPic, NULL, xOffsetInPixels, 0);
+			AlphaBlt(rcTempWindow, rcTempVideo, pSubPic.Get(), NULL, xOffsetInPixels, 0);
 
 			m_d3DDev->SetFVF(fvf);
 			m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, alphaTest);
@@ -477,15 +479,15 @@ void CSubManager::RenderEx(RECT viewportRect, RECT croppedVideoRect, int xOffset
 			m_d3DDev->SetSamplerState(0, D3DSAMP_ADDRESSU, samplerAddressU);
 			m_d3DDev->SetSamplerState(0, D3DSAMP_ADDRESSV, samplerAddressV);
 
-			rcWindow.left += rcWindow.Width() / 2;
-			rcVideo.left += rcVideo.Width() / 2;
+			rcWindow.left += RectWidth(rcWindow) / 2;
+			rcVideo.left += RectWidth(rcVideo) / 2;
 		}
 		else if (m_iSubpicStereoMode == SUBPIC_STEREO_TOPANDBOTTOM)
 		{
-			CRect rcTempWindow(windowRect);
-			rcTempWindow.bottom -= rcTempWindow.Height() / 2;
-			CRect rcTempVideo(videoRect);
-			rcTempVideo.bottom -= rcTempVideo.Height() / 2;
+			RECT rcTempWindow = windowRect;
+			rcTempWindow.bottom -= RectHeight(rcTempWindow) / 2;
+			RECT rcTempVideo = videoRect;
+			rcTempVideo.bottom -= RectHeight(rcTempVideo) / 2;
 
 			xOffsetInPixels = -DefaultStereoOffsetInPixels;
 
@@ -498,7 +500,7 @@ void CSubManager::RenderEx(RECT viewportRect, RECT croppedVideoRect, int xOffset
 
 			m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
-			AlphaBlt(rcTempWindow, rcTempVideo, pSubPic, NULL, xOffsetInPixels, 0);
+			AlphaBlt(rcTempWindow, rcTempVideo, pSubPic.Get(), NULL, xOffsetInPixels, 0);
 
 			m_d3DDev->SetFVF(fvf);
 			m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, alphaTest);
@@ -507,8 +509,8 @@ void CSubManager::RenderEx(RECT viewportRect, RECT croppedVideoRect, int xOffset
 			m_d3DDev->SetSamplerState(0, D3DSAMP_ADDRESSU, samplerAddressU);
 			m_d3DDev->SetSamplerState(0, D3DSAMP_ADDRESSV, samplerAddressV);
 
-			rcWindow.top += rcWindow.Height() / 2;
-			rcVideo.top += rcVideo.Height() / 2;
+			rcWindow.top += RectHeight(rcWindow) / 2;
+			rcVideo.top += RectHeight(rcVideo) / 2;
 		}
 		{
 			xOffsetInPixels = DefaultStereoOffsetInPixels;
@@ -522,7 +524,7 @@ void CSubManager::RenderEx(RECT viewportRect, RECT croppedVideoRect, int xOffset
 
 			m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
-			AlphaBlt(rcWindow, rcVideo, pSubPic, NULL, xOffsetInPixels, 0);
+			AlphaBlt(rcWindow, rcVideo, pSubPic.Get(), NULL, xOffsetInPixels, 0);
 
 			m_d3DDev->SetFVF(fvf);
 			m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, alphaTest);
@@ -531,13 +533,13 @@ void CSubManager::RenderEx(RECT viewportRect, RECT croppedVideoRect, int xOffset
 			m_d3DDev->SetSamplerState(0, D3DSAMP_ADDRESSU, samplerAddressU);
 			m_d3DDev->SetSamplerState(0, D3DSAMP_ADDRESSV, samplerAddressV);
 		}
-		//CRect rcSource, rcDest;
+		//RECT rcSource, rcDest;
 		//if (SUCCEEDED(pSubPic->GetSourceAndDest(&size, rcSource, rcDest, xOffsetInPixels)))
 		//{
 		//  //ATLTRACE("m_rtNow %d", (long)(m_rtNow/10000000));
 		//  //ATLTRACE("src: (%d,%d) - (%d,%d)", rcSource.left, rcSource.top, rcSource.right, rcSource.bottom);
 		//  //ATLTRACE("dst: (%d,%d) - (%d,%d)\n", rcDest.left, rcDest.top, rcDest.right, rcDest.bottom);
-		//  rcDest.OffsetRect(x, y);
+		//  ::OffsetRect(&rcDest, x, y);
 		//  DWORD fvf, alphaTest, colorOp, samplerAddressU, samplerAddressV;
 		//  m_d3DDev->GetFVF(&fvf);
 		//  m_d3DDev->GetRenderState(D3DRS_ALPHATESTENABLE, &alphaTest);
@@ -547,7 +549,7 @@ void CSubManager::RenderEx(RECT viewportRect, RECT croppedVideoRect, int xOffset
 
 		//  m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE, posRelativeToFrame);
 
-		//  pSubPic->AlphaBlt(rcSource, rcDest, NULL/*pTarget*/);
+		//  pSubPic->AlphaBlt(&rcSource, &rcDest, NULL/*pTarget*/);
 
 		//  m_d3DDev->SetFVF(fvf);
 		//  m_d3DDev->SetRenderState(D3DRS_ALPHATESTENABLE, alphaTest);
@@ -589,16 +591,16 @@ void CSubManager::LoadInternalSubtitles(IGraphBuilder* pGB, bool onlyShowForcedS
 {
 	BeginEnumFilters(pGB, pEF, pBF)
 	{
-		ATLTRACE(L"Processing filter: %s", GetFilterName(pBF).GetString());
-		if (!IsSplitter(pBF)) continue;
+		ATLTRACE(L"Processing filter: %s", GetFilterName(pBF.Get()).c_str());
+		if (!IsSplitter(pBF.Get())) continue;
 		ATLTRACE("Is splitter!");
-		if (m_pSS != 0 && CComQIPtr<IAMStreamSelect>(pBF) != 0)
+		if (m_pSS && ComQuery<IAMStreamSelect>(pBF))
 		{
 			ATLTRACE("Skipping - IAMStreamSelect filter already set!");
 			continue;
 		}
 
-		CComQIPtr<ITrackInfo> pTrackInfo(pBF);
+		auto pTrackInfo = ComQuery<ITrackInfo>(pBF);
 		int index = -1;
 
 		BeginEnumPins(pBF, pEP, pPin)
@@ -608,59 +610,59 @@ void CSubManager::LoadInternalSubtitles(IGraphBuilder* pGB, bool onlyShowForcedS
 			if (pindir != PINDIR_OUTPUT)
 				continue;
 			index++;
-			CComPtr<IPin> pPinTo;
+			ComPtr<IPin> pPinTo;
 			pPin->ConnectedTo(&pPinTo);
 			if (pPinTo)
 			{
-				if (!isTextConnection(pPin))
+				if (!isTextConnection(pPin.Get()))
 					continue;
-				pGB->Disconnect(pPin);
-				pGB->Disconnect(pPinTo);
+				pGB->Disconnect(pPin.Get());
+				pGB->Disconnect(pPinTo.Get());
 			}
-			else if (!IsTextPin(pPin))
+			else if (!IsTextPin(pPin.Get()))
 				continue;
 
-			CComQIPtr<IBaseFilter> pTPTF = new CTextPassThruFilter(this);
-			CStringW name;
-			name.Format(L"TextPassThru%08x", pTPTF);
-			if (FAILED(pGB->AddFilter(pTPTF, name)))
+			auto pTPTF = ComQuery<IBaseFilter>(static_cast<IBaseFilter*>(new CTextPassThruFilter(this)));
+			std::wstring name;
+			name = ::Format(L"TextPassThru%08x", pTPTF.Get());
+			if (FAILED(pGB->AddFilter(pTPTF.Get(), name.c_str())))
 				continue;
 
-			CComQIPtr<ISubStream> pSubStream;
+			ComPtr<ISubStream> pSubStream;
 			HRESULT hr;
 			do
 			{
-				if (FAILED(hr = pGB->ConnectDirect(pPin, GetFirstPin(pTPTF, PINDIR_INPUT), NULL)))
+				if (FAILED(hr = pGB->ConnectDirect(pPin.Get(), GetFirstPin(pTPTF.Get(), PINDIR_INPUT), NULL)))
 				{
 					ATLTRACE("connection to TextPassThruFilter failed: %x", hr);
 					break;
 				}
-				CComQIPtr<IBaseFilter> pNTR = new CNullTextRenderer(NULL, &hr);
-				if (FAILED(hr) || FAILED(pGB->AddFilter(pNTR, NULL)))
+				auto pNTR = ComQuery<IBaseFilter>(static_cast<IBaseFilter*>(new CNullTextRenderer(NULL, &hr)));
+				if (FAILED(hr) || FAILED(pGB->AddFilter(pNTR.Get(), NULL)))
 					break;
 
-				if FAILED(hr = pGB->ConnectDirect(GetFirstPin(pTPTF, PINDIR_OUTPUT), GetFirstPin(pNTR, PINDIR_INPUT), NULL))
+				if FAILED(hr = pGB->ConnectDirect(GetFirstPin(pTPTF.Get(), PINDIR_OUTPUT), GetFirstPin(pNTR.Get(), PINDIR_INPUT), NULL))
 					break;
-				pSubStream = pTPTF;
+				pSubStream = ComQuery<ISubStream>(pTPTF);
 			} while (0);
 
 			if (pSubStream)
 			{
-				ApplyStyleSubStream(pSubStream);
-				if (m_pSS == 0 && ((m_pSS = pBF) != 0))
+				ApplyStyleSubStream(pSubStream.Get());
+				if (!m_pSS && (m_pSS = ComQuery<IAMStreamSelect>(pBF)))
 				{
-					InitInternalSubs(pBF, lcidci);
+					InitInternalSubs(pBF.Get(), lcidci);
 					m_intSubStream = pSubStream;
 				}
 				else
 				{
-					m_pSubStreams.AddTail(pSubStream);
+					m_pSubStreams.push_back(pSubStream);
 					if (pTrackInfo) {
 						TrackElement trackElement;
 						memset(&trackElement, 0, sizeof(trackElement));
 						pTrackInfo->GetTrackInfo(index, &trackElement);
 						if (trackElement.FlagForced) {
-							m_forcedSubIndex = m_pSubStreams.GetCount() - 1;
+							m_forcedSubIndex = m_pSubStreams.size() - 1;
 							ATLTRACE("subtitle track %d is forced", index);
 						}
 					}
@@ -669,7 +671,7 @@ void CSubManager::LoadInternalSubtitles(IGraphBuilder* pGB, bool onlyShowForcedS
 			else
 			{
 				ATLTRACE("TextPassThruFilter removed");
-				pGB->RemoveFilter(pTPTF);
+				pGB->RemoveFilter(pTPTF.Get());
 			}
 		}
 		EndEnumPins
@@ -683,7 +685,7 @@ void CSubManager::InitInternalSubs(IBaseFilter* pBF, LCID lcidci)
 	DWORD cStreams = 0;
 	if (SUCCEEDED(m_pSS->Count(&cStreams)))
 	{
-		CComQIPtr<ITrackInfo> pTrackInfo(pBF);
+		auto pTrackInfo = ComQuery<ITrackInfo>(pBF);
 		for (int i = 0; i < (int)cStreams; i++)
 		{
 			DWORD dwFlags = 0;
@@ -696,24 +698,24 @@ void CSubManager::InitInternalSubs(IBaseFilter* pBF, LCID lcidci)
 
 			if (dwGroup == 2)
 			{
-				CString lang, langForced, track(pszName);
+				tstring lang, langForced, track(pszName);
 				if (lcid == 0)
 				{
 					lang = pszName;
-					if (lang.Find(L"No ") >= 0)
-						lang.Empty();
+					if (StringFind(lang, L"No ") >= 0)
+						lang.clear();
 				}
 				else
 				{
-					int len = GetLocaleInfo(lcid, LOCALE_SENGLANGUAGE, lang.GetBuffer(64), 64);
-					lang.ReleaseBufferSetLength(std::max(len - 1, 0));
+					int len = GetLocaleInfo(lcid, LOCALE_SENGLANGUAGE, StringBuffer(lang, 64), 64);
+					StringRelease(lang, std::max(len - 1, 0));
 				}
-				if (!lang.IsEmpty())
+				if (!lang.empty())
 				{
-					ATLTRACE(L"InitInternalSubs: %d, %s", i, lang);
-					m_intSubs.Add(i);
-					m_intNames.Add(lang);
-					m_intTrackNames.Add(track);
+					ATLTRACE(L"InitInternalSubs: %d, %s", i, lang.c_str());
+					m_intSubs.push_back(i);
+					m_intNames.push_back(lang);
+					m_intTrackNames.push_back(track);
 					if (pTrackInfo)
 					{
 						TrackElement trackElement;
@@ -729,13 +731,13 @@ void CSubManager::InitInternalSubs(IBaseFilter* pBF, LCID lcidci)
 						pTrackInfo->GetTrackInfo(i, &trackElement);
 						if (trackElement.FlagForced) {
 							langForced = pszName;
-							if (m_forcedSubIndex <= -1 && langForced.Find(L"Forced Subtitles (auto)") >= 0)
+							if (m_forcedSubIndex <= -1 && StringFind(langForced, L"Forced Subtitles (auto)") >= 0)
 							{
-								m_forcedSubIndex = m_intSubs.GetCount() - 1;
+								m_forcedSubIndex = m_intSubs.size() - 1;
 							}
-							else if (((lcid == lcidci) || (lcid == lcidciTrad)) && langForced.Find(L"Forced Subtitles (auto)") <= 0)
+							else if (((lcid == lcidci) || (lcid == lcidciTrad)) && StringFind(langForced, L"Forced Subtitles (auto)") <= 0)
 							{
-								m_forcedSubIndex = m_intSubs.GetCount() - 1;
+								m_forcedSubIndex = m_intSubs.size() - 1;
 								ATLTRACE("subtitle track %d is forced", i);
 							}
 						}
@@ -753,26 +755,26 @@ void CSubManager::InitInternalSubs(IBaseFilter* pBF, LCID lcidci)
 void CSubManager::LoadExternalSubtitles(const wchar_t* filename, const wchar_t* subpaths, bool onlyShowForcedSubs)
 {
 	m_movieFile = filename;
-	CAtlArray<CString> paths;
+	std::vector<tstring> paths;
 
-	CString allpaths = subpaths;
-	CString path;
+	tstring allpaths = subpaths;
+	tstring path;
 	int start = 0;
 	int prev = 0;
 
 	while (start != -1)
 	{
-		start = allpaths.Find(',', start);
+		start = StringFind(allpaths, ',', start);
 		if (start > 0)
 		{
-			path = allpaths.Mid(prev, start);
-			paths.Add(path);
-			int end = allpaths.Find(',', start + 1);
+			path = StringMid(allpaths, prev, start);
+			paths.push_back(path);
+			int end = StringFind(allpaths, ',', start + 1);
 			if (end > start)
 			{
-				path = allpaths.Mid(start + 1, end - start - 1);
-				paths.Add(path);
-				prev = allpaths.Find(',', end + 1);
+				path = StringMid(allpaths, start + 1, end - start - 1);
+				paths.push_back(path);
+				prev = StringFind(allpaths, ',', end + 1);
 				if (prev > 0)
 				{
 					start++;
@@ -780,70 +782,69 @@ void CSubManager::LoadExternalSubtitles(const wchar_t* filename, const wchar_t* 
 				}
 				else
 				{
-					path = allpaths.Right(allpaths.GetLength() - end - 1);
-					paths.Add(path);
+					path = StringRight(allpaths, int(allpaths.size()) - end - 1);
+					paths.push_back(path);
 					start = -1;
 				}
 			}
 			else
 			{
-				path = allpaths.Right(allpaths.GetLength() - start - 1);
-				paths.Add(path);
+				path = StringRight(allpaths, int(allpaths.size()) - start - 1);
+				paths.push_back(path);
 				start = -1;
 			}
 		}
-		else if (allpaths.GetLength() > 0)
+		else if (int(allpaths.size()) > 0)
 		{
-			paths.Add(allpaths);
+			paths.push_back(allpaths);
 			start = -1;
 		}
 	}
 
-	if (paths.GetCount() <= 0)
+	if (paths.size() <= 0)
 	{
-		paths.Add(_T("."));
-		paths.Add(_T(".\\subtitles"));
-		paths.Add(_T("c:\\subtitles"));
+		paths.push_back(_T("."));
+		paths.push_back(_T(".\\subtitles"));
+		paths.push_back(_T("c:\\subtitles"));
 	}
 
-	CAtlArray<Subtitle::SubFile> ret;
+	std::vector<Subtitle::SubFile> ret;
 	Subtitle::GetSubFileNames(m_movieFile, paths, ret);
 
-	for (size_t i = 0; i < ret.GetCount(); i++)
+	for (size_t i = 0; i < ret.size(); i++)
 	{
 		// TMP: maybe this will catch something for those who get a runtime error dialog when opening subtitles from cds
 		try
 		{
-			CComPtr<ISubStream> pSubStream;
+			ComPtr<ISubStream> pSubStream;
 
 			//if(!pSubStream)
 			{
-				CAutoPtr<CVobSubFile> pVSF(new CVobSubFile(&m_csSubLock));
-				if (CString(CPath(ret[i].fn).GetExtension()).MakeLower() == _T(".idx") && pVSF && pVSF->Open(ret[i].fn) && pVSF->GetStreamCount() > 0) {
+				std::unique_ptr<CVobSubFile> pVSF(new CVobSubFile(&m_csSubLock));
+				if (StringLowered(tstring(PathFindExtension(ret[i].fn.c_str()))) == _T(".idx") && pVSF && pVSF->Open(ret[i].fn) && pVSF->GetStreamCount() > 0) {
 					pVSF->m_bOnlyShowForcedSubs = onlyShowForcedSubs;
-					pSubStream = pVSF.Detach();
+					pSubStream = pVSF.release();
 				}
 			}
 
 			if (!pSubStream)
 			{
-				CAutoPtr<CRenderedTextSubtitle> pRTS(new CRenderedTextSubtitle(&m_csSubLock));
-				if (CString(CPath(ret[i].fn).GetExtension()).MakeLower() != _T(".sub"))
+				std::unique_ptr<CRenderedTextSubtitle> pRTS(new CRenderedTextSubtitle(&m_csSubLock));
+				if (StringLowered(tstring(PathFindExtension(ret[i].fn.c_str()))) != _T(".sub"))
 				{
 					if (pRTS && pRTS->Open(ret[i].fn, DEFAULT_CHARSET, _T(""), m_movieFile) && pRTS->GetStreamCount() > 0) {
-						ApplyStyle(pRTS);
-						pSubStream = pRTS.Detach();
+						ApplyStyle(pRTS.get());
+						pSubStream = pRTS.release();
 					}
 				}
 			}
 			if (pSubStream)
 			{
-				m_pSubStreams.AddTail(pSubStream);
+				m_pSubStreams.push_back(pSubStream);
 			}
 		}
-		catch (CException* e)
+		catch (const std::exception&)
 		{
-			e->Delete();
 		}
 	}
 }
@@ -864,14 +865,14 @@ void CSubManager::SaveToDisk()
 {
 	if (m_iSubtitleSel >= 0)
 	{
-		m_subresync.SaveToDisk(m_pSubStream, m_fps, m_movieFile);
+		m_subresync.SaveToDisk(m_pSubStream.Get(), m_fps, m_movieFile);
 	}
 }
 
 void CSubManager::LoadSubtitlesForFile(const wchar_t* fn, IGraphBuilder* pGB, const wchar_t* paths, LCID lcidci)
 {
 	{//hook vmr
-		CComPtr<IBaseFilter> vmr;
+		ComPtr<IBaseFilter> vmr;
 		pGB->FindFilterByName(L"Enhanced Video Renderer", &vmr);
 		if (!vmr)
 		{
@@ -887,7 +888,7 @@ void CSubManager::LoadSubtitlesForFile(const wchar_t* fn, IGraphBuilder* pGB, co
 			ATLTRACE(L"Failed to load subtitles: could not find video renderer");
 			return;
 		}
-		CComPtr<IPin> pPin = GetFirstPin(vmr);
+		ComPtr<IPin> pPin = GetFirstPin(vmr.Get());
 
 		//set fps
 		REFERENCE_TIME rtTimePerFrame(0);
@@ -904,8 +905,8 @@ void CSubManager::LoadSubtitlesForFile(const wchar_t* fn, IGraphBuilder* pGB, co
 		m_fps = 10000000.0 / rtTimePerFrame;
 		m_pSubPicQueue->SetFPS(m_fps);
 
-		CComQIPtr<IMemInputPin> pMemInputPin = pPin;
-		HookNewSegmentAndReceive((IPinC*)(IPin*)pPin, (IMemInputPinC*)(IMemInputPin*)pMemInputPin);
+		auto pMemInputPin = ComQuery<IMemInputPin>(pPin);
+		HookNewSegmentAndReceive((IPinC*)(IPin*)pPin.Get(), (IMemInputPinC*)(IMemInputPin*)pMemInputPin.Get());
 	}
 	bool onlyShowForcedSubs = g_onlyShowForcedSubs ? true : false;
 	LoadInternalSubtitles(pGB, onlyShowForcedSubs, lcidci);

@@ -51,9 +51,16 @@
 #ifndef VC_EXTRALEAN
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 #endif
+#include <string>
+#include <vector>
+#include <list>
+#include <memory>
+#include <winsock2.h>
+#include <windows.h>
+#include <objbase.h>
+#include <tchar.h>
+#include <process.h>
 
-#include <afx.h>
-#include <afxwin.h>         // MFC core and standard components
 
 
 // TODO: reference additional headers your program requires here

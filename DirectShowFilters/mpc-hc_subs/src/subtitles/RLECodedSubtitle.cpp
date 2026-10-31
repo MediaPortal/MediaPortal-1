@@ -23,7 +23,7 @@
 #include "PGSSub.h"
 #include "RLECodedSubtitle.h"
 
-CRLECodedSubtitle::CRLECodedSubtitle(CCritSec* pLock, const CString& name, LCID lcid)
+CRLECodedSubtitle::CRLECodedSubtitle(CCritSec* pLock, const tstring& name, LCID lcid)
     : CSubPicProviderImpl(pLock)
     , m_name(name)
     , m_lcid(lcid)
@@ -72,12 +72,12 @@ STDMETHODIMP CRLECodedSubtitle::GetStreamInfo(int iStream, WCHAR** ppName, LCID*
     }
 
     if (ppName) {
-        *ppName = (WCHAR*)CoTaskMemAlloc((m_name.GetLength() + 1) * sizeof(WCHAR));
+        *ppName = (WCHAR*)CoTaskMemAlloc((int(m_name.size()) + 1) * sizeof(WCHAR));
         if (!(*ppName)) {
             return E_OUTOFMEMORY;
         }
 
-        wcscpy_s(*ppName, m_name.GetLength() + 1, CStringW(m_name));
+        wcscpy_s(*ppName, int(m_name.size()) + 1, std::wstring(m_name).c_str());
     }
 
     if (pLCID) {
@@ -102,11 +102,11 @@ STDMETHODIMP CRLECodedSubtitle::Reload()
     return S_OK;
 }
 
-STDMETHODIMP CRLECodedSubtitle::SetSourceTargetInfo(CString yuvMatrix, int targetBlackLevel, int targetWhiteLevel)
+STDMETHODIMP CRLECodedSubtitle::SetSourceTargetInfo(tstring yuvMatrix, int targetBlackLevel, int targetWhiteLevel)
 {
     int nPos = 0;
-    CString range = yuvMatrix.Tokenize(_T("."), nPos);
-    CString matrix = yuvMatrix.Mid(nPos);
+    tstring range = StringTokenize(yuvMatrix, _T("."), nPos);
+    tstring matrix = StringMid(yuvMatrix, nPos);
 
     ColorConvTable::YuvRangeType sourceRange = ColorConvTable::RANGE_TV;
     if (range == _T("PC")) {

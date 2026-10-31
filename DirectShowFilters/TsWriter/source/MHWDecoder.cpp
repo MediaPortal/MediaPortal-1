@@ -21,7 +21,6 @@
 #pragma warning(disable: 4786)
 #pragma warning(disable : 4995)
 #include <windows.h>
-#include <atlconv.h>
 #include ".\mhwparser.h"
 #include "entercriticalSection.h"  
 
@@ -116,11 +115,6 @@ bool CMhwDecoder::ParseSummaries(byte* data, int maxLen)
 	if (it==m_mapSummaries.end())
 	{
 		m_mapSummaries[sum.ProgramID]=sum;
-		it=m_mapSummaries.find(sum.ProgramID);
-		if (it==m_mapSummaries.end())
-		{
-			int x=1;
-		}
 		return true;
 	}
 	return false;
@@ -241,8 +235,6 @@ int CMhwDecoder::GetTitleCount()
 
 void CMhwDecoder::GetTitle(int program, UINT* id, UINT* transportId, UINT* networkId, UINT* channelId, ULONG* programId, UINT* themeId, UINT* PPV, BYTE* Summaries, UINT* duration, ULONG* dateStart, ULONG* timeStart,char** title,char** programName)
 {
-  USES_CONVERSION;
-
 	CEnterCriticalSection lock (m_critSection);
 	*id = 0;
 	*transportId=0;
@@ -276,20 +268,9 @@ void CMhwDecoder::GetTitle(int program, UINT* id, UINT* transportId, UINT* netwo
 	*dateStart=prog.dateStart;
 	*timeStart=prog.timeStart;
 	*title=(char*)prog.Title.c_str();
-	char tmp[128];
-	sprintf(tmp,"got:prog.id:%lu\n",prog.ID);OutputDebugString(A2T(tmp));
 	//LogDebug("mhw-epg: GetTitle(%d) size:%d chan:%d progid:%x '%s'", 
 	//	program,m_vecTitles.size(),
 	//	*channelId, *programId, *title);
-	imapSummaries it=m_mapSummaries.find(prog.ID);
-	if (it==m_mapSummaries.end())
-	{
-		int x=1;
-	}
-	if (prog.ChannelID>=m_vecChannels.size()) 
-	{
-		int x=1;
-	}
 }
 
 void CMhwDecoder::GetChannel(UINT channelNr, UINT* channelId, UINT* networkId, UINT* transportId, char** channelName)
@@ -319,9 +300,6 @@ void CMhwDecoder::GetChannel(UINT channelNr, UINT* channelId, UINT* networkId, U
 
 void CMhwDecoder::GetSummary(ULONG programId, char** summary)
 {
-  USES_CONVERSION;
-	char tmp[128];
-	sprintf(tmp,"get:prog.id:%lu\n",programId);OutputDebugString(A2T(tmp));
 	CEnterCriticalSection lock (m_critSection);
 	*summary="";
 	imapSummaries it=m_mapSummaries.find(programId);
@@ -329,10 +307,6 @@ void CMhwDecoder::GetSummary(ULONG programId, char** summary)
 	{
 		*summary=(char*)it->second.Description.c_str();		
 		//LogDebug("mhw-epg: GetSummary(%x) size:%d found ", programId,m_mapSummaries.size());
-	}
-	else  
-	{
-		int x=1;
 	}
 	//else
 		//LogDebug("mhw-epg: GetSummary(%x) size:%d not found", programId,m_mapSummaries.size());
@@ -351,6 +325,5 @@ void CMhwDecoder::GetTheme(UINT themeId, char** theme)
 		}
 		++it;
 	}
-	int x=1;
 	//LogDebug("mhw-epg: GetTheme(%x) size:%d not found", themeId,m_vecThemes.size());
 }

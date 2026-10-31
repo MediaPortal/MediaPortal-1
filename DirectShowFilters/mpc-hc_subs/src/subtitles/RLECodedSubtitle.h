@@ -31,7 +31,7 @@ class __declspec(uuid("FCA68599-C83E-4ea5-94A3-C2E1B0E326B9"))
 public:
     static const REFERENCE_TIME INVALID_TIME = _I64_MIN;
 
-    CRLECodedSubtitle(CCritSec* pLock, const CString& name, LCID lcid);
+    CRLECodedSubtitle(CCritSec* pLock, const tstring& name, LCID lcid);
     virtual ~CRLECodedSubtitle() = default;
 
     DECLARE_IUNKNOWN
@@ -49,7 +49,7 @@ public:
     STDMETHODIMP_(int) GetStream();
     STDMETHODIMP SetStream(int iStream);
     STDMETHODIMP Reload();
-    STDMETHODIMP SetSourceTargetInfo(CString yuvMatrix, int targetBlackLevel, int targetWhiteLevel);
+    STDMETHODIMP SetSourceTargetInfo(tstring yuvMatrix, int targetBlackLevel, int targetWhiteLevel);
 
     virtual HRESULT ParseSample(REFERENCE_TIME rtStart, REFERENCE_TIME rtStop, BYTE* pData, size_t nLen) PURE;
     HRESULT NewSegment(REFERENCE_TIME tStart, REFERENCE_TIME tStop, double dRate);
@@ -59,7 +59,7 @@ public:
 protected:
     CCritSec        m_csCritSec;
 
-    CString         m_name;
+    tstring         m_name;
     LCID            m_lcid;
     Subtitle::HearingImpairedType m_eHearingImpaired;
 

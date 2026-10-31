@@ -86,8 +86,8 @@ CMemSubPic::CMemSubPic(const SubPicDesc& spd, CMemSubPicAllocator* pAllocator)
     : m_pAllocator(pAllocator)
     , m_spd(spd)
 {
-    m_maxsize.SetSize(spd.w, spd.h);
-    m_rcDirty.SetRect(0, 0, spd.w, spd.h);
+    m_maxsize = MakeSize(spd.w, spd.h);
+    ::SetRect(&m_rcDirty, 0, 0, spd.w, spd.h);
 }
 
 CMemSubPic::~CMemSubPic()
@@ -139,7 +139,7 @@ STDMETHODIMP CMemSubPic::CopyTo(ISubPic* pSubPic)
         subPic->m_resizedSpd = std::move(m_resizedSpd);
     }
 
-    int w = m_rcDirty.Width(), h = m_rcDirty.Height();
+    int w = RectWidth(m_rcDirty), h = RectHeight(m_rcDirty);
     BYTE* s = src.bits + src.pitch * m_rcDirty.top + m_rcDirty.left * 4;
     BYTE* d = dst.bits + dst.pitch * m_rcDirty.top + m_rcDirty.left * 4;
 
@@ -152,15 +152,15 @@ STDMETHODIMP CMemSubPic::CopyTo(ISubPic* pSubPic)
 
 STDMETHODIMP CMemSubPic::ClearDirtyRect()
 {
-    if (m_rcDirty.IsRectEmpty()) {
+    if (::IsRectEmpty(&m_rcDirty)) {
         return S_FALSE;
     }
 
     DWORD color = m_bInvAlpha ? 0x00000000 : 0xFF000000;
 
     BYTE* p = m_spd.bits + m_spd.pitch * m_rcDirty.top + m_rcDirty.left * (m_spd.bpp >> 3);
-    for (ptrdiff_t j = 0, h = m_rcDirty.Height(); j < h; j++, p += m_spd.pitch) {
-        int w = m_rcDirty.Width();
+    for (ptrdiff_t j = 0, h = RectHeight(m_rcDirty); j < h; j++, p += m_spd.pitch) {
+        int w = RectWidth(m_rcDirty);
 #ifdef _WIN64
         memsetd(p, color, w * 4); // nya
 #else
@@ -174,7 +174,7 @@ STDMETHODIMP CMemSubPic::ClearDirtyRect()
 #endif
     }
 
-    m_rcDirty.SetRectEmpty();
+    ::SetRectEmpty(&m_rcDirty);
 
     return S_OK;
 }
@@ -186,23 +186,23 @@ STDMETHODIMP CMemSubPic::Lock(SubPicDesc& spd)
 
 STDMETHODIMP CMemSubPic::Unlock(RECT* pDirtyRect)
 {
-    m_rcDirty = pDirtyRect ? *pDirtyRect : CRect(0, 0, m_spd.w, m_spd.h);
+    m_rcDirty = pDirtyRect ? *pDirtyRect : MakeRect(0, 0, m_spd.w, m_spd.h);
 
-    if (m_rcDirty.IsRectEmpty()) {
+    if (::IsRectEmpty(&m_rcDirty)) {
         return S_OK;
     }
 
-    CRect r = m_spd.vidrect;
-    CRect rcDirty = m_rcDirty;
-    if (m_spd.h != r.Height() || m_spd.w != r.Width()) {
+    RECT r = m_spd.vidrect;
+    RECT rcDirty = m_rcDirty;
+    if (m_spd.h != RectHeight(r) || m_spd.w != RectWidth(r)) {
         if (!m_resizedSpd) {
-            m_resizedSpd = std::unique_ptr<SubPicDesc>(DEBUG_NEW SubPicDesc);
+            m_resizedSpd = std::unique_ptr<SubPicDesc>(new SubPicDesc);
         }
 
         m_resizedSpd->type = m_spd.type;
-        m_resizedSpd->w = r.Width();
-        m_resizedSpd->h = r.Height();
-        m_resizedSpd->pitch = r.Width() * 4;
+        m_resizedSpd->w = RectWidth(r);
+        m_resizedSpd->h = RectHeight(r);
+        m_resizedSpd->pitch = RectWidth(r) * 4;
         m_resizedSpd->bpp = m_spd.bpp;
 
         if (!m_resizedSpd->bits) {
@@ -211,10 +211,10 @@ STDMETHODIMP CMemSubPic::Unlock(RECT* pDirtyRect)
 
         BitBltFromRGBToRGBStretch(m_resizedSpd->w, m_resizedSpd->h, m_resizedSpd->bits, m_resizedSpd->pitch, m_resizedSpd->bpp
                                   , m_spd.w, m_spd.h, m_spd.bits, m_spd.pitch, m_spd.bpp);
-        TRACE("CMemSubPic: Resized SubPic %dx%d -> %dx%d\n", m_spd.w, m_spd.h, r.Width(), r.Height());
+        TRACE("CMemSubPic: Resized SubPic %dx%d -> %dx%d\n", m_spd.w, m_spd.h, RectWidth(r), RectHeight(r));
 
         // Set whole resized spd as dirty, we are not going to reuse it.
-        rcDirty.SetRect(0, 0, m_resizedSpd->w, m_resizedSpd->h);
+        ::SetRect(&rcDirty, 0, 0, m_resizedSpd->w, m_resizedSpd->h);
     } else if (m_resizedSpd) {
         // Resize is not needed so release m_resizedSpd.
         m_pAllocator->FreeSpdBits(*m_resizedSpd);
@@ -241,7 +241,7 @@ STDMETHODIMP CMemSubPic::Unlock(RECT* pDirtyRect)
         m_rcDirty = rcDirty;
     }
 
-    int w = rcDirty.Width(), h = rcDirty.Height();
+    int w = RectWidth(rcDirty), h = RectHeight(rcDirty);
     BYTE* top = subPic.bits + subPic.pitch * rcDirty.top + rcDirty.left * 4;
     BYTE* bottom = top + subPic.pitch * h;
 
@@ -426,10 +426,10 @@ STDMETHODIMP CMemSubPic::AlphaBlt(RECT* pSrc, RECT* pDst, SubPicDesc* pTarget)
         return E_INVALIDARG;
     }
 
-    CRect rs(*pSrc), rd(*pDst);
+    RECT rs = *pSrc, rd = *pDst;
 
     if (m_resizedSpd) {
-        rs = rd = CRect(0, 0, m_resizedSpd->w, m_resizedSpd->h);
+        rs = rd = MakeRect(0, 0, m_resizedSpd->w, m_resizedSpd->h);
     }
 
     if (dst.h < 0) {
@@ -438,11 +438,11 @@ STDMETHODIMP CMemSubPic::AlphaBlt(RECT* pSrc, RECT* pDst, SubPicDesc* pTarget)
         rd.top = dst.h - rd.top;
     }
 
-    if (rs.Width() != rd.Width() || rs.Height() != abs(rd.Height())) {
+    if (RectWidth(rs) != RectWidth(rd) || RectHeight(rs) != abs(RectHeight(rd))) {
         return E_INVALIDARG;
     }
 
-    int w = rs.Width(), h = rs.Height();
+    int w = RectWidth(rs), h = RectHeight(rs);
     BYTE* s = src.bits + src.pitch * rs.top + rs.left * 4;
     BYTE* d = dst.bits + dst.pitch * rd.top + ((rd.left * dst.bpp) >> 3);
 
@@ -666,9 +666,8 @@ bool CMemSubPicAllocator::Alloc(bool fStatic, ISubPic** ppSubPic)
     }
 
     try {
-        *ppSubPic = DEBUG_NEW CMemSubPic(spd, this);
-    } catch (CMemoryException* e) {
-        e->Delete();
+        *ppSubPic = new CMemSubPic(spd, this);
+    } catch (const std::bad_alloc&) {
         delete [] spd.bits;
         return false;
     }
@@ -695,10 +694,9 @@ bool CMemSubPicAllocator::AllocSpdBits(SubPicDesc& spd)
         m_freeMemoryChunks.erase(it);
     } else {
         try {
-            spd.bits = DEBUG_NEW BYTE[spd.pitch * spd.h];
-        } catch (CMemoryException* e) {
+            spd.bits = new BYTE[spd.pitch * spd.h];
+        } catch (const std::bad_alloc&) {
             ASSERT(FALSE);
-            e->Delete();
             return false;
         }
     }

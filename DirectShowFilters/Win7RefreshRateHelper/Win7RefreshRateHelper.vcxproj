@@ -113,6 +113,10 @@
     <OutDir>.\bin\Release\</OutDir>
     <IntDir>.\obj\Release\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>.\bin\Debug\</OutDir>
+    <IntDir>.\obj\Debug\</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
@@ -142,7 +146,7 @@
       <AssemblyDebug>true</AssemblyDebug>
       <ProgramDatabaseFile>bin\Debug/Win7RefreshRateHelper.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <ImportLibrary>bin\Debug/Win7RefreshRateHelper.lib</ImportLibrary>
@@ -178,7 +182,7 @@
       <AssemblyDebug>true</AssemblyDebug>
       <ProgramDatabaseFile>bin\Debug/Win7RefreshRateHelper.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <ImportLibrary>bin\Debug/Win7RefreshRateHelper.lib</ImportLibrary>
@@ -214,7 +218,7 @@
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <ImportLibrary>bin\Release/Win7RefreshRateHelper.lib</ImportLibrary>
@@ -252,7 +256,7 @@
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <ImportLibrary>bin\Release/Win7RefreshRateHelper.lib</ImportLibrary>

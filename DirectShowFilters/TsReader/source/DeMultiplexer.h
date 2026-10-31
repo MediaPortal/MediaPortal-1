@@ -21,8 +21,6 @@
 #pragma once
 
 #include "StdAfx.h"
-#include <atlbase.h>
-#include <atlcoll.h>
 #include "buffer.h"
 #include "MultiFileReader.h"
 #include "tsDuration.h"
@@ -35,6 +33,8 @@
 #include "PidTable.h"
 #include "TSThread.h"
 #include "..\..\shared\Pcr.h"
+#include <list>
+#include <memory>
 #include <vector>
 #include <map>
 #include <dvdmedia.h>
@@ -46,7 +46,7 @@ using namespace std;
 class CTsReaderFilter;
 
 // Used for H.264 video stream demuxing
-class Packet : public CAtlArray<BYTE>
+class Packet : public std::vector<BYTE>
 {
 public:
 //	DWORD TrackNumber;
@@ -56,9 +56,12 @@ public:
 //	AM_MEDIA_TYPE* pmt;
 	Packet() {/*pmt = NULL;*/ /*bDiscontinuity = FALSE;*/ /*bNewRtStart = FALSE;*/}
 	virtual ~Packet() {/*if(pmt) DeleteMediaType(pmt);*/}
-	virtual size_t GetDataSize() {return GetCount();}
-	void SetData(const void* ptr, DWORD len) {SetCount(len); memcpy(GetData(), ptr, len);}
+	virtual size_t GetDataSize() {return size();}
+	void SetData(const void* ptr, DWORD len) {resize(len); memcpy(data(), ptr, len);}
 };
+
+typedef std::list<std::unique_ptr<Packet>> PacketList;
+inline std::unique_ptr<Packet> PopHead(PacketList& l) { std::unique_ptr<Packet> p = std::move(l.front()); l.pop_front(); return p; }
 
 class CDeMultiplexer : public CPacketSync, public IPatParserCallback, public TSThread, public TsAVRT
 {
@@ -282,8 +285,8 @@ private:
   int (CALLBACK *pSubUpdateCallback)(int c, void* opts,int* bi);
 
   // Used only for H.264 stream demuxing
-  CAutoPtr<Packet> m_p;
-  CAutoPtrList<Packet> m_pl;
+  std::unique_ptr<Packet> m_p;
+  PacketList m_pl;
   bool m_fHasAccessUnitDelimiters;
   ptrdiff_t m_lastStart;
   CPcr m_VideoPts;

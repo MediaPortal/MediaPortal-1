@@ -18,18 +18,16 @@
 
 #pragma once
 
-#include <atlbase.h>
-#include <atlcoll.h>
 
 #define PauseGraph \
-	CComQIPtr<IMediaControl> _pMC(m_pGraph); \
+	auto _pMC = ComQuery<IMediaControl>(m_pGraph); \
 	OAFilterState _fs = -1; \
 	if(_pMC) _pMC->GetState(1000, &_fs); \
 	if(_fs == State_Running) \
 		_pMC->Pause(); \
  \
 	HRESULT _hr = E_FAIL; \
-	CComQIPtr<IMediaSeeking> _pMS((IUnknown*)(INonDelegatingUnknown*)m_pGraph); \
+	auto _pMS = ComQuery<IMediaSeeking>((IUnknown*)(INonDelegatingUnknown*)m_pGraph); \
 	LONGLONG _rtNow = 0; \
 	if(_pMS) _hr = _pMS->GetCurrentPosition(&_rtNow); \
 
@@ -188,8 +186,8 @@ public:
 
 class CStreamSwitcherOutputPin : public CBaseOutputPin, public IStreamBuilder
 {
-	CComPtr<IUnknown> m_pStreamSwitcherPassThru;
-	CComPtr<IPinConnection> m_pPinConnection;
+	ComPtr<IUnknown> m_pStreamSwitcherPassThru;
+	ComPtr<IPinConnection> m_pPinConnection;
 
 	HRESULT QueryAcceptUpstream(const AM_MEDIA_TYPE* pmt);
 
@@ -201,7 +199,7 @@ public:
 
     CMediaType& CurrentMediaType() {return m_mt;}
 	IMemAllocator* CurrentAllocator() {return m_pAllocator;}
-	IPinConnection* CurrentPinConnection() {return m_pPinConnection;}
+	IPinConnection* CurrentPinConnection() {return m_pPinConnection.Get();}
 
 	// pure virtual
 	HRESULT	DecideBufferSize(IMemAllocator* pAllocator, ALLOCATOR_PROPERTIES* pProperties);
@@ -231,7 +229,7 @@ class CStreamSwitcherFilter : public CBaseFilter, public IAMStreamSelect
 	friend class CStreamSwitcherOutputPin;
 	friend class CStreamSwitcherPassThru;
 
-	CAtlList<CStreamSwitcherInputPin*> m_pInputs;
+	std::list<CStreamSwitcherInputPin*> m_pInputs;
 	CStreamSwitcherInputPin* m_pInput;
 	CStreamSwitcherOutputPin* m_pOutput;
 

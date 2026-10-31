@@ -106,4 +106,4 @@ bool StrHexToUInt32(const wchar_t* str, uint32_t& value);
 bool StrHexToUInt64(const wchar_t* str, uint64_t& value);
 bool StrToDouble(const wchar_t* str, double& value);
 
-CStringW HR2Str(const HRESULT hr);
+std::wstring HR2Str(const HRESULT hr);

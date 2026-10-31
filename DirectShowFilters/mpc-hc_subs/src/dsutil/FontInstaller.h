@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include <atlcoll.h>
 
 class CFontInstaller
 {
@@ -31,16 +30,16 @@ class CFontInstaller
     BOOL (WINAPI* pRemoveFontResourceEx)(LPCTSTR, DWORD, PVOID);
     BOOL (WINAPI* pMoveFileEx)(LPCTSTR, LPCTSTR, DWORD);
 
-    CAtlList<HANDLE> m_fonts;
-    CAtlList<CString> m_files;
-	CAtlList<CString> m_tempfonts;
+    std::list<HANDLE> m_fonts;
+    std::list<tstring> m_files;
+	std::list<tstring> m_tempfonts;
     bool InstallFontFile(const void* pData, UINT len);
 
 public:
     CFontInstaller();
     virtual ~CFontInstaller();
 
-    bool InstallFont(const CAtlArray<BYTE>& data);
+    bool InstallFont(const std::vector<BYTE>& data);
     bool InstallFont(const void* pData, UINT len);
     bool InstallFontMemory(const void* pData, UINT len);
 	bool InstallTempFontFile(LPCTSTR fn);

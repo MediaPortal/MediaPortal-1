@@ -704,12 +704,16 @@ STDMETHODIMP CBDReaderFilter::Load(LPCOLESTR pszFileName, const AM_MEDIA_TYPE *p
 
   CheckPointer(pszFileName, E_POINTER);
 
+  if (wcslen(pszFileName) >= _countof(m_fileName))
+    return S_FALSE; // does not fit into m_fileName
+
   wcscpy(m_fileName, pszFileName);
   char path[4096];
-  WideCharToMultiByte(CP_UTF8, 0, m_fileName, -1, path, 4096, 0, 0);
+  if (!WideCharToMultiByte(CP_UTF8, 0, m_fileName, -1, path, sizeof(path), 0, 0))
+    return S_FALSE;
 
-  int pathLen = strlen(path);
-  int extLen = strlen("\\BDMV\\index.bdmv");
+  int pathLen = (int)strlen(path);
+  int extLen = (int)strlen("\\BDMV\\index.bdmv");
   
   // We need at least "\BDMV\index.bdmv"
   if (pathLen < extLen)

@@ -33,12 +33,12 @@ CSubPicImpl::CSubPicImpl()
     , m_rtStop(0)
     , m_rtSegmentStart(0)
     , m_rtSegmentStop(0)
-    , m_rcDirty(0, 0, 0, 0)
-    , m_maxsize(0, 0)
-    , m_size(0, 0)
-    , m_vidrect(0, 0, 0, 0)
-    , m_virtualTextureSize(0, 0)
-    , m_virtualTextureTopLeft(0, 0)
+    , m_rcDirty(MakeRect(0, 0, 0, 0))
+    , m_maxsize(MakeSize(0, 0))
+    , m_size(MakeSize(0, 0))
+    , m_vidrect(MakeRect(0, 0, 0, 0))
+    , m_virtualTextureSize(MakeSize(0, 0))
+    , m_virtualTextureTopLeft(MakePoint(0, 0))
     , m_bInvAlpha(false)
     , m_relativeTo(WINDOW)
 {
@@ -101,7 +101,7 @@ STDMETHODIMP CSubPicImpl::CopyTo(ISubPic* pSubPic)
     pSubPic->SetStop(m_rtStop);
     pSubPic->SetSegmentStart(m_rtSegmentStart);
     pSubPic->SetSegmentStop(m_rtSegmentStop);
-    pSubPic->SetDirtyRect(m_rcDirty);
+    pSubPic->SetDirtyRect(&m_rcDirty);
     pSubPic->SetSize(m_size, m_vidrect);
     pSubPic->SetVirtualTextureSize(m_virtualTextureSize, m_virtualTextureTopLeft);
     pSubPic->SetInverseAlpha(m_bInvAlpha);
@@ -126,32 +126,32 @@ STDMETHODIMP CSubPicImpl::GetSourceAndDest(RECT rcWindow, RECT rcVideo,
     CheckPointer(pRcSource, E_POINTER);
     CheckPointer(pRcDest,   E_POINTER);
 
-    if (m_size.cx > 0 && m_size.cy > 0 && m_rcDirty.Height() > 0) {
-        CRect videoRect(rcVideo);
-        CRect windowRect(rcWindow);
+    if (m_size.cx > 0 && m_size.cy > 0 && RectHeight(m_rcDirty) > 0) {
+        RECT videoRect = rcVideo;
+        RECT windowRect = rcWindow;
 
-        CRect originalDirtyRect = m_rcDirty;
+        RECT originalDirtyRect = m_rcDirty;
         *pRcSource = originalDirtyRect;
-        originalDirtyRect.OffsetRect(m_virtualTextureTopLeft);
+        RectMove(originalDirtyRect, m_virtualTextureTopLeft);
 
-        CRect targetDirtyRect;
+        RECT targetDirtyRect = {};
 
         // check if scaling is needed
-        if (videoRect.Size() != windowRect.Size() || videoRect.Size() != m_virtualTextureSize) {
+        if (RectSize(videoRect) != RectSize(windowRect) || RectSize(videoRect) != m_virtualTextureSize) {
             if (m_relativeTo == BEST_FIT && m_virtualTextureSize.cx > 720 && videoStretchFactor == 1.0) {
-                CRect visibleRect;
+                RECT visibleRect = {};
                 visibleRect.top    = videoRect.top    > windowRect.top    ? (videoRect.top    > windowRect.bottom ? windowRect.bottom : videoRect.top)    : windowRect.top;
                 visibleRect.bottom = videoRect.bottom < windowRect.bottom ? (videoRect.bottom < windowRect.top    ? windowRect.top    : videoRect.bottom) : windowRect.bottom;
                 visibleRect.left   = videoRect.left   > windowRect.left   ? (videoRect.left   > windowRect.right  ? windowRect.right  : videoRect.left)   : windowRect.left;
                 visibleRect.right  = videoRect.right  < windowRect.right  ? (videoRect.right  < windowRect.left   ? windowRect.left   : videoRect.right)  : windowRect.right;
-                if (visibleRect.Width() <= 0 || visibleRect.Height() <= 0) {
+                if (RectWidth(visibleRect) <= 0 || RectHeight(visibleRect) <= 0) {
                     visibleRect = windowRect;
                     ASSERT(false);
                 }
-                CPoint offset(0, 0);
+                POINT offset = MakePoint(0, 0);
                 double scaleFactor;
                 double subtitleAR = double(m_virtualTextureSize.cx) / m_virtualTextureSize.cy;
-                double visibleAR  = double(visibleRect.Width()) / visibleRect.Height();
+                double visibleAR  = double(RectWidth(visibleRect)) / RectHeight(visibleRect);
                 double vertical_stretch = 1.0;
                 if (visibleAR * 2 - subtitleAR < 0.01) {
                     // some PGS can be encoded with resolution at half height
@@ -161,21 +161,21 @@ STDMETHODIMP CSubPicImpl::GetSourceAndDest(RECT rcWindow, RECT rcVideo,
 
                 if (visibleAR == subtitleAR) {
                     // exact same AR
-                    scaleFactor = double(visibleRect.Width()) / m_virtualTextureSize.cx;
-                    targetDirtyRect = CRect(lround(originalDirtyRect.left * scaleFactor), lround(originalDirtyRect.top * scaleFactor * vertical_stretch), lround(originalDirtyRect.right * scaleFactor), lround(originalDirtyRect.bottom * scaleFactor * vertical_stretch));
-                    targetDirtyRect.OffsetRect(visibleRect.TopLeft());
+                    scaleFactor = double(RectWidth(visibleRect)) / m_virtualTextureSize.cx;
+                    targetDirtyRect = MakeRect(lround(originalDirtyRect.left * scaleFactor), lround(originalDirtyRect.top * scaleFactor * vertical_stretch), lround(originalDirtyRect.right * scaleFactor), lround(originalDirtyRect.bottom * scaleFactor * vertical_stretch));
+                    RectMove(targetDirtyRect, RectTopLeft(visibleRect));
                 } else if (visibleAR > subtitleAR) {
                     // video is cropped in height
-                    scaleFactor = double(visibleRect.Width()) / m_virtualTextureSize.cx;
-                    int extraheight = m_virtualTextureSize.cy * scaleFactor * vertical_stretch - visibleRect.Height();
-                    CRect expandedRect = visibleRect;
+                    scaleFactor = double(RectWidth(visibleRect)) / m_virtualTextureSize.cx;
+                    int extraheight = m_virtualTextureSize.cy * scaleFactor * vertical_stretch - RectHeight(visibleRect);
+                    RECT expandedRect = visibleRect;
                     expandedRect.top    -= extraheight / 2;
                     expandedRect.bottom += extraheight - extraheight / 2;
                     offset.x = expandedRect.left;
                     offset.y = expandedRect.top;
 
-                    targetDirtyRect = CRect(lround(originalDirtyRect.left * scaleFactor), lround(originalDirtyRect.top * scaleFactor * vertical_stretch), lround(originalDirtyRect.right * scaleFactor), lround(originalDirtyRect.bottom * scaleFactor * vertical_stretch));
-                    targetDirtyRect.OffsetRect(offset);
+                    targetDirtyRect = MakeRect(lround(originalDirtyRect.left * scaleFactor), lround(originalDirtyRect.top * scaleFactor * vertical_stretch), lround(originalDirtyRect.right * scaleFactor), lround(originalDirtyRect.bottom * scaleFactor * vertical_stretch));
+                    RectMove(targetDirtyRect, offset);
 
                     if (expandedRect.left >= windowRect.left && expandedRect.top >= windowRect.top && expandedRect.right <= windowRect.right && expandedRect.bottom <= windowRect.bottom) {
                         // expanded fits in window
@@ -184,26 +184,26 @@ STDMETHODIMP CSubPicImpl::GetSourceAndDest(RECT rcWindow, RECT rcVideo,
                             // dirty rect fits in window
                         } else {
                             // does not fit yet, rescale based on available window height
-                            scaleFactor = double(windowRect.Height()) / m_virtualTextureSize.cy / vertical_stretch;
-                            offset.x = lround((windowRect.Width() - scaleFactor * m_virtualTextureSize.cx) / 2.0);
+                            scaleFactor = double(RectHeight(windowRect)) / m_virtualTextureSize.cy / vertical_stretch;
+                            offset.x = lround((RectWidth(windowRect) - scaleFactor * m_virtualTextureSize.cx) / 2.0);
                             offset.y = 0;
 
-                            targetDirtyRect = CRect(lround(originalDirtyRect.left * scaleFactor), lround(originalDirtyRect.top * scaleFactor * vertical_stretch), lround(originalDirtyRect.right * scaleFactor), lround(originalDirtyRect.bottom * scaleFactor * vertical_stretch));
-                            targetDirtyRect.OffsetRect(offset);
+                            targetDirtyRect = MakeRect(lround(originalDirtyRect.left * scaleFactor), lround(originalDirtyRect.top * scaleFactor * vertical_stretch), lround(originalDirtyRect.right * scaleFactor), lround(originalDirtyRect.bottom * scaleFactor * vertical_stretch));
+                            RectMove(targetDirtyRect, offset);
                         }
                     }
                 } else {
                     // video is cropped in width
-                    scaleFactor = double(visibleRect.Height()) / m_virtualTextureSize.cy / vertical_stretch;
-                    int extrawidth = m_virtualTextureSize.cx * scaleFactor - visibleRect.Width();
-                    CRect expandedRect = visibleRect;
+                    scaleFactor = double(RectHeight(visibleRect)) / m_virtualTextureSize.cy / vertical_stretch;
+                    int extrawidth = m_virtualTextureSize.cx * scaleFactor - RectWidth(visibleRect);
+                    RECT expandedRect = visibleRect;
                     expandedRect.left  -= extrawidth / 2;
                     expandedRect.right += extrawidth - extrawidth / 2;
                     offset.x = expandedRect.left;
                     offset.y = expandedRect.top;
 
-                    targetDirtyRect = CRect(lround(originalDirtyRect.left * scaleFactor), lround(originalDirtyRect.top * scaleFactor * vertical_stretch), lround(originalDirtyRect.right * scaleFactor), lround(originalDirtyRect.bottom * scaleFactor * vertical_stretch));
-                    targetDirtyRect.OffsetRect(offset);
+                    targetDirtyRect = MakeRect(lround(originalDirtyRect.left * scaleFactor), lround(originalDirtyRect.top * scaleFactor * vertical_stretch), lround(originalDirtyRect.right * scaleFactor), lround(originalDirtyRect.bottom * scaleFactor * vertical_stretch));
+                    RectMove(targetDirtyRect, offset);
 
                     if (expandedRect.left >= windowRect.left && expandedRect.top >= windowRect.top && expandedRect.right <= windowRect.right && expandedRect.bottom <= windowRect.bottom) {
                         // expanded fits in window
@@ -212,23 +212,23 @@ STDMETHODIMP CSubPicImpl::GetSourceAndDest(RECT rcWindow, RECT rcVideo,
                             // dirty rect fits in window
                         } else {
                             // does not fit yet, rescale based on available window width
-                            scaleFactor = double(windowRect.Width()) / m_virtualTextureSize.cx;
+                            scaleFactor = double(RectWidth(windowRect)) / m_virtualTextureSize.cx;
                             offset.x = 0;
-                            offset.y = lround((windowRect.Height() - scaleFactor * m_virtualTextureSize.cy * vertical_stretch) / 2.0);
+                            offset.y = lround((RectHeight(windowRect) - scaleFactor * m_virtualTextureSize.cy * vertical_stretch) / 2.0);
 
-                            targetDirtyRect = CRect(lround(originalDirtyRect.left * scaleFactor), lround(originalDirtyRect.top * scaleFactor * vertical_stretch), lround(originalDirtyRect.right * scaleFactor), lround(originalDirtyRect.bottom * scaleFactor * vertical_stretch));
-                            targetDirtyRect.OffsetRect(offset);
+                            targetDirtyRect = MakeRect(lround(originalDirtyRect.left * scaleFactor), lround(originalDirtyRect.top * scaleFactor * vertical_stretch), lround(originalDirtyRect.right * scaleFactor), lround(originalDirtyRect.bottom * scaleFactor * vertical_stretch));
+                            RectMove(targetDirtyRect, offset);
                         }
                     }
                 }
             } else {
-                CRect rcTarget = (m_relativeTo == WINDOW) ? windowRect : videoRect;
-                CSize szTarget = rcTarget.Size();
+                RECT rcTarget = (m_relativeTo == WINDOW) ? windowRect : videoRect;
+                SIZE szTarget = RectSize(rcTarget);
                 double scaleX = double(szTarget.cx) / m_virtualTextureSize.cx;
                 double scaleY = double(szTarget.cy) / m_virtualTextureSize.cy;
 
-                targetDirtyRect = CRect(lround(originalDirtyRect.left * scaleX), lround(originalDirtyRect.top * scaleY), lround(originalDirtyRect.right * scaleX), lround(originalDirtyRect.bottom * scaleY));
-                targetDirtyRect.OffsetRect(rcTarget.TopLeft());
+                targetDirtyRect = MakeRect(lround(originalDirtyRect.left * scaleX), lround(originalDirtyRect.top * scaleY), lround(originalDirtyRect.right * scaleX), lround(originalDirtyRect.bottom * scaleY));
+                RectMove(targetDirtyRect, RectTopLeft(rcTarget));
             }
         } else {
             // no scaling needed
@@ -238,12 +238,12 @@ STDMETHODIMP CSubPicImpl::GetSourceAndDest(RECT rcWindow, RECT rcVideo,
         if (videoStretchFactor != 1.0) {
             ASSERT(FALSE);
             // FIXME: when is videoStretchFactor not equal to 1.0? Test that situation. Only madvr might possibly use it. Our own renderers do not.
-            LONG stretch = lround(targetDirtyRect.Width() * (1.0 - 1.0 / videoStretchFactor) / 2.0);
+            LONG stretch = lround(RectWidth(targetDirtyRect) * (1.0 - 1.0 / videoStretchFactor) / 2.0);
             targetDirtyRect.left += stretch;
             targetDirtyRect.right -= stretch;
         }
 
-        targetDirtyRect.OffsetRect(CPoint(xOffsetInPixels, yOffsetInPixels));
+        RectMove(targetDirtyRect, MakePoint(xOffsetInPixels, yOffsetInPixels));
 
         *pRcDest = targetDirtyRect;
         return S_OK;
@@ -298,8 +298,8 @@ STDMETHODIMP CSubPicImpl::SetSize(SIZE size, RECT vidrect)
 
 STDMETHODIMP CSubPicImpl::SetVirtualTextureSize(const SIZE pSize, const POINT pTopLeft)
 {
-    m_virtualTextureSize.SetSize(pSize.cx, pSize.cy);
-    m_virtualTextureTopLeft.SetPoint(pTopLeft.x, pTopLeft.y);
+    m_virtualTextureSize = MakeSize(pSize.cx, pSize.cy);
+    m_virtualTextureTopLeft = MakePoint(pTopLeft.x, pTopLeft.y);
 
     return S_OK;
 }
@@ -334,7 +334,7 @@ CSubPicAllocatorImpl::CSubPicAllocatorImpl(SIZE cursize, bool fDynamicWriteOnly)
     , m_cursize(cursize)
     , m_fDynamicWriteOnly(fDynamicWriteOnly)
 {
-    m_curvidrect = CRect(CPoint(0, 0), m_cursize);
+    m_curvidrect = MakeRect(MakePoint(0, 0), m_cursize);
 }
 
 STDMETHODIMP CSubPicAllocatorImpl::NonDelegatingQueryInterface(REFIID riid, void** ppv)
@@ -376,7 +376,7 @@ STDMETHODIMP CSubPicAllocatorImpl::GetStatic(ISubPic** ppSubPic)
             }
         }
 
-        *ppSubPic = m_pStatic;
+        *ppSubPic = m_pStatic.Get();
     }
 
     (*ppSubPic)->AddRef();
@@ -412,7 +412,7 @@ STDMETHODIMP CSubPicAllocatorImpl::FreeStatic()
 {
     CAutoLock cAutoLock(&m_staticLock);
     if (m_pStatic) {
-        m_pStatic.Release();
+        m_pStatic.Reset();
     }
     return S_OK;
 }

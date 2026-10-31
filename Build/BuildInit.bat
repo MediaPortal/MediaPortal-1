@@ -32,7 +32,6 @@ set CommonMPTV="%GIT_ROOT%\Common-MP-TVE3"
 set DirectShowFilters="%GIT_ROOT%\DirectShowFilters"
 set MediaPortal="%GIT_ROOT%\mediaportal"
 set TVLibrary="%GIT_ROOT%\TvEngine3\TVLibrary"
-set LibblurayJAR="%GIT_ROOT%\libbluray\src\libbluray\bdj\build.xml"
 set NugetPackages=%GIT_ROOT%\Packages
 
 REM set log file

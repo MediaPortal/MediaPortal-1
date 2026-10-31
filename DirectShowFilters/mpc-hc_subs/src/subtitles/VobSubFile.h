@@ -21,26 +21,26 @@
 
 #pragma once
 
-#include <atlcoll.h>
 #include "VobSubImage.h"
 #include "../SubPic/SubPicProviderImpl.h"
 
 #define VOBSUBIDXVER 7
 
+// f is a FilePtr
 #define ReadBEb(var)              \
-    f.Read(&((BYTE*)&var)[0], 1);
+    fread(&((BYTE*)&var)[0], 1, 1, f.get());
 
 #define ReadBEw(var)              \
-    f.Read(&((BYTE*)&var)[1], 1); \
-    f.Read(&((BYTE*)&var)[0], 1);
+    fread(&((BYTE*)&var)[1], 1, 1, f.get()); \
+    fread(&((BYTE*)&var)[0], 1, 1, f.get());
 
 #define ReadBEdw(var)             \
-    f.Read(&((BYTE*)&var)[3], 1); \
-    f.Read(&((BYTE*)&var)[2], 1); \
-    f.Read(&((BYTE*)&var)[1], 1); \
-    f.Read(&((BYTE*)&var)[0], 1);
+    fread(&((BYTE*)&var)[3], 1, 1, f.get()); \
+    fread(&((BYTE*)&var)[2], 1, 1, f.get()); \
+    fread(&((BYTE*)&var)[1], 1, 1, f.get()); \
+    fread(&((BYTE*)&var)[0], 1, 1, f.get());
 
-extern CString FindLangFromId(WORD id);
+extern tstring FindLangFromId(WORD id);
 
 class CVobSubSettings
 {
@@ -48,9 +48,9 @@ protected:
     HRESULT Render(SubPicDesc& spd, RECT& bbox);
 
 public:
-    CSize m_size;
+    SIZE m_size = {};
     int m_x, m_y;
-    CPoint m_org;
+    POINT m_org = {};
     int m_scale_x, m_scale_y;   // % (don't set it to unsigned because as a side effect it will mess up negative coordinates in GetDestrect())
     int m_alpha;                // %
     int m_iSmooth;              // 0: OFF, 1: ON, 2: OLD (means no filtering at all)
@@ -71,8 +71,8 @@ public:
     bool GetCustomPal(RGBQUAD* cuspal, int& tridx);
     void SetCustomPal(const RGBQUAD* cuspal, int tridx);
 
-    void GetDestrect(CRect& r); // destrect of m_img, considering the current alignment mode
-    void GetDestrect(CRect& r, int w, int h); // this will scale it to the frame size of (w, h)
+    void GetDestrect(RECT& r); // destrect of m_img, considering the current alignment mode
+    void GetDestrect(RECT& r, int w, int h); // this will scale it to the frame size of (w, h)
 
     void SetAlignment(bool bAlign, int x, int y, int hor = 1, int ver = 1);
 };
@@ -99,19 +99,19 @@ public:
 
     struct SubLang {
         WORD id = 0;
-        CString name, alt;
-        CAtlArray<SubPos> subpos;
+        tstring name, alt;
+        std::vector<SubPos> subpos;
     };
 
 protected:
-    CString m_title;
-    CString m_path;
+    tstring m_title;
+    tstring m_path;
 
-    void TrimExtension(CString& fn);
-    bool ReadIdx(CString fn, int& ver), ReadSub(CString fn), ReadRar(CString fn), ReadIfo(CString fn);
-    bool WriteIdx(CString fn, int delay), WriteSub(CString fn);
+    void TrimExtension(tstring& fn);
+    bool ReadIdx(tstring fn, int& ver), ReadSub(tstring fn), ReadRar(tstring fn), ReadIfo(tstring fn);
+    bool WriteIdx(tstring fn, int delay), WriteSub(tstring fn);
 
-    CMemFile m_sub;
+    CMemBuffer m_sub;
 
     BYTE* GetPacket(size_t idx, size_t& packetSize, size_t& dataSize, size_t nLang = SIZE_T_ERROR);
     const SubPos* GetFrameInfo(size_t idx, size_t nLang = SIZE_T_ERROR) const;
@@ -119,10 +119,10 @@ protected:
     bool GetFrameByTimeStamp(__int64 time);
     size_t GetFrameIdxByTimeStamp(__int64 time);
 
-    bool SaveVobSub(CString fn, int delay);
-    bool SaveWinSubMux(CString fn, int delay);
-    bool SaveScenarist(CString fn, int delay);
-    bool SaveMaestro(CString fn, int delay);
+    bool SaveVobSub(tstring fn, int delay);
+    bool SaveWinSubMux(tstring fn, int delay);
+    bool SaveScenarist(tstring fn, int delay);
+    bool SaveMaestro(tstring fn, int delay);
 
 public:
     size_t m_nLang;
@@ -132,7 +132,7 @@ public:
     virtual ~CVobSubFile();
 
     bool Copy(CVobSubFile& vsf);
-    CString GetPath();
+    tstring GetPath();
 
     enum SubFormat {
         None,
@@ -142,11 +142,11 @@ public:
         Maestro
     };
 
-    bool Open(CString fn);
-    bool Save(CString fn, int delay = 0, SubFormat sf = VobSub);
+    bool Open(tstring fn);
+    bool Save(tstring fn, int delay = 0, SubFormat sf = VobSub);
     void Close();
 
-    CString GetTitle() { return m_title; }
+    tstring GetTitle() { return m_title; }
 
     DECLARE_IUNKNOWN
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
@@ -169,27 +169,27 @@ public:
     STDMETHODIMP_(int) GetStream();
     STDMETHODIMP SetStream(int iStream);
     STDMETHODIMP Reload();
-    STDMETHODIMP SetSourceTargetInfo(CString yuvMatrix, int targetBlackLevel, int targetWhiteLevel) { return E_NOTIMPL; };
+    STDMETHODIMP SetSourceTargetInfo(tstring yuvMatrix, int targetBlackLevel, int targetWhiteLevel) { return E_NOTIMPL; };
 };
 
 class __declspec(uuid("D7FBFB45-2D13-494F-9B3D-FFC9557D5C45"))
     CVobSubStream : public CVobSubSettings, public ISubStream, public CSubPicProviderImpl
 {
-    CString m_name;
+    tstring m_name;
 
     CCritSec m_csSubPics;
     struct SubPic {
         REFERENCE_TIME tStart, tStop;
         bool bAnimated;
-        CAtlArray<BYTE> pData;
+        std::vector<BYTE> pData;
     };
-    CAutoPtrList<SubPic> m_subpics;
+    std::list<std::unique_ptr<SubPic>> m_subpics;
 
 public:
     CVobSubStream(CCritSec* pLock);
     virtual ~CVobSubStream();
 
-    void Open(CString name, BYTE* pData, int len);
+    void Open(tstring name, BYTE* pData, int len);
 
     void Add(REFERENCE_TIME tStart, REFERENCE_TIME tStop, BYTE* pData, int len);
     void RemoveAll();
@@ -215,5 +215,5 @@ public:
     STDMETHODIMP_(int) GetStream();
     STDMETHODIMP SetStream(int iStream);
     STDMETHODIMP Reload() { return E_NOTIMPL; }
-    STDMETHODIMP SetSourceTargetInfo(CString yuvMatrix, int targetBlackLevel, int targetWhiteLevel) { return E_NOTIMPL; }
+    STDMETHODIMP SetSourceTargetInfo(tstring yuvMatrix, int targetBlackLevel, int targetWhiteLevel) { return E_NOTIMPL; }
 };

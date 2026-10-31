@@ -329,10 +329,10 @@ void CPlaylistManager::SetVideoPMT(AM_MEDIA_TYPE *pmt, int nPlaylist, int nClip)
 
 void CPlaylistManager::PushPlaylists()
 {
-  m_itCurrentAudioPlayBackPlaylistPos = m_itCurrentAudioPlayBackPlaylist-m_vecPlaylists.begin();
-  m_itCurrentVideoPlayBackPlaylistPos = m_itCurrentVideoPlayBackPlaylist-m_vecPlaylists.begin();
-  m_itCurrentAudioSubmissionPlaylistPos = m_itCurrentAudioSubmissionPlaylist-m_vecPlaylists.begin();
-  m_itCurrentVideoSubmissionPlaylistPos = m_itCurrentVideoSubmissionPlaylist-m_vecPlaylists.begin();
+  m_itCurrentAudioPlayBackPlaylistPos = (int)(m_itCurrentAudioPlayBackPlaylist-m_vecPlaylists.begin());
+  m_itCurrentVideoPlayBackPlaylistPos = (int)(m_itCurrentVideoPlayBackPlaylist-m_vecPlaylists.begin());
+  m_itCurrentAudioSubmissionPlaylistPos = (int)(m_itCurrentAudioSubmissionPlaylist-m_vecPlaylists.begin());
+  m_itCurrentVideoSubmissionPlaylistPos = (int)(m_itCurrentVideoSubmissionPlaylist-m_vecPlaylists.begin());
 }
 
 void CPlaylistManager::PopPlaylists(int difference)

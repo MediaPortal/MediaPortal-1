@@ -21,69 +21,68 @@
 
 #pragma once
 
-#include <atlcoll.h>
 #include <string>
 
 template<class T, typename SEP>
-T Explode(const T& str, CAtlList<T>& sl, SEP sep, size_t limit = 0)
+T Explode(const T& str, std::list<T>& sl, SEP sep, size_t limit = 0)
 {
-    sl.RemoveAll();
+    sl.clear();
 
     for (int i = 0, j = 0; ; i = j + 1) {
-        j = str.Find(sep, i);
+        j = StringFind(str, sep, i);
 
-        if (j < 0 || sl.GetCount() == limit - 1) {
-            sl.AddTail(str.Mid(i).Trim());
+        if (j < 0 || sl.size() == limit - 1) {
+            sl.push_back(StringTrimmed(StringMid(str, i)));
             break;
         } else {
-            sl.AddTail(str.Mid(i, j - i).Trim());
+            sl.push_back(StringTrimmed(StringMid(str, i, j - i)));
         }
     }
 
-    return sl.GetHead();
+    return sl.front();
 }
 
 template<class T, typename SEP>
-T ExplodeNoTrim(const T& str, CAtlList<T>& sl, SEP sep, size_t limit = 0)
+T ExplodeNoTrim(const T& str, std::list<T>& sl, SEP sep, size_t limit = 0)
 {
-    sl.RemoveAll();
+    sl.clear();
 
     for (int i = 0, j = 0; ; i = j + 1) {
-        j = str.Find(sep, i);
+        j = StringFind(str, sep, i);
 
-        if (j < 0 || sl.GetCount() == limit - 1) {
-            sl.AddTail(str.Mid(i));
+        if (j < 0 || sl.size() == limit - 1) {
+            sl.push_back(StringMid(str, i));
             break;
         } else {
-            sl.AddTail(str.Mid(i, j - i));
+            sl.push_back(StringMid(str, i, j - i));
         }
     }
 
-    return sl.GetHead();
+    return sl.front();
 }
 
 template<class T, typename SEP>
-T ExplodeMin(const T& str, CAtlList<T>& sl, SEP sep, size_t limit = 0)
+T ExplodeMin(const T& str, std::list<T>& sl, SEP sep, size_t limit = 0)
 {
     Explode(str, sl, sep, limit);
-    POSITION pos = sl.GetHeadPosition();
-    while (pos) {
-        POSITION tmp = pos;
-        if (sl.GetNext(pos).IsEmpty()) {
-            sl.RemoveAt(tmp);
+    for (auto it = sl.begin(); it != sl.end();) {
+        if (it->IsEmpty()) {
+            it = sl.erase(it);
+        } else {
+            ++it;
         }
     }
-    if (sl.IsEmpty()) {
-        sl.AddTail(T());    // eh
+    if (sl.empty()) {
+        sl.push_back(T());    // eh
     }
 
-    return sl.GetHead();
+    return sl.front();
 }
 
 template<class T, typename SEP>
-T ExplodeEsc(T str, CAtlList<T>& sl, SEP sep, size_t limit = 0, SEP esc = _T('\\'))
+T ExplodeEsc(T str, std::list<T>& sl, SEP sep, size_t limit = 0, SEP esc = _T('\\'))
 {
-    sl.RemoveAll();
+    sl.clear();
 
     int split = 0;
     for (int i = 0, j = 0; ; i = j + 1) {
@@ -99,26 +98,25 @@ T ExplodeEsc(T str, CAtlList<T>& sl, SEP sep, size_t limit = 0, SEP esc = _T('\\
             continue;
         }
 
-        if (sl.GetCount() < limit - 1) {
-            sl.AddTail(str.Mid(split, j - split).Trim());
+        if (sl.size() < limit - 1) {
+            sl.push_back(str.Mid(split, j - split).Trim());
 
             // Save new splitting position
             split = j + 1;
         }
     }
-    sl.AddTail(str.Mid(split).Trim());
+    sl.push_back(str.Mid(split).Trim());
 
-    return sl.GetHead();
+    return sl.front();
 }
 
 template<class T, typename SEP>
-T Implode(const CAtlList<T>& sl, SEP sep)
+T Implode(const std::list<T>& sl, SEP sep)
 {
     T ret;
-    POSITION pos = sl.GetHeadPosition();
-    while (pos) {
-        ret += sl.GetNext(pos);
-        if (pos) {
+    for (auto it = sl.begin(); it != sl.end(); ++it) {
+        ret += *it;
+        if (std::next(it) != sl.end()) {
             ret += sep;
         }
     }
@@ -126,90 +124,74 @@ T Implode(const CAtlList<T>& sl, SEP sep)
 }
 
 template<class T, typename SEP>
-T ImplodeEsc(const CAtlList<T>& sl, SEP sep, SEP esc = _T('\\'))
+T ImplodeEsc(const std::list<T>& sl, SEP sep, SEP esc = _T('\\'))
 {
     T ret;
     T escsep = T(esc) + T(sep);
-    POSITION pos = sl.GetHeadPosition();
-    while (pos) {
-        T str = sl.GetNext(pos);
+    for (auto it = sl.begin(); it != sl.end(); ++it) {
+        T str = *it;
         str.Replace(T(sep), escsep);
         ret += str;
-        if (pos) {
+        if (std::next(it) != sl.end()) {
             ret += sep;
         }
     }
     return ret;
 }
 
-extern CString ExtractTag(CString tag, CMapStringToString& attribs, bool& fClosing);
-extern CStringA ConvertMBCS(CStringA str, DWORD SrcCharSet, DWORD DstCharSet);
-extern CStringA UrlEncode(const CStringA& strIn);
+extern std::string ConvertMBCS(std::string str, DWORD SrcCharSet, DWORD DstCharSet);
+extern std::string UrlEncode(const std::string& strIn);
 /**
  * @brief Escape the characters that JSON reserves as special.
  * @param str The string that needs escaping.
  * @return The input string with the special characters escaped.
  */
-extern CStringA EscapeJSONString(const CStringA& str);
-extern CStringA UrlDecode(const CStringA& strIn);
-extern CStringW UrlDecodeWithUTF8(const CStringW in, bool keepEncodedSpecialChar = false);
-extern CStringW URLGetHostName(const CStringW in);
-extern CStringW ShortenURL(const CStringW url, int targetLength = 100, bool returnHostnameIfTooLong = false);
-extern CStringA HtmlSpecialChars(CStringA str, bool bQuotes = false);
-extern CStringA HtmlSpecialCharsDecode(CStringA str);
+extern std::string EscapeJSONString(const std::string& str);
+extern std::string UrlDecode(const std::string& strIn);
+extern std::wstring UrlDecodeWithUTF8(const std::wstring in, bool keepEncodedSpecialChar = false);
+extern std::wstring URLGetHostName(const std::wstring in);
+extern std::wstring ShortenURL(const std::wstring url, int targetLength = 100, bool returnHostnameIfTooLong = false);
+extern std::string HtmlSpecialChars(std::string str, bool bQuotes = false);
+extern std::string HtmlSpecialCharsDecode(std::string str);
 extern DWORD CharSetToCodePage(DWORD dwCharSet);
-extern CAtlList<CString>& MakeLower(CAtlList<CString>& sl);
-extern CAtlList<CString>& MakeUpper(CAtlList<CString>& sl);
-extern int LastIndexOfCString(const CString& text, const CString& pattern);
-extern bool IsNameSimilar(const CString& title, const CString& fileName);
+extern std::list<tstring>& MakeLower(std::list<tstring>& sl);
+extern std::list<tstring>& MakeUpper(std::list<tstring>& sl);
+extern int LastIndexOfCString(const tstring& text, const tstring& pattern);
+extern bool IsNameSimilar(const tstring& title, const tstring& fileName);
 
-CString FormatNumber(CString szNumber, bool bNoFractionalDigits = true);
-void GetLocaleString(LCID lcid, LCTYPE type, CString& output);
+tstring FormatNumber(tstring szNumber, bool bNoFractionalDigits = true);
+void GetLocaleString(LCID lcid, LCTYPE type, tstring& output);
 
-template<class T>
-T& FastTrimRight(T& str)
+template<class C>
+std::basic_string<C>& FastTrimRight(std::basic_string<C>& str)
 {
-    if (!str.IsEmpty()) {
-        typename T::PCXSTR szStart = str;
-        typename T::PCXSTR szEnd   = szStart + str.GetLength() - 1;
-        typename T::PCXSTR szCur   = szEnd;
-        for (; szCur >= szStart; szCur--) {
-            if (!T::StrTraits::IsSpace(*szCur) || *szCur == 133) { // allow ellipsis character
-                break;
-            }
-        }
-
-        if (szCur != szEnd) {
-            str.Truncate(int(szCur - szStart + 1));
-        }
+    // the ellipsis character (133) is not taken for a space
+    while (!str.empty() && StrDetail::Chars<C>::isSpace(str.back()) && str.back() != 133) {
+        str.pop_back();
     }
 
     return str;
 }
 
-template<class T>
-T& FastTrim(T& str)
+template<class C>
+std::basic_string<C>& FastTrim(std::basic_string<C>& str)
 {
-    return FastTrimRight(str).TrimLeft();
+    return StringTrimLeft(FastTrimRight(str));
 }
 
-template<class T>
-int FindOneOf(const T& str, typename T::PCXSTR pszCharSet, int iStart) throw()
+template<class C>
+int FindOneOf(const std::basic_string<C>& str, const typename StrDetail::Id<C>::type* pszCharSet, int iStart)
 {
-    ATLASSERT(AtlIsValidString(pszCharSet));
-    ATLASSERT(iStart >= 0);
-
-    if (iStart < 0 || iStart >= str.GetLength()) {
+    if (iStart < 0 || iStart >= int(str.size())) {
         return -1;
     }
 
-    typename T::PCXSTR psz = T::StrTraits::StringScanSet(str.GetString() + iStart, pszCharSet);
-    return ((psz == NULL) ? -1 : int(psz - str.GetString()));
+    return StrDetail::Pos(str.find_first_of(pszCharSet, static_cast<size_t>(iStart)));
 }
 
 template<typename T>
-CString NumToCString(T num)
+tstring NumToCString(T num)
 {
     static_assert(std::numeric_limits<T>::is_specialized, "NumToCString can be used only for numeric types.");
-    return std::to_string(num).c_str();
+    return StringToT(std::to_string(num));
 }

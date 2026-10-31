@@ -38,29 +38,10 @@
 #include <errno.h>
 #include "dvbsubdecoder.h"
 #include "subtitle.h"
+#include <algorithm>
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\..\alloctracing.h"
-
-page_t page;
-region_t regions[MAX_REGIONS];
-uint8_t colours[256*3];
-uint8_t trans[256];
-uint16_t apid;
-int y=0;
-int x=0;
-int ext;
-int acquired=0;
-uint64_t PTS;
-uint64_t first_PTS;
-unsigned int curr_obj;
-unsigned int curr_reg[64];
-uint8_t buf[1920*1080];  
-int i=0;
-int nibble_flag=0;
-int in_scanline=0;
-uint64_t video_pts,first_video_pts,audio_pts,first_audio_pts;
-int audio_pts_wrap=0;
 
 // HACK to adjust the timeout
 const int maxSubtitleTimeOut = 6;
@@ -76,19 +57,27 @@ CDVBSubDecoder::~CDVBSubDecoder()
     delete m_CurrentSubtitle;
   }
 
-  // Release all rendered subtitles
-  for( unsigned int i = 0 ; i < m_RenderedSubtitles.size() ; i++ )
-  {
-    m_RenderedSubtitles.erase( m_RenderedSubtitles.begin() );
-  }
+  ClearRenderedSubtitles();
 }
 
 CDVBSubDecoder::CDVBSubDecoder() :
-  m_CurrentSubtitle( NULL ),	
+  m_CurrentSubtitle( NULL ),
   m_pObserver( NULL ),
   m_ScreenWidth( 720 ), // use PAL resolution as default as PAL streams don't
   m_ScreenHeight( 576 ) // provide the screen specification information
 {
+  ZeroMemory( &page, sizeof( page ) );
+  ext = 0;
+  Reset();
+}
+
+void CDVBSubDecoder::ClearRenderedSubtitles()
+{
+  for( unsigned int n = 0 ; n < m_RenderedSubtitles.size() ; n++ )
+  {
+    delete m_RenderedSubtitles[n];
+  }
+  m_RenderedSubtitles.clear();
 }
 
 void CDVBSubDecoder::Init_data() 
@@ -108,20 +97,18 @@ void CDVBSubDecoder::Create_region(int region_id,int region_width,int region_hei
   regions[region_id].width=region_width;
   regions[region_id].height=region_height;
 
-  memset(regions[region_id].img,15,sizeof(regions[region_id].img));
+  regions[region_id].img.assign( region_width * region_height, 15 );
 }
 
-void CDVBSubDecoder::Do_plot( int r,int x, int y, unsigned char pixel ) 
+void CDVBSubDecoder::Do_plot( int r,int x, int y, unsigned char pixel )
 {
-  int i;
-  if ( ( y >= 0 ) && ( y < regions[r].height ) ) 
+  if ( ( y >= 0 ) && ( y < regions[r].height ) && ( x >= 0 ) && ( x < regions[r].width ) )
   {
-    i = ( y * regions[r].width ) + x;
-    regions[r].img[i] = pixel;
-  } 
-  else 
+    regions[r].img[( y * regions[r].width ) + x] = pixel;
+  }
+  else
   {
-    LogDebug("DVBsubs: plot out of region: x=%d, y=%d - r=%d, height=%d",x,y,r,regions[r].height);
+    LogDebug("DVBsubs: plot out of region: x=%d, y=%d - r=%d, width=%d, height=%d",x,y,r,regions[r].width,regions[r].height);
   }
 }
 
@@ -378,6 +365,12 @@ void CDVBSubDecoder::Process_page_composition_segment()
     region_x = (buf[i]<<8)|buf[i+1]; i += 2;
     region_y = (buf[i]<<8)|buf[i+1]; i += 2;
 
+    if( region_id >= MAX_REGIONS )
+    {
+      LogDebug("DVBsubs: page composition references invalid region %d", region_id );
+      continue;
+    }
+
     page.regions[region_id].x = region_x;
     page.regions[region_id].y = region_y;
     page.regions[region_id].is_visible = 1;
@@ -437,20 +430,25 @@ void CDVBSubDecoder::Process_region_composition_segment()
     return;
   }
 
-  if ( regions[region_id].win < 0 ) 
+  if( region_width <= 0 || region_width > MAX_DISPLAY_WIDTH ||
+      region_height <= 0 || region_height > MAX_DISPLAY_HEIGHT )
   {
-    // If the region doesn't exist, then open it.
+    LogDebug("DVBsubs: invalid region size %dx%d for region %d", region_width, region_height, region_id );
+    return;
+  }
+
+  if ( regions[region_id].win < 0 ||
+       regions[region_id].width != region_width || regions[region_id].height != region_height )
+  {
+    // If the region doesn't exist (or its size changed), then (re)open it.
     Create_region( region_id, region_width, region_height, region_depth );
     regions[region_id].CLUT_id = CLUT_id;
   }
 
-  regions[region_id].width = region_width;
-  regions[region_id].height = region_height;
-
-  if (region_fill_flag==1) 
+  if (region_fill_flag==1)
   {
     //LogDebug("DVBsubs: "filling region %d with %d", region_id, region_4_bit_pixel_code );
-    memset(regions[region_id].img,region_4_bit_pixel_code, sizeof( regions[region_id].img ) );
+    std::fill( regions[region_id].img.begin(), regions[region_id].img.end(), (unsigned char)region_4_bit_pixel_code );
   }
 
   regions[region_id].objects_start = i;  
@@ -594,8 +592,19 @@ void CDVBSubDecoder::Process_display_definition_segment()
 
   bool windowed = buf[i]&0x10; i+=1; // to be tested with some real .ts file
 
-  m_ScreenWidth = ((buf[i]<<8)|buf[i+1])+1; i+=2;
-  m_ScreenHeight = ((buf[i]<<8)|buf[i+1])+1; i+=2;
+  int width = ((buf[i]<<8)|buf[i+1])+1; i+=2;
+  int height = ((buf[i]<<8)|buf[i+1])+1; i+=2;
+
+  // m_Buffer and the rendered bitmap are sized for at most MAX_DISPLAY_WIDTH x MAX_DISPLAY_HEIGHT
+  if( width > MAX_DISPLAY_WIDTH || height > MAX_DISPLAY_HEIGHT )
+  {
+    LogDebug("DVBsubs: unsupported display size %dx%d, keeping %dx%d", width, height, m_ScreenWidth, m_ScreenHeight );
+  }
+  else
+  {
+    m_ScreenWidth = width;
+    m_ScreenHeight = height;
+  }
 
   //if(windowed)
   {
@@ -621,18 +630,28 @@ void CDVBSubDecoder::Compose_subtitle()
   {
     if (regions[r].win >= 0) 
     {
-      if (page.regions[r].is_visible) 
+      if (page.regions[r].is_visible)
       {
         count++;
-        out_y=page.regions[r].y*m_ScreenWidth;
-        for ( y = 0 ; y < regions[r].height ; y++ ) 
+        // Clip the region to the display, positions come from the stream
+        int left = page.regions[r].x;
+        int top = page.regions[r].y;
+        if (left >= m_ScreenWidth || top >= m_ScreenHeight)
         {
-          for ( x = 0 ; x < regions[r].width ; x++ ) 
+          continue;
+        }
+        int width = min(regions[r].width, m_ScreenWidth - left);
+        int height = min(regions[r].height, m_ScreenHeight - top);
+
+        out_y=top*m_ScreenWidth;
+        for ( y = 0 ; y < height ; y++ )
+        {
+          for ( x = 0 ; x < width ; x++ )
           {
             v = regions[r].img[(y*regions[r].width)+x];
-            m_Buffer[out_y+x+page.regions[r].x]=v+16*regions[r].CLUT_id;
+            m_Buffer[out_y+x+left]=v+16*regions[r].CLUT_id;
           }
-        
+
         out_y+=m_ScreenWidth;
         }
       }
@@ -675,8 +694,18 @@ int CDVBSubDecoder::ProcessPES( const unsigned char* data, int length, int pid )
 
   Init_data();
 
+  if( data == NULL || length < 14 || length > MAX_PES_SIZE )
+  {
+    LogDebug("DVBsubs: ERROR: invalid PES length %d", length );
+    delete m_CurrentSubtitle;
+    m_CurrentSubtitle = NULL;
+    return 1;
+  }
+
   PES_packet_length = length;
   memcpy(buf,data,PES_packet_length);
+  // The segment parsers trust lengths from the stream, keep the slack deterministic
+  memset(buf + PES_packet_length, 0, sizeof(buf) - PES_packet_length);
 
   while( PES_packet_length >= 0 ) 
   {
@@ -936,8 +965,8 @@ void CDVBSubDecoder::Reset()
 
   curr_obj = 0;
 
-  ZeroMemory( curr_reg, 64 );
-  ZeroMemory( buf, 1920*1080 );
+  ZeroMemory( curr_reg, sizeof( curr_reg ) );
+  ZeroMemory( buf, sizeof( buf ) );
 
   m_ScreenWidth = 720;
   m_ScreenHeight = 576;
@@ -946,14 +975,6 @@ void CDVBSubDecoder::Reset()
 
   nibble_flag = 0;
   in_scanline = 0;
-  video_pts = 0;
-  first_video_pts = 0;
-  audio_pts = 0;
-  first_audio_pts = 0;
-  audio_pts_wrap = 0;
 
-  for( unsigned int i( 0 ) ; i < m_RenderedSubtitles.size() ; i++ )
-  {
-    m_RenderedSubtitles.erase( m_RenderedSubtitles.begin() );	
-  }
+  ClearRenderedSubtitles();
 }

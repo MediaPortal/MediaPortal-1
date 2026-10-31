@@ -46,9 +46,9 @@ CFontInstaller::~CFontInstaller()
     UninstallFonts();
 }
 
-bool CFontInstaller::InstallFont(const CAtlArray<BYTE>& data)
+bool CFontInstaller::InstallFont(const std::vector<BYTE>& data)
 {
-    return InstallFont(data.GetData(), (UINT)data.GetCount());
+    return InstallFont(data.data(), (UINT)data.size());
 }
 
 bool CFontInstaller::InstallFont(const void* pData, UINT len)
@@ -59,32 +59,27 @@ bool CFontInstaller::InstallFont(const void* pData, UINT len)
 void CFontInstaller::UninstallFonts()
 {
     if (pRemoveFontMemResourceEx) {
-        POSITION pos = m_fonts.GetHeadPosition();
-        while (pos) {
-            pRemoveFontMemResourceEx(m_fonts.GetNext(pos));
+        for (HANDLE hFont : m_fonts) {
+            pRemoveFontMemResourceEx(hFont);
         }
-        m_fonts.RemoveAll();
+        m_fonts.clear();
     }
 
     if (pRemoveFontResourceEx) {
-        POSITION pos = m_files.GetHeadPosition();
-        while (pos) {
-            CString fn = m_files.GetNext(pos);
-            pRemoveFontResourceEx(fn, FR_PRIVATE, 0);
-            if (!DeleteFile(fn) && pMoveFileEx) {
-                pMoveFileEx(fn, nullptr, MOVEFILE_DELAY_UNTIL_REBOOT);
+        for (tstring fn : m_files) {
+            pRemoveFontResourceEx(fn.c_str(), FR_PRIVATE, 0);
+            if (!DeleteFile(fn.c_str()) && pMoveFileEx) {
+                pMoveFileEx(fn.c_str(), nullptr, MOVEFILE_DELAY_UNTIL_REBOOT);
             }
         }
 
-        m_files.RemoveAll();
+        m_files.clear();
 		
-        pos = m_tempfonts.GetHeadPosition();
-        while (pos) {
-            CString fn = m_tempfonts.GetNext(pos);
-            pRemoveFontResourceEx(fn, FR_PRIVATE, 0);
+        for (tstring fn : m_tempfonts) {
+            pRemoveFontResourceEx(fn.c_str(), FR_PRIVATE, 0);
         }
 		
-        m_tempfonts.RemoveAll();
+        m_tempfonts.clear();
     }
 }
 
@@ -97,7 +92,7 @@ bool CFontInstaller::InstallFontMemory(const void* pData, UINT len)
     DWORD nFonts = 0;
     HANDLE hFont = pAddFontMemResourceEx((PVOID)pData, len, nullptr, &nFonts);
     if (hFont && nFonts > 0) {
-        m_fonts.AddTail(hFont);
+        m_fonts.push_back(hFont);
     }
     return hFont && nFonts > 0;
 }
@@ -108,18 +103,21 @@ bool CFontInstaller::InstallFontFile(const void* pData, UINT len)
         return false;
     }
 
-    CFile f;
     TCHAR path[MAX_PATH], fn[MAX_PATH];
     if (!GetTempPath(MAX_PATH, path) || !GetTempFileName(path, _T("g_font"), 0, fn)) {
         return false;
     }
 
-    if (f.Open(fn, CFile::modeWrite)) {
-        f.Write(pData, len);
-        f.Close();
+    if (FilePtr f = OpenFile(fn, L"wb", _SH_DENYWR)) {
+        const bool written = fwrite(pData, 1, len, f.get()) == len;
+        f.reset();
+        if (!written) {
+            DeleteFile(fn);
+            return false;
+        }
 
         if (pAddFontResourceEx(fn, FR_PRIVATE, 0) > 0) {
-            m_files.AddTail(fn);
+            m_files.push_back(fn);
             return true;
         }
     }
@@ -131,7 +129,7 @@ bool CFontInstaller::InstallFontFile(const void* pData, UINT len)
 bool CFontInstaller::InstallTempFontFile(LPCTSTR fn)
 {
 	if (pAddFontResourceEx && pAddFontResourceEx(fn, FR_PRIVATE, 0) > 0) {
-		m_tempfonts.AddTail(fn);
+		m_tempfonts.push_back(fn);
 		return true;
 	}
 

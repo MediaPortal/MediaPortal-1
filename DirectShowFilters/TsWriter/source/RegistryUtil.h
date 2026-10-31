@@ -21,8 +21,6 @@
 #pragma once
 
 #include <windows.h>
-#include <AtlBase.h>
-#include <AtlConv.h>
 
 #define MAX_REG_LENGTH 256
 

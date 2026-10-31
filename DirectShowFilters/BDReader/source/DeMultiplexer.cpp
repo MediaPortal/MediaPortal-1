@@ -22,7 +22,6 @@
 #pragma warning(disable:4996)
 #pragma warning(disable:4995)
 #include "StdAfx.h"
-#include <afx.h>
 #include <streams.h>
 #include <wmcodecdsp.h>
 #include "demultiplexer.h"
@@ -118,7 +117,7 @@ CDeMultiplexer::~CDeMultiplexer()
   delete m_videoParser;
   delete m_audioParser;
 
-  m_pl.RemoveAll();
+  m_pl.clear();
 
   m_audioStreams.clear();
 }
@@ -201,7 +200,7 @@ int CDeMultiplexer::GetAudioStreamCount()
   }
   else
   {
-    return m_audioStreams.size();
+    return (int)m_audioStreams.size();
   }
 }
 
@@ -295,11 +294,11 @@ void CDeMultiplexer::FlushVideo()
   delete m_pCurrentVideoBuffer;
   m_pCurrentVideoBuffer = NULL;
 
-  m_p.Free();
-  m_pBuild.Free();
+  m_p.reset();
+  m_pBuild.reset();
   m_lastStart = 0;
   m_loopLastSearch = 1;
-  m_pl.RemoveAll();
+  m_pl.clear();
   m_fHasAccessUnitDelimiters = false;
 
   m_VideoValidPES = true;
@@ -745,14 +744,14 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 
           if (len < m_nAudioPesLenght)
           {
-            m_pCurrentAudioBuffer->SetCount(len, m_nAudioPesLenght);
-            memcpy(m_pCurrentAudioBuffer->GetData(), ps, len);
+            m_pCurrentAudioBuffer->resize(len);
+            memcpy(m_pCurrentAudioBuffer->data(), ps, len);
             packetProcessed = true;
           }
           else
           {
-            m_pCurrentAudioBuffer->SetCount(m_nAudioPesLenght);
-            memcpy(m_pCurrentAudioBuffer->GetData(), ps, m_nAudioPesLenght);
+            m_pCurrentAudioBuffer->resize(m_nAudioPesLenght);
+            memcpy(m_pCurrentAudioBuffer->data(), ps, m_nAudioPesLenght);
           }
         }
         else
@@ -775,19 +774,19 @@ void CDeMultiplexer::FillAudio(CTsHeader& header, byte* tsPacket)
 
   if (m_AudioValidPES && !packetProcessed && m_pCurrentAudioBuffer && !m_bAC3Substream)
   {
-    if (m_pCurrentAudioBuffer->GetCount() != m_nAudioPesLenght)
+    if (m_pCurrentAudioBuffer->size() != m_nAudioPesLenght)
     {
       int pos = header.PayLoadStart;
 
       if (pos > 0 && pos < 188)
       {
         int dataLenght = 188 - pos;
-        m_pCurrentAudioBuffer->SetCount(m_pCurrentAudioBuffer->GetDataSize() + dataLenght);
-        memcpy(m_pCurrentAudioBuffer->GetData() + m_pCurrentAudioBuffer->GetDataSize() - dataLenght, &tsPacket[pos], dataLenght);
+        m_pCurrentAudioBuffer->resize(m_pCurrentAudioBuffer->GetDataSize() + dataLenght);
+        memcpy(m_pCurrentAudioBuffer->data() + m_pCurrentAudioBuffer->GetDataSize() - dataLenght, &tsPacket[pos], dataLenght);
       }
     }
     
-    if (m_pCurrentAudioBuffer->GetCount() == m_nAudioPesLenght)
+    if (m_pCurrentAudioBuffer->size() == m_nAudioPesLenght)
     {
       if (ParseAudioFormat(m_pCurrentAudioBuffer))
         m_playlistManager->SubmitAudioPacket(m_pCurrentAudioBuffer);
@@ -813,16 +812,16 @@ void CDeMultiplexer::FlushPESBuffers(bool bDiscardData, bool bSetCurrentClipFill
         m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_MPEG2)
       FillVideoMPEG2(NULL, NULL, true);
     else if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_H264 || m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_HEVC)
-      FillVideoH264PESPacket(NULL, m_pBuild, true);
+      FillVideoH264PESPacket(NULL, std::move(m_pBuild), true);
     else if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_VC1)
-      FillVideoVC1PESPacket(NULL, m_pBuild, true);
+      FillVideoVC1PESPacket(NULL, std::move(m_pBuild), true);
   }
 
-  m_p.Free();
-  m_pBuild.Free();
+  m_p.reset();
+  m_pBuild.reset();
   m_lastStart = 0;
   m_loopLastSearch = 1;
-  m_pl.RemoveAll();
+  m_pl.clear();
   m_nMPEG2LastPlaylist = -1;
   m_nMPEG2LastClip = -1;
   delete m_pCurrentAudioBuffer;
@@ -852,26 +851,26 @@ void CDeMultiplexer::FillVideo(CTsHeader& header, byte* tsPacket)
   }
 }
 
-void CDeMultiplexer::PacketDelivery(CAutoPtr<Packet> p)
+void CDeMultiplexer::PacketDelivery(std::unique_ptr<Packet> p)
 {
   if (m_filter.GetVideoPin()->IsConnected())
   {
     if (p->rtStart != Packet::INVALID_TIME)
       m_LastValidFrameCount++;
     
-    ParseVideoFormat(p);
+    ParseVideoFormat(p.get());
     if (m_bVideoFormatParsed)
-      m_playlistManager->SubmitVideoPacket(p.Detach());
+      m_playlistManager->SubmitVideoPacket(p.release());
   }
   else
-    ParseVideoFormat(p);
+    ParseVideoFormat(p.get());
 }
 
 bool CDeMultiplexer::ParseVideoFormat(Packet* p)
 {
   if (!m_bVideoFormatParsed)
   {
-    m_bVideoFormatParsed = m_videoParser->OnTsPacket(p->GetData(), p->GetCount(), m_videoServiceType);
+    m_bVideoFormatParsed = m_videoParser->OnTsPacket(p->data(), (int)p->size(), m_videoServiceType);
     if (!m_bVideoFormatParsed)
       LogDebug("demux: ParseVideoFormat - failed to parse video format!");
     else
@@ -893,7 +892,7 @@ bool CDeMultiplexer::ParseAudioFormat(Packet* p)
 {
   if (!m_bAudioFormatParsed)
   {
-    m_bAudioFormatParsed = m_audioParser->OnTsPacket(p->GetData(), p->GetCount(), m_AudioStreamType);
+    m_bAudioFormatParsed = m_audioParser->OnTsPacket(p->data(), (int)p->size(), m_AudioStreamType);
     if (!m_bAudioFormatParsed)
       LogDebug("demux: ParseAudioFormat - failed to parse audio format!");
     else
@@ -906,18 +905,18 @@ bool CDeMultiplexer::ParseAudioFormat(Packet* p)
   return m_bAudioFormatParsed;
 }
 
-void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader* header, CAutoPtr<Packet> p, bool pFlushBuffers)
+void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader* header, std::unique_ptr<Packet> p, bool pFlushBuffers)
 {
   if (!pFlushBuffers)
   {
     if (!m_p) 
     {
-      m_p.Attach(new Packet());
-      m_p->SetCount(0, PACKET_GRANULARITY);
+      m_p.reset(new Packet());
+      m_p->reserve(PACKET_GRANULARITY);
       m_p->TransferProperties(*p, false, false);
     }
 
-    m_p->Append(*p);
+    m_p->insert(m_p->end(), p->begin(), p->end());
   }
   else
   {
@@ -927,15 +926,15 @@ void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader* header, CAutoPtr<Packet> 
     m_loopLastSearch = 0;
   }
 
-  BYTE* start = m_p->GetData();
-  BYTE* end = start + m_p->GetCount();
+  BYTE* start = m_p->data();
+  BYTE* end = start + m_p->size();
 
   while (start <= end - 4 && *(DWORD*)start != 0x01000000) start++;
   while (start <= end - 4) 
   {
     BYTE* next =  start + (m_loopLastSearch==0 ? 1 : m_loopLastSearch);
     while(next <= end - 4 && *(DWORD*)next != 0x01000000) next++;
-    m_loopLastSearch = next - start;
+    m_loopLastSearch = (int)(next - start);
     if (next >= end - 4)
     {
       if (pFlushBuffers)
@@ -943,11 +942,11 @@ void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader* header, CAutoPtr<Packet> 
       else 
         break;
     }
-    int size = next - start;
+    int size = (int)(next - start);
     CH264Nalu	nalu;
     nalu.SetBuffer(start, size, 0);
-    CAutoPtr<Packet> p2(new Packet());
-    p2->SetCount(0, PACKET_GRANULARITY);
+    std::unique_ptr<Packet> p2(new Packet());
+    p2->reserve(PACKET_GRANULARITY);
     while (nalu.ReadNext()) 
     {
       DWORD	dwNalLength =
@@ -956,19 +955,19 @@ void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader* header, CAutoPtr<Packet> 
         ((nalu.GetDataLength() <<  8) & 0x00ff0000) |
         ((nalu.GetDataLength() << 24) & 0xff000000);
 
-      CAutoPtr<Packet> p3(new Packet());
+      std::unique_ptr<Packet> p3(new Packet());
 
-      p3->SetCount (nalu.GetDataLength() + sizeof(dwNalLength));
-      memcpy(p3->GetData(), &dwNalLength, sizeof(dwNalLength));
-      memcpy(p3->GetData() + sizeof(dwNalLength), nalu.GetDataBuffer(), nalu.GetDataLength());
+      p3->resize(nalu.GetDataLength() + sizeof(dwNalLength));
+      memcpy(p3->data(), &dwNalLength, sizeof(dwNalLength));
+      memcpy(p3->data() + sizeof(dwNalLength), nalu.GetDataBuffer(), nalu.GetDataLength());
 
-      if (p2 == NULL) p2 = p3;
-      else p2->Append(*p3);
+      if (p2 == NULL) p2 = std::move(p3);
+      else p2->insert(p2->end(), p3->begin(), p3->end());
     }
 
 
     p2->TransferProperties(*m_p, false, true);
-    m_pl.AddTail(p2);
+    m_pl.push_back(std::move(p2));
 
     if (p)
     {
@@ -979,21 +978,21 @@ void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader* header, CAutoPtr<Packet> 
     start = next;
   }
 
-  if (start > m_p->GetData()) 
+  if (start > m_p->data()) 
   {
     m_loopLastSearch = 1;
-    m_p->RemoveAt(0, start - m_p->GetData());
+    m_p->erase(m_p->begin() + (0), m_p->begin() + (0) + (start - m_p->data()));
   }
 
-  for (POSITION pos = m_pl.GetHeadPosition(); pos; m_pl.GetNext(pos)) 
+  for (PacketList::iterator pos = m_pl.begin(); pos != m_pl.end(); ++pos) 
   {
-    if (pos == m_pl.GetHeadPosition()) 
+    if (pos == m_pl.begin()) 
       continue;
 
-    Packet* pPacket = m_pl.GetAt(pos);
-    BYTE* pData = pPacket->GetData();
+    Packet* pPacket = pos->get();
+    BYTE* pData = pPacket->data();
 
-    if (!pData)
+    if (pPacket->empty())
       continue;
 
     bool bFlag = false;
@@ -1013,42 +1012,42 @@ void CDeMultiplexer::FillVideoH264PESPacket(CTsHeader* header, CAutoPtr<Packet> 
 
     if (bFlag || !m_fHasAccessUnitDelimiters && pPacket->rtStart != Packet::INVALID_TIME)
     {
-      p = m_pl.RemoveHead();
+      p = PopHead(m_pl);
 
-      while (pos != m_pl.GetHeadPosition() && !m_pl.IsEmpty())
+      while (pos != m_pl.begin() && !m_pl.empty())
       {
-        CAutoPtr<Packet> p2 = m_pl.RemoveHead();
-        p->Append(*p2);
+        std::unique_ptr<Packet> p2 = PopHead(m_pl);
+        p->insert(p->end(), p2->begin(), p2->end());
       }
       //LogDebug("PacketDelivery - %6.3f %d %d", p->rtStart / 10000000.0, p->nPlaylist, p->nClipNumber);
-      PacketDelivery(p);
+      PacketDelivery(std::move(p));
     }
   }
-  if (pFlushBuffers && m_pl.GetCount() > 0)
+  if (pFlushBuffers && m_pl.size() > 0)
   {
-    p = m_pl.RemoveHead();
-    while (!m_pl.IsEmpty())
+    p = PopHead(m_pl);
+    while (!m_pl.empty())
     {
-      CAutoPtr<Packet> p2 = m_pl.RemoveHead();
-      p->Append(*p2);
+      std::unique_ptr<Packet> p2 = PopHead(m_pl);
+      p->insert(p->end(), p2->begin(), p2->end());
     }
 
-    PacketDelivery(p);
+    PacketDelivery(std::move(p));
   }
 }
 
-void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader* header, CAutoPtr<Packet> p, bool pFlushBuffers) 
+void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader* header, std::unique_ptr<Packet> p, bool pFlushBuffers) 
 {
   if (!pFlushBuffers)
   {
     if (!m_p) 
     {
-      m_p.Attach(new Packet());
-      m_p->SetCount(0, PACKET_GRANULARITY);
+      m_p.reset(new Packet());
+      m_p->reserve(PACKET_GRANULARITY);
       m_p->TransferProperties(*p, false, false);
     }
 
-    m_p->Append(*p);
+    m_p->insert(m_p->end(), p->begin(), p->end());
   }
   else if (!m_p)
     return;
@@ -1067,8 +1066,8 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader* header, CAutoPtr<Packet> p
   * 0x1F: user-defined sequence header
   */
 
-  BYTE* start = m_p->GetData();
-  BYTE* end = start + m_p->GetCount();
+  BYTE* start = m_p->data();
+  BYTE* end = start + m_p->size();
 
   bool bSeqFound = false;
   while(start <= end - 4)
@@ -1102,7 +1101,7 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader* header, CAutoPtr<Packet> p
       next++;
     }
 
-    m_loopLastSearch = next - start;
+    m_loopLastSearch = (int)(next - start);
 
     if (next >= end - 4) 
     {
@@ -1112,15 +1111,15 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader* header, CAutoPtr<Packet> p
         break;
     }
 
-    int size = next - start - 4;
+    int size = (int)(next - start - 4);
     UNUSED_ALWAYS(size);
 
-    CAutoPtr<Packet> p2(new Packet());
-    p2->SetCount(0, PACKET_GRANULARITY);
+    std::unique_ptr<Packet> p2(new Packet());
+    p2->reserve(PACKET_GRANULARITY);
     p2->CopyProperties(*m_p);
-    p2->SetData(start, next - start);
+    p2->SetData(start, (DWORD)(next - start));
 
-    PacketDelivery(p2);
+    PacketDelivery(std::move(p2));
    
     if (p)
     {
@@ -1133,15 +1132,15 @@ void CDeMultiplexer::FillVideoVC1PESPacket(CTsHeader* header, CAutoPtr<Packet> p
       bSeqFound = (*(DWORD*)start == 0x0D010000);
     else
     {
-      m_p.Free();
+      m_p.reset();
       m_loopLastSearch = 1;
     }
   }
 
-  if (m_p && start > m_p->GetData())
+  if (m_p && start > m_p->data())
   {
     m_loopLastSearch = 1;
-    m_p->RemoveAt(0, start - m_p->GetData());
+    m_p->erase(m_p->begin() + (0), m_p->begin() + (0) + (start - m_p->data()));
   }
 }
 
@@ -1154,7 +1153,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader* header, byte* tsPacket)
 
   if (!m_pBuild)
   {
-    m_pBuild.Attach(new Packet());
+    m_pBuild.reset(new Packet());
     m_pBuild->bDiscontinuity = false;
     m_pBuild->rtStart = Packet::INVALID_TIME;
     m_pBuild->nClipNumber = m_nClip;
@@ -1170,14 +1169,14 @@ void CDeMultiplexer::FillVideoH264(CTsHeader* header, byte* tsPacket)
     //LogDebug("demux: FillVideoH264 PayLoad Unit Start");
 #endif
     
-    m_WaitHeaderPES = m_pBuild->GetCount();
+    m_WaitHeaderPES = (int)m_pBuild->size();
 
-    if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_VC1 && m_pBuild->GetCount() > 0)
+    if (m_videoServiceType == BLURAY_STREAM_TYPE_VIDEO_VC1 && m_pBuild->size() > 0)
     {
-      FillVideoVC1PESPacket(header, m_pBuild);
-      m_pBuild.Free();
+      FillVideoVC1PESPacket(header, std::move(m_pBuild));
+      m_pBuild.reset();
 
-      m_pBuild.Attach(new Packet());
+      m_pBuild.reset(new Packet());
       m_pBuild->bDiscontinuity = false;
       m_pBuild->rtStart = Packet::INVALID_TIME;
       m_pBuild->nClipNumber = m_nClip;
@@ -1188,23 +1187,23 @@ void CDeMultiplexer::FillVideoH264(CTsHeader* header, byte* tsPacket)
     }
   }
   
-  CAutoPtr<Packet> p(new Packet());
+  std::unique_ptr<Packet> p(new Packet());
   
   if (headerlen < 188)
   {            
     int dataLen = 188 - headerlen;
-    p->SetCount(dataLen);
+    p->resize(dataLen);
     p->SetData(&tsPacket[headerlen], dataLen);
 
-    m_pBuild->Append(*p);
+    m_pBuild->insert(m_pBuild->end(), p->begin(), p->end());
   }
   else
     return;
 
   if (m_WaitHeaderPES >= 0)
   {
-    int AvailablePESlength = m_pBuild->GetCount() - m_WaitHeaderPES;
-    BYTE* start = m_pBuild->GetData() + m_WaitHeaderPES;
+    int AvailablePESlength = (int)m_pBuild->size() - m_WaitHeaderPES;
+    BYTE* start = m_pBuild->data() + m_WaitHeaderPES;
     
     if (AvailablePESlength < 9)
     {
@@ -1241,7 +1240,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader* header, byte* tsPacket)
         }
 
         m_lastStart -= 9 + start[8];
-        m_pBuild->RemoveAt(m_WaitHeaderPES, 9 + start[8]);
+        m_pBuild->erase(m_pBuild->begin() + (m_WaitHeaderPES), m_pBuild->begin() + (m_WaitHeaderPES) + (9 + start[8]));
         
         if (pts.IsValid)
         {
@@ -1273,10 +1272,10 @@ void CDeMultiplexer::FillVideoH264(CTsHeader* header, byte* tsPacket)
     }
   }//waitPESheader
 
-  if (m_pBuild->GetCount() && m_videoServiceType != BLURAY_STREAM_TYPE_VIDEO_VC1)
+  if (m_pBuild->size() && m_videoServiceType != BLURAY_STREAM_TYPE_VIDEO_VC1)
   {
-      FillVideoH264PESPacket(header, m_pBuild);
-      m_pBuild.Free();
+      FillVideoH264PESPacket(header, std::move(m_pBuild));
+      m_pBuild.reset();
   }
 }
 
@@ -1299,8 +1298,8 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
 
     if (!m_p)
     {
-      m_p.Attach(new Packet());
-      m_p->SetCount(0, PACKET_GRANULARITY);
+      m_p.reset(new Packet());
+      m_p->reserve(PACKET_GRANULARITY);
       m_p->bDiscontinuity = false;
       m_p->rtStart = Packet::INVALID_TIME;
       m_p->nPlaylist = m_nPlaylist;
@@ -1312,30 +1311,30 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
   
     if (header->PayloadUnitStart)
     {
-      m_WaitHeaderPES = m_p->GetCount();
+      m_WaitHeaderPES = (int)m_p->size();
 
 #ifdef LOG_DEMUXER_VIDEO_SAMPLES
       //LogDebug("demux FillVideoMPEG2 PayLoad Unit Start");
 #endif
     }
   
-    CAutoPtr<Packet> p(new Packet());
+    std::unique_ptr<Packet> p(new Packet());
   
     if (headerlen < 188)
     {            
       int dataLen = 188 - headerlen;
-      p->SetCount(dataLen);
+      p->resize(dataLen);
       p->SetData(&tsPacket[headerlen], dataLen);
 
-      m_p->Append(*p);
+      m_p->insert(m_p->end(), p->begin(), p->end());
     }
     else
       return;
 
     if (m_WaitHeaderPES >= 0)
     {
-      int AvailablePESlength = m_p->GetCount() - m_WaitHeaderPES;
-      BYTE* start = m_p->GetData() + m_WaitHeaderPES;
+      int AvailablePESlength = (int)m_p->size() - m_WaitHeaderPES;
+      BYTE* start = m_p->data() + m_WaitHeaderPES;
     
       if (AvailablePESlength < 9)
       {
@@ -1369,7 +1368,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
         }
 
         m_lastStart -= 9 + start[8];
-        m_p->RemoveAt(m_WaitHeaderPES, 9 + start[8]);
+        m_p->erase(m_p->begin() + (m_WaitHeaderPES), m_p->begin() + (m_WaitHeaderPES) + (9 + start[8]));
         m_WaitHeaderPES = -1;
         m_VideoValidPES = true;
 
@@ -1402,10 +1401,10 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
     }
   }
   
-  if (m_p && m_p->GetCount())
+  if (m_p && m_p->size())
   {
-    BYTE* start = m_p->GetData();
-    BYTE* end = start + m_p->GetCount();
+    BYTE* start = m_p->data();
+    BYTE* end = start + m_p->size();
     // 000001B3 sequence_header_code
     // 00000100 picture_start_code
 
@@ -1427,8 +1426,8 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
     if (start <= end - 4)
     {
       BYTE* next = start + 1;
-      if (next < m_p->GetData() + m_lastStart)
-        next = m_p->GetData() + m_lastStart;
+      if (next < m_p->data() + m_lastStart)
+        next = m_p->data() + m_lastStart;
 
       if (!pFlushBuffers)
         while(next <= end - 4 && ((*(DWORD*)next & 0xFFFFFFFF) != 0xb3010000) && ((*(DWORD*)next & 0xFFFFFFFF) != 0x00010000)) next++;
@@ -1436,32 +1435,32 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
         next = end;
 
       if ((next >= end - 4) && !pFlushBuffers)
-        m_lastStart = next - m_p->GetData();
+        m_lastStart = (DWORD)(next - m_p->data());
       else
       {
         m_bInBlock = false;
-        int size = next - start;
+        int size = (int)(next - start);
 
-        CAutoPtr<Packet> p2(new Packet());
-        p2->SetCount(size);
-        memcpy(p2->GetData(), m_p->GetData(), size);
+        std::unique_ptr<Packet> p2(new Packet());
+        p2->resize(size);
+        memcpy(p2->data(), m_p->data(), size);
         
-        if (*(DWORD*)p2->GetData() == 0x00010000 || (*(DWORD*)p2->GetData() == 0xb3010000) && pFlushBuffers)
+        if (*(DWORD*)p2->data() == 0x00010000 || (*(DWORD*)p2->data() == 0xb3010000) && pFlushBuffers)
         {
-          BYTE* p = p2->GetData();
+          BYTE* p = p2->data();
           char frame_type = tc[((p[5]>>3)&7)];    // Extract frame type (IBP). Just info.
           int frame_count = (p[5]>>6)+(p[4]<<2);  // Extract temporal frame count to rebuild timestamp ( if required )
 
-          m_pl.AddTail(p2);
+          m_pl.push_back(std::move(p2));
        
           if (m_VideoValidPES)
           {
-            Packet* p = m_pl.RemoveHead().Detach();
+            Packet* p = PopHead(m_pl).release();
 
-            while (m_pl.GetCount())
+            while (m_pl.size())
             {
-              Packet* head = m_pl.RemoveHead().Detach();
-              p->Append(*head);
+              Packet* head = PopHead(m_pl).release();
+              p->insert(p->end(), head->begin(), head->end());
               delete head;
             }
     
@@ -1506,21 +1505,21 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlu
           }
           m_CurrentVideoPts.IsValid = false;
           m_VideoValidPES = true;                                    // We've just completed a frame, set flag until problem clears it 
-          m_pl.RemoveAll();
+          m_pl.clear();
         }
         else                                                        // sequence_header_code
         {
-          m_curFrameRate = frame_rate[*(p2->GetData()+7) & 0x0F];   // Extract frame rate in seconds.
-   	      m_pl.AddTail(p2);                                         // Add sequence header.
+          m_curFrameRate = frame_rate[*(p2->data()+7) & 0x0F];   // Extract frame rate in seconds.
+   	      m_pl.push_back(std::move(p2));                                         // Add sequence header.
    	    }
       
         start = next;
-        m_lastStart = start - m_p->GetData() + 1;
+        m_lastStart = (DWORD)(start - m_p->data() + 1);
       }
-      if (start > m_p->GetData())
+      if (start > m_p->data())
       {
-        m_lastStart -= (start - m_p->GetData());
-        m_p->RemoveAt(0, start - m_p->GetData());
+        m_lastStart -= (DWORD)(start - m_p->data());
+        m_p->erase(m_p->begin() + (0), m_p->begin() + (0) + (start - m_p->data()));
       }
     }
   }

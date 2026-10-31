@@ -42,6 +42,11 @@ jobs:
         run: |
           git submodule update --init --recursive
 
+      - name: Setup vcpkg (native filter dependencies)
+        uses: ./.github/actions/setup-vcpkg
+        with:
+          triplets: x86-windows-mp
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4.39.1
         with:
@@ -55,3 +60,54 @@ jobs:
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4.39.1
+
+  CodeQL-cpp:
+    name: CodeQL (C/C++ native filters)
+
+    runs-on: windows-2022
+
+    # Same permissions as the C# job: the release workflow grants only security-events
+    permissions:
+      security-events: write
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v2
+
+      - name: Restore NuGet packages
+        run: >-
+          nuget restore DirectShowFilters\Filters.sln
+          -PackagesDirectory Packages
+          -Source https://api.nuget.org/v3/index.json
+          -Source https://www.myget.org/F/mediaportal/api/v3/index.json
+          -NonInteractive
+
+      # Before CodeQL init, so the third-party libraries built by vcpkg are not analysed
+      - name: Setup vcpkg (native filter dependencies)
+        uses: ./.github/actions/setup-vcpkg
+        with:
+          triplets: x86-windows-mp
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4.38.3
+        with:
+          languages: c-cpp
+          build-mode: manual
+
+      - name: Build
+        run: >-
+          msbuild DirectShowFilters\Filters.sln /m /nologo /v:m
+          /t:Rebuild /p:Configuration=Release /p:Platform=Win32
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4.38.3
+        with:
+          category: "/language:c-cpp"

@@ -592,6 +592,8 @@ Section "MediaPortal core files (required)" SecCore
   File "${git_DirectShowFilters}\Win7RefreshRateHelper\bin\${BUILD_TYPE}\Win7RefreshRateHelper.dll"
   File "${git_DirectShowFilters}\DxUtil\bin\${BUILD_TYPE}\dxutil.dll"
   File "${git_DirectShowFilters}\mpc-hc_subs\bin\${BUILD_TYPE}\mpcSubs.dll"
+  ; unrar (vcpkg), loaded by mpcSubs.dll for VobSub subtitles in RAR archives
+  File "${git_DirectShowFilters}\mpc-hc_subs\bin\${BUILD_TYPE}\unrar.dll"
   File "${git_DirectShowFilters}\DXErr9\bin\${BUILD_TYPE}\Dxerr9.dll"
   File "${git_MP}\MiniDisplayLibrary\bin\${BUILD_TYPE}\MiniDisplayLibrary.dll"
   ; Json Library
@@ -766,66 +768,12 @@ Section "MediaPortal core files (required)" SecCore
   SetOutPath "$MPdir.Base\Docs"
   File "${git_MP}\Docs\BASS License.txt"
   File "${git_MP}\Docs\MediaPortal License.rtf"
-  ; libbluray
+  ; libbluray (NuGet package MediaPortal.libbluray); both BD-J jars must stay in the same folder
   SetOutPath "$MPdir.Base"
-  !ifdef Libbluray_use_Nuget_DLL
-         !if ${BUILD_TYPE} == "Debug"       # it's an debug build
-       File /oname=bluray.dll "${Libbluray_nuget_path}\references\runtimes\Debug\libbluray.dll"
-     !else
-       File /oname=bluray.dll "${Libbluray_nuget_path}\references\runtimes\Release\libbluray.dll"
-	 !endif
-  !else
-    !if "${Architecture}" == "x64"
-      !if ${BUILD_TYPE} == "Debug"       # it's an debug build
-        File /oname=bluray.dll "${git_DirectShowFilters}\bin_x64d\libbluray.dll"
-      !else
-        File /oname=bluray.dll "${git_DirectShowFilters}\bin_x64\libbluray\libbluray.dll"
-      !endif
-    !else
-      !if ${BUILD_TYPE} == "Debug"       # it's an debug build
-        File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32d\libbluray.dll"
-      !else
-        File /oname=bluray.dll "${git_DirectShowFilters}\bin_Win32\libbluray\libbluray.dll"
-      !endif
-    !endif
-  !endif
-  !ifdef Libbluray_use_Nuget_JAR
-       File /oname=libbluray.jar "${Libbluray_nuget_path}\references\runtimes\libbluray-.jar"
-  !else
-	   File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-.jar"
-  !endif
-  CopyFiles /SILENT "$MPdir.Base\libbluray.jar" "$MPdir.Base\libbluray-j2se-${GIT_LIBBLURAY_VERSION}.jar"
-    ; libbluray - Awt file
-   SetOutPath "$MPdir.Base\awt"
-   !ifdef Libbluray_use_Nuget_JAR
-   	   File /oname=libbluray.jar "${Libbluray_nuget_path}\references\runtimes\libbluray-awt-.jar"
-   !else 
-       File /oname=libbluray.jar "${git_Libbluray}\src\.libs\libbluray-awt-.jar"
-   !endif
-    SetOutPath "$MPdir.Base"
-  ; libbluray - submodul freetype library
-   !ifdef Libbluray_use_Nuget_DLL
-    !if ${BUILD_TYPE} == "Debug"       # it's an debug build
-    File /oname=freetype.dll "${Libbluray_nuget_path}\references\runtimes\Debug\freetype.dll"
-    !else
-    File /oname=freetype.dll "${Libbluray_nuget_path}\references\runtimes\Release\freetype.dll"
-	!endif
-  !else
-     !if "${Architecture}" == "x64"
-       !if ${BUILD_TYPE} == "Debug"       # it's an debug build
-         File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\x64\Debug\freetype.dll"
-       !else
-         File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\x64\Release\freetype.dll"
-       !endif
-     !else
-       !if ${BUILD_TYPE} == "Debug"       # it's an debug build
-         File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Debug\freetype.dll"
-       !else
-         File /oname=freetype.dll "${git_Libbluray}\3rd_party\freetype2\objs\Win32\Release\freetype.dll"
-       !endif
-     !endif
-  !endif
-  
+  File "${Libbluray_nuget_path}\references\runtimes\${Architecture}\bluray.dll"
+  File "${Libbluray_nuget_path}\references\runtimes\libbluray-j2se-${GIT_LIBBLURAY_VERSION}.jar"
+  File "${Libbluray_nuget_path}\references\runtimes\libbluray-awt-j2se-${GIT_LIBBLURAY_VERSION}.jar"
+
   ; LibWebP
   File /oname=libwebp.dll "${git_MP}\MediaPortal.Base\3rd_party\libwebp_${Architecture}.dll"
 
@@ -984,6 +932,7 @@ SectionEnd
   Delete "$MPdir.Base\dxutil.dll"
   Delete "$MPdir.Base\Dxerr9.dll"
   Delete "$MPdir.Base\mpcSubs.dll"
+  Delete "$MPdir.Base\unrar.dll"
   Delete "$MPdir.Base\MiniDisplayLibrary.dll"
   Delete "$MPdir.Base\System.Management.Automation.dll"
   ; Json Library
@@ -1062,6 +1011,7 @@ SectionEnd
   ; libbluray
   Delete "$MPdir.Base\bluray.dll"
   Delete "$MPdir.Base\libbluray.jar"
+  Delete "$MPdir.Base\libbluray-*.jar"
   Delete "$MPdir.Base\freetype.dll"
   Delete "$MPdir.Base\awt\libbluray.jar"
   RMDir "$MPdir.Base\awt"

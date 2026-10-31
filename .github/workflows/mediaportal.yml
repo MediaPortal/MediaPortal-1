@@ -61,11 +61,24 @@ jobs:
         run: |
           git submodule update --init --recursive
 
+      - name: Setup vcpkg (native filter dependencies)
+        uses: ./.github/actions/setup-vcpkg
+        with:
+          triplets: ${{ matrix.architecture }}-windows-mp
+
       - name: Build
         run: |
           BuildFullinstaller.cmd LOG ${{ matrix.architecture }}
         working-directory: ${{ github.workspace }}\Build
         shell: cmd
+
+      # Enforced in native_filters.yml; informational here because the installer
+      # build may copy third-party binaries into the filter output folders.
+      - name: Check native binary hardening (ASLR, DEP, CFG)
+        continue-on-error: true
+        run: |
+          .\Build\Check-NativeHardening.ps1 -Path DirectShowFilters
+        shell: pwsh
 
       - name: Display Build logs on failure
         if: ${{ failure() }}

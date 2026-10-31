@@ -20,24 +20,24 @@
 
 #pragma once
 
-CStringW GetFileOnly(LPCWSTR Path);
-CStringW GetFolderOnly(LPCWSTR Path);
-CStringW AddSlash(LPCWSTR Path);
-CStringW RemoveSlash(LPCWSTR Path);
-CStringW GetFileExt(LPCWSTR Path);
-CStringW RenameFileExt(LPCWSTR Path, LPCWSTR Ext);
-CStringW RemoveFileExt(LPCWSTR Path);
-BOOL     GetTemporaryFilePath(CStringW strExtension, CStringW& strFileName);
-CStringW CompactPath(LPCWSTR Path, UINT cchMax);
+std::wstring GetFileOnly(LPCWSTR Path);
+std::wstring GetFolderOnly(LPCWSTR Path);
+std::wstring AddSlash(LPCWSTR Path);
+std::wstring RemoveSlash(LPCWSTR Path);
+std::wstring GetFileExt(LPCWSTR Path);
+std::wstring RenameFileExt(LPCWSTR Path, LPCWSTR Ext);
+std::wstring RemoveFileExt(LPCWSTR Path);
+BOOL     GetTemporaryFilePath(std::wstring strExtension, std::wstring& strFileName);
+std::wstring CompactPath(LPCWSTR Path, UINT cchMax);
 
 // Get path of specified module
-CStringW GetModulePath(HMODULE hModule);
+std::wstring GetModulePath(HMODULE hModule);
 // Get path of the executable file of the current process
-CStringW GetProgramPath();
+std::wstring GetProgramPath();
 // Get programm directory with slash
-CStringW GetProgramDir();
+std::wstring GetProgramDir();
 
 // wFunc can be FO_MOVE or FO_COPY.
 // To move a folder, add "\" to the end of the source path.
 // To copy a folder, add "\*" to the end of the source path.
-int FileOperation(const CStringW& source, const CStringW& target, const UINT wFunc);
+int FileOperation(const std::wstring& source, const std::wstring& target, const UINT wFunc);

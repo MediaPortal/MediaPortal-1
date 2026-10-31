@@ -21,7 +21,9 @@
 
 #pragma once
 
-#include <atlcoll.h>
+#include <list>
+#include <memory>
+#include <vector>
 #include <Dshow.h>
 
 #define NS_NEW_CLIP     1
@@ -29,7 +31,7 @@
 #define NS_INTERRUPTED  4
 #define NS_NEW_PLAYLIST 8
 
-class Packet : public CAtlArray<BYTE>
+class Packet : public std::vector<BYTE>
 {
 public:
 
@@ -60,3 +62,6 @@ public:
 
   AM_MEDIA_TYPE* pmt;
 };
+
+typedef std::list<std::unique_ptr<Packet>> PacketList;
+inline std::unique_ptr<Packet> PopHead(PacketList& l) { std::unique_ptr<Packet> p = std::move(l.front()); l.pop_front(); return p; }

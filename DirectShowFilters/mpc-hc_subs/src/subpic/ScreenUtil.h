@@ -20,6 +20,6 @@
 
 #pragma once
 
-CSize GetDesktopSize();
-CSize GetLargestScreenSize(CSize fallback);
-CSize GetBackBufferSize(CSize currentScreen, CSize largestScreen, bool use_desktop_size);
+SIZE GetDesktopSize();
+SIZE GetLargestScreenSize(SIZE fallback = {});
+SIZE GetBackBufferSize(SIZE currentScreen, SIZE largestScreen, bool use_desktop_size);

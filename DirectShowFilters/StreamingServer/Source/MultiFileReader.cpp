@@ -26,7 +26,6 @@
 #include "StdAfx.h"
 
 #include "MultiFileReader.h"
-#include <atlbase.h>
 #include <mmsystem.h>
 
 // For more details for memory leak detection see the alloctracing.h header
@@ -972,8 +971,8 @@ void MultiFileReader::SetStopping(BOOL isStopping)
 
 __int64 MultiFileReader::FindFileLength(LPWSTR pFilename)
 {  
-  WIN32_FIND_DATA fileinfo;
-  HANDLE hFind = FindFirstFile(pFilename, &fileinfo);  
+  WIN32_FIND_DATAW fileinfo;
+  HANDLE hFind = FindFirstFileW(pFilename, &fileinfo);  
   if (hFind == INVALID_HANDLE_VALUE)
   {
     HRESULT lastErr = HRESULT_FROM_WIN32(GetLastError());	 

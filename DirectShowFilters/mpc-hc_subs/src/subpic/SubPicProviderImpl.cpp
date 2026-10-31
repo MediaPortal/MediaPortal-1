@@ -45,7 +45,7 @@ STDMETHODIMP CSubPicProviderImpl::NonDelegatingQueryInterface(REFIID riid, void*
 STDMETHODIMP CSubPicProviderImpl::Lock()
 {
     CheckPointer(m_pLock, E_FAIL);
-#if DEBUG
+#ifdef DEBUG
     if (m_pLock->m_currentOwner != 0 && m_pLock->m_currentOwner != GetCurrentThreadId()) {
         TRACE(_T("CSubPicProviderImpl::Lock -> Lockcount=%d Lockowner=%d Thread=%d\n"), m_pLock->m_lockCount, m_pLock->m_currentOwner, GetCurrentThreadId());
     };

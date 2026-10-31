@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include <atlcoll.h>
 #include "../DeCSS/VobFile.h"
 #include "../DSUtil/DSUtil.h"
 #include "VobSubFile.h"
@@ -50,24 +49,24 @@ struct vc_t {
 
 struct PGC {
     int nAngles;
-    CAtlArray<vc_t> angles[10];
+    std::vector<vc_t> angles[10];
     int iSelAngle;
     RGBQUAD pal[16];
     WORD ids[32];
 };
 
 struct VSFRipperData {
-    CSize vidsize;
+    SIZE vidsize = {};
     vidinfo vidinfo;
-    CAtlArray<PGC> pgcs;
+    std::vector<PGC> pgcs;
     int iSelPGC;
     bool bResetTime, bClosedCaption, bForcedOnly;
 
     bool bClose, bBeep, bAuto; // only used by the UI externally, but may be set through the parameter file
     bool bCloseIgnoreError;
 
-    CAtlArray<UINT> selvcs;
-    CAtlMap<BYTE, bool> selids;
+    std::vector<UINT> selvcs;
+    std::map<BYTE, bool> selids;
 
     void Reset();
     void Copy(struct VSFRipperData& rd);
@@ -125,9 +124,9 @@ interface __declspec(uuid("69F935BB-B8D0-43f5-AA2E-BBD0851CC9A6"))
     public IUnknown
 {
     STDMETHOD(SetCallBack)(IVSFRipperCallback* pCallback) PURE;
-    STDMETHOD(LoadParamFile)(CString fn) PURE;
-    STDMETHOD(SetInput)(CString infn) PURE;
-    STDMETHOD(SetOutput)(CString outfn) PURE;
+    STDMETHOD(LoadParamFile)(tstring fn) PURE;
+    STDMETHOD(SetInput)(tstring infn) PURE;
+    STDMETHOD(SetOutput)(tstring outfn) PURE;
     STDMETHOD(GetRipperData)(VSFRipperData& rd) PURE;
     STDMETHOD(UpdateRipperData)(VSFRipperData& rd) PURE;
     STDMETHOD(Index)() PURE;
@@ -157,19 +156,19 @@ private:
     //
 
     CCritSec m_csAccessLock;
-    CString m_infn, m_outfn;
+    tstring m_infn, m_outfn;
     CVobFile m_vob;
     VSFRipperData m_rd;
 
-    bool LoadIfo(CString fn);
-    bool LoadVob(CString fn);
-    bool LoadChunks(CAtlArray<vcchunk>& chunks);
-    bool SaveChunks(CAtlArray<vcchunk>& chunks);
+    bool LoadIfo(tstring fn);
+    bool LoadVob(tstring fn);
+    bool LoadChunks(std::vector<vcchunk>& chunks);
+    bool SaveChunks(std::vector<vcchunk>& chunks);
 
     //
 
     CCritSec m_csCallback;
-    CComPtr<IVSFRipperCallback> m_pCallback;
+    ComPtr<IVSFRipperCallback> m_pCallback;
 
 public:
     CVobSubFileRipper();
@@ -180,9 +179,9 @@ public:
 
     // IVSFRipper
     STDMETHODIMP SetCallBack(IVSFRipperCallback* pCallback);
-    STDMETHODIMP LoadParamFile(CString fn);
-    STDMETHODIMP SetInput(CString infn);
-    STDMETHODIMP SetOutput(CString outfn);
+    STDMETHODIMP LoadParamFile(tstring fn);
+    STDMETHODIMP SetInput(tstring infn);
+    STDMETHODIMP SetOutput(tstring outfn);
     STDMETHODIMP GetRipperData(VSFRipperData& rd);
     STDMETHODIMP UpdateRipperData(VSFRipperData& rd);
     STDMETHODIMP Index();

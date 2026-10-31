@@ -77,11 +77,16 @@
     <OutDir>..\shared\</OutDir>
     <IntDir>.\obj\Release\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>..\shared\</OutDir>
+    <IntDir>.\obj\Debug\</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;./usageenvironment/include;./basicusageenvironment/include;./groupsock/include;./livemedia;./livemedia/include;./MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WIN32;WINNT;__GNUC__=4;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;./MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WIN32;WINNT;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -100,8 +105,9 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;./usageenvironment/include;./basicusageenvironment/include;./groupsock/include;./livemedia;./livemedia/include;./MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WIN32;WINNT;__GNUC__=4;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;./MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WIN32;WINNT;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -122,8 +128,9 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;./usageenvironment/include;./basicusageenvironment/include;./groupsock/include;./livemedia;./livemedia/include;./MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;WIN32;_WIN32;__GNUC__=4;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;./MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;WIN32;_WIN32;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -141,8 +148,9 @@
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;./usageenvironment/include;./basicusageenvironment/include;./groupsock/include;./livemedia;./livemedia/include;./MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;WIN32;_WIN32;__GNUC__=4;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(WINDOWS_SDK)Include\;$(DXSDK_DIR)Include;./MediaPortal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;WIN32;_WIN32;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -156,390 +164,15 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="BasicUsageEnvironment\include\DelayQueue.hh" />
-    <None Include="groupsock\include\TunnelEncaps.hh" />
-    <None Include="liveMedia\EBMLNumber.hh" />
-    <None Include="liveMedia\include\AC3AudioFileServerMediaSubsession.hh" />
-    <None Include="liveMedia\include\BitVector.hh" />
-    <None Include="liveMedia\include\ByteStreamMemoryBufferSource.hh" />
-    <None Include="liveMedia\include\DVVideoFileServerMediaSubsession.hh" />
-    <None Include="liveMedia\include\DVVideoRTPSource.hh" />
-    <None Include="liveMedia\include\GenericMediaServer.hh" />
-    <None Include="liveMedia\include\H264or5VideoFileSink.hh" />
-    <None Include="liveMedia\include\H264or5VideoRTPSink.hh" />
-    <None Include="liveMedia\include\H264or5VideoStreamDiscreteFramer.hh" />
-    <None Include="liveMedia\include\H264or5VideoStreamFramer.hh" />
-    <None Include="liveMedia\include\H264VideoFileServerMediaSubsession.hh" />
-    <None Include="liveMedia\include\H264VideoStreamDiscreteFramer.hh" />
-    <None Include="liveMedia\include\H265VideoFileServerMediaSubsession.hh" />
-    <None Include="liveMedia\include\H265VideoFileSink.hh" />
-    <None Include="liveMedia\include\H265VideoRTPSink.hh" />
-    <None Include="liveMedia\include\H265VideoRTPSource.hh" />
-    <None Include="liveMedia\include\H265VideoStreamDiscreteFramer.hh" />
-    <None Include="liveMedia\include\H265VideoStreamFramer.hh" />
-    <None Include="liveMedia\include\MatroskaFile.hh" />
-    <None Include="liveMedia\include\MatroskaFileServerDemux.hh" />
-    <None Include="liveMedia\include\MediaTranscodingTable.hh" />
-    <None Include="liveMedia\include\MPEG2TransportUDPServerMediaSubsession.hh" />
-    <None Include="liveMedia\include\OggFile.hh" />
-    <None Include="liveMedia\include\OggFileServerDemux.hh" />
-    <None Include="liveMedia\include\OggFileSink.hh" />
-    <None Include="liveMedia\include\ourMD5.hh" />
-    <None Include="liveMedia\include\ProxyServerMediaSession.hh" />
-    <None Include="liveMedia\include\RTSPRegisterSender.hh" />
-    <None Include="liveMedia\include\RTSPServerSupportingHTTPStreaming.hh" />
-    <None Include="liveMedia\include\StreamReplicator.hh" />
-    <None Include="liveMedia\include\T140TextRTPSink.hh" />
-    <None Include="liveMedia\include\TCPStreamSink.hh" />
-    <None Include="liveMedia\include\TextRTPSink.hh" />
-    <None Include="liveMedia\include\TheoraVideoRTPSink.hh" />
-    <None Include="liveMedia\include\TheoraVideoRTPSource.hh" />
-    <None Include="liveMedia\include\VorbisAudioRTPSink.hh" />
-    <None Include="liveMedia\include\VorbisAudioRTPSource.hh" />
-    <None Include="liveMedia\include\VP8VideoRTPSink.hh" />
-    <None Include="liveMedia\include\VP8VideoRTPSource.hh" />
-    <None Include="liveMedia\include\VP9VideoRTPSink.hh" />
-    <None Include="liveMedia\include\VP9VideoRTPSource.hh" />
-    <None Include="liveMedia\MatroskaDemuxedTrack.hh" />
-    <None Include="liveMedia\MatroskaFileParser.hh" />
-    <None Include="liveMedia\MatroskaFileServerMediaSubsession.hh" />
-    <None Include="liveMedia\MP3AudioMatroskaFileServerMediaSubsession.hh" />
-    <None Include="liveMedia\OggDemuxedTrack.hh" />
-    <None Include="liveMedia\OggFileParser.hh" />
-    <None Include="liveMedia\OggFileServerMediaSubsession.hh" />
     <None Include="packages.config" />
-    <None Include="UsageEnvironment\include\Boolean.hh" />
-    <None Include="UsageEnvironment\include\HashTable.hh" />
-    <None Include="UsageEnvironment\include\strDup.hh" />
-    <None Include="UsageEnvironment\include\UsageEnvironment.hh" />
-    <None Include="UsageEnvironment\include\UsageEnvironment_version.hh" />
-    <None Include="BasicUsageEnvironment\include\BasicHashTable.hh" />
-    <None Include="BasicUsageEnvironment\include\BasicUsageEnvironment.hh" />
-    <None Include="BasicUsageEnvironment\include\BasicUsageEnvironment0.hh" />
-    <None Include="BasicUsageEnvironment\include\BasicUsageEnvironment_version.hh" />
-    <None Include="BasicUsageEnvironment\include\HandlerSet.hh" />
-    <None Include="liveMedia\include\AC3AudioRTPSink.hh" />
-    <None Include="liveMedia\include\AC3AudioRTPSource.hh" />
-    <None Include="liveMedia\include\AC3AudioStreamFramer.hh" />
-    <None Include="liveMedia\include\ADTSAudioFileServerMediaSubsession.hh" />
-    <None Include="liveMedia\include\ADTSAudioFileSource.hh" />
-    <None Include="liveMedia\include\AMRAudioFileServerMediaSubsession.hh" />
-    <None Include="liveMedia\include\AMRAudioFileSink.hh" />
-    <None Include="liveMedia\include\AMRAudioFileSource.hh" />
-    <None Include="liveMedia\include\AMRAudioRTPSink.hh" />
-    <None Include="liveMedia\include\AMRAudioRTPSource.hh" />
-    <None Include="liveMedia\include\AMRAudioSource.hh" />
-    <None Include="liveMedia\include\AudioInputDevice.hh" />
-    <None Include="liveMedia\include\AudioRTPSink.hh" />
-    <None Include="liveMedia\include\AVIFileSink.hh" />
-    <None Include="liveMedia\include\Base64.hh" />
-    <None Include="liveMedia\include\BasicUDPSink.hh" />
-    <None Include="liveMedia\include\BasicUDPSource.hh" />
-    <None Include="liveMedia\include\ByteStreamFileSource.hh" />
-    <None Include="liveMedia\include\ByteStreamMultiFileSource.hh" />
-    <None Include="liveMedia\include\DeviceSource.hh" />
-    <None Include="liveMedia\include\DigestAuthentication.hh" />
-    <None Include="liveMedia\include\DVVideoRTPSink.hh" />
-    <None Include="liveMedia\include\DVVideoStreamFramer.hh" />
-    <None Include="liveMedia\include\FileServerMediaSubsession.hh" />
-    <None Include="liveMedia\include\FileSink.hh" />
-    <None Include="liveMedia\include\FramedFileSource.hh" />
-    <None Include="liveMedia\include\FramedFilter.hh" />
-    <None Include="liveMedia\include\FramedSource.hh" />
-    <None Include="liveMedia\include\GSMAudioRTPSink.hh" />
-    <None Include="liveMedia\include\H261VideoRTPSource.hh" />
-    <None Include="liveMedia\include\H263plusVideoFileServerMediaSubsession.hh" />
-    <None Include="liveMedia\include\H263plusVideoRTPSink.hh" />
-    <None Include="liveMedia\include\H263plusVideoRTPSource.hh" />
-    <None Include="liveMedia\include\H263plusVideoStreamFramer.hh" />
-    <None Include="liveMedia\H263plusVideoStreamParser.hh" />
-    <None Include="liveMedia\include\H264VideoFileSink.hh" />
-    <None Include="liveMedia\include\H264VideoRTPSink.hh" />
-    <None Include="liveMedia\include\H264VideoRTPSource.hh" />
-    <None Include="liveMedia\include\H264VideoStreamFramer.hh" />
-    <None Include="liveMedia\include\InputFile.hh" />
-    <None Include="liveMedia\include\JPEGVideoRTPSink.hh" />
-    <None Include="liveMedia\include\JPEGVideoRTPSource.hh" />
-    <None Include="liveMedia\include\JPEGVideoSource.hh" />
-    <None Include="liveMedia\include\liveMedia.hh" />
-    <None Include="liveMedia\include\liveMedia_version.hh" />
-    <None Include="liveMedia\include\Locale.hh" />
-    <None Include="liveMedia\include\Media.hh" />
-    <None Include="liveMedia\include\MediaSession.hh" />
-    <None Include="liveMedia\include\MediaSink.hh" />
-    <None Include="liveMedia\include\MediaSource.hh" />
-    <None Include="liveMedia\include\MP3ADU.hh" />
-    <None Include="liveMedia\MP3ADUdescriptor.hh" />
-    <None Include="liveMedia\include\MP3ADUinterleaving.hh" />
-    <None Include="liveMedia\include\MP3ADURTPSink.hh" />
-    <None Include="liveMedia\include\MP3ADURTPSource.hh" />
-    <None Include="liveMedia\include\MP3ADUTranscoder.hh" />
-    <None Include="liveMedia\include\MP3AudioFileServerMediaSubsession.hh" />
-    <None Include="liveMedia\include\MP3FileSource.hh" />
-    <None Include="liveMedia\MP3Internals.hh" />
-    <None Include="liveMedia\MP3InternalsHuffman.hh" />
-    <None Include="liveMedia\MP3StreamState.hh" />
-    <None Include="liveMedia\include\MP3Transcoder.hh" />
-    <None Include="liveMedia\include\MPEG1or2AudioRTPSink.hh" />
-    <None Include="liveMedia\include\MPEG1or2AudioRTPSource.hh" />
-    <None Include="liveMedia\include\MPEG1or2AudioStreamFramer.hh" />
-    <None Include="liveMedia\include\MPEG1or2Demux.hh" />
-    <None Include="liveMedia\include\MPEG1or2DemuxedElementaryStream.hh" />
-    <None Include="liveMedia\include\MPEG1or2DemuxedServerMediaSubsession.hh" />
-    <None Include="liveMedia\include\MPEG1or2FileServerDemux.hh" />
-    <None Include="liveMedia\include\MPEG1or2VideoFileServerMediaSubsession.hh" />
-    <None Include="liveMedia\include\MPEG1or2VideoRTPSink.hh" />
-    <None Include="liveMedia\include\MPEG1or2VideoRTPSource.hh" />
-    <None Include="liveMedia\include\MPEG1or2VideoStreamDiscreteFramer.hh" />
-    <None Include="liveMedia\include\MPEG1or2VideoStreamFramer.hh" />
-    <None Include="liveMedia\include\MPEG2IndexFromTransportStream.hh" />
-    <None Include="liveMedia\include\MPEG2TransportFileServerMediaSubsession.hh" />
-    <None Include="liveMedia\include\MPEG2TransportStreamFramer.hh" />
-    <None Include="liveMedia\include\MPEG2TransportStreamFromESSource.hh" />
-    <None Include="liveMedia\include\MPEG2TransportStreamFromPESSource.hh" />
-    <None Include="liveMedia\include\MPEG2TransportStreamIndexFile.hh" />
-    <None Include="liveMedia\include\MPEG2TransportStreamMultiplexor.hh" />
-    <None Include="liveMedia\include\MPEG2TransportStreamTrickModeFilter.hh" />
-    <None Include="liveMedia\include\MPEG4ESVideoRTPSink.hh" />
-    <None Include="liveMedia\include\MPEG4ESVideoRTPSource.hh" />
-    <None Include="liveMedia\include\MPEG4GenericRTPSink.hh" />
-    <None Include="liveMedia\include\MPEG4GenericRTPSource.hh" />
-    <None Include="liveMedia\include\MPEG4LATMAudioRTPSink.hh" />
-    <None Include="liveMedia\include\MPEG4LATMAudioRTPSource.hh" />
-    <None Include="liveMedia\include\MPEG4VideoFileServerMediaSubsession.hh" />
-    <None Include="liveMedia\include\MPEG4VideoStreamDiscreteFramer.hh" />
-    <None Include="liveMedia\include\MPEG4VideoStreamFramer.hh" />
-    <None Include="liveMedia\include\MPEGVideoStreamFramer.hh" />
-    <None Include="liveMedia\MPEGVideoStreamParser.hh" />
-    <None Include="liveMedia\include\MultiFramedRTPSink.hh" />
-    <None Include="liveMedia\include\MultiFramedRTPSource.hh" />
-    <None Include="liveMedia\include\OnDemandServerMediaSubsession.hh" />
-    <None Include="liveMedia\include\OutputFile.hh" />
-    <None Include="liveMedia\include\PassiveServerMediaSubsession.hh" />
-    <None Include="liveMedia\include\QCELPAudioRTPSource.hh" />
-    <None Include="liveMedia\include\QuickTimeFileSink.hh" />
-    <None Include="liveMedia\include\QuickTimeGenericRTPSource.hh" />
-    <None Include="liveMedia\include\RTCP.hh" />
-    <None Include="liveMedia\include\RTPInterface.hh" />
-    <None Include="liveMedia\include\RTPSink.hh" />
-    <None Include="liveMedia\include\RTPSource.hh" />
-    <None Include="liveMedia\include\RTSPClient.hh" />
-    <None Include="liveMedia\include\RTSPCommon.hh" />
-    <None Include="liveMedia\include\RTSPServer.hh" />
-    <None Include="liveMedia\include\ServerMediaSession.hh" />
-    <None Include="liveMedia\include\SimpleRTPSink.hh" />
-    <None Include="liveMedia\include\SimpleRTPSource.hh" />
-    <None Include="liveMedia\include\SIPClient.hh" />
-    <None Include="liveMedia\streamparser.hh" />
-    <None Include="liveMedia\include\uLawAudioFilter.hh" />
-    <None Include="liveMedia\include\VideoRTPSink.hh" />
-    <None Include="liveMedia\include\WAVAudioFileServerMediaSubsession.hh" />
-    <None Include="liveMedia\include\WAVAudioFileSource.hh" />
-    <None Include="groupsock\include\GroupEId.hh" />
-    <None Include="groupsock\include\Groupsock.hh" />
-    <None Include="groupsock\include\groupsock_version.hh" />
-    <None Include="groupsock\include\GroupsockHelper.hh" />
-    <None Include="groupsock\include\IOHandlers.hh" />
-    <None Include="groupsock\include\NetAddress.hh" />
-    <None Include="groupsock\include\NetInterface.hh" />
-    <None Include="liveMedia\include\MPEG2TransportStreamAccumulator.hh" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="liveMedia\AC3AudioFileServerMediaSubsession.cpp" />
-    <ClCompile Include="liveMedia\ByteStreamMemoryBufferSource.cpp" />
-    <ClCompile Include="liveMedia\DVVideoFileServerMediaSubsession.cpp" />
-    <ClCompile Include="liveMedia\DVVideoRTPSource.cpp" />
-    <ClCompile Include="liveMedia\EBMLNumber.cpp" />
-    <ClCompile Include="liveMedia\GenericMediaServer.cpp" />
-    <ClCompile Include="liveMedia\H264or5VideoFileSink.cpp" />
-    <ClCompile Include="liveMedia\H264or5VideoRTPSink.cpp" />
-    <ClCompile Include="liveMedia\H264or5VideoStreamDiscreteFramer.cpp" />
-    <ClCompile Include="liveMedia\H264or5VideoStreamFramer.cpp" />
-    <ClCompile Include="liveMedia\H264VideoFileServerMediaSubsession.cpp" />
-    <ClCompile Include="liveMedia\H264VideoStreamDiscreteFramer.cpp" />
-    <ClCompile Include="liveMedia\H265VideoFileServerMediaSubsession.cpp" />
-    <ClCompile Include="liveMedia\H265VideoFileSink.cpp" />
-    <ClCompile Include="liveMedia\H265VideoRTPSink.cpp" />
-    <ClCompile Include="liveMedia\H265VideoRTPSource.cpp" />
-    <ClCompile Include="liveMedia\H265VideoStreamDiscreteFramer.cpp" />
-    <ClCompile Include="liveMedia\H265VideoStreamFramer.cpp" />
-    <ClCompile Include="liveMedia\MatroskaDemuxedTrack.cpp" />
-    <ClCompile Include="liveMedia\MatroskaFile.cpp" />
-    <ClCompile Include="liveMedia\MatroskaFileParser.cpp" />
-    <ClCompile Include="liveMedia\MatroskaFileServerDemux.cpp" />
-    <ClCompile Include="liveMedia\MatroskaFileServerMediaSubsession.cpp" />
-    <ClCompile Include="liveMedia\MP3AudioMatroskaFileServerMediaSubsession.cpp" />
-    <ClCompile Include="liveMedia\MPEG2TransportUDPServerMediaSubsession.cpp" />
-    <ClCompile Include="liveMedia\OggDemuxedTrack.cpp" />
-    <ClCompile Include="liveMedia\OggFile.cpp" />
-    <ClCompile Include="liveMedia\OggFileParser.cpp" />
-    <ClCompile Include="liveMedia\OggFileServerDemux.cpp" />
-    <ClCompile Include="liveMedia\OggFileServerMediaSubsession.cpp" />
-    <ClCompile Include="liveMedia\OggFileSink.cpp" />
-    <ClCompile Include="liveMedia\ourMD5.cpp" />
-    <ClCompile Include="liveMedia\ProxyServerMediaSession.cpp" />
-    <ClCompile Include="liveMedia\RawVideoRTPSink.cpp" />
-    <ClCompile Include="liveMedia\RawVideoRTPSource.cpp" />
-    <ClCompile Include="liveMedia\RTSPRegisterSender.cpp" />
-    <ClCompile Include="liveMedia\RTSPServerSupportingHTTPStreaming.cpp" />
-    <ClCompile Include="liveMedia\StreamReplicator.cpp" />
-    <ClCompile Include="liveMedia\T140TextRTPSink.cpp" />
-    <ClCompile Include="liveMedia\TCPStreamSink.cpp" />
-    <ClCompile Include="liveMedia\TextRTPSink.cpp" />
-    <ClCompile Include="liveMedia\TheoraVideoRTPSink.cpp" />
-    <ClCompile Include="liveMedia\TheoraVideoRTPSource.cpp" />
-    <ClCompile Include="liveMedia\VorbisAudioRTPSink.cpp" />
-    <ClCompile Include="liveMedia\VorbisAudioRTPSource.cpp" />
-    <ClCompile Include="liveMedia\VP8VideoRTPSink.cpp" />
-    <ClCompile Include="liveMedia\VP8VideoRTPSource.cpp" />
-    <ClCompile Include="liveMedia\VP9VideoRTPSink.cpp" />
-    <ClCompile Include="liveMedia\VP9VideoRTPSource.cpp" />
     <ClCompile Include="MediaPortal\MPMPEG2TransportStreamFromPESSource.cpp" />
     <ClCompile Include="MediaPortal\MPRTSPClient.cpp" />
-    <ClCompile Include="UsageEnvironment\HashTable.cpp" />
-    <ClCompile Include="UsageEnvironment\strDup.cpp" />
-    <ClCompile Include="UsageEnvironment\UsageEnvironment.cpp" />
-    <ClCompile Include="BasicUsageEnvironment\BasicHashTable.cpp" />
-    <ClCompile Include="BasicUsageEnvironment\BasicTaskScheduler.cpp" />
-    <ClCompile Include="BasicUsageEnvironment\BasicTaskScheduler0.cpp" />
-    <ClCompile Include="BasicUsageEnvironment\BasicUsageEnvironment.cpp" />
-    <ClCompile Include="BasicUsageEnvironment\BasicUsageEnvironment0.cpp" />
-    <ClCompile Include="BasicUsageEnvironment\DelayQueue.cpp" />
-    <ClCompile Include="liveMedia\AC3AudioRTPSink.cpp" />
-    <ClCompile Include="liveMedia\AC3AudioRTPSource.cpp" />
-    <ClCompile Include="liveMedia\AC3AudioStreamFramer.cpp" />
-    <ClCompile Include="liveMedia\ADTSAudioFileServerMediaSubsession.cpp" />
-    <ClCompile Include="liveMedia\ADTSAudioFileSource.cpp" />
-    <ClCompile Include="liveMedia\AMRAudioFileServerMediaSubsession.cpp" />
-    <ClCompile Include="liveMedia\AMRAudioFileSink.cpp" />
-    <ClCompile Include="liveMedia\AMRAudioFileSource.cpp" />
-    <ClCompile Include="liveMedia\AMRAudioRTPSink.cpp" />
-    <ClCompile Include="liveMedia\AMRAudioRTPSource.cpp" />
-    <ClCompile Include="liveMedia\AMRAudioSource.cpp" />
-    <ClCompile Include="liveMedia\AudioInputDevice.cpp" />
-    <ClCompile Include="liveMedia\AudioRTPSink.cpp" />
-    <ClCompile Include="liveMedia\AVIFileSink.cpp" />
-    <ClCompile Include="liveMedia\Base64.cpp" />
-    <ClCompile Include="liveMedia\BasicUDPSink.cpp" />
-    <ClCompile Include="liveMedia\BasicUDPSource.cpp" />
-    <ClCompile Include="liveMedia\BitVector.cpp" />
-    <ClCompile Include="liveMedia\ByteStreamFileSource.cpp" />
-    <ClCompile Include="liveMedia\ByteStreamMultiFileSource.cpp" />
-    <ClCompile Include="liveMedia\DeviceSource.cpp" />
-    <ClCompile Include="liveMedia\DigestAuthentication.cpp" />
-    <ClCompile Include="liveMedia\DVVideoRTPSink.cpp" />
-    <ClCompile Include="liveMedia\DVVideoStreamFramer.cpp" />
-    <ClCompile Include="liveMedia\FileServerMediaSubsession.cpp" />
-    <ClCompile Include="liveMedia\FileSink.cpp" />
-    <ClCompile Include="liveMedia\FramedFileSource.cpp" />
-    <ClCompile Include="liveMedia\FramedFilter.cpp" />
-    <ClCompile Include="liveMedia\FramedSource.cpp" />
-    <ClCompile Include="liveMedia\GSMAudioRTPSink.cpp" />
-    <ClCompile Include="liveMedia\H261VideoRTPSource.cpp" />
-    <ClCompile Include="liveMedia\H263plusVideoFileServerMediaSubsession.cpp" />
-    <ClCompile Include="liveMedia\H263plusVideoRTPSink.cpp" />
-    <ClCompile Include="liveMedia\H263plusVideoRTPSource.cpp" />
-    <ClCompile Include="liveMedia\H263plusVideoStreamFramer.cpp" />
-    <ClCompile Include="liveMedia\H263plusVideoStreamParser.cpp" />
-    <ClCompile Include="liveMedia\H264VideoFileSink.cpp" />
-    <ClCompile Include="liveMedia\H264VideoRTPSink.cpp" />
-    <ClCompile Include="liveMedia\H264VideoRTPSource.cpp" />
-    <ClCompile Include="liveMedia\H264VideoStreamFramer.cpp" />
-    <ClCompile Include="liveMedia\InputFile.cpp" />
-    <ClCompile Include="liveMedia\JPEGVideoRTPSink.cpp" />
-    <ClCompile Include="liveMedia\JPEGVideoRTPSource.cpp" />
-    <ClCompile Include="liveMedia\JPEGVideoSource.cpp" />
-    <ClCompile Include="liveMedia\Locale.cpp" />
-    <ClCompile Include="liveMedia\Media.cpp" />
-    <ClCompile Include="liveMedia\MediaSession.cpp" />
-    <ClCompile Include="liveMedia\MediaSink.cpp" />
-    <ClCompile Include="liveMedia\MediaSource.cpp" />
-    <ClCompile Include="liveMedia\MP3ADU.cpp" />
-    <ClCompile Include="liveMedia\MP3ADUdescriptor.cpp" />
-    <ClCompile Include="liveMedia\MP3ADUinterleaving.cpp" />
-    <ClCompile Include="liveMedia\MP3ADURTPSink.cpp" />
-    <ClCompile Include="liveMedia\MP3ADURTPSource.cpp" />
-    <ClCompile Include="liveMedia\MP3ADUTranscoder.cpp" />
-    <ClCompile Include="liveMedia\MP3AudioFileServerMediaSubsession.cpp" />
-    <ClCompile Include="liveMedia\MP3FileSource.cpp" />
-    <ClCompile Include="liveMedia\MP3Internals.cpp" />
-    <ClCompile Include="liveMedia\MP3InternalsHuffman.cpp" />
-    <ClCompile Include="liveMedia\MP3InternalsHuffmanTable.cpp" />
-    <ClCompile Include="liveMedia\MP3StreamState.cpp" />
-    <ClCompile Include="liveMedia\MP3Transcoder.cpp" />
-    <ClCompile Include="liveMedia\MPEG1or2AudioRTPSink.cpp" />
-    <ClCompile Include="liveMedia\MPEG1or2AudioRTPSource.cpp" />
-    <ClCompile Include="liveMedia\MPEG1or2AudioStreamFramer.cpp" />
-    <ClCompile Include="liveMedia\MPEG1or2Demux.cpp" />
-    <ClCompile Include="liveMedia\MPEG1or2DemuxedElementaryStream.cpp" />
-    <ClCompile Include="liveMedia\MPEG1or2DemuxedServerMediaSubsession.cpp" />
-    <ClCompile Include="liveMedia\MPEG1or2FileServerDemux.cpp" />
-    <ClCompile Include="liveMedia\MPEG1or2VideoFileServerMediaSubsession.cpp" />
-    <ClCompile Include="liveMedia\MPEG1or2VideoRTPSink.cpp" />
-    <ClCompile Include="liveMedia\MPEG1or2VideoRTPSource.cpp" />
-    <ClCompile Include="liveMedia\MPEG1or2VideoStreamDiscreteFramer.cpp" />
-    <ClCompile Include="liveMedia\MPEG1or2VideoStreamFramer.cpp" />
-    <ClCompile Include="liveMedia\MPEG2IndexFromTransportStream.cpp" />
-    <ClCompile Include="liveMedia\MPEG2TransportFileServerMediaSubsession.cpp" />
-    <ClCompile Include="liveMedia\MPEG2TransportStreamFramer.cpp" />
-    <ClCompile Include="liveMedia\MPEG2TransportStreamFromESSource.cpp" />
-    <ClCompile Include="liveMedia\MPEG2TransportStreamFromPESSource.cpp" />
-    <ClCompile Include="liveMedia\MPEG2TransportStreamIndexFile.cpp" />
-    <ClCompile Include="liveMedia\MPEG2TransportStreamMultiplexor.cpp" />
-    <ClCompile Include="liveMedia\MPEG2TransportStreamTrickModeFilter.cpp" />
-    <ClCompile Include="liveMedia\MPEG4ESVideoRTPSink.cpp" />
-    <ClCompile Include="liveMedia\MPEG4ESVideoRTPSource.cpp" />
-    <ClCompile Include="liveMedia\MPEG4GenericRTPSink.cpp" />
-    <ClCompile Include="liveMedia\MPEG4GenericRTPSource.cpp" />
-    <ClCompile Include="liveMedia\MPEG4LATMAudioRTPSink.cpp" />
-    <ClCompile Include="liveMedia\MPEG4LATMAudioRTPSource.cpp" />
-    <ClCompile Include="liveMedia\MPEG4VideoFileServerMediaSubsession.cpp" />
-    <ClCompile Include="liveMedia\MPEG4VideoStreamDiscreteFramer.cpp" />
-    <ClCompile Include="liveMedia\MPEG4VideoStreamFramer.cpp" />
-    <ClCompile Include="liveMedia\MPEGVideoStreamFramer.cpp" />
-    <ClCompile Include="liveMedia\MPEGVideoStreamParser.cpp" />
-    <ClCompile Include="liveMedia\MultiFramedRTPSink.cpp" />
-    <ClCompile Include="liveMedia\MultiFramedRTPSource.cpp" />
-    <ClCompile Include="liveMedia\OnDemandServerMediaSubsession.cpp" />
-    <ClCompile Include="liveMedia\OutputFile.cpp" />
-    <ClCompile Include="liveMedia\PassiveServerMediaSubsession.cpp" />
-    <ClCompile Include="liveMedia\QCELPAudioRTPSource.cpp" />
-    <ClCompile Include="liveMedia\QuickTimeFileSink.cpp" />
-    <ClCompile Include="liveMedia\QuickTimeGenericRTPSource.cpp" />
-    <ClCompile Include="liveMedia\RTCP.cpp" />
-    <ClCompile Include="liveMedia\rtcp_from_spec.c" />
-    <ClCompile Include="liveMedia\RTPInterface.cpp" />
-    <ClCompile Include="liveMedia\RTPSink.cpp" />
-    <ClCompile Include="liveMedia\RTPSource.cpp" />
-    <ClCompile Include="liveMedia\RTSPClient.cpp" />
-    <ClCompile Include="liveMedia\RTSPCommon.cpp" />
-    <ClCompile Include="liveMedia\RTSPServer.cpp" />
-    <ClCompile Include="liveMedia\ServerMediaSession.cpp" />
-    <ClCompile Include="liveMedia\SimpleRTPSink.cpp" />
-    <ClCompile Include="liveMedia\SimpleRTPSource.cpp" />
-    <ClCompile Include="liveMedia\SIPClient.cpp" />
-    <ClCompile Include="liveMedia\StreamParser.cpp" />
-    <ClCompile Include="liveMedia\uLawAudioFilter.cpp" />
-    <ClCompile Include="liveMedia\VideoRTPSink.cpp" />
-    <ClCompile Include="liveMedia\WAVAudioFileServerMediaSubsession.cpp" />
-    <ClCompile Include="liveMedia\WAVAudioFileSource.cpp" />
-    <ClCompile Include="groupsock\GroupEId.cpp" />
-    <ClCompile Include="groupsock\Groupsock.cpp" />
-    <ClCompile Include="groupsock\GroupsockHelper.cpp" />
-    <ClCompile Include="groupsock\inet.c" />
-    <ClCompile Include="groupsock\IOHandlers.cpp" />
-    <ClCompile Include="groupsock\NetAddress.cpp" />
-    <ClCompile Include="groupsock\NetInterface.cpp" />
     <ClCompile Include="MediaPortal\MPRTSPServer.cpp" />
     <ClCompile Include="MediaPortal\MPTaskScheduler.cpp" />
-    <ClCompile Include="liveMedia/MPEG2TransportStreamAccumulator.cpp" />
-    <ClCompile Include="liveMedia/RTSPServerRegister.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="liveMedia\include\RawVideoRTPSink.hh" />
-    <ClInclude Include="liveMedia\include\RawVideoRTPSource.hh" />
-    <ClInclude Include="liveMedia\rtcp_from_spec.h" />
-    <ClInclude Include="groupsock\include\NetCommon.h" />
     <ClInclude Include="MediaPortal\MPMPEG2TransportStreamFromPESSource.h" />
     <ClInclude Include="MediaPortal\MPRTSPClient.h" />
     <ClInclude Include="MediaPortal\MPRTSPServer.h" />

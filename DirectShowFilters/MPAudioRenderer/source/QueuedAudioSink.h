@@ -72,7 +72,7 @@ protected:
   struct TQueueEntry 
   {
     AudioSinkCommand Command;
-    CComPtr<IMediaSample> Sample;
+    Microsoft::WRL::ComPtr<IMediaSample> Sample;
     TQueueEntry(AudioSinkCommand nCommand) : Command(nCommand), Sample(NULL) {};
     TQueueEntry(IMediaSample *pSample) : Command(ASC_PutSample), Sample(pSample) {};
   };
@@ -105,7 +105,7 @@ protected:
   // Lock against this when dealing with resources that are used from the worker thread
   CCritSec  m_csResources;
 
-  CComPtr<IMediaSample> m_pCurrentSample;
+  Microsoft::WRL::ComPtr<IMediaSample> m_pCurrentSample;
   CCritSec m_csCurrentSample;
 
   Logger* m_pLogger;

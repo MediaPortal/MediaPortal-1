@@ -271,7 +271,7 @@ void ConvMatrix::InitMatrix(int in_level, int in_type, int out_level, int out_ty
     if (out_matrix) {
         return;
     }
-    out_matrix = DEBUG_NEW int[3 * 4];
+    out_matrix = new int[3 * 4];
     ASSERT(out_matrix);
 
     float matrix[3][4];

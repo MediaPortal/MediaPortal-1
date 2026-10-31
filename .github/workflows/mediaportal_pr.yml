@@ -1,0 +1,39 @@
+name: Mediaportal / Pull Request
+
+on:
+  pull_request:
+    branches:
+      - master
+      - 'MP1.**'
+    paths-ignore:
+      - '**.md'
+      - '.github/ISSUE_TEMPLATE/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Mediaportal Build
+    uses: ./.github/workflows/mediaportal.yml
+    with:
+      retention-logs: 3
+      retention-build: 3
+
+  ci-status:
+    name: Status
+    runs-on: ubuntu-latest
+    needs:
+      - build
+    if: always()
+    steps:
+      - name: Success
+        if: ${{ !(contains(needs.*.result, 'failure')) }}
+        run: exit 0
+      - name: Failure
+        if: ${{ contains(needs.*.result, 'failure') }}
+        run: exit 1

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" TreatAsLocalProperty="CharacterSet" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -21,14 +21,14 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5E56335F-0FB1-4EEA-B240-D8DC5E0608E4}</ProjectGuid>
     <RootNamespace>Subtitles</RootNamespace>
-    <Keyword>MFCProj</Keyword>
+    <Keyword>Win32Proj</Keyword>
     <ProjectName>Subtitles</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="..\platform.props" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseOfMfc>Static</UseOfMfc>
+    <UseOfMfc>false</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -41,8 +41,9 @@
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\include;$(SolutionDir)baseclasses;..\thirdparty;..\thirdparty\freetype2\freetype2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_AFXDLL;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>..\..\include;$(SolutionDir)baseclasses;..\thirdparty;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">6509;26812</DisableSpecificWarnings>
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">6509;26812</DisableSpecificWarnings>
       <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MultiThreadedDLL</RuntimeLibrary>
@@ -68,7 +69,6 @@
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="StdioFile64.cpp" />
     <ClCompile Include="STS.cpp" />
     <ClCompile Include="SubtitleInputPin.cpp" />
     <ClCompile Include="TextFile.cpp" />
@@ -96,7 +96,6 @@
     <ClInclude Include="RTS.h" />
     <ClInclude Include="SeparableFilter.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="StdioFile64.h" />
     <ClInclude Include="STS.h" />
     <ClInclude Include="SubtitleInputPin.h" />
     <ClInclude Include="TextFile.h" />
@@ -104,11 +103,6 @@
     <ClInclude Include="VobSubFile.h" />
     <ClInclude Include="VobSubFileRipper.h" />
     <ClInclude Include="VobSubImage.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\thirdparty\libass\libass.vcxproj">
-      <Project>{19677dfd-c020-434d-9cb1-d0f105e72770}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

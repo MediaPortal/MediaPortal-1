@@ -1,14 +1,14 @@
 #pragma once
 #include "Subresync.h"
 #include "../filters/renderer/VideoRenderers/RenderersSettings.h"
-#include "..\mpc-hc\RegexUtil.h"
+#include "..\dsutil\RegexUtil.h"
 
 class CRenderedTextSubtitle;
 
 extern STSStyle g_style;
 extern BOOL g_overrideUserStyles;
 extern int g_subPicsBufferAhead;
-extern CSize g_textureSize;
+extern SIZE g_textureSize;
 extern bool g_pow2tex;
 extern BOOL g_disableAnim;
 extern BOOL g_onlyShowForcedSubs;
@@ -60,14 +60,14 @@ private:
 	int GetExtCount();
 	BSTR GetLanguageHelper(int i, bool useTrackName);
 
-	CComPtr<IDirect3DDevice9> m_d3DDev;
-	CComQIPtr<ISubPicQueue> m_pSubPicQueue;
+	ComPtr<IDirect3DDevice9> m_d3DDev;
+	ComPtr<ISubPicQueue> m_pSubPicQueue;
 	bool m_isSetTime;
   bool m_bIsMadVR;
 	CCritSec m_csSubLock; 
 	
 	//list of subs (that are not coming from IAMStreamSelect filter, e.g. external sub files)
-	CInterfaceList<ISubStream> m_pSubStreams; 
+	std::list<ComPtr<ISubStream>> m_pSubStreams; 
 
 	int m_forcedSubIndex; //index of forced sub in m_pSubStreams
 
@@ -76,17 +76,17 @@ private:
 	REFERENCE_TIME m_rtNow; //current time
 	double m_fps;
 	REFERENCE_TIME m_delay; 
-	CComPtr<ISubStream> m_pSubStream; //current sub stream
-	CString m_movieFile;
-	CSize m_lastSize;
-	CComQIPtr<ISubPicAllocator> m_pAllocator;
+	ComPtr<ISubStream> m_pSubStream; //current sub stream
+	tstring m_movieFile;
+	SIZE m_lastSize = {};
+	ComPtr<ISubPicAllocator> m_pAllocator;
 
 	bool m_isIntSubStreamSelected;
-	CComQIPtr<IAMStreamSelect> m_pSS; //graph filter with subtitles
-	CAtlArray<int> m_intSubs; //internal sub indexes on IAMStreamSelect
-	CAtlArray<CString> m_intNames; //internal sub names
-	CAtlArray<CString> m_intTrackNames; //internal track names
-	CComQIPtr<ISubStream> m_intSubStream; //current internal sub stream
+	ComPtr<IAMStreamSelect> m_pSS; //graph filter with subtitles
+	std::vector<int> m_intSubs; //internal sub indexes on IAMStreamSelect
+	std::vector<tstring> m_intNames; //internal sub names
+	std::vector<tstring> m_intTrackNames; //internal track names
+	ComPtr<ISubStream> m_intSubStream; //current internal sub stream
   int m_iSubpicStereoMode;
 
 	CSubresync m_subresync;

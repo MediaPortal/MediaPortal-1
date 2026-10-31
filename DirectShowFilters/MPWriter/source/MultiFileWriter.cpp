@@ -31,9 +31,9 @@
 #include <ws2tcpip.h>
 #include <streams.h>
 #include "MultiFileWriter.h"
-#include <atlbase.h>
 #include <windows.h>
 #include <stdio.h>
+#include "../../shared/TcharConv.h"
 
 extern void LogDebug(const wchar_t *fmt, ...);
 extern void LogDebug(const char *fmt, ...) ;
@@ -77,7 +77,6 @@ HRESULT MultiFileWriter::GetFileName(LPOLESTR *lpszFileName)
 
 HRESULT MultiFileWriter::OpenFile(LPCWSTR pszFileName)
 {
-	USES_CONVERSION;
 
 	// Is the file already opened
 	if (m_hTSBufferFile != INVALID_HANDLE_VALUE)
@@ -114,7 +113,7 @@ HRESULT MultiFileWriter::OpenFile(LPCWSTR pszFileName)
 	TCHAR *pFileName = NULL;
 
 	// Try to open the file
-	m_hTSBufferFile = CreateFile(W2T(m_pTSBufferFileName),  // The filename
+	m_hTSBufferFile = CreateFile(ToTchar(m_pTSBufferFileName).c_str(),  // The filename
 								 (DWORD) GENERIC_WRITE,             // File access
 								 (DWORD) FILE_SHARE_READ,           // Share access
 								 NULL,                      // Security
@@ -223,7 +222,6 @@ HRESULT MultiFileWriter::Write(PBYTE pbData, ULONG lDataLength)
 
 HRESULT MultiFileWriter::PrepareTSFile()
 {
-	USES_CONVERSION;
 	HRESULT hr;
 
 	LogDebug("MultiFileWriter: PrepareTSFile()");
@@ -290,7 +288,6 @@ HRESULT MultiFileWriter::PrepareTSFile()
 
 HRESULT MultiFileWriter::CreateNewTSFile()
 {
-	USES_CONVERSION;
 	HRESULT hr;
 
 	LPWSTR pFilename = new wchar_t[MAX_PATH];
@@ -345,7 +342,6 @@ HRESULT MultiFileWriter::CreateNewTSFile()
 
 HRESULT MultiFileWriter::ReuseTSFile()
 {
-	USES_CONVERSION;
 	HRESULT hr;
   DWORD Tmo=5 ;
 
@@ -469,7 +465,6 @@ HRESULT MultiFileWriter::WriteTSBufferFile()
 
 HRESULT MultiFileWriter::CleanupFiles()
 {
-	USES_CONVERSION;
 
 	m_filesAdded = 0;
 	m_filesRemoved = 0;
@@ -489,7 +484,7 @@ HRESULT MultiFileWriter::CleanupFiles()
 			// delete any so that the full buffer stays intact.
 			wchar_t msg[MAX_PATH];
 			swprintf((LPWSTR)&msg, L"CleanupFiles: A file is still locked : %s\n", *it);
-			::OutputDebugString(W2T((LPWSTR)&msg));
+			::OutputDebugString(ToTchar((LPWSTR)&msg).c_str());
 			LogDebug("MultiFileWriter: CleanupFiles: A file is still locked");
 			return S_OK;
 		}
@@ -499,22 +494,22 @@ HRESULT MultiFileWriter::CleanupFiles()
 
 	for (it = m_tsFileNames.begin() ; it < m_tsFileNames.end() ; it++ )
 	{
-		if (DeleteFile(W2T(*it)) == FALSE)
+		if (DeleteFile(ToTchar(*it).c_str()) == FALSE)
 		{
 			wchar_t msg[MAX_PATH];
 			swprintf((LPWSTR)&msg, L"Failed to delete file %s : 0x%x\n", *it, GetLastError());
-			::OutputDebugString(W2T((LPWSTR)&msg));
+			::OutputDebugString(ToTchar((LPWSTR)&msg).c_str());
 			LogDebug("MultiFileWriter: CleanupFiles: Failed to delete file");
 		}
 		delete[] *it;
 	}
 	m_tsFileNames.clear();
 
-	if (DeleteFile(W2T(m_pTSBufferFileName)) == FALSE)
+	if (DeleteFile(ToTchar(m_pTSBufferFileName).c_str()) == FALSE)
 	{
 		wchar_t msg[MAX_PATH];
 		swprintf((LPWSTR)&msg, L"Failed to delete tsbuffer file : 0x%x\n", GetLastError());
-		::OutputDebugString(W2T((LPWSTR)&msg));
+		::OutputDebugString(ToTchar((LPWSTR)&msg).c_str());
 			LogDebug("MultiFileWriter: CleanupFiles: Failed to delete tsbuffer file: 0x%x\n", GetLastError());
 
 	}
@@ -527,10 +522,9 @@ HRESULT MultiFileWriter::CleanupFiles()
 
 BOOL MultiFileWriter::IsFileLocked(LPWSTR pFilename)
 {
-	USES_CONVERSION;
 
 	HANDLE hFile;
-	hFile = CreateFile(W2T(pFilename),        // The filename
+	hFile = CreateFile(ToTchar(pFilename).c_str(),        // The filename
 					   (DWORD) GENERIC_READ,          // File access
 					   (DWORD) NULL,                  // Share access
 					   NULL,                  // Security

@@ -90,8 +90,8 @@ protected:
   bool m_bDiscontinuity;
 
   // Output buffer support
-  CComQIPtr<IMemAllocator> m_pMemAllocator;
-  CComPtr<IMediaSample> m_pNextOutSample;
+  Microsoft::WRL::ComPtr<IMemAllocator> m_pMemAllocator;
+  Microsoft::WRL::ComPtr<IMediaSample> m_pNextOutSample;
 
   REFERENCE_TIME m_rtStart;
 

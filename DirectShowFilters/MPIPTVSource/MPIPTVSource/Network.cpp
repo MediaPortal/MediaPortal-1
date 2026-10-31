@@ -1107,7 +1107,7 @@ MPIPTVSOURCE_API int ProcessError(CLogger *logger, const TCHAR *protocolName, co
   return result;
 }
 
-MPIPTVSOURCE_API int Send(CLogger *logger, const TCHAR *protocolName, const TCHAR *functionName, SOCKET s, const TCHAR *buffer, int length, int flags, unsigned int timeout)
+MPIPTVSOURCE_API int Send(CLogger *logger, const TCHAR *protocolName, const TCHAR *functionName, SOCKET s, const char *buffer, int length, int flags, unsigned int timeout)
 {
   int result = 0;
 

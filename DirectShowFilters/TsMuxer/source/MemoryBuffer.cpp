@@ -98,6 +98,7 @@ HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength, long lOffset)
 {
 	if (lDataLength<=0) return E_FAIL;
 	if (lOffset<0) return E_FAIL;
+	if (lOffset>=lDataLength) return E_FAIL; // nothing behind the offset
 	if (pbData==NULL) return E_FAIL;
 
 	BUFFERITEM* item = new BUFFERITEM();
@@ -130,7 +131,7 @@ HRESULT CMemoryBuffer::PutBuffer(BYTE *pbData, long lDataLength, long lOffset)
 	}
 	if (m_pcallback)
 	{
-		m_pcallback->OnRawDataReceived(&pbData[lOffset],lDataLength);
+		m_pcallback->OnRawDataReceived(&pbData[lOffset],lDataLength-lOffset);
 	}
 	return S_OK;
 }

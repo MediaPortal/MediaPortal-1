@@ -32,7 +32,7 @@
 #endif
 
 
-CPGSSub::CPGSSub(CCritSec* pLock, const CString& name, LCID lcid)
+CPGSSub::CPGSSub(CCritSec* pLock, const tstring& name, LCID lcid)
     : CRLECodedSubtitle(pLock, name, lcid)
     , m_nCurSegment(NO_SEGMENT)
     , m_pSegBuffer(nullptr)
@@ -40,7 +40,7 @@ CPGSSub::CPGSSub(CCritSec* pLock, const CString& name, LCID lcid)
     , m_nSegBufferPos(0)
     , m_nSegSize(0)
 {
-    if (m_name.IsEmpty() || m_name == _T("Unknown")) {
+    if (m_name.empty() || m_name == _T("Unknown")) {
         m_name = _T("PGS Embedded Subtitle");
     }
 }
@@ -58,41 +58,43 @@ STDMETHODIMP_(POSITION) CPGSSub::GetStartPosition(REFERENCE_TIME rt, double fps)
 {
     CAutoLock cAutoLock(&m_csCritSec);
 
-    POSITION pos = m_pPresentationSegments.GetHeadPosition();
-    while (pos) {
-        const auto& pPresentationSegment = m_pPresentationSegments.GetAt(pos);
-        if (pPresentationSegment->rtStop <= rt) {
-            m_pPresentationSegments.GetNext(pos);
-        } else {
-            break;
+    // the position is the presentation segment itself
+    for (const auto& pPresentationSegment : m_pPresentationSegments) {
+        if (pPresentationSegment->rtStop > rt) {
+            return reinterpret_cast<POSITION>(pPresentationSegment.get());
         }
     }
 
-    return pos;
+    return nullptr;
 }
 
 STDMETHODIMP_(POSITION) CPGSSub::GetNext(POSITION pos)
 {
     CAutoLock cAutoLock(&m_csCritSec);
-    m_pPresentationSegments.GetNext(pos);
-    return pos;
+    for (auto it = m_pPresentationSegments.cbegin(); it != m_pPresentationSegments.cend(); ++it) {
+        if (reinterpret_cast<POSITION>(it->get()) == pos) {
+            ++it;
+            return it == m_pPresentationSegments.cend() ? nullptr : reinterpret_cast<POSITION>(it->get());
+        }
+    }
+    return nullptr;
 }
 
 STDMETHODIMP_(REFERENCE_TIME) CPGSSub::GetStart(POSITION pos, double fps)
 {
-    const auto& pPresentationSegment = m_pPresentationSegments.GetAt(pos);
+    const HDMV_PRESENTATION_SEGMENT* pPresentationSegment = reinterpret_cast<const HDMV_PRESENTATION_SEGMENT*>(pos);
     return pPresentationSegment ? pPresentationSegment->rtStart : INVALID_TIME;
 }
 
 STDMETHODIMP_(REFERENCE_TIME) CPGSSub::GetStop(POSITION pos, double fps)
 {
-    const auto& pPresentationSegment = m_pPresentationSegments.GetAt(pos);
+    const HDMV_PRESENTATION_SEGMENT* pPresentationSegment = reinterpret_cast<const HDMV_PRESENTATION_SEGMENT*>(pos);
     return pPresentationSegment ? pPresentationSegment->rtStop : INVALID_TIME;
 }
 
 STDMETHODIMP_(bool) CPGSSub::IsAnimated(POSITION pos)
 {
-    const auto& pPresentationSegment = m_pPresentationSegments.GetAt(pos);
+    const HDMV_PRESENTATION_SEGMENT* pPresentationSegment = reinterpret_cast<const HDMV_PRESENTATION_SEGMENT*>(pos);
     // If the end time isn't known yet, we consider the subtitle as animated to be sure it will properly updated
     return (pPresentationSegment && pPresentationSegment->rtStop == UNKNOWN_TIME);
 }
@@ -104,7 +106,7 @@ STDMETHODIMP CPGSSub::Render(SubPicDesc& spd, REFERENCE_TIME rt, double fps, REC
 
 STDMETHODIMP CPGSSub::GetTextureSize(POSITION pos, SIZE& MaxTextureSize, SIZE& VideoSize, POINT& VideoTopLeft)
 {
-    const auto& pPresentationSegment = m_pPresentationSegments.GetAt(pos);
+    const HDMV_PRESENTATION_SEGMENT* pPresentationSegment = reinterpret_cast<const HDMV_PRESENTATION_SEGMENT*>(pos);
     if (pPresentationSegment) {
         MaxTextureSize.cx = VideoSize.cx = pPresentationSegment->video_descriptor.nVideoWidth;
         MaxTextureSize.cy = VideoSize.cy = pPresentationSegment->video_descriptor.nVideoHeight;
@@ -214,8 +216,8 @@ void CPGSSub::Reset()
 
     m_nSegBufferPos = m_nSegSize = 0;
     m_nCurSegment = NO_SEGMENT;
-    m_pCurrentPresentationSegment.Free();
-    m_pPresentationSegments.RemoveAll();
+    m_pCurrentPresentationSegment.reset();
+    m_pPresentationSegments.clear();
     for (auto& compositionObject : m_compositionObjects) {
         compositionObject.Reset();
     }
@@ -225,7 +227,7 @@ void CPGSSub::AllocSegment(size_t nSize)
 {
     if (nSize > m_nTotalSegBuffer) {
         delete[] m_pSegBuffer;
-        m_pSegBuffer = DEBUG_NEW BYTE[nSize];
+        m_pSegBuffer = new BYTE[nSize];
         m_nTotalSegBuffer = nSize;
     }
     m_nSegBufferPos = 0;
@@ -242,10 +244,10 @@ HRESULT CPGSSub::Render(SubPicDesc& spd, REFERENCE_TIME rt, RECT& bbox, bool bRe
         RemoveOldSegments(rt);
     }
 
-    POSITION posPresentationSegment = FindPresentationSegment(rt);
+    const auto itPresentationSegment = FindPresentationSegment(rt);
 
-    if (posPresentationSegment) {
-        const auto& pPresentationSegment = m_pPresentationSegments.GetAt(posPresentationSegment);
+    if (itPresentationSegment != m_pPresentationSegments.cend()) {
+        const auto& pPresentationSegment = *itPresentationSegment;
 
         if (m_eSourceMatrix == ColorConvTable::AUTO) {
             m_eSourceMatrix = (pPresentationSegment->video_descriptor.nVideoWidth > 720) ? ColorConvTable::BT709 : ColorConvTable::BT601;
@@ -253,7 +255,7 @@ HRESULT CPGSSub::Render(SubPicDesc& spd, REFERENCE_TIME rt, RECT& bbox, bool bRe
 
         TRACE_PGSSUB(_T("CPGSSub:Render Presentation segment %d --> %s - %s\n"), pPresentationSegment->composition_descriptor.nNumber,
                      ReftimeToString(pPresentationSegment->rtStart),
-                     pPresentationSegment->rtStop == UNKNOWN_TIME ? _T("?") : ReftimeToString(pPresentationSegment->rtStop).GetString());
+                     pPresentationSegment->rtStop == UNKNOWN_TIME ? _T("?") : ReftimeToString(pPresentationSegment->rtStop).c_str());
 
         bbox.left = bbox.top = LONG_MAX;
         bbox.right = bbox.bottom = 0;
@@ -292,8 +294,8 @@ int CPGSSub::ParsePresentationSegment(REFERENCE_TIME rt, CGolombBuffer* pGBuffer
         return 0;
     }
 
-    m_pCurrentPresentationSegment.Free();
-    m_pCurrentPresentationSegment.Attach(DEBUG_NEW HDMV_PRESENTATION_SEGMENT());
+    m_pCurrentPresentationSegment.reset();
+    m_pCurrentPresentationSegment.reset(new HDMV_PRESENTATION_SEGMENT());
 
     m_pCurrentPresentationSegment->rtStart = rt;
     m_pCurrentPresentationSegment->rtStop = UNKNOWN_TIME; // Unknown for now
@@ -313,7 +315,7 @@ int CPGSSub::ParsePresentationSegment(REFERENCE_TIME rt, CGolombBuffer* pGBuffer
     }
 
     for (int i = 0; i < m_pCurrentPresentationSegment->objectCount; i++) {
-        std::unique_ptr<CompositionObject> pCompositionObject(DEBUG_NEW CompositionObject());
+        std::unique_ptr<CompositionObject> pCompositionObject(new CompositionObject());
         if (ParseCompositionObject(pGBuffer, pCompositionObject)) {
             m_pCurrentPresentationSegment->objects.emplace_back(std::move(pCompositionObject));
         }
@@ -342,18 +344,18 @@ void CPGSSub::EnqueuePresentationSegment()
 
             TRACE_PGSSUB(_T("CPGSSub: Enqueue Presentation Segment %d - %s => ?\n"), m_pCurrentPresentationSegment->composition_descriptor.nNumber,
                          ReftimeToString(m_pCurrentPresentationSegment->rtStart));
-            m_pPresentationSegments.AddTail(m_pCurrentPresentationSegment);
+            m_pPresentationSegments.push_back(std::move(m_pCurrentPresentationSegment));
         } else {
             TRACE_PGSSUB(_T("CPGSSub: Delete empty Presentation Segment %d\n"), m_pCurrentPresentationSegment->composition_descriptor.nNumber);
-            m_pCurrentPresentationSegment.Free();
+            m_pCurrentPresentationSegment.reset();
         }
     }
 }
 
 void CPGSSub::UpdateTimeStamp(REFERENCE_TIME rtStop)
 {
-    if (!m_pPresentationSegments.IsEmpty()) {
-        const auto& pPresentationSegment = m_pPresentationSegments.GetTail();
+    if (!m_pPresentationSegments.empty()) {
+        const auto& pPresentationSegment = m_pPresentationSegments.back();
 
         // Since we drop empty segments we might be trying to update a segment that isn't
         // in the queue so we update the timestamp only if it was previously unknown.
@@ -469,34 +471,26 @@ void CPGSSub::ParseCompositionDescriptor(CGolombBuffer* pGBuffer, COMPOSITION_DE
     pCompositionDescriptor->bState  = pGBuffer->ReadByte() >> 6;
 }
 
-POSITION CPGSSub::FindPresentationSegment(REFERENCE_TIME rt) const
+std::list<std::unique_ptr<CPGSSub::HDMV_PRESENTATION_SEGMENT>>::const_iterator CPGSSub::FindPresentationSegment(REFERENCE_TIME rt) const
 {
-    POSITION pos = m_pPresentationSegments.GetHeadPosition();
-
-    while (pos) {
-        POSITION currentPos = pos;
-        const auto& pPresentationSegment = m_pPresentationSegments.GetNext(pos);
-
-        if (pPresentationSegment->rtStart <= rt && pPresentationSegment->rtStop > rt) {
-            return currentPos;
-        }
-    }
-
-    return nullptr;
+    return std::find_if(m_pPresentationSegments.cbegin(), m_pPresentationSegments.cend(),
+                        [rt](const std::unique_ptr<HDMV_PRESENTATION_SEGMENT>& pPresentationSegment) {
+        return pPresentationSegment->rtStart <= rt && pPresentationSegment->rtStop > rt;
+    });
 }
 
 void CPGSSub::RemoveOldSegments(REFERENCE_TIME rt)
 {
     // Cleanup the old presentation segments. We keep a 2 min buffer to play nice with the queue.
-    while (!m_pPresentationSegments.IsEmpty()
-            && m_pPresentationSegments.GetHead()->rtStop != UNKNOWN_TIME
-            && m_pPresentationSegments.GetHead()->rtStop + 120 * 10000000i64 < rt) {
+    while (!m_pPresentationSegments.empty()
+            && m_pPresentationSegments.front()->rtStop != UNKNOWN_TIME
+            && m_pPresentationSegments.front()->rtStop + 120 * 10000000i64 < rt) {
         TRACE_PGSSUB(_T("CPGSSub::RemoveOldSegments Remove presentation segment %d %s => %s (rt=%s)\n"),
-                     m_pPresentationSegments.GetHead()->composition_descriptor.nNumber,
-                     ReftimeToString(m_pPresentationSegments.GetHead()->rtStart),
-                     ReftimeToString(m_pPresentationSegments.GetHead()->rtStop),
+                     m_pPresentationSegments.front()->composition_descriptor.nNumber,
+                     ReftimeToString(m_pPresentationSegments.front()->rtStart),
+                     ReftimeToString(m_pPresentationSegments.front()->rtStop),
                      ReftimeToString(rt));
-        m_pPresentationSegments.RemoveHeadNoReturn();
+        m_pPresentationSegments.pop_front();
     }
 }
 
@@ -525,13 +519,13 @@ STDMETHODIMP CPGSSubFile::Render(SubPicDesc& spd, REFERENCE_TIME rt, double fps,
     return __super::Render(spd, rt, bbox, false);
 }
 
-bool CPGSSubFile::Open(CString fn, CString name /*= _T("")*/, CString videoName /*= _T("")*/)
+bool CPGSSubFile::Open(tstring fn, tstring name /*= _T("")*/, tstring videoName /*= _T("")*/)
 {
     bool bOpened = false;
 
-    CString tmp;
-    CString guessed = Subtitle::GuessSubtitleName(fn, videoName, m_lcid, tmp, m_eHearingImpaired);
-    if (name.IsEmpty()) {
+    tstring tmp;
+    tstring guessed = Subtitle::GuessSubtitleName(fn, videoName, m_lcid, tmp, m_eHearingImpaired);
+    if (name.empty()) {
         m_name = guessed;
     } else {
         m_name = name;
@@ -539,31 +533,27 @@ bool CPGSSubFile::Open(CString fn, CString name /*= _T("")*/, CString videoName 
 
     m_path = fn;
 
-    try {
-        CFile f;
-        if (f.Open(fn, CFile::modeRead | CFile::shareDenyWrite)) {
-            WORD wSyncCode = 0;
-            f.Read(&wSyncCode, sizeof(wSyncCode));
-            wSyncCode = _byteswap_ushort(wSyncCode);
-            if (wSyncCode == PGS_SYNC_CODE) {
-                m_parsingThread = std::thread([this, fn] { ParseFile(fn); });
-                bOpened = true;
-            }
+    if (FilePtr f = OpenFile(fn, L"rb", _SH_DENYWR)) {
+        WORD wSyncCode = 0;
+        fread(&wSyncCode, sizeof(wSyncCode), 1, f.get());
+        wSyncCode = _byteswap_ushort(wSyncCode);
+        if (wSyncCode == PGS_SYNC_CODE) {
+            m_parsingThread = std::thread([this, fn] { ParseFile(fn); });
+            bOpened = true;
         }
-    } catch (CFileException*) {
     }
 
     return bOpened;
 }
 
-CString CPGSSubFile::GetPath() {
+tstring CPGSSubFile::GetPath() {
     return m_path;
 }
 
-void CPGSSubFile::ParseFile(CString fn)
+void CPGSSubFile::ParseFile(tstring fn)
 {
-    CFile f;
-    if (!f.Open(fn, CFile::modeRead | CFile::shareDenyWrite)) {
+    FilePtr f = OpenFile(fn, L"rb", _SH_DENYWR);
+    if (!f) {
         return;
     }
 
@@ -572,7 +562,7 @@ void CPGSSubFile::ParseFile(CString fn)
     const int nExtraSize = 1 + 2; // segment type + segment size
     std::vector<BYTE> segBuff;
 
-    while (!m_bStopParsing && f.Read(header.data(), (UINT)header.size()) == header.size()) {
+    while (!m_bStopParsing && fread(header.data(), 1, header.size(), f.get()) == header.size()) {
         // Parse the header
         CGolombBuffer headerBuffer(header.data(), (int)header.size());
 
@@ -591,7 +581,7 @@ void CPGSSubFile::ParseFile(CString fn)
         memcpy(segBuff.data(), &header[header.size() - nExtraSize], nExtraSize);
 
         // Read the segment
-        if (wLenSegment && f.Read(&segBuff[nExtraSize], wLenSegment) != wLenSegment) {
+        if (wLenSegment && fread(&segBuff[nExtraSize], 1, wLenSegment, f.get()) != wLenSegment) {
             break;
         }
 

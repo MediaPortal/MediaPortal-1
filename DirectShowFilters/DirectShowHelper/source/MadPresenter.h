@@ -255,8 +255,8 @@ class MPMadPresenter : public CUnknown, public CCritSec
     //virtual OAHWND HWnDMadVR() { return reinterpret_cast<OAHWND>(m_hWnd); }
     static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
     HWND m_hWnd = nullptr;
-    CWnd* m_pVideoWnd = nullptr;
-    CWnd* pWnd = nullptr;
+    HWND m_pVideoWnd = nullptr;
+    HWND pWnd = nullptr;
     bool InitMadvrWindow(HWND &hWnd);
     void DeInitMadvrWindow();
     HINSTANCE m_hInstance = nullptr;
@@ -310,21 +310,21 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
     OAHWND m_hParent = reinterpret_cast<OAHWND>(nullptr);
 
-    CComPtr<IDirect3DDevice9Ex> m_pDevice = nullptr;
-    CComPtr<IDirect3DDevice9Ex> m_pMadD3DDev = nullptr;
+    Com::SmartPtr<IDirect3DDevice9Ex> m_pDevice = nullptr;
+    Com::SmartPtr<IDirect3DDevice9Ex> m_pMadD3DDev = nullptr;
 
-    CComPtr<IGraphBuilder> m_pGraphbuilder = nullptr;
+    Com::SmartPtr<IGraphBuilder> m_pGraphbuilder = nullptr;
 
     Com::SmartPtr<IUnknown> m_pMad = nullptr;
 
-    CComQIPtr<IDirect3DTexture9> m_pRenderTextureGui = nullptr;
-    CComQIPtr<IDirect3DTexture9> m_pRenderTextureOsd = nullptr;
+    Com::SmartQIPtr<IDirect3DTexture9> m_pRenderTextureGui;
+    Com::SmartQIPtr<IDirect3DTexture9> m_pRenderTextureOsd;
 
-    CComQIPtr<IDirect3DTexture9> m_pMPTextureGui = nullptr;
-    CComQIPtr<IDirect3DTexture9> m_pMPTextureOsd = nullptr;
+    Com::SmartQIPtr<IDirect3DTexture9> m_pMPTextureGui;
+    Com::SmartQIPtr<IDirect3DTexture9> m_pMPTextureOsd;
 
-    CComQIPtr<IDirect3DVertexBuffer9> m_pMadGuiVertexBuffer = nullptr;
-    CComQIPtr<IDirect3DVertexBuffer9> m_pMadOsdVertexBuffer = nullptr;
+    Com::SmartQIPtr<IDirect3DVertexBuffer9> m_pMadGuiVertexBuffer;
+    Com::SmartQIPtr<IDirect3DVertexBuffer9> m_pMadOsdVertexBuffer;
 
     HANDLE m_hSharedGuiHandle = nullptr;
     HANDLE m_hSharedOsdHandle = nullptr;
@@ -365,7 +365,7 @@ class MPMadPresenter : public CUnknown, public CCritSec
 
     bool uiVisible = false;
 
-    CComPtr<IDirect3DSurface9> m_pSurfaceDevice = nullptr;
+    Com::SmartPtr<IDirect3DSurface9> m_pSurfaceDevice = nullptr;
 
     double m_pRefreshrate = 0;
     bool m_pKodiWindowUse = false;

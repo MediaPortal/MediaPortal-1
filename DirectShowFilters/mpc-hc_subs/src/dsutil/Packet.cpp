@@ -25,33 +25,33 @@
 // CPacketQueue
 //
 
-void CPacketQueue2::Add(CAutoPtr<CPacket> p)
+void CPacketQueue2::Add(std::unique_ptr<CPacket> p)
 {
 	std::unique_lock<std::mutex> lock(m_mutex);
 	if (p) {
 		m_size += p->size();
 	}
-	emplace_back(p);
+	emplace_back(std::move(p));
 }
 
-CAutoPtr<CPacket> CPacketQueue2::Remove()
+std::unique_ptr<CPacket> CPacketQueue2::Remove()
 {
 	std::unique_lock<std::mutex> lock(m_mutex);
 	ASSERT(!empty());
-	CAutoPtr<CPacket> p = front(); pop_front();
+	std::unique_ptr<CPacket> p = std::move(front()); pop_front();
 	if (p) {
 		m_size -= p->size();
 	}
 	return p;
 }
 
-void CPacketQueue2::RemoveSafe(CAutoPtr<CPacket>& p, size_t& count)
+void CPacketQueue2::RemoveSafe(std::unique_ptr<CPacket>& p, size_t& count)
 {
 	std::unique_lock<std::mutex> lock(m_mutex);
 	count = size();
 
 	if (count) {
-		p = front(); pop_front();
+		p = std::move(front()); pop_front();
 		if (p) {
 			m_size -= p->size();
 		}

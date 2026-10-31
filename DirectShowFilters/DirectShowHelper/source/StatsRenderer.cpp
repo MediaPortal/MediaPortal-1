@@ -79,7 +79,7 @@ StatsRenderer::StatsRenderer(MPEVRCustomPresenter* presenter, IDirect3DDevice9* 
 	PDH_STATUS pdhStatus;
 
 	PdhOpenQuery(NULL, NULL, &m_cpuQuery);
-	pdhStatus = PdhAddEnglishCounter(m_cpuQuery, L"\\Processor(_Total)\\% Processor Time", NULL, &m_cpuTotal);
+	pdhStatus = PdhAddEnglishCounterW(m_cpuQuery, L"\\Processor(_Total)\\% Processor Time", NULL, &m_cpuTotal);
 	if (pdhStatus == ERROR_SUCCESS)
 	{
 		PdhCollectQueryData(m_cpuQuery);
@@ -96,7 +96,7 @@ StatsRenderer::~StatsRenderer(void)
 }
 
 
-static HRESULT DrawRect(CComPtr<IDirect3DDevice9> pD3DDev, MYD3DVERTEX<0> v[4])
+static HRESULT DrawRect(Com::SmartPtr<IDirect3DDevice9> pD3DDev, MYD3DVERTEX<0> v[4])
 {
 	if (!pD3DDev)
   {
@@ -134,7 +134,7 @@ static HRESULT DrawRect(CComPtr<IDirect3DDevice9> pD3DDev, MYD3DVERTEX<0> v[4])
 }
 
 
-void StatsRenderer::DrawText(const RECT &rc, const CString &strText)
+void StatsRenderer::DrawText(const RECT &rc, const CStdString &strText)
 {
   D3DXCOLOR Color1( 1.0f, 0.2f, 0.2f, 1.0f );
   D3DXCOLOR Color0( 0.0f, 0.0f, 0.0f, 1.0f );
@@ -147,7 +147,7 @@ void StatsRenderer::DrawText(const RECT &rc, const CString &strText)
 }
 
 
-HRESULT StatsRenderer::DrawRect(DWORD color, DWORD alpha, const CRect &rect)
+HRESULT StatsRenderer::DrawRect(DWORD color, DWORD alpha, const RECT &rect)
 {
   DWORD Color = D3DCOLOR_ARGB(alpha, GetRValue(color), GetGValue(color), GetBValue(color));
   MYD3DVERTEX<0> v[] =
@@ -206,7 +206,7 @@ void StatsRenderer::DrawStats()
 	if (m_pFont && m_pSprite)
 	{
 		m_pSprite->Begin(D3DXSPRITE_ALPHABLEND);
-		CString  strText;
+		CStdString  strText;
 		int TextHeight = int(25.0*m_TextScale + 0.5);
 		int BlankHeight = int(10.0*m_TextScale + 0.5);
 
@@ -349,7 +349,7 @@ void StatsRenderer::DrawStats()
     int StartX = rc.left;
     int StartY = rc.top;
 
-    DrawRect(RGB(0, 0, 0), Alpha, CRect(StartX, StartY, StartX + DrawWidth, StartY + DrawHeight));
+    DrawRect(RGB(0, 0, 0), Alpha, RECT{ StartX, StartY, StartX + DrawWidth, StartY + DrawHeight });
     m_pLine->SetWidth(2.5); 
     m_pLine->SetAntialias(1);
     m_pLine->Begin();
@@ -427,7 +427,7 @@ void StatsRenderer::DrawStats()
 }
 
 
-void StatsRenderer::DrawTearingTest(CComPtr<IDirect3DSurface9> pSurface)
+void StatsRenderer::DrawTearingTest(Com::SmartPtr<IDirect3DSurface9> pSurface)
 {
   RECT rcTearing;
 
