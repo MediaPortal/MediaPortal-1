@@ -1,27 +1,44 @@
-name: Mediaportal / Test Build
+name: Mediaportal / Test
 
 on:
   push:
-    # On Push to Pre Release / Final Test branch
     branches:
+      # Jira branches
+      - 'MP1-**'
+      # Pre Release / Final Test branches
       - 'MP1.**_Test**'
     # Ignore all Tags / Release
     tags-ignore:
       - '**'
+
+  pull_request:
+    branches:
+      - master
+      - 'MP1.**'
+    paths-ignore:
+      - '**.md'
+      - '.github/ISSUE_TEMPLATE/**'
+
   workflow_dispatch:
 
   workflow_call:
     inputs:
       retention-logs:
-        description: "Retention Period for Log files. Default is 1"
+        description: "Retention Period for Log files. Default is 3"
         default: 3
         required: false
         type: number
       retention-build:
-        description: "Retention Period for Setup files. Default is 90"
-        default: 7
+        description: "Retention Period for Setup files. Default is 3, 7 for Test branches"
         required: false
         type: number
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
@@ -29,7 +46,7 @@ jobs:
     uses: ./.github/workflows/mediaportal.yml
     with:
       retention-logs: ${{ inputs.retention-logs || 3 }}
-      retention-build: ${{ inputs.retention-build || 7 }}
+      retention-build: ${{ inputs.retention-build || (contains(github.ref_name, '_Test') && 7) || 3 }}
 
   ci-status:
     name: Status

@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -340,7 +340,7 @@ namespace Yeti.Lame
     /// <returns>On success: BE_ERR_SUCCESSFUL</returns>
     [DllImport("Lame_enc.dll")]
     public static extern uint beInitStream(BE_CONFIG pbeConfig, ref uint dwSamples, ref uint dwBufferSize,
-                                           ref uint phbeStream);
+                                           ref IntPtr phbeStream);
 
     /// <summary>
     /// Encodes a chunk of samples. Please note that if you have set the output to 
@@ -359,7 +359,7 @@ namespace Yeti.Lame
     /// The amount of data written might vary from chunk to chunk</param>
     /// <returns>On success: BE_ERR_SUCCESSFUL</returns>
     [DllImport("Lame_enc.dll")]
-    public static extern uint beEncodeChunk(uint hbeStream, uint nSamples, short[] pInSamples, [In, Out] byte[] pOutput,
+    public static extern uint beEncodeChunk(IntPtr hbeStream, uint nSamples, short[] pInSamples, [In, Out] byte[] pOutput,
                                             ref uint pdwOutput);
 
     /// <summary>
@@ -380,7 +380,7 @@ namespace Yeti.Lame
     /// The amount of data written might vary from chunk to chunk</param>
     /// <returns>On success: BE_ERR_SUCCESSFUL</returns>
     [DllImport("Lame_enc.dll")]
-    protected static extern uint beEncodeChunk(uint hbeStream, uint nSamples, IntPtr pSamples, [In, Out] byte[] pOutput,
+    protected static extern uint beEncodeChunk(IntPtr hbeStream, uint nSamples, IntPtr pSamples, [In, Out] byte[] pOutput,
                                                ref uint pdwOutput);
 
     /// <summary>
@@ -395,7 +395,7 @@ namespace Yeti.Lame
     /// <param name="pdwOutput">Returns the number of bytes of encoded data written. 
     /// The amount of data written might vary from chunk to chunk</param>
     /// <returns>On success: BE_ERR_SUCCESSFUL</returns>
-    public static uint EncodeChunk(uint hbeStream, byte[] buffer, int index, uint nBytes, byte[] pOutput,
+    public static uint EncodeChunk(IntPtr hbeStream, byte[] buffer, int index, uint nBytes, byte[] pOutput,
                                    ref uint pdwOutput)
     {
       uint res;
@@ -422,7 +422,7 @@ namespace Yeti.Lame
     /// <param name="pdwOutput">Returns the number of bytes of encoded data written. 
     /// The amount of data written might vary from chunk to chunk</param>
     /// <returns>On success: BE_ERR_SUCCESSFUL</returns>
-    public static uint EncodeChunk(uint hbeStream, byte[] buffer, byte[] pOutput, ref uint pdwOutput)
+    public static uint EncodeChunk(IntPtr hbeStream, byte[] buffer, byte[] pOutput, ref uint pdwOutput)
     {
       return EncodeChunk(hbeStream, buffer, 0, (uint)buffer.Length, pOutput, ref pdwOutput);
     }
@@ -439,7 +439,7 @@ namespace Yeti.Lame
     /// <param name="pdwOutput">Returns number of bytes of encoded data written.</param>
     /// <returns>On success: BE_ERR_SUCCESSFUL</returns>
     [DllImport("Lame_enc.dll")]
-    public static extern uint beDeinitStream(uint hbeStream, [In, Out] byte[] pOutput, ref uint pdwOutput);
+    public static extern uint beDeinitStream(IntPtr hbeStream, [In, Out] byte[] pOutput, ref uint pdwOutput);
 
     /// <summary>
     /// Last function to be called when finished encoding a stream. 
@@ -448,7 +448,7 @@ namespace Yeti.Lame
     /// <param name="hbeStream">Handle of the stream.</param>
     /// <returns>On success: BE_ERR_SUCCESSFUL</returns>
     [DllImport("Lame_enc.dll")]
-    public static extern uint beCloseStream(uint hbeStream);
+    public static extern uint beCloseStream(IntPtr hbeStream);
 
     /// <summary>
     /// Returns information like version numbers (both of the DLL and encoding engine), 
@@ -465,14 +465,14 @@ namespace Yeti.Lame
     public static extern void beWriteVBRHeader(string pszMP3FileName);
 
     [DllImport("Lame_enc.dll")]
-    public static extern uint beEncodeChunkFloatS16NI(uint hbeStream, uint nSamples, [In] float[] buffer_l,
+    public static extern uint beEncodeChunkFloatS16NI(IntPtr hbeStream, uint nSamples, [In] float[] buffer_l,
                                                       [In] float[] buffer_r, [In, Out] byte[] pOutput,
                                                       ref uint pdwOutput);
 
     [DllImport("Lame_enc.dll")]
-    public static extern uint beFlushNoGap(uint hbeStream, [In, Out] byte[] pOutput, ref uint pdwOutput);
+    public static extern uint beFlushNoGap(IntPtr hbeStream, [In, Out] byte[] pOutput, ref uint pdwOutput);
 
     [DllImport("Lame_enc.dll", CharSet = CharSet.Ansi)]
-    public static extern uint beWriteInfoTag(uint hbeStream, string lpszFileName);
+    public static extern uint beWriteInfoTag(IntPtr hbeStream, string lpszFileName);
   }
 }

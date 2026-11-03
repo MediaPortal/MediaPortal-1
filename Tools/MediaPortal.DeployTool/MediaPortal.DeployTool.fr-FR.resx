@@ -224,7 +224,7 @@ Ce PC sera utilisé comme TV-Server dédié et distribuera la TV aux autres PC d
     <value>Forum Mediaportal</value>
   </data>
   <data name="Finished_linkHomepage" xml:space="preserve">
-    <value>Page d'accueuil MediaPortal</value>
+    <value>Page d'accueil MediaPortal</value>
   </data>
   <data name="Finished_linkWiki" xml:space="preserve">
     <value>Wiki MediaPortal</value>
@@ -437,10 +437,10 @@ Voulez-vous démarrer le processus d'installation maintenant ou uniquement tél�
     <value>Appuyez sur le bouton "Télécharger" pour télécharger tous les composants requis</value>
   </data>
   <data name="OS_Support" xml:space="preserve">
-    <value>Désolé votre système d'exploitation n'est pas supporté par MediaPortal !</value>
+    <value>Désolé, votre système d'exploitation n'est pas supporté par MediaPortal !</value>
   </data>
   <data name="OS_Warning" xml:space="preserve">
-    <value>Votre système d'exploitation n'est pas supporté car Microsoft n'a pas mis a disposition plusieurs hotfix requis.
+    <value>Votre système d'exploitation n'est pas supporté car Microsoft n'a pas mis à disposition plusieurs hotfix requis.
 Continuez à vos risques et périls.</value>
   </data>
   <data name="DownloadSettings_failed" xml:space="preserve">
@@ -452,12 +452,12 @@ Si un fichier de configuration corrompu est trouvé, il sera supprimé.</value>
     <value>Configurer le Pare-Feu Windows pour permettre l'accès à MediaPortal depuis les autres PC</value>
   </data>
   <data name="OS_Beta" xml:space="preserve">
-    <value>Une version Beta de SP est détecté. Votre système n'est pas supporté...
-Continuer à vos risques et périls !</value>
+    <value>Une version Beta de SP est détectée. Votre système n'est pas supporté...
+Continuez à vos risques et périls !</value>
   </data>
   <data name="Finished_labelHeading3_download" xml:space="preserve">
     <value>Cette application va maintenant se fermer et ouvrir le dossier "MediaPortal Installation".
-Transférer se dossier dans votre HTPC. Commencer l'installation, en éxecutant "MediaPortal.DeployTool.exe".</value>
+Transférez ce dossier dans votre PCHC. Commencez l'installation, en éxecutant "MediaPortal.DeployTool.exe".</value>
   </data>
   <data name="Install_stateSkipped" xml:space="preserve">
     <value>Sauté</value>
@@ -472,7 +472,7 @@ Transférer se dossier dans votre HTPC. Commencer l'installation, en éxecutant 
     <value>Veuillez séllectionner les paramétres de téléchargement :</value>
   </data>
   <data name="DownloadOnly_NoConnectionWarning" xml:space="preserve">
-    <value>Aucune connection internet trouvé ! Pour poursuivre l'installation une connection active est requise.</value>
+    <value>Aucune connection internet trouvée ! Pour poursuivre l'installation une connection active est requise.</value>
   </data>
   <data name="DiskSpace_Error" xml:space="preserve">
     <value>Il n'y a pas suffisamment d'espace disque sur le lecteur spécifié ! Pour l'installation de MediaPortal vous avez besoin d'au moins {0} Mo d'espace libre sur le disque.</value>
@@ -490,8 +490,8 @@ Transférer se dossier dans votre HTPC. Commencer l'installation, en éxecutant 
     <value>Mise à jour vers {0}</value>
   </data>
   <data name="Upgrade_note" xml:space="preserve">
-    <value>REMARQUE: Vous ne pouvez évoluer à partir d'une GIT build,
-          ceux-ci sont destinés à des fins de test uniquement.</value>
+    <value>REMARQUE: Vous ne pouvez évoluer à partir d'une version GIT,
+          celles-ci sont destinées à des fins de test uniquement.</value>
   </data>
   <data name="Install_actionUpgradeInstall" xml:space="preserve">
     <value>Mise à jour-&gt;Installation</value>
@@ -511,11 +511,8 @@ L'activation d'AERO peut réduire également l'utilisation du processeur, ce qui
     <value>Un redémarrage est nécessaire par un composant Microsoft.
 Merci de procéder au redémarrage avant de poursuivre l'installation de MediaPortal.</value>
   </data>
-  <data name="Need_Reboot" xml:space="preserve">
-    <value>Veillez à redémarrer votre ordinateur avant d'utiliser MediaPortal.</value>
-  </data>
   <data name="ExtensionChoice_LAV" xml:space="preserve">
-    <value>Installez LAV Filtres pour permettre la lecture de nombreux formats audio vidéo</value>
+    <value>Installez LAV Filters pour permettre la lecture de nombreux formats audio vidéo</value>
   </data>
   <data name="Reinstall" xml:space="preserve">
     <value>Réinstaller l'installation actuelle vers {0}</value>
@@ -524,7 +521,7 @@ Merci de procéder au redémarrage avant de poursuivre l'installation de MediaPo
     <value>Impossible de supprimer deploy.xml\nVoulez-vous continuer ?\nLes paramêtres pourraient ne pas être mis à jour correctement</value>
   </data>
   <data name="ExtensionChoice_MoreInfo" xml:space="preserve">
-    <value>Plus d'nfo</value>
+    <value>Plus d'info</value>
   </data>
   <data name="ExtensionChoice_OtherExtensions" xml:space="preserve">
     <value>Parcourir les autres extensions</value>
@@ -555,5 +552,8 @@ Merci de procéder au redémarrage avant de poursuivre l'installation de MediaPo
   </data>
   <data name="SkinChoice_OtherSkins" xml:space="preserve">
     <value>Parcourir d'autres skins</value>
+  </data>
+  <data name="DBMSType_rbMySQLOutdated" xml:space="preserve">
+    <value>MySQL 5.6</value>
   </data>
 </root>

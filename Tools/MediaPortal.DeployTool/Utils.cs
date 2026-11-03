@@ -133,7 +133,7 @@ namespace MediaPortal.DeployTool
       try
       {
         doc.Load(XmlFile);
-        
+
         bool need64 = false;
         if (Is64bit())
         {
@@ -326,7 +326,7 @@ namespace MediaPortal.DeployTool
       Type safeRegistryHandleType = typeof(SafeHandleZeroOrMinusOneIsInvalid).Assembly.GetType("Microsoft.Win32.SafeHandles.SafeRegistryHandle");
 
       Type[] safeRegistryHandleConstructorTypes = new Type[] { typeof(System.IntPtr), typeof(System.Boolean) };
-      ConstructorInfo safeRegistryHandleConstructor = safeRegistryHandleType.GetConstructor(privateConstructors, null, 
+      ConstructorInfo safeRegistryHandleConstructor = safeRegistryHandleType.GetConstructor(privateConstructors, null,
                                                                                             safeRegistryHandleConstructorTypes, null);
       Object safeHandle = safeRegistryHandleConstructor.Invoke(new Object[] { hKey, pOwnsHandle });
 
@@ -335,7 +335,7 @@ namespace MediaPortal.DeployTool
       // a .NET natively opened handle and disposed of correctly
       Type registryKeyType = typeof(Microsoft.Win32.RegistryKey);
       Type[] registryKeyConstructorTypes = new Type[] { safeRegistryHandleType, typeof(Boolean) };
-      ConstructorInfo registryKeyConstructor = registryKeyType.GetConstructor(privateConstructors, null, 
+      ConstructorInfo registryKeyConstructor = registryKeyType.GetConstructor(privateConstructors, null,
                                                                               registryKeyConstructorTypes, null);
       RegistryKey result = (RegistryKey)registryKeyConstructor.Invoke(new Object[] { safeHandle, pWritable });
       return result;
@@ -467,7 +467,7 @@ namespace MediaPortal.DeployTool
 
 #if DEBUG
         MessageBox.Show("Registry version = <" + ver + ">, IsUpdatable= " + IsPackageUpdatabled(ver) + ", IsInstalled=" + _IsInstalled + " [" + RegistryPath + "]",
-                        "Debug information: " +  MementoSection, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        "Debug information: " + MementoSection, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 #endif
 
         if (_IsInstalled == 1)
@@ -547,8 +547,8 @@ namespace MediaPortal.DeployTool
       {
         if (Directory.GetCurrentDirectory().StartsWith("\\"))
         {
-          MessageBox.Show("Please start installation from a local drive.", 
-                          Application.StartupPath, 
+          MessageBox.Show("Please start installation from a local drive.",
+                          Application.StartupPath,
                           MessageBoxButtons.OK,
                           MessageBoxIcon.Stop);
           return false;
@@ -559,8 +559,8 @@ namespace MediaPortal.DeployTool
         {
           if ((dir.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
           {
-            MessageBox.Show("Need write access to startup directory.", 
-                            Application.StartupPath, 
+            MessageBox.Show("Need write access to startup directory.",
+                            Application.StartupPath,
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Stop);
             return false;
@@ -571,8 +571,8 @@ namespace MediaPortal.DeployTool
       catch
       {
         MessageBox.Show("Unable to determine startup path. Please try running from a local drive with write access.",
-                        Application.StartupPath, 
-                        MessageBoxButtons.OK, 
+                        Application.StartupPath,
+                        MessageBoxButtons.OK,
                         MessageBoxIcon.Stop);
         return false;
       }
@@ -631,8 +631,8 @@ namespace MediaPortal.DeployTool
       Utils.AutoRunApplication();
 
       // Notify about the needed reboot
-      MessageBox.Show(Localizer.GetBestTranslation("Reboot_Required"), 
-                      DisplayName, 
+      MessageBox.Show(Localizer.GetBestTranslation("Reboot_Required"),
+                      DisplayName,
                       MessageBoxButtons.OK,
                       MessageBoxIcon.Exclamation);
 
@@ -651,18 +651,18 @@ namespace MediaPortal.DeployTool
       switch (OSInfo.OSInfo.GetOSSupported())
       {
         case OSInfo.OSInfo.OsSupport.Blocked:
-          MessageBox.Show(Localizer.GetBestTranslation("OS_Support"), 
+          MessageBox.Show(Localizer.GetBestTranslation("OS_Support"),
                           OSInfo.OSInfo.GetOSDisplayVersion(),
-                          MessageBoxButtons.OK, 
+                          MessageBoxButtons.OK,
                           MessageBoxIcon.Error);
           Application.Exit();
           break;
         case OSInfo.OSInfo.OsSupport.NotSupported:
-          res = MessageBox.Show(Localizer.GetBestTranslation("OS_Warning"), 
+          res = MessageBox.Show(Localizer.GetBestTranslation("OS_Warning"),
                                 OSInfo.OSInfo.GetOSDisplayVersion(),
-                                MessageBoxButtons.OKCancel, 
+                                MessageBoxButtons.OKCancel,
                                 MessageBoxIcon.Warning);
-          if (res == DialogResult.Cancel) 
+          if (res == DialogResult.Cancel)
           {
             Application.Exit();
           }
@@ -671,9 +671,9 @@ namespace MediaPortal.DeployTool
 
       if (OSInfo.OSInfo.OSServicePackMinor != 0)
       {
-        res = MessageBox.Show(Localizer.GetBestTranslation("OS_Beta"), 
+        res = MessageBox.Show(Localizer.GetBestTranslation("OS_Beta"),
                               OSInfo.OSInfo.GetOSDisplayVersion(),
-                              MessageBoxButtons.OKCancel, 
+                              MessageBoxButtons.OKCancel,
                               MessageBoxIcon.Warning);
         if (res == DialogResult.Cancel)
         {
@@ -798,8 +798,8 @@ namespace MediaPortal.DeployTool
           break;
         case "max":
           major = 1;
-          minor = 38;
-          revision = 3;
+          minor = 39;
+          revision = 0;
           break;
       }
       Version ver = new Version(major, minor, revision);
@@ -820,7 +820,7 @@ namespace MediaPortal.DeployTool
     {
       int major = 1;
       int minor = 39;
-      int revision = 000;
+      int revision = 001;
 
       Version ver = new Version(major, minor, revision);
       return ver;
@@ -870,7 +870,7 @@ namespace MediaPortal.DeployTool
 
     public static string GetDisplayVersion()
     {
-      return "1.39 Endurance";
+      return "1.39.1 Endurance";
     }
 
     /// <summary>
@@ -902,8 +902,8 @@ namespace MediaPortal.DeployTool
 
       var existingNode =
         (from x in deployXml.Elements("deploySettings").Elements()
-         where (string) x.Attribute("section") == section &&
-               (string) x.Attribute("entry") == entry
+         where (string)x.Attribute("section") == section &&
+               (string)x.Attribute("entry") == entry
          select x).FirstOrDefault();
 
       if (existingNode == null)

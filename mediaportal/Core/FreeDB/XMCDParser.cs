@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2011 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2011 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@ namespace MediaPortal.Freedb
   public class XMCDParser
   {
     private const string APPNAME = "MediaPortal";
-    private const string APPVERSION = "2.1";
+    private const string APPVERSION = "1.0";
     private string m_content = null;
     private char[] m_seps = {'\r', '\n'};
 

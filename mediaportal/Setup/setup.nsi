@@ -786,6 +786,16 @@ Section "MediaPortal core files (required)" SecCore
   ;SetOutPath "$MPdir.Base\lib"
   ;File /nonfatal /r /x .git "${MEDIAPORTAL.BASE}\lib\*"
 
+  ; Lame
+  SetOutPath "$MPdir.Base"
+  !if "${Architecture}" == "x64"
+    File "${git_MP}\MediaPortal.Base\Lame\x64\lame_enc.dll"
+    File "${git_MP}\MediaPortal.Base\Lame\x64\libmpg123-0.dll"
+  !else
+    File "${git_MP}\MediaPortal.Base\Lame\x86\lame_enc.dll"
+    File "${git_MP}\MediaPortal.Base\Lame\x86\libmpg123-0.dll"
+  !endif
+
   #---------------------------------------------------------------------------
   # FILTER REGISTRATION
   #               for more information see:           http://nsis.sourceforge.net/Docs/AppendixB.html

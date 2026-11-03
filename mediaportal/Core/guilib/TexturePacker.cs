@@ -1,6 +1,6 @@
-#region Copyright (C) 2005-2013 Team MediaPortal
+#region Copyright (C) 2005-2026 Team MediaPortal
 
-// Copyright (C) 2005-2013 Team MediaPortal
+// Copyright (C) 2005-2026 Team MediaPortal
 // http://www.team-mediaportal.com
 // 
 // MediaPortal is free software: you can redistribute it and/or modify
@@ -211,18 +211,24 @@ namespace MediaPortal.GUI.Library
 
         try
         {
-          string[] cacheFiles = Directory.GetFiles(GUIGraphicsContext.SkinCacheFolder, "packedgfx*",
-                                                   SearchOption.TopDirectoryOnly);
-          foreach (string file in cacheFiles)
+          string cacheFolder = GUIGraphicsContext.SkinCacheFolder;
+          if (Directory.Exists(cacheFolder))
           {
-            File.Delete(file);
+            string[] cacheFiles = Directory.GetFiles(cacheFolder, "packedgfx*", SearchOption.TopDirectoryOnly);
+            foreach (string file in cacheFiles)
+            {
+              File.Delete(file);
+            }
+          }
+          else
+          {
+            Log.Debug("TexturePacker: Cleanup skipped, cache folder does not exist: {0}", cacheFolder);
           }
         }
         catch (Exception ex) 
         {
           Log.Error("TexturePacker: Cleanup {0}", ex.Message);
         }
-
       }
     }
 

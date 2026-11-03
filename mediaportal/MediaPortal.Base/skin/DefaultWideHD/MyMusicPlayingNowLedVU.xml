@@ -1610,7 +1610,7 @@
         <visible>player.paused</visible>
       </control>
     </control>
-    <import>MyMusicPlayingNow.Infos.xml</import>
+ <!--<import>MyMusicPlayingNow.Infos.xml</import>-->
     <!-- *************************************************************************************************** -->
     <!-- ********************************** Here is the Music ClearArt ************************************* -->
     <!-- *************************************************************************************************** -->
@@ -2588,6 +2588,16 @@
   <visible>Player.HasMedia</visible>
   <animation effect="Fade" time="200">WindowOpen</animation>
   <animation effect="Fade" time="200">WindowClose</animation>
+</control>
+<control>
+  <type>image</type>
+  <id>1</id>
+  <posX>0</posX>
+  <posY>-50</posY>
+  <width>140</width>
+  <height>984</height>
+  <texture>Action_nofocus.png</texture> 
+  <visible>Control.HasFocus(333)|[Control.HasFocus(333)+skin.hassetting(#skin.music.nowplaying.VUMeters)]</visible>
 </control>
 <control>
   <id>1</id>

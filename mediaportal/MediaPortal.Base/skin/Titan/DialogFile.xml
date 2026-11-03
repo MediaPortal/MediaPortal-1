@@ -7,34 +7,35 @@
 
 	<import>common.dialog.xml</import><!-- Override the definition in common.dialog.xml, as we need more space for the Always and Never buttons -->
 	
-	<control>
+    <control>
 		<type>image</type>
 		<id>0</id>
 		<posX>280</posX>
 		<posY>233</posY>
 		<width>718</width>
 		<height>302</height>
-		<texture>dialog_background.png</texture>
+		<texture>dialog_background2.png</texture>
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
-
+    
 	<control>
 		<type>image</type>
 		<id>100</id>
 		<posX>366</posX>
-		<posY>370</posY>
-		<width>533</width>
-		<texture>osd_progress_background.png</texture>
+		<posY>320</posY> 
+		<width>548</width>
+		<height>18</height>
+		<texture>osd_progress_background_medium.png</texture>
 	</control>
 
 	<control>
 		<description>progress control</description>
 		<type>progress</type>
 		<id>20</id>
-		<posX>346</posX>
-		<posY>368</posY>
-		<width>533</width>
+		<posX>357</posX> 
+		<posY>323</posY> 
+		<width>567</width> 
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
@@ -44,13 +45,15 @@
 		<type>button</type>
 		<id>11</id>
 		<posX>364</posX>
-		<posY>412</posY>
+		<posY>368</posY> 
+		<textalign>center</textalign>
 		<width>142</width>
 		<height>37</height>
 		<textYOff>2</textYOff>
 		<textureFocus>small_button_focus.png</textureFocus>
-		<textureNoFocus>small_button_nofocus.png</textureNoFocus>
+		<textureNoFocus>-</textureNoFocus>
 		<label>107</label>
+		<textXOff>20</textXOff>
 		<onleft>14</onleft>
 		<onright>10</onright>
 		<onup>12</onup>
@@ -63,14 +66,16 @@
 		<description>No button</description>
 		<type>button</type>
 		<id>10</id>
-		<posX>568</posX>
-		<posY>412</posY>
+		<posX>570</posX>
+		<posY>368</posY> 
+		<textalign>center</textalign>
 		<width>142</width>
 		<height>37</height>
 		<textYOff>2</textYOff>
 		<textureFocus>small_button_focus.png</textureFocus>
-		<textureNoFocus>small_button_nofocus.png</textureNoFocus>
+		<textureNoFocus>-</textureNoFocus>
 		<label>106</label>
+		<textXOff>20</textXOff>
 		<onleft>11</onleft>
 		<onright>14</onright>
 		<onup>13</onup>
@@ -84,13 +89,15 @@
 		<type>button</type>
 		<id>12</id>
 		<posX>364</posX>
-		<posY>456</posY>
+		<posY>412</posY>
+		<textalign>center</textalign>
 		<width>142</width>
 		<height>37</height>
 		<textYOff>2</textYOff>
 		<textureFocus>small_button_focus.png</textureFocus>
-		<textureNoFocus>small_button_nofocus.png</textureNoFocus>
+		<textureNoFocus>-</textureNoFocus>
 		<label>511</label>
+		<textXOff>20</textXOff>
 		<onleft>13</onleft>
 		<onright>13</onright>
 		<onup>11</onup>
@@ -98,19 +105,21 @@
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
-
-	<control>
+	
+    <control>
 		<description>Never</description>
 		<type>button</type>
 		<id>13</id>
-		<posX>568</posX>
-		<posY>456</posY>
+		<posX>570</posX>
+		<posY>412</posY> 
+		<textalign>center</textalign>
 		<width>142</width>
 		<height>37</height>
 		<textYOff>2</textYOff>
 		<textureFocus>small_button_focus.png</textureFocus>
-		<textureNoFocus>small_button_nofocus.png</textureNoFocus>
+		<textureNoFocus>-</textureNoFocus>
 		<label>512</label>
+		<textXOff>20</textXOff>
 		<onleft>12</onleft>
 		<onright>12</onright>
 		<onup>10</onup>
@@ -118,6 +127,29 @@
 		<animation effect="fade" time="250">WindowOpen</animation>
 		<animation effect="fade" time="250">WindowClose</animation>
 	</control>
+	
+	<control>
+	    <description>Cancel button</description>
+        <type>button</type>
+        <id>14</id>
+        <posX>776</posX> 
+		<posY>368</posY> 
+	    <textalign>center</textalign>
+	    <width>142</width>
+		<height>37</height>
+        <textYOff>2</textYOff>
+        <textureFocus>small_button_clear_focus.png</textureFocus>
+        <textureNoFocus>-</textureNoFocus>
+        <label>510</label>
+		<textXOff>20</textXOff>
+        <onleft>10</onleft>
+        <onright>11</onright>
+        <onup>14</onup>
+        <ondown>14</ondown>
+		<animation effect="fade" time="250">WindowOpen</animation>
+		<animation effect="fade" time="250">WindowClose</animation>
+    </control>
+	
 
 </controls>
 </window>
