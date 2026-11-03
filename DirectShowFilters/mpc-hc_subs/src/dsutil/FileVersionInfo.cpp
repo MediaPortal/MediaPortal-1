@@ -29,7 +29,7 @@ bool FileVersionInfo::LoadInfo(LPCTSTR filePath, VS_FIXEDFILEINFO& fileInfo)
     DWORD dwFileVersionInfoSize = GetFileVersionInfoSize(filePath, nullptr);
     if (dwFileVersionInfoSize) {
         // Allocate the buffer
-        BYTE* lpData = (BYTE*)DEBUG_NEW BYTE[dwFileVersionInfoSize];
+        BYTE* lpData = (BYTE*)new BYTE[dwFileVersionInfoSize];
         if (lpData) {
             // Load the file-version information
             if (GetFileVersionInfo(filePath, 0, dwFileVersionInfoSize, (LPVOID)lpData)) {
@@ -50,10 +50,10 @@ bool FileVersionInfo::LoadInfo(LPCTSTR filePath, VS_FIXEDFILEINFO& fileInfo)
     return success;
 }
 
-CString FileVersionInfo::GetFileVersionStr(LPCTSTR filePath)
+tstring FileVersionInfo::GetFileVersionStr(LPCTSTR filePath)
 {
     VS_FIXEDFILEINFO fileInfo;
-    CString strFileVersion;
+    tstring strFileVersion;
 
     if (LoadInfo(filePath, fileInfo)) {
         strFileVersion = FormatVersionString(fileInfo.dwFileVersionLS, fileInfo.dwFileVersionMS);
@@ -62,30 +62,26 @@ CString FileVersionInfo::GetFileVersionStr(LPCTSTR filePath)
     return strFileVersion;
 }
 
-QWORD FileVersionInfo::GetFileVersionNum(LPCTSTR filePath)
+UINT64 FileVersionInfo::GetFileVersionNum(LPCTSTR filePath)
 {
     VS_FIXEDFILEINFO fileInfo;
-    QWORD qwFileVersion = 0;
+    UINT64 qwFileVersion = 0;
 
     if (LoadInfo(filePath, fileInfo)) {
-        qwFileVersion = ((QWORD)fileInfo.dwFileVersionMS << 32) | fileInfo.dwFileVersionLS;
+        qwFileVersion = ((UINT64)fileInfo.dwFileVersionMS << 32) | fileInfo.dwFileVersionLS;
     }
 
     return qwFileVersion;
 }
 
-CString FileVersionInfo::FormatVersionString(DWORD dwVersionNumberLow, DWORD dwVersionNumberHigh)
+tstring FileVersionInfo::FormatVersionString(DWORD dwVersionNumberLow, DWORD dwVersionNumberHigh)
 {
-    CString strFileVersion;
-    strFileVersion.Format(_T("%lu.%lu.%lu.%lu"),
-                          (dwVersionNumberHigh & 0xFFFF0000) >> 16,
-                          (dwVersionNumberHigh & 0x0000FFFF),
-                          (dwVersionNumberLow & 0xFFFF0000) >> 16,
-                          (dwVersionNumberLow & 0x0000FFFF));
+    tstring strFileVersion;
+    strFileVersion = ::Format(_T("%lu.%lu.%lu.%lu"), (dwVersionNumberHigh & 0xFFFF0000) >> 16, (dwVersionNumberHigh & 0x0000FFFF), (dwVersionNumberLow & 0xFFFF0000) >> 16, (dwVersionNumberLow & 0x0000FFFF));
     return strFileVersion;
 }
 
-CString FileVersionInfo::FormatVersionString(QWORD qwVersionNumber)
+tstring FileVersionInfo::FormatVersionString(UINT64 qwVersionNumber)
 {
     return FormatVersionString(qwVersionNumber & DWORD_MAX, (qwVersionNumber >> 32) & DWORD_MAX);
 }

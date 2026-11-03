@@ -26,7 +26,7 @@
 #include <algorithm>
 
 CVobSubImage::CVobSubImage()
-    : org(CSize(0, 0))
+    : org(MakeSize(0, 0))
     , lpTemp1(nullptr)
     , lpTemp2(nullptr)
     , nPlane(0)
@@ -42,7 +42,7 @@ CVobSubImage::CVobSubImage()
     , tCurrent(-1)
     , start(0)
     , delay(0)
-    , rect(CRect(0, 0, 0, 0))
+    , rect(MakeRect(0, 0, 0, 0))
     , lpPixels(nullptr)
 {
     ZeroMemory(&pal, sizeof(pal));
@@ -63,18 +63,16 @@ bool CVobSubImage::Alloc(int w, int h)
         Free();
 
         try {
-            lpTemp1 = DEBUG_NEW RGBQUAD[w * h];
-        } catch (CMemoryException* e) {
+            lpTemp1 = new RGBQUAD[w * h];
+        } catch (const std::bad_alloc&) {
             ASSERT(FALSE);
-            e->Delete();
             return false;
         }
 
         try {
-            lpTemp2 = DEBUG_NEW RGBQUAD[(w + 2) * (h + 2)];
-        } catch (CMemoryException* e) {
+            lpTemp2 = new RGBQUAD[(w + 2) * (h + 2)];
+        } catch (const std::bad_alloc&) {
             ASSERT(FALSE);
-            e->Delete();
             delete [] lpTemp1;
             lpTemp1 = nullptr;
             return false;
@@ -105,7 +103,7 @@ bool CVobSubImage::Decode(BYTE* _lpData, size_t _packetSize, size_t _dataSize, i
 {
     GetPacketInfo(_lpData, _packetSize, _dataSize, _t);
 
-    if (!Alloc(rect.Width(), rect.Height())) {
+    if (!Alloc(RectWidth(rect), RectHeight(rect))) {
         return false;
     }
 
@@ -119,7 +117,7 @@ bool CVobSubImage::Decode(BYTE* _lpData, size_t _packetSize, size_t _dataSize, i
     tridx = _tridx;
     cuspal = _cuspal;
 
-    CPoint p = rect.TopLeft();
+    POINT p = RectTopLeft(rect);
 
     size_t end[] = { nOffset[1], _dataSize };
 
@@ -240,7 +238,7 @@ void CVobSubImage::GetPacketInfo(const BYTE* lpData, size_t packetSize, size_t d
                     //tr &= 0x00f0;
                     break;
                 case 0x05:
-                    rect = CRect((lpData[i] << 4) + (lpData[i + 1] >> 4),
+                    rect = MakeRect((lpData[i] << 4) + (lpData[i + 1] >> 4),
                                  (lpData[i + 3] << 4) + (lpData[i + 4] >> 4),
                                  ((lpData[i + 1] & 0x0f) << 8) + lpData[i + 2] + 1,
                                  ((lpData[i + 4] & 0x0f) << 8) + lpData[i + 5] + 1);
@@ -285,7 +283,7 @@ BYTE CVobSubImage::GetNibble(const BYTE* lpData)
     return ret;
 }
 
-void CVobSubImage::DrawPixels(CPoint p, int length, size_t colorId)
+void CVobSubImage::DrawPixels(POINT p, int length, size_t colorId)
 {
     if (length <= 0
             || p.x + length < rect.left
@@ -302,7 +300,7 @@ void CVobSubImage::DrawPixels(CPoint p, int length, size_t colorId)
         length = rect.right - p.x;
     }
 
-    RGBQUAD* ptr = &lpPixels[rect.Width() * (p.y - rect.top) + (p.x - rect.left)];
+    RGBQUAD* ptr = &lpPixels[RectWidth(rect) * (p.y - rect.top) + (p.x - rect.left)];
 
     RGBQUAD c;
 
@@ -320,16 +318,16 @@ void CVobSubImage::DrawPixels(CPoint p, int length, size_t colorId)
 
 void CVobSubImage::TrimSubImage()
 {
-    CRect r;
-    r.left = rect.Width();
-    r.top = rect.Height();
+    RECT r = {};
+    r.left = RectWidth(rect);
+    r.top = RectHeight(rect);
     r.right = 0;
     r.bottom = 0;
 
     RGBQUAD* ptr = lpTemp1;
 
-    for (int j = 0, y = rect.Height(); j < y; j++) {
-        for (int i = 0, x = rect.Width(); i < x; i++, ptr++) {
+    for (int j = 0, y = RectHeight(rect); j < y; j++) {
+        for (int i = 0, x = RectWidth(rect); i < x; i++, ptr++) {
             if (ptr->rgbReserved) {
                 if (r.top > j) {
                     r.top = j;
@@ -351,22 +349,22 @@ void CVobSubImage::TrimSubImage()
         return;
     }
 
-    r += CRect(0, 0, 1, 1);
+    r = RectInflate(r, MakeRect(0, 0, 1, 1));
 
-    r &= CRect(CPoint(0, 0), rect.Size());
+    r = RectIntersect(r, MakeRect(MakePoint(0, 0), RectSize(rect)));
 
-    int w = r.Width(), h = r.Height();
+    int w = RectWidth(r), h = RectHeight(r);
 
-    DWORD offset = r.top * rect.Width() + r.left;
+    DWORD offset = r.top * RectWidth(rect) + r.left;
 
-    r += CRect(1, 1, 1, 1);
+    r = RectInflate(r, MakeRect(1, 1, 1, 1));
 
     DWORD* src = (DWORD*)&lpTemp1[offset];
     DWORD* dst = (DWORD*)&lpTemp2[1 + w + 1];
 
     ZeroMemory(lpTemp2, (1 + w + 1)*sizeof(RGBQUAD));
 
-    for (int height = h; height; height--, src += rect.Width()) {
+    for (int height = h; height; height--, src += RectWidth(rect)) {
         *dst++ = 0;
         memcpy(dst, src, w * sizeof(RGBQUAD));
         dst += w;
@@ -377,35 +375,34 @@ void CVobSubImage::TrimSubImage()
 
     lpPixels = lpTemp2;
 
-    rect = r + rect.TopLeft();
+    rect = RectOffset(r, rect.left, rect.top);
 }
 
 ////////////////////////////////
 
 #define GP(xx, yy) (((xx) < 0 || (yy) < 0 || (xx) >= w || (yy) >= h) ? 0 : p[(yy) * w + (xx)])
 
-CAutoPtrList<COutline>* CVobSubImage::GetOutlineList(CPoint& topleft)
+std::list<std::unique_ptr<COutline>>* CVobSubImage::GetOutlineList(POINT& topleft)
 {
-    int w = rect.Width(), h = rect.Height(), len = w * h;
+    int w = RectWidth(rect), h = RectHeight(rect), len = w * h;
     if (len <= 0) {
         return nullptr;
     }
 
-    CAutoVectorPtr<BYTE> p;
-    if (!p.Allocate(len)) {
+    std::unique_ptr<BYTE[]> p(new(std::nothrow) BYTE[len]);
+    if (!p) {
         return nullptr;
     }
 
-    CAutoPtrList<COutline>* ol;
+    std::list<std::unique_ptr<COutline>>* ol;
     try {
-        ol = DEBUG_NEW CAutoPtrList<COutline>();
-    } catch (CMemoryException* e) {
+        ol = new std::list<std::unique_ptr<COutline>>();
+    } catch (const std::bad_alloc&) {
         ASSERT(FALSE);
-        e->Delete();
         return nullptr;
     }
 
-    BYTE* cp = p;
+    BYTE* cp = p.get();
     RGBQUAD* rgbp = (RGBQUAD*)lpPixels;
 
     for (int i = 0; i < len; i++, cp++, rgbp++) {
@@ -417,7 +414,7 @@ CAutoPtrList<COutline>* CVobSubImage::GetOutlineList(CPoint& topleft)
     topleft.x = topleft.y = INT_MAX;
 
     for (;;) {
-        cp = p;
+        cp = p.get();
 
         int x = 0;
         int y = 0;
@@ -444,17 +441,16 @@ CAutoPtrList<COutline>* CVobSubImage::GetOutlineList(CPoint& topleft)
 
         int ox = x, oy = y, odir = dir;
 
-        CAutoPtr<COutline> o;
+        std::unique_ptr<COutline> o;
         try {
-            o.Attach(DEBUG_NEW COutline);
-        } catch (CMemoryException* e) {
+            o.reset(new COutline);
+        } catch (const std::bad_alloc&) {
             ASSERT(FALSE);
-            e->Delete();
             break;
         }
 
         do {
-            CPoint pp;
+            POINT pp = {};
             BYTE fl = 0;
             BYTE fr = 0;
             BYTE br = 0;
@@ -463,25 +459,25 @@ CAutoPtrList<COutline>* CVobSubImage::GetOutlineList(CPoint& topleft)
 
             switch (prevdir) {
                 case UP:
-                    pp = CPoint(x + 1, y);
+                    pp = MakePoint(x + 1, y);
                     fl = GP(x, y - 1);
                     fr = GP(x + 1, y - 1);
                     br = GP(x + 1, y);
                     break;
                 case RIGHT:
-                    pp = CPoint(x + 1, y + 1);
+                    pp = MakePoint(x + 1, y + 1);
                     fl = GP(x + 1, y);
                     fr = GP(x + 1, y + 1);
                     br = GP(x, y + 1);
                     break;
                 case DOWN:
-                    pp = CPoint(x, y + 1);
+                    pp = MakePoint(x, y + 1);
                     fl = GP(x, y + 1);
                     fr = GP(x - 1, y + 1);
                     br = GP(x - 1, y);
                     break;
                 case LEFT:
-                    pp = CPoint(x, y);
+                    pp = MakePoint(x, y);
                     fl = GP(x - 1, y);
                     fr = GP(x - 1, y - 1);
                     br = GP(x, y - 1);
@@ -558,8 +554,8 @@ CAutoPtrList<COutline>* CVobSubImage::GetOutlineList(CPoint& topleft)
             }
         } while (!(x == ox && y == oy && dir == odir));
 
-        if (!o->pa.IsEmpty() && (x == ox && y == oy && dir == odir)) {
-            ol->AddTail(o);
+        if (!o->pa.empty() && (x == ox && y == oy && dir == odir)) {
+            ol->push_back(std::move(o));
         } else {
             ASSERT(0);
         }
@@ -570,7 +566,7 @@ CAutoPtrList<COutline>* CVobSubImage::GetOutlineList(CPoint& topleft)
 
 static bool FitLine(const COutline& o, int& start, int& end)
 {
-    int len = (int)o.pa.GetCount();
+    int len = (int)o.pa.size();
     if (len < 7) {
         return false;    // small segments should be handled with beziers...
     }
@@ -586,7 +582,7 @@ static bool FitLine(const COutline& o, int& start, int& end)
         return false;
     }
 
-    CUIntArray la, ra;
+    std::vector<UINT> la, ra;
 
     UINT i, j, k;
 
@@ -598,9 +594,9 @@ static bool FitLine(const COutline& o, int& start, int& end)
             return false;
         }
         if (o.da[i] == -1) {
-            la.Add(i - k);
+            la.push_back(i - k);
         } else {
-            ra.Add(i - k);
+            ra.push_back(i - k);
         }
         k = i;
     }
@@ -609,12 +605,12 @@ static bool FitLine(const COutline& o, int& start, int& end)
 
     // these tests are completly heuristic and might be redundant a bit...
 
-    for (i = 0, j = (UINT)la.GetSize(); i < j && fl; i++) {
+    for (i = 0, j = (UINT)la.size(); i < j && fl; i++) {
         if (la[i] != 1) {
             fl = false;
         }
     }
-    for (i = 0, j = (UINT)ra.GetSize(); i < j && fr; i++) {
+    for (i = 0, j = (UINT)ra.size(); i < j && fr; i++) {
         if (ra[i] != 1) {
             fr = false;
         }
@@ -626,16 +622,16 @@ static bool FitLine(const COutline& o, int& start, int& end)
     if (fl && fr && 1.0 * (end - start) / ((len - end) * 2 + (start - 0) * 2) > 0.4) {
         return false;    // if this section is relatively too small it may only be a rounded corner
     }
-    if (!fl && !la.IsEmpty() && la.GetSize() <= 4 && (la[0] == 1 && la[la.GetSize() - 1] == 1)) {
+    if (!fl && !la.empty() && la.size() <= 4 && (la[0] == 1 && la[la.size() - 1] == 1)) {
         return false;    // one step at both ends, doesn't sound good for a line (may be it was skewed, so only eliminate smaller sections where beziers going to look just as good)
     }
-    if (!fr && !ra.IsEmpty() && ra.GetSize() <= 4 && (ra[0] == 1 && ra[ra.GetSize() - 1] == 1)) {
+    if (!fr && !ra.empty() && ra.size() <= 4 && (ra[0] == 1 && ra[ra.size() - 1] == 1)) {
         return false;    // -''-
     }
 
-    CUIntArray& a = !fl ? la : ra;
+    std::vector<UINT>& a = !fl ? la : ra;
 
-    len = (int)a.GetSize();
+    len = (int)a.size();
 
     int sum = 0;
 
@@ -656,7 +652,7 @@ static bool FitLine(const COutline& o, int& start, int& end)
         return false;
     }
 
-    if ((la.GetSize() / 2 + ra.GetSize() / 2) / 2 <= 2) {
+    if ((la.size() / 2 + ra.size() / 2) / 2 <= 2) {
         if ((k + j) / 2 < 2 && k * j != 1) {
             return false;
         }
@@ -664,7 +660,7 @@ static bool FitLine(const COutline& o, int& start, int& end)
 
     double err = 0;
 
-    CPoint sp = o.pa[start], ep = o.pa[end];
+    POINT sp = o.pa[start], ep = o.pa[end];
 
     double minerr = 0, maxerr = 0;
 
@@ -673,7 +669,7 @@ static bool FitLine(const COutline& o, int& start, int& end)
     vy /= l;
 
     for (i = start + 1, j = end - 1; i <= j; i++) {
-        CPoint p = o.pa[i], dp = p - sp;
+        POINT p = o.pa[i], dp = p - sp;
         double t = vx * dp.x + vy * dp.y, dx = vx * t + sp.x - p.x, dy = vy * t + sp.y - p.y;
         t = dx * dx + dy * dy;
         err += t;
@@ -694,18 +690,18 @@ static bool FitLine(const COutline& o, int& start, int& end)
 
 static int CalcPossibleCurveDegree(const COutline& o)
 {
-    size_t len2 = o.da.GetCount();
+    size_t len2 = o.da.size();
 
-    CUIntArray la;
+    std::vector<UINT> la;
 
     for (size_t i = 0, j = 0; j < len2; j++) {
         if (j + 1 == len2 || o.da[j]) {
-            la.Add(UINT(j - i));
+            la.push_back(UINT(j - i));
             i = j;
         }
     }
 
-    ptrdiff_t len = la.GetCount();
+    ptrdiff_t len = la.size();
 
     int ret = 0;
 
@@ -751,21 +747,21 @@ static int CalcPossibleCurveDegree(const COutline& o)
     return ret;
 }
 
-inline double vectlen(CPoint p)
+inline double vectlen(POINT p)
 {
     return sqrt((double)(p.x * p.x + p.y * p.y));
 }
 
-inline double vectlen(CPoint p1, CPoint p2)
+inline double vectlen(POINT p1, POINT p2)
 {
     return vectlen(p2 - p1);
 }
 
 static bool MinMaxCosfi(COutline& o, double& mincf, double& maxcf) // not really cosfi, it is weighted by the distance from the segment endpoints, and since it would be always between -1 and 0, the applied sign marks side
 {
-    CAtlArray<CPoint>& pa = o.pa;
+    std::vector<POINT>& pa = o.pa;
 
-    int len = (int)pa.GetCount();
+    int len = (int)pa.size();
     if (len < 6) {
         return false;
     }
@@ -773,12 +769,12 @@ static bool MinMaxCosfi(COutline& o, double& mincf, double& maxcf) // not really
     mincf = 1;
     maxcf = -1;
 
-    CPoint p = pa[len - 1] - pa[0];
+    POINT p = pa[len - 1] - pa[0];
     double l = vectlen(p);
     UNREFERENCED_PARAMETER(l);
 
     for (ptrdiff_t i = 2; i < len - 2; i++) { // skip the endpoints, they aren't accurate
-        CPoint p1 = pa[0] - pa[i], p2 = pa[len - 1] - pa[i];
+        POINT p1 = pa[0] - pa[i], p2 = pa[len - 1] - pa[i];
         double l1 = vectlen(p1), l2 = vectlen(p2);
         int sign = p1.x * p.y - p1.y * p.x >= 0 ? 1 : -1;
 
@@ -796,25 +792,25 @@ static bool MinMaxCosfi(COutline& o, double& mincf, double& maxcf) // not really
     return true;
 }
 
-static bool FitBezierVH(COutline& o, CPoint& p1, CPoint& p2)
+static bool FitBezierVH(COutline& o, POINT& p1, POINT& p2)
 {
     int i;
 
-    CAtlArray<CPoint>& pa = o.pa;
+    std::vector<POINT>& pa = o.pa;
 
-    int len = (int)pa.GetCount();
+    int len = (int)pa.size();
 
     if (len <= 1) {
         return false;
     } else if (len == 2) {
-        CPoint mid = pa[0] + pa[1];
+        POINT mid = pa[0] + pa[1];
         mid.x >>= 1;
         mid.y >>= 1;
         p1 = p2 = mid;
         return true;
     }
 
-    CPoint dir1 = pa[1] - pa[0], dir2 = pa[len - 2] - pa[len - 1];
+    POINT dir1 = pa[1] - pa[0], dir2 = pa[len - 2] - pa[len - 1];
     if ((dir1.x && dir1.y) || (dir2.x && dir2.y)) {
         return false;    // we are only fitting beziers with hor./ver. endings
     }
@@ -831,18 +827,18 @@ static bool FitBezierVH(COutline& o, CPoint& p1, CPoint& p2)
         }
     }
 
-    CPoint p0 = p1 = pa[0];
-    CPoint p3 = p2 = pa[len - 1];
+    POINT p0 = p1 = pa[0];
+    POINT p3 = p2 = pa[len - 1];
 
-    CAtlArray<double> pl;
-    pl.SetCount(len);
+    std::vector<double> pl;
+    pl.resize(len);
 
     double c10 = 0, c11 = 0, c12 = 0, c13 = 0, c1x = 0, c1y = 0;
     double c20 = 0, c21 = 0, c22 = 0, c23 = 0, c2x = 0, c2y = 0;
     double length = 0;
 
     for (pl[0] = 0, i = 1; i < len; i++) {
-        CPoint diff = (pa[i] - pa[i - 1]);
+        POINT diff = (pa[i] - pa[i - 1]);
         pl[i] = (length += sqrt((double)(diff.x * diff.x + diff.y * diff.y)));
     }
 
@@ -894,7 +890,7 @@ static bool FitBezierVH(COutline& o, CPoint& p1, CPoint& p2)
     }
 
     // check for "inside-out" beziers
-    CPoint dir3 = p1 - p0, dir4 = p2 - p3;
+    POINT dir3 = p1 - p0, dir4 = p2 - p3;
     if ((dir1.x * dir3.x + dir1.y * dir3.y) <= 0 || (dir2.x * dir4.x + dir2.y * dir4.y) <= 0) {
         return false;
     }
@@ -906,7 +902,7 @@ int CVobSubImage::GrabSegment(int _start, const COutline& o, COutline& ret)
 {
     ret.RemoveAll();
 
-    int len = int(o.pa.GetCount());
+    int len = int(o.pa.size());
 
     int cur = (_start) % len, first = -1, last = -1;
     int lastDir = 0;
@@ -923,10 +919,10 @@ int CVobSubImage::GrabSegment(int _start, const COutline& o, COutline& ret)
         }
 
         if (lastDir == o.da[cur]) {
-            CPoint startp = o.pa[first] + o.pa[_start];
+            POINT startp = o.pa[first] + o.pa[_start];
             startp.x >>= 1;
             startp.y >>= 1;
-            CPoint endp = o.pa[last] + o.pa[cur];
+            POINT endp = o.pa[last] + o.pa[cur];
             endp.x >>= 1;
             endp.y >>= 1;
 
@@ -972,20 +968,20 @@ int CVobSubImage::GrabSegment(int _start, const COutline& o, COutline& ret)
 
 void CVobSubImage::SplitOutline(const COutline& o, COutline& o1, COutline& o2)
 {
-    size_t len = o.pa.GetCount();
+    size_t len = o.pa.size();
     if (len < 4) {
         return;
     }
 
-    CAtlArray<UINT> la, sa, ea;
+    std::vector<UINT> la, sa, ea;
 
     size_t i, j, k;
 
     for (i = 0, j = 0; j < len; j++) {
         if (j + 1 == len || o.da[j]) {
-            la.Add(unsigned int(j - i));
-            sa.Add(unsigned int(i));
-            ea.Add(unsigned int(j));
+            la.push_back(unsigned int(j - i));
+            sa.push_back(unsigned int(i));
+            ea.push_back(unsigned int(j));
             i = j;
         }
     }
@@ -993,13 +989,13 @@ void CVobSubImage::SplitOutline(const COutline& o, COutline& o1, COutline& o2)
     size_t maxlen = 0, maxidx = SIZE_T_ERROR;
     size_t maxlen2 = 0, maxidx2 = SIZE_T_ERROR;
 
-    for (i = 0; i < la.GetCount(); i++) {
+    for (i = 0; i < la.size(); i++) {
         if (maxlen < la[i]) {
             maxlen = la[i];
             maxidx = i;
         }
 
-        if (maxlen2 < la[i] && i > 0 && i < la.GetCount() - 1) {
+        if (maxlen2 < la[i] && i > 0 && i < la.size() - 1) {
             maxlen2 = la[i];
             maxidx2 = i;
         }
@@ -1021,7 +1017,7 @@ void CVobSubImage::SplitOutline(const COutline& o, COutline& o1, COutline& o2)
     }
 
     if (j != k) {
-        CPoint mid = o.pa[j] + o.pa[k];
+        POINT mid = o.pa[j] + o.pa[k];
         mid.x >>= 1;
         mid.y >>= 1;
         o1.Add(mid, 0);
@@ -1033,9 +1029,9 @@ void CVobSubImage::SplitOutline(const COutline& o, COutline& o1, COutline& o2)
     }
 }
 
-void CVobSubImage::AddSegment(COutline& o, CAtlArray<BYTE>& pathTypes, CAtlArray<CPoint>& pathPoints)
+void CVobSubImage::AddSegment(COutline& o, std::vector<BYTE>& pathTypes, std::vector<POINT>& pathPoints)
 {
-    int i, len = int(o.pa.GetCount());
+    int i, len = int(o.pa.size());
     if (len < 3) {
         return;
     }
@@ -1051,111 +1047,111 @@ void CVobSubImage::AddSegment(COutline& o, CAtlArray<BYTE>& pathTypes, CAtlArray
     }
 
     if (nLeftTurns == 0 && nRightTurns == 0) { // line
-        pathTypes.Add(PT_LINETO);
-        pathPoints.Add(o.pa[len - 1]);
+        pathTypes.push_back(PT_LINETO);
+        pathPoints.push_back(o.pa[len - 1]);
 
         return;
     }
 
     if (nLeftTurns == 0 || nRightTurns == 0) { // b-spline
-        pathTypes.Add(PT_MOVETONC);
-        pathPoints.Add(o.pa[0] + (o.pa[0] - o.pa[1]));
+        pathTypes.push_back(PT_MOVETONC);
+        pathPoints.push_back(o.pa[0] + (o.pa[0] - o.pa[1]));
 
         for (i = 0; i < 3; i++) {
-            pathTypes.Add(PT_BSPLINETO);
-            pathPoints.Add(o.pa[i]);
+            pathTypes.push_back(PT_BSPLINETO);
+            pathPoints.push_back(o.pa[i]);
         }
 
         for (; i < len; i++) {
-            pathTypes.Add(PT_BSPLINEPATCHTO);
-            pathPoints.Add(o.pa[i]);
+            pathTypes.push_back(PT_BSPLINEPATCHTO);
+            pathPoints.push_back(o.pa[i]);
         }
 
-        pathTypes.Add(PT_BSPLINEPATCHTO);
-        pathPoints.Add(o.pa[len - 1] + (o.pa[len - 1] - o.pa[len - 2]));
+        pathTypes.push_back(PT_BSPLINEPATCHTO);
+        pathPoints.push_back(o.pa[len - 1] + (o.pa[len - 1] - o.pa[len - 2]));
 
-        pathTypes.Add(PT_MOVETONC);
-        pathPoints.Add(o.pa[len - 1]);
+        pathTypes.push_back(PT_MOVETONC);
+        pathPoints.push_back(o.pa[len - 1]);
 
         return;
     }
 
     int _start, _end;
     if (FitLine(o, _start, _end)) { // b-spline, line, b-spline
-        pathTypes.Add(PT_MOVETONC);
-        pathPoints.Add(o.pa[0] + (o.pa[0] - o.pa[1]));
+        pathTypes.push_back(PT_MOVETONC);
+        pathPoints.push_back(o.pa[0] + (o.pa[0] - o.pa[1]));
 
-        pathTypes.Add(PT_BSPLINETO);
-        pathPoints.Add(o.pa[0]);
+        pathTypes.push_back(PT_BSPLINETO);
+        pathPoints.push_back(o.pa[0]);
 
-        pathTypes.Add(PT_BSPLINETO);
-        pathPoints.Add(o.pa[1]);
+        pathTypes.push_back(PT_BSPLINETO);
+        pathPoints.push_back(o.pa[1]);
 
-        CPoint p[4], pp, d = o.pa[_end] - o.pa[_start];
+        POINT p[4], pp, d = o.pa[_end] - o.pa[_start];
         double l = sqrt((double)(d.x * d.x + d.y * d.y)), dx = 1.0 * d.x / l, dy = 1.0 * d.y / l;
 
         pp = o.pa[_start] - o.pa[_start - 1];
         double l1 = abs(pp.x) + abs(pp.y);
         pp = o.pa[_end] - o.pa[_end + 1];
         double l2 = abs(pp.x) + abs(pp.y);
-        p[0] = CPoint((int)(1.0 * o.pa[_start].x + dx * l1 + 0.5), (int)(1.0 * o.pa[_start].y + dy * l1 + 0.5));
-        p[1] = CPoint((int)(1.0 * o.pa[_start].x + dx * l1 * 2 + 0.5), (int)(1.0 * o.pa[_start].y + dy * l1 * 2 + 0.5));
-        p[2] = CPoint((int)(1.0 * o.pa[_end].x - dx * l2 * 2 + 0.5), (int)(1.0 * o.pa[_end].y - dy * l2 * 2 + 0.5));
-        p[3] = CPoint((int)(1.0 * o.pa[_end].x - dx * l2 + 0.5), (int)(1.0 * o.pa[_end].y - dy * l2 + 0.5));
+        p[0] = MakePoint((int)(1.0 * o.pa[_start].x + dx * l1 + 0.5), (int)(1.0 * o.pa[_start].y + dy * l1 + 0.5));
+        p[1] = MakePoint((int)(1.0 * o.pa[_start].x + dx * l1 * 2 + 0.5), (int)(1.0 * o.pa[_start].y + dy * l1 * 2 + 0.5));
+        p[2] = MakePoint((int)(1.0 * o.pa[_end].x - dx * l2 * 2 + 0.5), (int)(1.0 * o.pa[_end].y - dy * l2 * 2 + 0.5));
+        p[3] = MakePoint((int)(1.0 * o.pa[_end].x - dx * l2 + 0.5), (int)(1.0 * o.pa[_end].y - dy * l2 + 0.5));
 
         if (_start == 1) {
-            pathTypes.Add(PT_BSPLINETO);
-            pathPoints.Add(p[0]);
+            pathTypes.push_back(PT_BSPLINETO);
+            pathPoints.push_back(p[0]);
         } else {
-            pathTypes.Add(PT_BSPLINETO);
-            pathPoints.Add(o.pa[2]);
+            pathTypes.push_back(PT_BSPLINETO);
+            pathPoints.push_back(o.pa[2]);
 
             for (ptrdiff_t k = 3; k <= _start; k++) {
-                pathTypes.Add(PT_BSPLINEPATCHTO);
-                pathPoints.Add(o.pa[k]);
+                pathTypes.push_back(PT_BSPLINEPATCHTO);
+                pathPoints.push_back(o.pa[k]);
             }
 
-            pathTypes.Add(PT_BSPLINEPATCHTO);
-            pathPoints.Add(p[0]);
+            pathTypes.push_back(PT_BSPLINEPATCHTO);
+            pathPoints.push_back(p[0]);
         }
 
-        pathTypes.Add(PT_BSPLINEPATCHTO);
-        pathPoints.Add(p[1]);
+        pathTypes.push_back(PT_BSPLINEPATCHTO);
+        pathPoints.push_back(p[1]);
 
-        pathTypes.Add(PT_MOVETONC);
-        pathPoints.Add(p[0]);
+        pathTypes.push_back(PT_MOVETONC);
+        pathPoints.push_back(p[0]);
 
-        pathTypes.Add(PT_LINETO);
-        pathPoints.Add(p[3]);
+        pathTypes.push_back(PT_LINETO);
+        pathPoints.push_back(p[3]);
 
-        pathTypes.Add(PT_MOVETONC);
-        pathPoints.Add(p[2]);
+        pathTypes.push_back(PT_MOVETONC);
+        pathPoints.push_back(p[2]);
 
-        pathTypes.Add(PT_BSPLINEPATCHTO);
-        pathPoints.Add(p[3]);
+        pathTypes.push_back(PT_BSPLINEPATCHTO);
+        pathPoints.push_back(p[3]);
 
         for (i = _end; i < len; i++) {
-            pathTypes.Add(PT_BSPLINEPATCHTO);
-            pathPoints.Add(o.pa[i]);
+            pathTypes.push_back(PT_BSPLINEPATCHTO);
+            pathPoints.push_back(o.pa[i]);
         }
 
-        pathTypes.Add(PT_BSPLINEPATCHTO);
-        pathPoints.Add(o.pa[len - 1] + (o.pa[len - 1] - o.pa[len - 2]));
+        pathTypes.push_back(PT_BSPLINEPATCHTO);
+        pathPoints.push_back(o.pa[len - 1] + (o.pa[len - 1] - o.pa[len - 2]));
 
-        pathTypes.Add(PT_MOVETONC);
-        pathPoints.Add(o.pa[len - 1]);
+        pathTypes.push_back(PT_MOVETONC);
+        pathPoints.push_back(o.pa[len - 1]);
 
         return;
     }
 
-    CPoint p1, p2;
+    POINT p1, p2;
     if (FitBezierVH(o, p1, p2)) { // bezier
-        pathTypes.Add(PT_BEZIERTO);
-        pathPoints.Add(p1);
-        pathTypes.Add(PT_BEZIERTO);
-        pathPoints.Add(p2);
-        pathTypes.Add(PT_BEZIERTO);
-        pathPoints.Add(o.pa[o.pa.GetCount() - 1]);
+        pathTypes.push_back(PT_BEZIERTO);
+        pathPoints.push_back(p1);
+        pathTypes.push_back(PT_BEZIERTO);
+        pathPoints.push_back(p2);
+        pathTypes.push_back(PT_BEZIERTO);
+        pathPoints.push_back(o.pa[o.pa.size() - 1]);
 
         return;
     }
@@ -1166,28 +1162,25 @@ void CVobSubImage::AddSegment(COutline& o, CAtlArray<BYTE>& pathTypes, CAtlArray
     AddSegment(o2, pathTypes, pathPoints);
 }
 
-bool CVobSubImage::Polygonize(CAtlArray<BYTE>& pathTypes, CAtlArray<CPoint>& pathPoints, bool bSmooth, int scale)
+bool CVobSubImage::Polygonize(std::vector<BYTE>& pathTypes, std::vector<POINT>& pathPoints, bool bSmooth, int scale)
 {
-    CPoint topleft;
-    CAutoPtr<CAutoPtrList<COutline>> ol(GetOutlineList(topleft));
+    POINT topleft = {};
+    std::unique_ptr<std::list<std::unique_ptr<COutline>>> ol(GetOutlineList(topleft));
     if (!ol) {
         return false;
     }
 
-    POSITION pos;
-
-    pos = ol->GetHeadPosition();
-    while (pos) {
-        CAtlArray<CPoint>& pa = ol->GetNext(pos)->pa;
-        for (size_t i = 0; i < pa.GetCount(); i++) {
+    for (const auto& outline : *ol) {
+        std::vector<POINT>& pa = outline->pa;
+        for (size_t i = 0; i < pa.size(); i++) {
             pa[i].x = (pa[i].x - topleft.x) << scale;
             pa[i].y = (pa[i].y - topleft.y) << scale;
         }
     }
 
-    pos = ol->GetHeadPosition();
-    while (pos) {
-        COutline& o = *ol->GetNext(pos), o2;
+    for (const auto& outline : *ol) {
+        COutline& o = *outline;
+        COutline o2;
 
         if (bSmooth) {
             int i = 0, iFirst = -1;
@@ -1201,8 +1194,8 @@ bool CVobSubImage::Polygonize(CAtlArray<BYTE>& pathTypes, CAtlArray<CPoint>& pat
 
                 if (iFirst < 0) {
                     iFirst = i;
-                    pathTypes.Add(PT_MOVETO);
-                    pathPoints.Add(o2.pa[0]);
+                    pathTypes.push_back(PT_MOVETO);
+                    pathPoints.push_back(o2.pa[0]);
                 }
 
                 AddSegment(o2, pathTypes, pathPoints);
@@ -1213,9 +1206,9 @@ bool CVobSubImage::Polygonize(CAtlArray<BYTE>& pathTypes, CAtlArray<CPoint>& pat
                         {
                             if (int dir = o.da[i-1])
                             {
-                                CPoint dir2 = o.pa[i] - o.pa[i-1];
+                                POINT dir2 = o.pa[i] - o.pa[i-1];
                                 dir2.x /= 2; dir2.y /= 2;
-                                CPoint dir1 = dir > 0 ? CPoint(dir2.y, -dir2.x) : CPoint(-dir2.y, dir2.x);
+                                POINT dir1 = dir > 0 ? MakePoint(dir2.y, -dir2.x) : MakePoint(-dir2.y, dir2.x);
                                 i = i;
                                 o.pa[i-1] -= dir1;
                                 o.pa.InsertAt(i, o.pa[i-1] + dir2);
@@ -1227,63 +1220,63 @@ bool CVobSubImage::Polygonize(CAtlArray<BYTE>& pathTypes, CAtlArray<CPoint>& pat
                             }
                         }
             */
-            pathTypes.Add(PT_MOVETO);
-            pathPoints.Add(o.pa[0]);
+            pathTypes.push_back(PT_MOVETO);
+            pathPoints.push_back(o.pa[0]);
 
-            for (size_t i = 1, len = o.pa.GetCount(); i < len; i++) {
-                pathTypes.Add(PT_LINETO);
-                pathPoints.Add(o.pa[i]);
+            for (size_t i = 1, len = o.pa.size(); i < len; i++) {
+                pathTypes.push_back(PT_LINETO);
+                pathPoints.push_back(o.pa[i]);
             }
         }
     }
 
-    return !pathTypes.IsEmpty();
+    return !pathTypes.empty();
 }
 
-bool CVobSubImage::Polygonize(CStringW& assstr, bool bSmooth, int scale)
+bool CVobSubImage::Polygonize(std::wstring& assstr, bool bSmooth, int scale)
 {
-    CAtlArray<BYTE> pathTypes;
-    CAtlArray<CPoint> pathPoints;
+    std::vector<BYTE> pathTypes;
+    std::vector<POINT> pathPoints;
 
     if (!Polygonize(pathTypes, pathPoints, bSmooth, scale)) {
         return false;
     }
 
-    assstr.Format(L"{\\an7\\pos(%d,%d)\\p%d}", rect.left, rect.top, 1 + scale);
-    //  assstr.Format(L"{\\p%d}", 1+scale);
+    assstr = ::Format(L"{\\an7\\pos(%d,%d)\\p%d}", rect.left, rect.top, 1 + scale);
+    //  assstr = ::Format(L"{\\p%d}", 1+scale);
 
     BYTE lastType = 0;
 
-    size_t nPoints = pathTypes.GetCount();
+    size_t nPoints = pathTypes.size();
 
     for (size_t i = 0; i < nPoints; i++) {
-        CStringW s;
+        std::wstring s;
 
         switch (pathTypes[i]) {
             case PT_MOVETO:
                 if (lastType != PT_MOVETO) {
                     assstr += L"m ";
                 }
-                s.Format(L"%ld %ld ", pathPoints[i].x, pathPoints[i].y);
+                s = ::Format(L"%ld %ld ", pathPoints[i].x, pathPoints[i].y);
                 break;
             case PT_MOVETONC:
                 if (lastType != PT_MOVETONC) {
                     assstr += L"n ";
                 }
-                s.Format(L"%ld %ld ", pathPoints[i].x, pathPoints[i].y);
+                s = ::Format(L"%ld %ld ", pathPoints[i].x, pathPoints[i].y);
                 break;
             case PT_LINETO:
                 if (lastType != PT_LINETO) {
                     assstr += L"l ";
                 }
-                s.Format(L"%ld %ld ", pathPoints[i].x, pathPoints[i].y);
+                s = ::Format(L"%ld %ld ", pathPoints[i].x, pathPoints[i].y);
                 break;
             case PT_BEZIERTO:
                 if (i + 2 < nPoints) {
                     if (lastType != PT_BEZIERTO) {
                         assstr += L"b ";
                     }
-                    s.Format(L"%ld %ld %ld %ld %ld %ld ", pathPoints[i].x, pathPoints[i].y, pathPoints[i + 1].x, pathPoints[i + 1].y, pathPoints[i + 2].x, pathPoints[i + 2].y);
+                    s = ::Format(L"%ld %ld %ld %ld %ld %ld ", pathPoints[i].x, pathPoints[i].y, pathPoints[i + 1].x, pathPoints[i + 1].y, pathPoints[i + 2].x, pathPoints[i + 2].y);
                     i += 2;
                 }
                 break;
@@ -1292,7 +1285,7 @@ bool CVobSubImage::Polygonize(CStringW& assstr, bool bSmooth, int scale)
                     if (lastType != PT_BSPLINETO) {
                         assstr += L"s ";
                     }
-                    s.Format(L"%ld %ld %ld %ld %ld %ld ", pathPoints[i].x, pathPoints[i].y, pathPoints[i + 1].x, pathPoints[i + 1].y, pathPoints[i + 2].x, pathPoints[i + 2].y);
+                    s = ::Format(L"%ld %ld %ld %ld %ld %ld ", pathPoints[i].x, pathPoints[i].y, pathPoints[i + 1].x, pathPoints[i + 1].y, pathPoints[i + 2].x, pathPoints[i + 2].y);
                     i += 2;
                 }
                 break;
@@ -1300,7 +1293,7 @@ bool CVobSubImage::Polygonize(CStringW& assstr, bool bSmooth, int scale)
                 if (lastType != PT_BSPLINEPATCHTO) {
                     assstr += L"p ";
                 }
-                s.Format(L"%ld %ld ", pathPoints[i].x, pathPoints[i].y);
+                s = ::Format(L"%ld %ld ", pathPoints[i].x, pathPoints[i].y);
                 break;
         }
 
@@ -1316,11 +1309,11 @@ bool CVobSubImage::Polygonize(CStringW& assstr, bool bSmooth, int scale)
 
 void CVobSubImage::Scale2x()
 {
-    int w = rect.Width(), h = rect.Height();
+    int w = RectWidth(rect), h = RectHeight(rect);
 
     if (w > 0 && h > 0) {
         DWORD* src = (DWORD*)lpPixels;
-        DWORD* dst = DEBUG_NEW DWORD[w * h];
+        DWORD* dst = new DWORD[w * h];
 
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++, src++, dst++) {

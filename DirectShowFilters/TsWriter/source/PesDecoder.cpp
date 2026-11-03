@@ -31,6 +31,7 @@ CPesDecoder::CPesDecoder(CPesCallback* callback)
 	m_pid=-1;
 	m_pCallback=callback;
 	m_iStreamId=-1;
+	m_bStartFound=false;
 }
 
 CPesDecoder::~CPesDecoder(void)

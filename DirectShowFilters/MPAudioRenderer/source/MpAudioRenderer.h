@@ -40,7 +40,7 @@
 #include "ChannelMixer.h"
 #include "SampleCopier.h"
 
-#include "../SoundTouch/Include/SoundTouch.h"
+#include <soundtouch/SoundTouch.h> // vcpkg
 #include "SyncClock.h"
 #include "Settings.h"
 #include "VolumeHandler.h"

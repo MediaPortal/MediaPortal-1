@@ -17,11 +17,9 @@
 #include "StdAfx.h"
 
 #include <streams.h>
-#include <atlbase.h>
 #include <d3dx9.h>
 #include <dvdmedia.h>
 #include <mfapi.h>
-#include <afxtempl.h> // CMap
 #include <dwmapi.h>
 
 #include "IAVSyncClock.h"
@@ -36,6 +34,7 @@
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
+#include "../../shared/TcharConv.h"
 
 extern MPEVRCustomPresenter* instanceID;
 
@@ -1032,7 +1031,7 @@ HRESULT MPEVRCustomPresenter::GetTimeToSchedule(IMFSample* pSample, LONGLONG *ph
 }
 
 
-HRESULT MPEVRCustomPresenter::GetAspectRatio(CComPtr<IMFMediaType> pType, int* piARX, int* piARY)
+HRESULT MPEVRCustomPresenter::GetAspectRatio(Com::SmartPtr<IMFMediaType> pType, int* piARX, int* piARY)
 {
   HRESULT hr;
   UINT32 u32;
@@ -1107,7 +1106,7 @@ HRESULT MPEVRCustomPresenter::GetAspectRatio(CComPtr<IMFMediaType> pType, int* p
 }
 
 
-HRESULT MPEVRCustomPresenter::SetMediaType(CComPtr<IMFMediaType> pType, BOOL* pbHasChanged)
+HRESULT MPEVRCustomPresenter::SetMediaType(Com::SmartPtr<IMFMediaType> pType, BOOL* pbHasChanged)
 {
   if (!pType)
   {
@@ -1255,7 +1254,7 @@ HRESULT MPEVRCustomPresenter::CreateProposedOutputType(IMFMediaType* pMixerType,
     i64Size.HighPart = 1;
     i64Size.LowPart  = 1;
 
-    CComPtr<IMFVideoMediaType> pVideoMediaType;
+    Com::SmartPtr<IMFVideoMediaType> pVideoMediaType;
 
     AM_MEDIA_TYPE *pAMMedia = NULL;
     MFVIDEOFORMAT *videoFormat = NULL;
@@ -1347,8 +1346,8 @@ HRESULT MPEVRCustomPresenter::LogOutputTypes()
   HRESULT hr = S_OK;
   BOOL fFoundMediaType = FALSE;
 
-  CComPtr<IMFMediaType> pMixerType;
-  CComPtr<IMFMediaType> pType;
+  Com::SmartPtr<IMFMediaType> pMixerType;
+  Com::SmartPtr<IMFMediaType> pType;
 
   if (!m_pMixer)
   {
@@ -1399,8 +1398,8 @@ HRESULT MPEVRCustomPresenter::RenegotiateMediaOutputType()
   HRESULT hr = S_OK;
   BOOL fFoundMediaType = FALSE;
 
-  CComPtr<IMFMediaType> pMixerType;
-  CComPtr<IMFMediaType> pType;
+  Com::SmartPtr<IMFMediaType> pMixerType;
+  Com::SmartPtr<IMFMediaType> pType;
 
   if (!m_pMixer)
   {
@@ -3129,7 +3128,7 @@ void MPEVRCustomPresenter::ReleaseSurfaces()
 }
 
 
-HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
+HRESULT MPEVRCustomPresenter::Paint(Com::SmartPtr<IDirect3DSurface9> pSurface)
 {
   CAutoLock sLock(&m_lockCallback);
 
@@ -3175,7 +3174,7 @@ HRESULT MPEVRCustomPresenter::Paint(CComPtr<IDirect3DSurface9> pSurface)
 
     m_pD3DDev->SetRenderTarget(0, pOldSurface);
 
-    CComPtr<IDirect3DTexture9> pTexture = NULL;
+    Com::SmartPtr<IDirect3DTexture9> pTexture = NULL;
     pSurface->GetContainer(IID_IDirect3DTexture9, (void**)&pTexture);
 
     hr = m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY, (IDirect3DTexture9*)pTexture, (IDirect3DSurface9*)pSurface);
@@ -4602,7 +4601,7 @@ bool MPEVRCustomPresenter::QueryFpsFromVideoMSDecoder()
   ZeroMemory(&filterInfo, sizeof(filterInfo));
   m_EVRFilter->QueryFilterInfo(&filterInfo); // This addref's the pGraph member
 
-  CComPtr<IBaseFilter> pBaseFilter;
+  Com::SmartPtr<IBaseFilter> pBaseFilter;
 
   HRESULT hr = filterInfo.pGraph->FindFilterByName(L"Microsoft DTV-DVD Video Decoder", &pBaseFilter);
   filterInfo.pGraph->Release();
@@ -4666,7 +4665,7 @@ void MPEVRCustomPresenter::GetAVSyncClockInterface()
   ZeroMemory(&filterInfo, sizeof(filterInfo));
   m_EVRFilter->QueryFilterInfo(&filterInfo); // This addref's the pGraph member
 
-  CComPtr<IBaseFilter> pBaseFilter;
+  Com::SmartPtr<IBaseFilter> pBaseFilter;
 
   HRESULT hr = filterInfo.pGraph->FindFilterByName(L"MediaPortal - Audio Renderer", &pBaseFilter);
   filterInfo.pGraph->Release();
@@ -4969,7 +4968,6 @@ HRESULT MPEVRCustomPresenter::EnumFilters(IFilterGraph *pGraph)
 
 void MPEVRCustomPresenter::ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data)
 {
-  USES_CONVERSION;
   DWORD dwSize = sizeof(DWORD);
   DWORD dwType = REG_DWORD;
   LONG error = RegQueryValueEx(hKey, lpSubKey, NULL, &dwType, (PBYTE)&data, &dwSize);
@@ -4977,28 +4975,27 @@ void MPEVRCustomPresenter::ReadRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DW
   {
     if (error == ERROR_FILE_NOT_FOUND)
     {
-      Log("Create default value for: %s", T2A(lpSubKey));
+      Log("Create default value for: %s", ToAnsi(lpSubKey).c_str());
       WriteRegistryKeyDword(hKey, lpSubKey, data);
     }
     else
     {
-      Log("Faíled to create default value for: %s", T2A(lpSubKey));
+      Log("Faíled to create default value for: %s", ToAnsi(lpSubKey).c_str());
     }
   }
 }
 
 void MPEVRCustomPresenter::WriteRegistryKeyDword(HKEY hKey, LPCTSTR& lpSubKey, DWORD& data)
 {  
-  USES_CONVERSION;
   DWORD dwSize = sizeof(DWORD);
   LONG result = RegSetValueEx(hKey, lpSubKey, 0, REG_DWORD, (LPBYTE)&data, dwSize);
   if (result == ERROR_SUCCESS) 
   {
-    Log("Success writing to Registry: %s", T2A(lpSubKey));
+    Log("Success writing to Registry: %s", ToAnsi(lpSubKey).c_str());
   } 
   else 
   {
-    Log("Error writing to Registry - subkey: %s error: %d", T2A(lpSubKey), result);
+    Log("Error writing to Registry - subkey: %s error: %d", ToAnsi(lpSubKey).c_str(), result);
   }
 }
 

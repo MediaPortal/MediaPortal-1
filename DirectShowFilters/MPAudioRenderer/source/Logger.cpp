@@ -160,7 +160,7 @@ void Logger::WriteLog(const char *fmt, ...)
   }
 
 #ifdef TRACELOGENTRY
-  TRACE("%s\n", buffer);
+  ATLTRACE("%s\n", buffer);
 #endif
 
   SYSTEMTIME systemTime;

@@ -24,9 +24,9 @@ namespace FileVersionInfo
 {
     bool LoadInfo(LPCTSTR filePath, VS_FIXEDFILEINFO& fileInfo);
 
-    CString GetFileVersionStr(LPCTSTR filePath);
-    QWORD GetFileVersionNum(LPCTSTR filePath);
+    tstring GetFileVersionStr(LPCTSTR filePath);
+    UINT64 GetFileVersionNum(LPCTSTR filePath);
 
-    CString FormatVersionString(DWORD dwVersionNumberLow, DWORD dwVersionNumberHigh);
-    CString FormatVersionString(QWORD qwVersionNumber);
+    tstring FormatVersionString(DWORD dwVersionNumberLow, DWORD dwVersionNumberHigh);
+    tstring FormatVersionString(UINT64 qwVersionNumber);
 };

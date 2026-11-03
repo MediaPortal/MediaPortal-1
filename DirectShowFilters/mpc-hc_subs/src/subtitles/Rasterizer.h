@@ -143,7 +143,7 @@ struct FTPathData {
 class Rasterizer
 {
     bool fFirstSet;
-    CPoint firstp, lastp;
+    POINT firstp, lastp;
 
 protected:
     BYTE* mpPathTypes;
@@ -204,9 +204,9 @@ public:
     bool CreateWidenedRegion(int borderX, int borderY);
     bool Rasterize(int xsub, int ysub, int fBlur, double fGaussianBlur);
     int getOverlayWidth() const;
-    bool GetPathFreeType(HDC hdc, bool bClearPath, CStringW fontName, wchar_t ch, int size, int dx, int dy);
+    bool GetPathFreeType(HDC hdc, bool bClearPath, std::wstring fontName, wchar_t ch, int size, int dx, int dy);
     inline void AddFTPath(BYTE type, FT_Pos x, FT_Pos y, FTPathData* data);
 
-    CRect Draw(SubPicDesc& spd, CRect& clipRect, byte* pAlphaMask, int xsub, int ysub, const DWORD* switchpts, bool fBody, bool fBorder) const;
+    RECT Draw(SubPicDesc& spd, RECT& clipRect, byte* pAlphaMask, int xsub, int ysub, const DWORD* switchpts, bool fBody, bool fBorder) const;
     void FillSolidRect(SubPicDesc& spd, int x, int y, int nWidth, int nHeight, DWORD lColor) const;
 };

@@ -57,13 +57,13 @@ class AudioStreamResampler;
 class CAudioSwitcherFilter : public CStreamSwitcherFilter, public IAudioSwitcherFilter, public IMPAudioSwitcherFilter
 {
 	typedef struct {DWORD Speaker, Channel;} ChMap;
-	CAtlArray<ChMap> m_chs[18];
+	std::vector<ChMap> m_chs[18];
 
 	bool m_fCustomChannelMapping;
 	DWORD m_pSpeakerToChannelMap[18][18];
 	bool m_fDownSampleTo441;
 	REFERENCE_TIME m_rtAudioTimeShift;
-	CAutoPtrArray<AudioStreamResampler> m_pResamplers;
+	std::vector<std::unique_ptr<AudioStreamResampler>> m_pResamplers;
 	double m_sample_max;
 	bool m_fNormalize, m_fNormalizeRecover;
 	float m_boost;

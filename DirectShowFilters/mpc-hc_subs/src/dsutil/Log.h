@@ -27,25 +27,25 @@
 #ifdef _DEBUG_LOGFILE
 #include <Shlobj.h>
 
-static const CString GetLogFileName()
+static const tstring GetLogFileName()
 {
-	CString ret = L"mpc-hc.log";
+	tstring ret = L"mpc-hc.log";
 
 	WCHAR szPath[MAX_PATH] = {};
 	if(SUCCEEDED(SHGetFolderPathW(nullptr, CSIDL_DESKTOP, nullptr, 0, szPath))) {
-		ret = CString(szPath) + L"\\mpc-hc.log";
+		ret = tstring(szPath) + L"\\mpc-hc.log";
 	}
 
 	return ret;
 }
 
-static const CString GetLocalTime()
+static const tstring GetLocalTime()
 {
 	SYSTEMTIME st;
 	::GetLocalTime(&st);
 
-	CString time;
-	time.Format(L"%04u.%02u.%02u %02u:%02u:%02u.%03u", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
+	tstring time;
+	time = ::Format(L"%04u.%02u.%02u %02u:%02u:%02u.%03u", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond, st.wMilliseconds);
 
 	return time;
 }
@@ -53,7 +53,7 @@ static const CString GetLocalTime()
 namespace Logger
 {
 	static std::mutex log_mutex;
-	static const CString logFileName = GetLogFileName();
+	static const tstring logFileName = GetLogFileName();
 
 	template<typename ... Args>
 	inline void Log2File(LPCWSTR fmt, Args ... args)
@@ -113,45 +113,43 @@ namespace Logger
 	#define DLogError(...) __noop
 #endif
 
-inline void HexDump(const CString& fileName, BYTE* buf, int size)
+inline void HexDump(const tstring& fileName, BYTE* buf, int size)
 {
 	if (size <= 0) {
 		return;
 	}
 
-	CStringW dump_str;
-	dump_str.Format(L"Dump size = %d\n", size);
+	std::wstring dump_str;
+	dump_str = ::Format(L"Dump size = %d\n", size);
 
 	for (int i = 0; i < size; i += 16) {
 		int len = size - i;
 		if (len > 16) {
 			len = 16;
 		}
-		dump_str.AppendFormat(L"%08x:", i);
+		dump_str += ::Format(L"%08x:", i);
 		for (int j = 0; j < 16; j++) {
 			if (j < len) {
-				dump_str.AppendFormat(L" %02x", buf[i+j]);
+				dump_str += ::Format(L" %02x", buf[i+j]);
 			}
 			else {
-				dump_str.Append(L"   ");
+				dump_str.append(L"   ");
 			}
 		}
-		dump_str.Append(L" | ");
+		dump_str.append(L" | ");
 		for (int j = 0; j < len; j++) {
 			int c = buf[i+j];
 			if (c < ' ' || c > '~') {
 				c = '.';
 			}
-			dump_str.AppendFormat(L"%c", c);
+			dump_str += ::Format(L"%c", c);
 		}
-		dump_str.AppendChar('\n');
+		dump_str.push_back('\n');
 	}
 
-	if (!fileName.IsEmpty()) {
-		CStdioFile file;
-		if (file.Open(fileName, CFile::modeCreate|CFile::modeWrite)) {
-			file.WriteString(dump_str);
-			file.Close();
+	if (!fileName.empty()) {
+		if (FilePtr file = OpenFile(fileName, L"wt", _SH_DENYWR)) {
+			_fputts(dump_str, file.get());
 		}
 	} else {
 		DLog(dump_str);

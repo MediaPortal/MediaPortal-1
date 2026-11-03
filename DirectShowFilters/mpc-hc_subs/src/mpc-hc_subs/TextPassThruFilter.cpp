@@ -42,15 +42,15 @@
 class CTextPassThruInputPin : public CSubtitleInputPin
 {
     CTextPassThruFilter* m_pTPTFilter;
-    CComPtr<ISubStream> m_pSubStreamOld;
+    ComPtr<ISubStream> m_pSubStreamOld;
 
 protected:
     void AddSubStream(ISubStream* pSubStream) {
         if (m_pSubStreamOld) {
             if (pSubStream) {
-                m_pTPTFilter->m_pMainFrame->ReplaceSubtitle(m_pSubStreamOld, pSubStream);
+                m_pTPTFilter->m_pMainFrame->ReplaceSubtitle(m_pSubStreamOld.Get(), pSubStream);
             }
-            m_pSubStreamOld = NULL;
+            m_pSubStreamOld = nullptr;
         }
     }
 
@@ -177,7 +177,7 @@ HRESULT CTextPassThruOutputPin::DecideBufferSize(IMemAllocator* pAllocator, ALLO
         return E_UNEXPECTED;
     }
 
-    CComPtr<IMemAllocator> pAllocatorIn;
+    ComPtr<IMemAllocator> pAllocatorIn;
     m_pTPTFilter->m_pInput->GetAllocator(&pAllocatorIn);
     if (!pAllocatorIn) {
         return E_UNEXPECTED;
@@ -223,8 +223,8 @@ CTextPassThruFilter::CTextPassThruFilter(CSubManager* pMainFrame)
     , m_pMainFrame(pMainFrame)
 {
     HRESULT hr;
-    m_pInput = DEBUG_NEW CTextPassThruInputPin(this, this, &m_pMainFrame->m_csSubLock, &hr);
-    m_pOutput = DEBUG_NEW CTextPassThruOutputPin(this, this, &hr);
+    m_pInput = new CTextPassThruInputPin(this, this, &m_pMainFrame->m_csSubLock, &hr);
+    m_pOutput = new CTextPassThruOutputPin(this, this, &hr);
 }
 
 CTextPassThruFilter::~CTextPassThruFilter()
@@ -238,7 +238,7 @@ CTextPassThruFilter::~CTextPassThruFilter()
 STDMETHODIMP CTextPassThruFilter::NonDelegatingQueryInterface(REFIID riid, void** ppv)
 {
     if (m_pInput && riid == __uuidof(ISubStream)) {
-        if (CComPtr<ISubStream> pSubStream = m_pInput->GetSubStream()) {
+        if (ComPtr<ISubStream> pSubStream = m_pInput->GetSubStream()) {
             *ppv = pSubStream.Detach();
             return S_OK;
         }

@@ -39,3 +39,43 @@
 #include "vld.h" //include visual leak detector procedures
 #endif
 #endif
+
+#include <windows.h>
+#include <shellapi.h>
+#include <shlobj.h>
+#include <shobjidl.h>
+#include <stdexcept>
+#include <algorithm>
+#include <list>
+#include <map>
+#include <memory>
+#include <unordered_map>
+#include <vector>
+#include <wrl/client.h>
+#include "StdHelpers.h"
+#include "DebugMacros.h"
+#include "RectUtils.h"
+#include "StrUtils.h"
+#include <comdef.h> // _bstr_t and _variant_t
+#include <shlwapi.h>
+
+#pragma comment(lib, "shlwapi.lib")
+
+using Microsoft::WRL::ComPtr;
+
+// A pointer to the interface T of an object, or an empty one when it has none (what CComQIPtr did)
+template <typename T>
+inline ComPtr<T> ComQuery(IUnknown* unknown)
+{
+    ComPtr<T> result;
+    if (unknown) {
+        unknown->QueryInterface(__uuidof(T), reinterpret_cast<void**>(result.GetAddressOf()));
+    }
+    return result;
+}
+
+template <typename T, typename U>
+inline ComPtr<T> ComQuery(const ComPtr<U>& source)
+{
+    return ComQuery<T>(static_cast<IUnknown*>(source.Get()));
+}

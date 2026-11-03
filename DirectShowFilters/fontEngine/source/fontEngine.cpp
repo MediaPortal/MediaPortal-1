@@ -1727,7 +1727,7 @@ void FontEngineAddFont( int fontNumber,void* fontTexture, int firstChar, int end
 void FontEngineSetCoordinate(int fontNumber, int index, int subindex, float fValue1, float fValue2, float fValue3, float fValue4)
 {
   if (fontNumber< 0 || fontNumber>=MAX_FONTS) return;
-  if (index < 0     || index > MAX_TEXTURE_COORDS) return;
+  if (index < 0     || index >= MAX_TEXTURE_COORDS) return;
   if (subindex < 0  || subindex > 3) return;
   fontData[fontNumber].textureCoord[index][0]=fValue1;
   fontData[fontNumber].textureCoord[index][1]=fValue2;
@@ -1838,6 +1838,8 @@ void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int ypo
         continue;							// Skip until row break or end of text
 
       int index = c - font->iFirstChar;
+      if (index < 0 || index >= MAX_TEXTURE_COORDS) // replacement chars can be below iFirstChar
+        continue;
       float tx1 = font->textureCoord[index][0];
       float tx2 = font->textureCoord[index][2];
 
@@ -1894,6 +1896,8 @@ void FontEngineDrawText3D(int fontNumber, void* textVoid, int xposStart, int ypo
         continue;							// Skip until row break or end of text
 
       int index = c - font->iFirstChar;
+      if (index < 0 || index >= MAX_TEXTURE_COORDS) // replacement chars can be below iFirstChar
+        continue;
       float tx1 = font->textureCoord[index][0];
       float ty1 = font->textureCoord[index][1];
       float tx2 = font->textureCoord[index][2];

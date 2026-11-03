@@ -22,7 +22,7 @@
 #include "BaseAudioSink.h"
 #include "Settings.h"
 #include "Logger.h"
-#include "..\libresample\src\samplerate.h"
+#include <samplerate.h> // vcpkg (libsamplerate)
 
 class CSampleRateConverter : public CBaseAudioSink
 {

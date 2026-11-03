@@ -96,7 +96,7 @@ void CompositionObject::SetRLEData(const BYTE* pBuffer, size_t nSize, size_t nTo
     delete [] m_pRLEData;
 
     if (nTotalSize > 0 && nSize <= nTotalSize) {
-        m_pRLEData     = DEBUG_NEW BYTE[nTotalSize];
+        m_pRLEData     = new BYTE[nTotalSize];
         m_nRLEDataSize = nTotalSize;
         m_nRLEPos      = nSize;
 

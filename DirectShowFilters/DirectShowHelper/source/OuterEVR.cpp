@@ -74,7 +74,7 @@ STDMETHODIMP COuterEVR::NonDelegatingQueryInterface(REFIID riid, void** ppv)
 
 STDMETHODIMP COuterEVR::EnumPins(__out  IEnumPins **ppEnum) 
 {
-  CComPtr<IBaseFilter> pEVRBase;
+  Com::SmartPtr<IBaseFilter> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -88,7 +88,7 @@ STDMETHODIMP COuterEVR::EnumPins(__out  IEnumPins **ppEnum)
 
 STDMETHODIMP COuterEVR::FindPin(LPCWSTR Id, __out  IPin **ppPin) 
 {
-  CComPtr<IBaseFilter> pEVRBase;
+  Com::SmartPtr<IBaseFilter> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -102,7 +102,7 @@ STDMETHODIMP COuterEVR::FindPin(LPCWSTR Id, __out  IPin **ppPin)
 
 STDMETHODIMP COuterEVR::QueryFilterInfo(__out  FILTER_INFO *pInfo) 
 {
-  CComPtr<IBaseFilter> pEVRBase;
+  Com::SmartPtr<IBaseFilter> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -116,7 +116,7 @@ STDMETHODIMP COuterEVR::QueryFilterInfo(__out  FILTER_INFO *pInfo)
 
 STDMETHODIMP COuterEVR::JoinFilterGraph(__in_opt  IFilterGraph *pGraph, __in_opt  LPCWSTR pName) 
 {
-  CComPtr<IBaseFilter> pEVRBase;
+  Com::SmartPtr<IBaseFilter> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -130,7 +130,7 @@ STDMETHODIMP COuterEVR::JoinFilterGraph(__in_opt  IFilterGraph *pGraph, __in_opt
 
 STDMETHODIMP COuterEVR::QueryVendorInfo(__out  LPWSTR *pVendorInfo) 
 {
-  CComPtr<IBaseFilter> pEVRBase;
+  Com::SmartPtr<IBaseFilter> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -144,7 +144,7 @@ STDMETHODIMP COuterEVR::QueryVendorInfo(__out  LPWSTR *pVendorInfo)
 
 STDMETHODIMP COuterEVR::Stop() 
 {
-  CComPtr<IBaseFilter> pEVRBase;
+  Com::SmartPtr<IBaseFilter> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -158,7 +158,7 @@ STDMETHODIMP COuterEVR::Stop()
 
 STDMETHODIMP COuterEVR::Pause() 
 {
-  CComPtr<IBaseFilter> pEVRBase;
+  Com::SmartPtr<IBaseFilter> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -172,7 +172,7 @@ STDMETHODIMP COuterEVR::Pause()
 
 STDMETHODIMP COuterEVR::Run(REFERENCE_TIME tStart) 
 {
-  CComPtr<IBaseFilter> pEVRBase;
+  Com::SmartPtr<IBaseFilter> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -191,7 +191,7 @@ STDMETHODIMP COuterEVR::GetState(DWORD dwMilliSecsTimeout, __out  FILTER_STATE *
   {
     return ReturnValue;
   }
-  CComPtr<IBaseFilter> pEVRBase;
+  Com::SmartPtr<IBaseFilter> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -205,7 +205,7 @@ STDMETHODIMP COuterEVR::GetState(DWORD dwMilliSecsTimeout, __out  FILTER_STATE *
 
 STDMETHODIMP COuterEVR::SetSyncSource(__in_opt  IReferenceClock *pClock) 
 {
-  CComPtr<IBaseFilter> pEVRBase;
+  Com::SmartPtr<IBaseFilter> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -219,7 +219,7 @@ STDMETHODIMP COuterEVR::SetSyncSource(__in_opt  IReferenceClock *pClock)
 
 STDMETHODIMP COuterEVR::GetSyncSource(__deref_out_opt  IReferenceClock **pClock) 
 {
-  CComPtr<IBaseFilter> pEVRBase;
+  Com::SmartPtr<IBaseFilter> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -233,7 +233,7 @@ STDMETHODIMP COuterEVR::GetSyncSource(__deref_out_opt  IReferenceClock **pClock)
 
 STDMETHODIMP COuterEVR::GetClassID(__RPC__out CLSID *pClassID) 
 {
-  CComPtr<IBaseFilter> pEVRBase;
+  Com::SmartPtr<IBaseFilter> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -248,7 +248,7 @@ STDMETHODIMP COuterEVR::GetClassID(__RPC__out CLSID *pClassID)
 /*
 STDMETHODIMP COuterEVR::IsFormatSupported(const GUID* pFormat)
 {
-  CComPtr<IMediaSeeking> pEVRBase;
+  Com::SmartPtr<IMediaSeeking> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -262,7 +262,7 @@ STDMETHODIMP COuterEVR::IsFormatSupported(const GUID* pFormat)
 
 STDMETHODIMP COuterEVR::QueryPreferredFormat(GUID* pFormat)
 {
-  CComPtr<IMediaSeeking> pEVRBase;
+  Com::SmartPtr<IMediaSeeking> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -276,7 +276,7 @@ STDMETHODIMP COuterEVR::QueryPreferredFormat(GUID* pFormat)
 
 STDMETHODIMP COuterEVR::SetTimeFormat(const GUID* pFormat)
 {
-  CComPtr<IMediaSeeking> pEVRBase;
+  Com::SmartPtr<IMediaSeeking> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -290,7 +290,7 @@ STDMETHODIMP COuterEVR::SetTimeFormat(const GUID* pFormat)
 
 STDMETHODIMP COuterEVR::IsUsingTimeFormat(const GUID* pFormat)
 {
-  CComPtr<IMediaSeeking> pEVRBase;
+  Com::SmartPtr<IMediaSeeking> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -304,7 +304,7 @@ STDMETHODIMP COuterEVR::IsUsingTimeFormat(const GUID* pFormat)
 
 STDMETHODIMP COuterEVR::GetTimeFormat(GUID* pFormat)
 {
-  CComPtr<IMediaSeeking> pEVRBase;
+  Com::SmartPtr<IMediaSeeking> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -318,7 +318,7 @@ STDMETHODIMP COuterEVR::GetTimeFormat(GUID* pFormat)
 
 STDMETHODIMP COuterEVR::GetDuration(LONGLONG* pDuration)
 {
-  CComPtr<IMediaSeeking> pEVRBase;
+  Com::SmartPtr<IMediaSeeking> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -332,7 +332,7 @@ STDMETHODIMP COuterEVR::GetDuration(LONGLONG* pDuration)
 
 STDMETHODIMP COuterEVR::GetStopPosition(LONGLONG* pStop)
 {
-  CComPtr<IMediaSeeking> pEVRBase;
+  Com::SmartPtr<IMediaSeeking> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -346,7 +346,7 @@ STDMETHODIMP COuterEVR::GetStopPosition(LONGLONG* pStop)
 
 STDMETHODIMP COuterEVR::GetCurrentPosition(LONGLONG* pCurrent)
 {
-  CComPtr<IMediaSeeking> pEVRBase;
+  Com::SmartPtr<IMediaSeeking> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -360,7 +360,7 @@ STDMETHODIMP COuterEVR::GetCurrentPosition(LONGLONG* pCurrent)
 
 STDMETHODIMP COuterEVR::CheckCapabilities(DWORD* pCapabilities)
 {
-  CComPtr<IMediaSeeking> pEVRBase;
+  Com::SmartPtr<IMediaSeeking> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -374,7 +374,7 @@ STDMETHODIMP COuterEVR::CheckCapabilities(DWORD* pCapabilities)
 
 STDMETHODIMP COuterEVR::GetCapabilities(DWORD* pCapabilities)
 {
-  CComPtr<IMediaSeeking> pEVRBase;
+  Com::SmartPtr<IMediaSeeking> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -388,7 +388,7 @@ STDMETHODIMP COuterEVR::GetCapabilities(DWORD* pCapabilities)
 
 STDMETHODIMP COuterEVR::ConvertTimeFormat(LONGLONG* pTarget, const GUID* pTargetFormat, LONGLONG Source, const GUID* pSourceFormat)
 {
-  CComPtr<IMediaSeeking> pEVRBase;
+  Com::SmartPtr<IMediaSeeking> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -402,7 +402,7 @@ STDMETHODIMP COuterEVR::ConvertTimeFormat(LONGLONG* pTarget, const GUID* pTarget
 
 STDMETHODIMP COuterEVR::SetPositions(LONGLONG* pCurrent, DWORD CurrentFlags, LONGLONG * pStop, DWORD StopFlags)
 {
-  CComPtr<IMediaSeeking> pEVRBase;
+  Com::SmartPtr<IMediaSeeking> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -416,7 +416,7 @@ STDMETHODIMP COuterEVR::SetPositions(LONGLONG* pCurrent, DWORD CurrentFlags, LON
 
 STDMETHODIMP COuterEVR::GetPositions(LONGLONG* pCurrent, LONGLONG* pStop)
 {
-  CComPtr<IMediaSeeking> pEVRBase;
+  Com::SmartPtr<IMediaSeeking> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -430,7 +430,7 @@ STDMETHODIMP COuterEVR::GetPositions(LONGLONG* pCurrent, LONGLONG* pStop)
 
 STDMETHODIMP COuterEVR::GetAvailable(LONGLONG* pEarliest, LONGLONG* pLatest)
 {
-  CComPtr<IMediaSeeking> pEVRBase;
+  Com::SmartPtr<IMediaSeeking> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -444,7 +444,7 @@ STDMETHODIMP COuterEVR::GetAvailable(LONGLONG* pEarliest, LONGLONG* pLatest)
 
 STDMETHODIMP COuterEVR::SetRate(double dRate)
 {
-  CComPtr<IMediaSeeking> pEVRBase;
+  Com::SmartPtr<IMediaSeeking> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -458,7 +458,7 @@ STDMETHODIMP COuterEVR::SetRate(double dRate)
 
 STDMETHODIMP COuterEVR::GetRate(double* pdRate)
 {
-  CComPtr<IMediaSeeking> pEVRBase;
+  Com::SmartPtr<IMediaSeeking> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);
@@ -472,7 +472,7 @@ STDMETHODIMP COuterEVR::GetRate(double* pdRate)
 
 STDMETHODIMP COuterEVR::GetPreroll(LONGLONG *pPreroll)
 {
-  CComPtr<IMediaSeeking> pEVRBase;
+  Com::SmartPtr<IMediaSeeking> pEVRBase;
   if (m_pEVR) 
   {
     m_pEVR->QueryInterface(&pEVRBase);

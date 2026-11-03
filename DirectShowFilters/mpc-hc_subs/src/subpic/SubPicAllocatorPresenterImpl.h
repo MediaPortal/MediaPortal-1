@@ -21,8 +21,7 @@
 
 #pragma once
 
-#include <atlbase.h>
-#include <atlcoll.h>
+#include <d3d9.h>
 #include <condition_variable>
 #include "ISubPic.h"
 #include "CoordGeom.h"
@@ -42,10 +41,10 @@ protected:
     HWND m_hWnd;
     REFERENCE_TIME m_rtSubtitleDelay;
 
-    CSize m_maxSubtitleTextureSize;
-    CSize m_curSubtitleTextureSize;
-    CSize m_nativeVideoSize, m_aspectRatio;
-    CRect m_videoRect, m_windowRect;
+    SIZE m_maxSubtitleTextureSize = {};
+    SIZE m_curSubtitleTextureSize = {};
+    SIZE m_nativeVideoSize, m_aspectRatio;
+    RECT m_videoRect, m_windowRect;
 	bool  m_bOtherTransform = false;
 
 	REFERENCE_TIME m_rtNow = 0;
@@ -54,17 +53,17 @@ protected:
 
     CMediaType m_inputMediaType;
 
-    CComPtr<ISubPicProvider> m_pSubPicProvider;
-    CComPtr<ISubPicAllocator> m_pAllocator;
-    CComPtr<ISubPicQueue> m_pSubPicQueue;
+    ComPtr<ISubPicProvider> m_pSubPicProvider;
+    ComPtr<ISubPicAllocator> m_pAllocator;
+    ComPtr<ISubPicQueue> m_pSubPicQueue;
 
     bool m_bDeviceResetRequested;
     bool m_bPendingResetDevice;
 
-    void InitMaxSubtitleTextureSize(int maxSizeX, int maxSizeY, CSize largestScreen);
+    void InitMaxSubtitleTextureSize(int maxSizeX, int maxSizeY, SIZE largestScreen);
 
-    HRESULT AlphaBltSubPic(const CRect& windowRect,
-                           const CRect& videoRect,
+    HRESULT AlphaBltSubPic(const RECT& windowRect,
+                           const RECT& videoRect,
                            SubPicDesc* pTarget = nullptr,
                            const double videoStretchFactor = 1.0,
                            int xOffsetInPixels = 0, int yOffsetInPixels = 0);
@@ -75,18 +74,18 @@ protected:
     Vector m_defaultVideoAngle, m_videoAngle;
     bool m_bDefaultVideoAngleSwitchAR;
     XForm m_xform;
-    void Transform(CRect r, Vector v[4]);
+    void Transform(RECT r, Vector v[4]);
 
     bool m_bHookedNewSegment;
     bool m_bHookedReceive;
 
 public:
-    CSubPicAllocatorPresenterImpl(HWND hWnd, HRESULT& hr, CString* _pError);
+    CSubPicAllocatorPresenterImpl(HWND hWnd, HRESULT& hr, tstring* _pError);
     virtual ~CSubPicAllocatorPresenterImpl();
 
     DECLARE_IUNKNOWN;
     STDMETHODIMP NonDelegatingQueryInterface(REFIID riid, void** ppv);
-    STDMETHODIMP_(void) SetVideoSize(CSize szVideo, CSize szAspectRatio = CSize(0, 0));
+    STDMETHODIMP_(void) SetVideoSize(SIZE szVideo, SIZE szAspectRatio = MakeSize(0, 0));
 
     // ISubPicAllocatorPresenter
 

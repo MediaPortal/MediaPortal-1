@@ -28,12 +28,12 @@ class CSubPicImpl : public CUnknown, public ISubPic
 protected:
     REFERENCE_TIME m_rtStart, m_rtStop;
     REFERENCE_TIME m_rtSegmentStart, m_rtSegmentStop;
-    CRect  m_rcDirty;
-    CSize  m_maxsize;
-    CSize  m_size;
-    CRect  m_vidrect;
-    CSize  m_virtualTextureSize;
-    CPoint m_virtualTextureTopLeft;
+    RECT  m_rcDirty;
+    SIZE  m_maxsize;
+    SIZE  m_size;
+    RECT  m_vidrect;
+    SIZE  m_virtualTextureSize;
+    POINT m_virtualTextureTopLeft = {};
     bool   m_bInvAlpha;
     RelativeTo m_relativeTo;
 
@@ -114,10 +114,10 @@ class CSubPicAllocatorImpl : public CUnknown, public ISubPicAllocator
 {
 protected:
     CCritSec m_staticLock;
-    CComPtr<ISubPic> m_pStatic;
+    ComPtr<ISubPic> m_pStatic;
 
-    CSize m_cursize;
-    CRect m_curvidrect;
+    SIZE m_cursize = {};
+    RECT m_curvidrect = {};
     bool m_fDynamicWriteOnly;
 
     virtual bool Alloc(bool fStatic, ISubPic** ppSubPic) PURE;

@@ -748,7 +748,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
             BYTE* pSampleBuffer;
             pSample->SetActualDataLength(buffer->GetDataSize());
             pSample->GetPointer(&pSampleBuffer);
-            memcpy(pSampleBuffer, buffer->GetData(), buffer->GetDataSize());
+            memcpy(pSampleBuffer, buffer->data(), buffer->GetDataSize());
 
             //Switch to AnnexB for HEVC
             if (m_demux.GetVideoServiceType() == BLURAY_STREAM_TYPE_VIDEO_HEVC)
@@ -770,7 +770,7 @@ HRESULT CVideoPin::FillBuffer(IMediaSample* pSample)
 
 #ifdef LOG_VIDEO_PIN_SAMPLES
             LogDebug("vid: %6.3f corr %6.3f playlist time %6.3f clip: %d playlist: %d size: %d", buffer->rtStart / 10000000.0, rtCorrectedStartTime / 10000000.0, 
-              buffer->rtPlaylistTime / 10000000.0, buffer->nClipNumber, buffer->nPlaylist, buffer->GetCount());
+              buffer->rtPlaylistTime / 10000000.0, buffer->nClipNumber, buffer->nPlaylist, buffer->size());
 #endif
           }
           else

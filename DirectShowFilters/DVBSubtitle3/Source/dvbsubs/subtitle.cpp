@@ -20,8 +20,6 @@
  */
 
 #define _AFXDLL
-#include <afx.h>
-#include <afxwin.h>
 
 #include <stdlib.h>
 #include <string>

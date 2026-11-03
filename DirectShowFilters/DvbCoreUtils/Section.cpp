@@ -78,6 +78,8 @@ int CSection::CalcSectionLength(const byte* tsPacket,int start)
     byte bLow=0;
     if (BufferPos==1)
 		{
+			if (start + 1 >= 188)
+				return section_length; // the second byte of the length is in the next packet
 			bHi=tsPacket[start];
       bLow=tsPacket[start+1];
     }

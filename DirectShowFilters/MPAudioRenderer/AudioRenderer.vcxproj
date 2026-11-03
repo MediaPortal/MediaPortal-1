@@ -28,7 +28,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseOfMfc>Dynamic</UseOfMfc>
+    <UseOfMfc>false</UseOfMfc>
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -36,7 +36,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseOfMfc>Dynamic</UseOfMfc>
+    <UseOfMfc>false</UseOfMfc>
     <UseOfAtl>false</UseOfAtl>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -44,13 +44,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseOfMfc>Dynamic</UseOfMfc>
+    <UseOfMfc>false</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseOfMfc>Dynamic</UseOfMfc>
+    <UseOfMfc>false</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>$(DefaultPlatformToolset)</PlatformToolset>
   </PropertyGroup>
@@ -95,7 +95,7 @@
     <TargetExt>.ax</TargetExt>
     <TargetName>MPAudioRenderer</TargetName>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(DXSDK_DIR)Include</IncludePath>
-    <LibraryPath>$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(DXSDK_DIR)lib\$(PlatformTarget)</LibraryPath>
+    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);$(DXSDK_DIR)lib\$(PlatformTarget)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetExt>.ax</TargetExt>
@@ -111,10 +111,14 @@
     <OutDir>.\bin\Release\</OutDir>
     <IntDir>.\obj\Release\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>.\bin\Debug\</OutDir>
+    <IntDir>.\obj\Debug\</IntDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include\;SoundTouch\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_USRDLL;FLOAT_SAMPLES;%(PreprocessorDefinitions);_USING_V110_SDK71_;</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <AssemblerListingLocation>.\bin\Debug/</AssemblerListingLocation>
@@ -134,7 +138,7 @@
       <IgnoreSpecificDefaultLibraries>libcmtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\source\MpAudioRenderer.def</ModuleDefinitionFile>
       <SubSystem>Windows</SubSystem>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
@@ -143,7 +147,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <AdditionalOptions>/MP %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include\;SoundTouch\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_USRDLL;FLOAT_SAMPLES;%(PreprocessorDefinitions);_USING_V110_SDK71_;</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <AssemblerListingLocation>.\bin\Debug/</AssemblerListingLocation>
@@ -163,7 +167,7 @@
       <IgnoreSpecificDefaultLibraries>libcmtd.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>.\source\MpAudioRenderer.def</ModuleDefinitionFile>
       <SubSystem>Windows</SubSystem>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
     </Link>
@@ -174,7 +178,7 @@
       <Optimization>Full</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include\;SoundTouch\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;FLOAT_SAMPLES;MULTICHANNEL_SUPPORT;%(PreprocessorDefinitions);_USING_V110_SDK71_;</PreprocessorDefinitions>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -201,7 +205,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <LargeAddressAware>true</LargeAddressAware>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
@@ -212,7 +216,7 @@
       <Optimization>Full</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include\;SoundTouch\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)baseclasses;$(WINDOWS_SDK)Include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_USRDLL;FLOAT_SAMPLES;MULTICHANNEL_SUPPORT;%(PreprocessorDefinitions);_USING_V110_SDK71_;</PreprocessorDefinitions>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -239,33 +243,13 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <LargeAddressAware>true</LargeAddressAware>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
       <DataExecutionPrevention>true</DataExecutionPrevention>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="libresample\src\samplerate.c">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="libresample\src\src_linear.c">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="libresample\src\src_sinc.c">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCpp</CompileAs>
-    </ClCompile>
-    <ClCompile Include="libresample\src\src_zoh.c">
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CompileAsCpp</CompileAs>
-      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CompileAsCpp</CompileAs>
-    </ClCompile>
     <ClCompile Include="AE_mixer\AEChannelInfo.cpp" />
     <ClCompile Include="AE_mixer\AERemap.cpp" />
-    <ClCompile Include="SoundTouch\source\cpu_detect_x86.cpp" />
-    <ClCompile Include="SoundTouch\source\InterpolateCubic.cpp" />
-    <ClCompile Include="SoundTouch\source\InterpolateLinear.cpp" />
-    <ClCompile Include="SoundTouch\source\InterpolateShannon.cpp" />
     <ClCompile Include="source\AC3EncoderFilter.cpp" />
     <ClCompile Include="source\BaseAudioSink.cpp" />
     <ClCompile Include="source\BitDepthAdapter.cpp" />
@@ -287,16 +271,6 @@
     <ClCompile Include="source\TimeSource.cpp" />
     <ClCompile Include="source\TimeStretchFilter.cpp" />
     <ClCompile Include="source\VolumeHandler.cpp" />
-    <ClCompile Include="SoundTouch\source\AAFilter.cpp" />
-    <ClCompile Include="SoundTouch\source\BPMDetect.cpp" />
-    <ClCompile Include="SoundTouch\source\FIFOSampleBuffer.cpp" />
-    <ClCompile Include="SoundTouch\source\FIRFilter.cpp" />
-    <ClCompile Include="SoundTouch\source\mmx_optimized.cpp" />
-    <ClCompile Include="SoundTouch\source\PeakFinder.cpp" />
-    <ClCompile Include="SoundTouch\source\RateTransposer.cpp" />
-    <ClCompile Include="SoundTouch\source\SoundTouch.cpp" />
-    <ClCompile Include="SoundTouch\source\sse_optimized.cpp" />
-    <ClCompile Include="SoundTouch\source\TDStretch.cpp" />
     <ClCompile Include="AC3_encoder\ac3enc.cpp" />
     <ClCompile Include="AC3_encoder\bits.cpp" />
     <ClCompile Include="source\SynchCorrection.cpp" />
@@ -307,11 +281,7 @@
     <None Include="source\MpAudioRenderer.def" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SoundTouch\source\InterpolateCubic.h" />
-    <ClInclude Include="SoundTouch\source\InterpolateLinear.h" />
-    <ClInclude Include="SoundTouch\source\InterpolateShannon.h" />
     <ClInclude Include="source\IMPAudioSettings.h" />
-    <ClInclude Include="libresample\src\samplerate.h" />
     <ClInclude Include="AE_mixer\AEAudioFormat.h" />
     <ClInclude Include="AE_mixer\AEChannelInfo.h" />
     <ClInclude Include="AE_mixer\AERemap.h" />
@@ -321,7 +291,6 @@
     <ClInclude Include="source\BitDepthAdapter.h" />
     <ClInclude Include="source\ChannelMixer.h" />
     <ClInclude Include="source\dllsetup.h" />
-    <ClInclude Include="source\FilterApp.h" />
     <ClInclude Include="source\Globals.h" />
     <ClInclude Include="source\IAudioSink.h" />
     <ClInclude Include="source\IAVSyncClock.h" />
@@ -342,17 +311,6 @@
     <ClInclude Include="source\TimeSource.h" />
     <ClInclude Include="source\TimeStretchFilter.h" />
     <ClInclude Include="source\VolumeHandler.h" />
-    <ClInclude Include="SoundTouch\include\BPMDetect.h" />
-    <ClInclude Include="SoundTouch\include\FIFOSampleBuffer.h" />
-    <ClInclude Include="SoundTouch\include\FIFOSamplePipe.h" />
-    <ClInclude Include="SoundTouch\include\SoundTouch.h" />
-    <ClInclude Include="SoundTouch\include\STTypes.h" />
-    <ClInclude Include="SoundTouch\source\AAFilter.h" />
-    <ClInclude Include="SoundTouch\source\cpu_detect.h" />
-    <ClInclude Include="SoundTouch\source\FIRFilter.h" />
-    <ClInclude Include="SoundTouch\source\PeakFinder.h" />
-    <ClInclude Include="SoundTouch\source\RateTransposer.h" />
-    <ClInclude Include="SoundTouch\source\TDStretch.h" />
     <ClInclude Include="AC3_encoder\ac3enc.h" />
     <ClInclude Include="AC3_encoder\bits.h" />
     <ClInclude Include="source\SynchCorrection.h" />

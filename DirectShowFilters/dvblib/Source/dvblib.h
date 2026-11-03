@@ -5,9 +5,6 @@
 
 #pragma once
 
-#ifndef __AFXWIN_H__
-	#error 'stdafx.h' muss vor dieser Datei in PCH eingeschlossen werden.
-#endif
 
 #include "resource.h"		// Hauptsymbole
 
@@ -81,14 +78,3 @@ IGrabberSample : public IUnknown
             BYTE *pBuffer) = 0;
 };
 
-class CdvblibApp : public CWinApp
-{
-public:
-	CdvblibApp();
-
-// Überschreibungen
-public:
-	virtual BOOL InitInstance();
-
-	DECLARE_MESSAGE_MAP()
-};

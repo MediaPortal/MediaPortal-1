@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" TreatAsLocalProperty="CharacterSet" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -21,14 +21,14 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{FC70988B-1AE5-4381-866D-4F405E28AC42}</ProjectGuid>
     <RootNamespace>DSUtil</RootNamespace>
-    <Keyword>MFCProj</Keyword>
+    <Keyword>Win32Proj</Keyword>
     <ProjectName>DSUtil</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <Import Project="..\platform.props" />
   <PropertyGroup Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseOfMfc>Static</UseOfMfc>
+    <UseOfMfc>false</UseOfMfc>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -41,8 +41,9 @@
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup>
     <ClCompile>
+      <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>..\..\include;$(SolutionDir)baseclasses;..\DSUtil;..\filters\renderer\VideoRenderers;..\thirdparty;..\thirdparty\VirtualDub\h;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_AFXDLL;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MultiThreadedDLL</RuntimeLibrary>
       <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MultiThreadedDLL</RuntimeLibrary>
       <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MultiThreadedDLL</RuntimeLibrary>
@@ -63,7 +64,6 @@
     <ClCompile Include="ISOLang.cpp" />
     <ClCompile Include="MediaTypeEx.cpp" />
     <ClCompile Include="MediaTypes.cpp" />
-    <ClCompile Include="MFCHelper.cpp" />
     <ClCompile Include="MP4AudioDecoderConfig.cpp" />
     <ClCompile Include="NullRenderers.cpp" />
     <ClCompile Include="Packet.cpp" />
@@ -94,7 +94,6 @@
     <ClInclude Include="ISOLang.h" />
     <ClInclude Include="MediaTypeEx.h" />
     <ClInclude Include="MediaTypes.h" />
-    <ClInclude Include="MFCHelper.h" />
     <ClInclude Include="MhookHelper.h" />
     <ClInclude Include="MP4AudioDecoderConfig.h" />
     <ClInclude Include="Mpeg2Def.h" />

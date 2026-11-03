@@ -21,11 +21,17 @@
 
 #pragma once
 
-#include "StdioFile64.h"
+#include "../dsutil/StdHelpers.h"
 
-class CTextFile : protected CStdioFile64
+class CTextFile
 {
 public:
+    enum SeekFrom {
+        begin = SEEK_SET,
+        current = SEEK_CUR,
+        end = SEEK_END
+    };
+
     enum enc {
         DEFAULT_ENCODING,
         UTF8,
@@ -38,14 +44,19 @@ private:
     enc m_encoding, m_defaultencoding, m_fallbackencoding;
     int m_offset;
     ULONGLONG m_posInFile;
-    CAutoVectorPtr<char> m_buffer;
-    CAutoVectorPtr<WCHAR> m_wbuffer;
+    std::unique_ptr<char[]> m_buffer;
+    std::unique_ptr<WCHAR[]> m_wbuffer;
     LONGLONG m_posInBuffer, m_nInBuffer;
 
+    FilePtr m_pStream;
+    tstring m_strFileName;
+
 public:
-    using CFile::Flush;
-    using CFile::Close;
     CTextFile(enc e = DEFAULT_ENCODING);
+    virtual ~CTextFile() {}
+
+    void Flush();
+    void Close();
 
     virtual bool Open(LPCTSTR lpszFileName);
     virtual bool Save(LPCTSTR lpszFileName, enc e /*= DEFAULT_ENCODING*/);
@@ -55,22 +66,32 @@ public:
     enc GetEncoding();
     bool IsUnicode();
 
-    // CFile
-
-    CString GetFilePath() const;
-
-    // CStdioFile
+    tstring GetFilePath() const;
 
     ULONGLONG GetPosition() const;
     ULONGLONG GetLength() const;
     ULONGLONG Seek(LONGLONG lOff, UINT nFrom);
 
-    void WriteString(LPCSTR lpsz/*CStringA str*/);
-    void WriteString(LPCWSTR lpsz/*CStringW str*/);
-    BOOL ReadString(CStringA& str);
-    BOOL ReadString(CStringW& str);
+    void WriteString(LPCSTR lpsz/*std::string str*/);
+    void WriteString(LPCWSTR lpsz/*std::wstring str*/);
+    void WriteString(const std::string& str) { WriteString(str.c_str()); }
+    void WriteString(const std::wstring& str) { WriteString(str.c_str()); }
+    BOOL ReadString(std::string& str);
+    BOOL ReadString(std::wstring& str);
 
 protected:
+    // The file as a C stream. The text modes translate the line ends and the code page like the CRT does.
+    enum StreamMode { READ_BINARY, READ_TEXT, WRITE_BINARY, WRITE_TEXT };
+    bool OpenStream(LPCTSTR lpszFileName, StreamMode mode);
+    void CloseStream();
+    UINT StreamRead(void* lpBuf, UINT nCount);
+    void StreamWrite(const void* lpBuf, UINT nCount);
+    ULONGLONG StreamSeek(LONGLONG lOff, UINT nFrom);
+    ULONGLONG StreamPosition() const;
+    ULONGLONG StreamLength() const;
+    BOOL StreamReadLine(tstring& str);
+    void StreamWriteString(LPCTSTR lpsz);
+
     virtual bool ReopenAsText();
     bool FillBuffer();
     ULONGLONG GetPositionFastBuffered() const;
@@ -79,7 +100,7 @@ protected:
 class CWebTextFile : public CTextFile
 {
     LONGLONG m_llMaxSize;
-    CString m_tempfn;
+    tstring m_tempfn;
 
 public:
     CWebTextFile(CTextFile::enc e = DEFAULT_ENCODING, LONGLONG llMaxSize = 64 * 1024 * 1024);
@@ -89,9 +110,9 @@ public:
     void Close();
 };
 
-extern CStringW AToW(CStringA str);
-extern CStringA WToA(CStringW str);
-extern CString  AToT(CStringA str);
-extern CString  WToT(CStringW str);
-extern CStringA TToA(CString  str);
-extern CStringW TToW(CString  str);
+extern std::wstring AToW(std::string str);
+extern std::string WToA(std::wstring str);
+extern tstring  AToT(std::string str);
+extern tstring  WToT(std::wstring str);
+extern std::string TToA(tstring  str);
+extern std::wstring TToW(tstring  str);

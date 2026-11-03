@@ -20,14 +20,13 @@
  */
 
 #include "LibBlurayWrapper.h"
-#include <afx.h>
-#include <afxwin.h>
 #include <bluray.h>
 #include <keys.h>
 #include "OSDTexture.h"
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
+#include "../../shared/TcharConv.h"
 
 extern void LogDebug(const char *fmt, ...);
 
@@ -138,7 +137,6 @@ void CLibBlurayWrapper::StaticARGBOverlayProc(void* this_gen, const BD_ARGB_OVER
 
 bool CLibBlurayWrapper::Initialize()
 {
-  USES_CONVERSION;
 
   m_bLibInitialized = false;
 
@@ -172,7 +170,7 @@ bool CLibBlurayWrapper::Initialize()
   }
 
   _stprintf_s(szDirectory, _T("%s\\bluray.dll"), szDirectory);
-  LogDebug("CLibBlurayWrapper - Load bluray: %s", T2A(szDirectory));
+  LogDebug("CLibBlurayWrapper - Load bluray: %s", ToAnsi(szDirectory).c_str());
   m_hDLL = LoadLibrary(szDirectory);
 
   if (!m_hDLL)

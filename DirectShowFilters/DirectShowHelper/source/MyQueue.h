@@ -44,6 +44,8 @@ public:
 
 	void Resize(int size)
 	{
+		delete[] m_elements;            // the room has to follow the size
+		m_elements = new T[size];
 		m_count = 0;
 		m_pos = 0;
 		m_insertPos = 0;

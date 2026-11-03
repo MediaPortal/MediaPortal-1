@@ -39,18 +39,20 @@
 	#include <ndisguid.h>
 
 	#ifdef UNICODE
-	#define	REGISTERDEVICENOTIFY	TEXT ("RegisterDeviceNotificationW")
+	// GetProcAddress takes a narrow name in every build
+	#define	REGISTERDEVICENOTIFY	"RegisterDeviceNotificationW"
 	#else
 	#define	REGISTERDEVICENOTIFY	"RegisterDeviceNotificationA"
 	#endif
 
 	#define	UNREGISTERDEVICENOTIFY	"UnregisterDeviceNotification"
 
-	#define TRACE_NOTIFICATION		printf
+	#define TRACE_NOTIFICATION		_tprintf
 
 #endif //defined _B2C2_USE_DEVICE_NOTIFICATION
 
 #include "Include\b2c2mpeg2adapter.h"
+#include "..\..\shared\TcharConv.h"
 
 #include "Include\ib2c2mpeg2tunerctrl.h"
 #include "Include\ib2c2mpeg2datactrl.h"
@@ -226,8 +228,7 @@ HRESULT B2C2MPEG2Adapter::EnumerateFilterPins(BOOL bAudoPin /*= TRUE*/,
 	PIN_INFO	pin_Info;
 	IPin *		pPinOut = NULL;
 
-	char		szPinName[128];	// from SDK, strmif.h; PIN_INFO::achName[ 128 ]
-	char		szTsPinName[10];
+	wchar_t		szTsPinName[10];
 
 	// Check if already initialized; got filter
 
@@ -270,8 +271,6 @@ HRESULT B2C2MPEG2Adapter::EnumerateFilterPins(BOOL bAudoPin /*= TRUE*/,
 			continue;
 		}
 
-		wcstombs (szPinName, pin_Info.achName, sizeof (szPinName));
-
 		BOOL bPinUsed = FALSE;
 
 		// Check for TS pins first
@@ -280,11 +279,11 @@ HRESULT B2C2MPEG2Adapter::EnumerateFilterPins(BOOL bAudoPin /*= TRUE*/,
 		{
 			for (int iCnt = 0; iCnt < B2C2_FILTER_MAX_TS_PINS; iCnt++)
 			{
-				sprintf (szTsPinName,"Data %d",iCnt);
+				swprintf (szTsPinName, 10, L"Data %d", iCnt);
 
 				if (  m_pTsOutPin[iCnt] == NULL 
 				   && bTsPins
-				   && strstr (szPinName, szTsPinName) != NULL)
+				   && wcsstr (pin_Info.achName, szTsPinName) != NULL)
 				{
 					m_pTsOutPin[iCnt] = pPinOut;
 					bPinUsed = TRUE;
@@ -300,7 +299,7 @@ HRESULT B2C2MPEG2Adapter::EnumerateFilterPins(BOOL bAudoPin /*= TRUE*/,
 		// Check if Audio PIN; if still 'missing'
 		if (  m_pPinOutAudio == NULL
 			    && bAudoPin 
-				&& strstr (szPinName, "Audio") != NULL)
+				&& wcsstr (pin_Info.achName, L"Audio") != NULL)
 		{
 			m_pPinOutAudio = pPinOut;
 		}
@@ -308,7 +307,7 @@ HRESULT B2C2MPEG2Adapter::EnumerateFilterPins(BOOL bAudoPin /*= TRUE*/,
 		// Check if Video PIN; if still 'missing'
 		if (  m_pPinOutVideo == NULL 
 		   && bVideoPin
-		   && strstr (szPinName, "Video") != NULL)
+		   && wcsstr (pin_Info.achName, L"Video") != NULL)
 		{
 			m_pPinOutVideo = pPinOut;
 		}
@@ -706,12 +705,10 @@ HRESULT B2C2MPEG2Adapter::ConnectTsFilterInToTsOutPin (int nPin, const TCHAR * s
 		}
 
 		// check name if defined
+		std::wstring wInPinName = ToWide(szInPinName);
 		if (bUsePin && szInPinName)
 		{
-			char szPinName[128];	// from SDK, strmif.h; PIN_INFO::achName[ 128 ]
-			wcstombs (szPinName, pin_Info.achName, sizeof (szPinName));
-
-			if (strstr (szPinName, szInPinName) == NULL)
+			if (wcsstr (pin_Info.achName, wInPinName.c_str()) == NULL)
 			{
 				// Not this PIN
 				bUsePin = FALSE;
@@ -965,7 +962,7 @@ B2C2MPEG2Adapter::E_B2C2_DEVICE B2C2MPEG2Adapter::GetB2C2DeviceType (PDEV_BROADC
 		nLen = min(nLen, B2C2_MAX_DEVICE_NAME_LEN - sizeof(TCHAR));
 		for(i = 0; i < nLen; i++)
 		{
-			m_szTmpStr[i] = tolower(pDeviceName[i]);
+			m_szTmpStr[i] = _totlower(pDeviceName[i]);
 		}
 		m_szTmpStr[nLen] = 0;//terminate the string
 

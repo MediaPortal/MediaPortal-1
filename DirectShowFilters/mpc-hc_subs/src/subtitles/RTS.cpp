@@ -29,6 +29,12 @@
 #include <ppl.h>
 #include "../filters/renderer/VideoRenderers/RenderersSettings.h"
 
+// the number of a color or alpha tag: &H80& and the like
+static long ParseHexTag(std::wstring s)
+{
+    return wcstol(StringTrim(s, L"&H").c_str(), nullptr, 16);
+}
+
 // WARNING: this isn't very thread safe, use only one RTS a time. We should use TLS in future.
 static HDC g_hDC;
 static int g_hDC_refcnt = 0;
@@ -64,12 +70,14 @@ CMyFont::CMyFont(const STSStyle& style)
     if (lf.lfCharSet == 0)
         lf.lfCharSet = DEFAULT_CHARSET;
 
-    if (!CreateFontIndirect(&lf)) {
+    m_hFont = CreateFontIndirect(&lf);
+    if (!m_hFont) {
         _tcscpy_s(lf.lfFaceName, _T("Calibri"));
-        VERIFY(CreateFontIndirect(&lf));
+        m_hFont = CreateFontIndirect(&lf);
+        ASSERT(m_hFont);
     }
 
-    HFONT hOldFont = SelectFont(g_hDC, *this);
+    HFONT hOldFont = SelectFont(g_hDC, m_hFont);
     TEXTMETRIC tm;
     GetTextMetrics(g_hDC, &tm);
     m_ascent = ((tm.tmAscent + 4) >> 3);
@@ -77,12 +85,19 @@ CMyFont::CMyFont(const STSStyle& style)
     SelectFont(g_hDC, hOldFont);
 }
 
+CMyFont::~CMyFont()
+{
+    if (m_hFont) {
+        DeleteObject(m_hFont);
+    }
+}
+
 // CWord
 
-CWord::CWord(const STSStyle& style, CStringW str, int ktype, int kstart, int kend, double scalex, double scaley,
+CWord::CWord(const STSStyle& style, std::wstring str, int ktype, int kstart, int kend, double scalex, double scaley,
              RenderingCaches& renderingCaches)
     : m_fDrawn(false)
-    , m_p(INT_MAX, INT_MAX)
+    , m_p(MakePoint(INT_MAX, INT_MAX))
     , m_renderingCaches(renderingCaches)
     , m_scalex(scalex)
     , m_scaley(scaley)
@@ -98,7 +113,7 @@ CWord::CWord(const STSStyle& style, CStringW str, int ktype, int kstart, int ken
     , m_ascent(0)
     , m_descent(0)
 {
-    if (str.IsEmpty()) {
+    if (str.empty()) {
         m_fWhiteSpaceChar = m_fLineBreak = true;
     }
 }
@@ -121,16 +136,13 @@ bool CWord::Append(CWord* w)
     m_width += w->m_width;
 
     m_fDrawn = false;
-    m_p = CPoint(INT_MAX, INT_MAX);
+    m_p = MakePoint(INT_MAX, INT_MAX);
 
     return true;
 }
 
-void CWord::Paint(const CPoint& p, const CPoint& org)
+void CWord::Paint(const POINT& p, const POINT& org)
 {
-    if (!m_str) {
-        return;
-    }
 
     COverlayKey overlayKey(this, p, org);
 
@@ -154,7 +166,7 @@ void CWord::Paint(const CPoint& p, const CPoint& org)
                     return;
                 }
 
-                Transform(CPoint((org.x - p.x) * 8, (org.y - p.y) * 8));
+                Transform(MakePoint((org.x - p.x) * 8, (org.y - p.y) * 8));
 
                 if (!ScanConvert()) {
                     return;
@@ -204,7 +216,7 @@ void CWord::Paint(const CPoint& p, const CPoint& org)
     }
 }
 
-void CWord::Transform(CPoint org)
+void CWord::Transform(POINT org)
 {
     if ((fabs(m_style.fontAngleX) > 0.000001) || (fabs(m_style.fontAngleY) > 0.000001) || (fabs(m_style.fontAngleZ) > 0.000001) ||
         (fabs(m_style.fontShiftX) > 0.000001) || (fabs(m_style.fontShiftY) > 0.000001)) {
@@ -232,7 +244,7 @@ bool CWord::CreateOpaqueBox()
 
     // We don't want to apply the outline and the scaling twice
     style.outlineWidthX = style.outlineWidthY = 0.0;
-    if (m_str.GetLength() > 2) {
+    if (int(m_str.size()) > 2) {
         // some SSA subs use an opaque box to draw text backgrounds for translated signs
         // these use single character with a large fontscale
         // don't adjust scale in that case
@@ -246,24 +258,19 @@ bool CWord::CreateOpaqueBox()
     int h = std::lround(m_style.outlineWidthY);
 
     // Convert to pixels rounding to nearest
-    CStringW str;
-    str.Format(L"m %d %d l %d %d %d %d %d %d",
-               -(w + 4) / 8, -(h + 4) / 8,
-               (m_width + w + 4) / 8, -(h + 4) / 8,
-               (m_width + w + 4) / 8, (m_ascent + m_descent + h + 4) / 8,
-               -(w + 4) / 8, (m_ascent + m_descent + h + 4) / 8);
+    std::wstring str;
+    str = ::Format(L"m %d %d l %d %d %d %d %d %d", -(w + 4) / 8, -(h + 4) / 8, (m_width + w + 4) / 8, -(h + 4) / 8, (m_width + w + 4) / 8, (m_ascent + m_descent + h + 4) / 8, -(w + 4) / 8, (m_ascent + m_descent + h + 4) / 8);
 
     try {
-        m_pOpaqueBox = DEBUG_NEW CPolygon(style, str, 0, 0, 0, 1.0, 1.0, 0, m_renderingCaches);
-    } catch (CMemoryException* e) {
-        e->Delete();
+        m_pOpaqueBox = new CPolygon(style, str, 0, 0, 0, 1.0, 1.0, 0, m_renderingCaches);
+    } catch (const std::bad_alloc&) {
         m_pOpaqueBox = nullptr;
     }
 
     return !!m_pOpaqueBox;
 }
 
-void CWord::Transform_C(const CPoint& org)
+void CWord::Transform_C(const POINT& org)
 {
     const double scalex = m_style.fontScaleX / 100.0;
     const double scaley = m_style.fontScaleY / 100.0;
@@ -310,7 +317,7 @@ void CWord::Transform_C(const CPoint& org)
     }
 }
 
-void CWord::Transform_quick(const CPoint& org)
+void CWord::Transform_quick(const POINT& org)
 {
     const double scalex = m_style.fontScaleX / 100.0;
     const double scaley = m_style.fontScaleY / 100.0;
@@ -329,7 +336,7 @@ void CWord::Transform_quick(const CPoint& org)
     }
 }
 
-void CWord::Transform_SSE2(const CPoint& org)
+void CWord::Transform_SSE2(const POINT& org)
 {
     // SSE code
     // speed up ~1.5-1.7x
@@ -472,7 +479,7 @@ void CWord::Transform_SSE2(const CPoint& org)
 
 // CText
 
-CText::CText(const STSStyle& style, CStringW str, int ktype, int kstart, int kend, double scalex, double scaley,
+CText::CText(const STSStyle& style, std::wstring str, int ktype, int kstart, int kend, double scalex, double scaley,
              RenderingCaches& renderingCaches)
     : CWord(style, str, ktype, kstart, kend, scalex, scaley, renderingCaches)
 {
@@ -490,8 +497,8 @@ CText::CText(const STSStyle& style, CStringW str, int ktype, int kstart, int ken
         HFONT hOldFont = SelectFont(g_hDC, font);
 
         if (m_style.fontSpacing) {
-            for (LPCWSTR s = m_str; *s; s++) {
-                CSize extent;
+            for (LPCWSTR s = m_str.c_str(); *s; s++) {
+                SIZE extent = {};
                 if (!GetTextExtentPoint32W(g_hDC, s, 1, &extent)) {
                     SelectFont(g_hDC, hOldFont);
                     ASSERT(0);
@@ -501,8 +508,8 @@ CText::CText(const STSStyle& style, CStringW str, int ktype, int kstart, int ken
             }
             // m_width -= (int)m_style.fontSpacing; // TODO: subtract only at the end of the line
         } else {
-            CSize extent;
-            if (!GetTextExtentPoint32W(g_hDC, m_str, str.GetLength(), &extent)) {
+            SIZE extent = {};
+            if (!GetTextExtentPoint32W(g_hDC, m_str.c_str(), int(str.size()), &extent)) {
                 SelectFont(g_hDC, hOldFont);
                 ASSERT(0);
                 return;
@@ -530,7 +537,7 @@ CText::CText(const STSStyle& style, CStringW str, int ktype, int kstart, int ken
 
 CWord* CText::Copy()
 {
-    return DEBUG_NEW CText(*this);
+    return new CText(*this);
 }
 
 bool CText::Append(CWord* w)
@@ -546,7 +553,7 @@ bool CText::CreatePath()
 
     LONG cx = 0;
     auto getExtent = [&](LPCWSTR s, int len) {
-        CSize extent;
+        SIZE extent = {};
         if (!GetTextExtentPoint32W(g_hDC, s, len, &extent)) {
             SelectFont(g_hDC, hOldFont);
             ASSERT(0);
@@ -561,7 +568,7 @@ bool CText::CreatePath()
         bool bFirstPath = true;
         bool failedPath = false;
 
-        for (LPCWSTR s = m_str; *s; s++) {
+        for (LPCWSTR s = m_str.c_str(); *s; s++) {
             if (!getExtent(s, 1)) {
                 return false;
             }
@@ -570,7 +577,7 @@ bool CText::CreatePath()
             TextOutW(g_hDC, 0, 0, s, 1);
             int mp = mPathPoints;
             PartialEndPath(g_hDC, width, 0);
-            if (mp == mPathPoints && !CStringW::StrTraits::IsSpace(s[0])) { //failed to add points, we will try again with FreeType as emulator
+            if (mp == mPathPoints && !iswspace(s[0])) { //failed to add points, we will try again with FreeType as emulator
                 failedPath=true;
                 break;
             }
@@ -584,7 +591,7 @@ bool CText::CreatePath()
         if (failedPath) { //try freetype
             int ftWidth = 0;
             bFirstPath = true;
-            for (LPCWSTR s = m_str; *s; s++) {
+            for (LPCWSTR s = m_str.c_str(); *s; s++) {
                 if (!getExtent(s, 1)) {
                     return false;
                 }
@@ -596,18 +603,18 @@ bool CText::CreatePath()
             }
         }
     } else {
-        if (!getExtent(m_str, m_str.GetLength())) {
+        if (!getExtent(m_str.c_str(), int(m_str.size()))) {
             return false;
         }
 
         BeginPath(g_hDC);
-        TextOutW(g_hDC, 0, 0, m_str, m_str.GetLength());
+        TextOutW(g_hDC, 0, 0, m_str.c_str(), int(m_str.size()));
         EndPath(g_hDC);
 
-        if (mPathPoints == 0 && m_str.GetLength() > 0) { // try freetype
+        if (mPathPoints == 0 && int(m_str.size()) > 0) { // try freetype
             int ftWidth = 0;
             bool bFirstPath = true;
-            for (LPCWSTR s = m_str; *s; s++) {
+            for (LPCWSTR s = m_str.c_str(); *s; s++) {
                 if (!getExtent(s, 1)) {
                     return false;
                 }
@@ -627,7 +634,7 @@ bool CText::CreatePath()
 
 // CPolygon
 
-CPolygon::CPolygon(const STSStyle& style, CStringW str, int ktype, int kstart, int kend, double scalex, double scaley, int baseline,
+CPolygon::CPolygon(const STSStyle& style, std::wstring str, int ktype, int kstart, int kend, double scalex, double scaley, int baseline,
                    RenderingCaches& renderingCaches)
     : CWord(style, str, ktype, kstart, kend, scalex, scaley, renderingCaches)
     , m_baseline(baseline)
@@ -651,7 +658,7 @@ CPolygon::~CPolygon()
 
 CWord* CPolygon::Copy()
 {
-    return (DEBUG_NEW CPolygon(*this));
+    return (new CPolygon(*this));
 }
 
 bool CPolygon::Append(CWord* w)
@@ -686,14 +693,14 @@ bool CPolygon::GetPOINT(LPCWSTR& str, POINT& point) const
 
 bool CPolygon::ParseStr()
 {
-    if (m_pPolygonPath && !m_pPolygonPath->typesOrg.IsEmpty()) {
+    if (m_pPolygonPath && !m_pPolygonPath->typesOrg.empty()) {
         return true;
     }
 
     CPolygonPathKey polygonPathKey(m_str, m_scalex, m_scaley);
     if (!m_renderingCaches.polygonCache.Lookup(polygonPathKey, m_pPolygonPath)) {
         m_pPolygonPath = std::make_shared<CPolygonPath>();
-        CPoint p;
+        POINT p = {};
         bool bFoundMove = false;
         size_t i, j, lastSplineStart = SIZE_T_ERROR;
 
@@ -702,7 +709,7 @@ bool CPolygon::ParseStr()
                    || c == L's' || c == L'p' || c == L'c';
         };
 
-        for (LPCWSTR str = m_str; *str;) {
+        for (LPCWSTR str = m_str.c_str(); *str;) {
             // Trim any leading invalid characters and whitespace
             while (*str && !isValidAction(*str)) {
                 str++;
@@ -716,7 +723,7 @@ bool CPolygon::ParseStr()
             switch (c) {
                 case L'm':
                     if (!bFoundMove) {
-                        if (m_pPolygonPath->typesOrg.GetCount() > 0) {
+                        if (m_pPolygonPath->typesOrg.size() > 0) {
                             // move command not first so we abort
                             m_pPolygonPath = nullptr;
                             return false;
@@ -724,76 +731,76 @@ bool CPolygon::ParseStr()
                         bFoundMove = true;
                     }
                     while (GetPOINT(str, p)) {
-                        m_pPolygonPath->typesOrg.Add(PT_MOVETO);
-                        m_pPolygonPath->pointsOrg.Add(p);
+                        m_pPolygonPath->typesOrg.push_back(PT_MOVETO);
+                        m_pPolygonPath->pointsOrg.push_back(p);
                     }
                     break;
                 case L'n':
                     while (GetPOINT(str, p)) {
-                        m_pPolygonPath->typesOrg.Add(PT_MOVETONC);
-                        m_pPolygonPath->pointsOrg.Add(p);
+                        m_pPolygonPath->typesOrg.push_back(PT_MOVETONC);
+                        m_pPolygonPath->pointsOrg.push_back(p);
                     }
                     break;
                 case L'l':
-                    if (m_pPolygonPath->pointsOrg.GetCount() < 1) {
+                    if (m_pPolygonPath->pointsOrg.size() < 1) {
                         break;
                     }
                     while (GetPOINT(str, p)) {
-                        m_pPolygonPath->typesOrg.Add(PT_LINETO);
-                        m_pPolygonPath->pointsOrg.Add(p);
+                        m_pPolygonPath->typesOrg.push_back(PT_LINETO);
+                        m_pPolygonPath->pointsOrg.push_back(p);
                     }
                     break;
                 case L'b':
-                    j = m_pPolygonPath->typesOrg.GetCount();
+                    j = m_pPolygonPath->typesOrg.size();
                     if (j < 1) {
                         break;
                     }
                     while (GetPOINT(str, p)) {
-                        m_pPolygonPath->typesOrg.Add(PT_BEZIERTO);
-                        m_pPolygonPath->pointsOrg.Add(p);
+                        m_pPolygonPath->typesOrg.push_back(PT_BEZIERTO);
+                        m_pPolygonPath->pointsOrg.push_back(p);
                         ++j;
                     }
-                    j = m_pPolygonPath->typesOrg.GetCount() - ((m_pPolygonPath->typesOrg.GetCount() - j) % 3);
-                    m_pPolygonPath->typesOrg.SetCount(j);
-                    m_pPolygonPath->pointsOrg.SetCount(j);
+                    j = m_pPolygonPath->typesOrg.size() - ((m_pPolygonPath->typesOrg.size() - j) % 3);
+                    m_pPolygonPath->typesOrg.resize(j);
+                    m_pPolygonPath->pointsOrg.resize(j);
                     break;
                 case L's':
-                    if (m_pPolygonPath->pointsOrg.GetCount() < 1) {
+                    if (m_pPolygonPath->pointsOrg.size() < 1) {
                         break;
                     }
-                    j = lastSplineStart = m_pPolygonPath->typesOrg.GetCount();
+                    j = lastSplineStart = m_pPolygonPath->typesOrg.size();
                     i = 3;
                     while (i-- && GetPOINT(str, p)) {
-                        m_pPolygonPath->typesOrg.Add(PT_BSPLINETO);
-                        m_pPolygonPath->pointsOrg.Add(p);
+                        m_pPolygonPath->typesOrg.push_back(PT_BSPLINETO);
+                        m_pPolygonPath->pointsOrg.push_back(p);
                         ++j;
                     }
-                    if (m_pPolygonPath->typesOrg.GetCount() - lastSplineStart < 3) {
-                        m_pPolygonPath->typesOrg.SetCount(lastSplineStart);
-                        m_pPolygonPath->pointsOrg.SetCount(lastSplineStart);
+                    if (m_pPolygonPath->typesOrg.size() - lastSplineStart < 3) {
+                        m_pPolygonPath->typesOrg.resize(lastSplineStart);
+                        m_pPolygonPath->pointsOrg.resize(lastSplineStart);
                         lastSplineStart = SIZE_T_ERROR;
                     }
                 // no break
                 case L'p':
-                    if (m_pPolygonPath->pointsOrg.GetCount() < 3) {
+                    if (m_pPolygonPath->pointsOrg.size() < 3) {
                         break;
                     }
                     while (GetPOINT(str, p)) {
-                        m_pPolygonPath->typesOrg.Add(PT_BSPLINEPATCHTO);
-                        m_pPolygonPath->pointsOrg.Add(p);
+                        m_pPolygonPath->typesOrg.push_back(PT_BSPLINEPATCHTO);
+                        m_pPolygonPath->pointsOrg.push_back(p);
                     }
                     break;
                 case L'c':
                     if (lastSplineStart != SIZE_T_ERROR && lastSplineStart > 0) {
-                        m_pPolygonPath->typesOrg.Add(PT_BSPLINEPATCHTO);
-                        m_pPolygonPath->typesOrg.Add(PT_BSPLINEPATCHTO);
-                        m_pPolygonPath->typesOrg.Add(PT_BSPLINEPATCHTO);
-                        p = m_pPolygonPath->pointsOrg[lastSplineStart - 1]; // we need p for temp storage, because operator [] will return a reference to CPoint and Add() may reallocate its internal buffer (this is true for MFC 7.0 but not for 6.0, hehe)
-                        m_pPolygonPath->pointsOrg.Add(p);
+                        m_pPolygonPath->typesOrg.push_back(PT_BSPLINEPATCHTO);
+                        m_pPolygonPath->typesOrg.push_back(PT_BSPLINEPATCHTO);
+                        m_pPolygonPath->typesOrg.push_back(PT_BSPLINEPATCHTO);
+                        p = m_pPolygonPath->pointsOrg[lastSplineStart - 1]; // we need p for temp storage, because operator [] will return a reference to POINT and Add() may reallocate its internal buffer (this is true for MFC 7.0 but not for 6.0, hehe)
+                        m_pPolygonPath->pointsOrg.push_back(p);
                         p = m_pPolygonPath->pointsOrg[lastSplineStart];
-                        m_pPolygonPath->pointsOrg.Add(p);
+                        m_pPolygonPath->pointsOrg.push_back(p);
                         p = m_pPolygonPath->pointsOrg[lastSplineStart + 1];
-                        m_pPolygonPath->pointsOrg.Add(p);
+                        m_pPolygonPath->pointsOrg.push_back(p);
                         lastSplineStart = SIZE_T_ERROR;
                     }
                     break;
@@ -810,7 +817,7 @@ bool CPolygon::ParseStr()
 
         int minx = INT_MAX, miny = INT_MAX, maxx = INT_MIN, maxy = INT_MIN;
 
-        for (size_t m = 0; m < m_pPolygonPath->typesOrg.GetCount(); m++) {
+        for (size_t m = 0; m < m_pPolygonPath->typesOrg.size(); m++) {
             if (minx > m_pPolygonPath->pointsOrg[m].x) {
                 minx = m_pPolygonPath->pointsOrg[m].x;
             }
@@ -825,7 +832,7 @@ bool CPolygon::ParseStr()
             }
         }
 
-        m_pPolygonPath->size.SetSize(std::max(maxx - minx, 0), std::max(maxy - miny, 0));
+        m_pPolygonPath->size = MakeSize(std::max(maxx - minx, 0), std::max(maxy - miny, 0));
 
         m_renderingCaches.polygonCache.SetAt(polygonPathKey, m_pPolygonPath);
     }
@@ -846,7 +853,7 @@ bool CPolygon::ParseStr()
 
 bool CPolygon::CreatePath()
 {
-    int len = m_pPolygonPath ? (int)m_pPolygonPath->typesOrg.GetCount() : 0;
+    int len = m_pPolygonPath ? (int)m_pPolygonPath->typesOrg.size() : 0;
     if (len == 0) {
         return false;
     }
@@ -865,15 +872,15 @@ bool CPolygon::CreatePath()
         mPathPoints = len;
     }
 
-    memcpy(mpPathTypes, m_pPolygonPath->typesOrg.GetData(), len * sizeof(BYTE));
-    memcpy(mpPathPoints, m_pPolygonPath->pointsOrg.GetData(), len * sizeof(POINT));
+    memcpy(mpPathTypes, m_pPolygonPath->typesOrg.data(), len * sizeof(BYTE));
+    memcpy(mpPathPoints, m_pPolygonPath->pointsOrg.data(), len * sizeof(POINT));
 
     return true;
 }
 
 // CClipper
 
-CClipper::CClipper(CStringW str, const CSize& size, double scalex, double scaley, bool inverse, const CPoint& cpOffset,
+CClipper::CClipper(std::wstring str, const SIZE& size, double scalex, double scaley, bool inverse, const POINT& cpOffset,
                    RenderingCaches& renderingCaches)
     : CPolygon(STSStyle(), str, 0, 0, 0, scalex, scaley, 0, renderingCaches)
     , m_size(size)
@@ -900,7 +907,7 @@ CAlphaMaskSharedPtr CClipper::GetAlphaMask(const std::shared_ptr<CClipper>& clip
         return m_pAlphaMask;
     }
 
-    Paint(CPoint(0, 0), CPoint(0, 0));
+    Paint(MakePoint(0, 0), MakePoint(0, 0));
 
     if (!m_pOverlayData) {
         return nullptr;
@@ -936,8 +943,7 @@ CAlphaMaskSharedPtr CClipper::GetAlphaMask(const std::shared_ptr<CClipper>& clip
 
     try {
         m_pAlphaMask = CAlphaMask::Alloc(m_renderingCaches.alphaMaskPool, alphaMaskSize);
-    } catch (CMemoryException* e) {
-        e->Delete();
+    } catch (const std::bad_alloc&) {
         m_pAlphaMask = nullptr;
         return nullptr;
     }
@@ -1049,7 +1055,7 @@ CAlphaMaskSharedPtr CClipper::GetAlphaMask(const std::shared_ptr<CClipper>& clip
 
 CWord* CClipper::Copy()
 {
-    return DEBUG_NEW CClipper(m_str, m_size, m_scalex, m_scaley, m_inverse, m_cpOffset, m_renderingCaches);
+    return new CClipper(m_str, m_size, m_scalex, m_scaley, m_inverse, m_cpOffset, m_renderingCaches);
 }
 
 bool CClipper::Append(CWord* w)
@@ -1061,62 +1067,54 @@ bool CClipper::Append(CWord* w)
 
 CLine::~CLine()
 {
-    POSITION pos = GetHeadPosition();
-    while (pos) {
-        delete GetNext(pos);
+    for (CWord* w : *this) {
+        delete w;
     }
 }
 
 void CLine::Compact()
 {
-    POSITION pos = GetHeadPosition();
-    while (pos) {
-        CWord* w = GetNext(pos);
+    while (!empty()) {
+        CWord* w = front();
         if (!w->m_fWhiteSpaceChar) {
             break;
         }
 
         m_width -= w->m_width;
         delete w;
-        RemoveHead();
+        pop_front();
     }
 
-    pos = GetTailPosition();
-    while (pos) {
-        CWord* w = GetPrev(pos);
+    while (!empty()) {
+        CWord* w = back();
         if (!w->m_fWhiteSpaceChar) {
             break;
         }
 
         m_width -= w->m_width;
         delete w;
-        RemoveTail();
+        pop_back();
     }
 
-    if (IsEmpty()) {
+    if (empty()) {
         return;
     }
 
     CLine l;
-    l.AddTailList(this);
-    RemoveAll();
+    l.splice(l.end(), *this);
 
     CWord* last = nullptr;
 
-    pos = l.GetHeadPosition();
-    while (pos) {
-        CWord* w = l.GetNext(pos);
+    for (CWord* w : l) {
 
         if (!last || !last->Append(w)) {
-            AddTail(last = w->Copy());
+            push_back(last = w->Copy());
         }
     }
 
     m_ascent = m_descent = m_borderX = m_borderY = 0;
 
-    pos = GetHeadPosition();
-    while (pos) {
-        CWord* w = GetNext(pos);
+    for (CWord*w : *this) {
 
         if (m_ascent < w->m_ascent) {
             m_ascent = w->m_ascent;
@@ -1133,13 +1131,11 @@ void CLine::Compact()
     }
 }
 
-CRect CLine::PaintShadow(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha)
+RECT CLine::PaintShadow(SubPicDesc& spd, RECT& clipRect, BYTE* pAlphaMask, POINT p, POINT org, int time, int alpha)
 {
-    CRect bbox(0, 0, 0, 0);
+    RECT bbox = MakeRect(0, 0, 0, 0);
 
-    POSITION pos = GetHeadPosition();
-    while (pos) {
-        CWord* w = GetNext(pos);
+    for (CWord*w : *this) {
 
         if (w->m_fLineBreak) {
             return bbox;    // should not happen since this class is just a line of text without any breaks
@@ -1157,14 +1153,14 @@ CRect CLine::PaintShadow(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPo
             DWORD sw[6] = {shadow, DWORD_MAX};
             sw[0] = ColorConvTable::ColorCorrection(sw[0]);
 
-            w->Paint(CPoint(x, y), org);
+            w->Paint(MakePoint(x, y), org);
 
             if (w->m_style.borderStyle == 0) {
-                bbox |= w->Draw(spd, clipRect, pAlphaMask, x, y, sw,
+                bbox = RectUnion(bbox, w->Draw(spd, clipRect, pAlphaMask, x, y, sw,
                                 w->m_ktype > 0 || w->m_style.alpha[0] < 0xff,
-                                (w->m_style.outlineWidthX + w->m_style.outlineWidthY > 0) && !(w->m_ktype == 2 && time < w->m_kstart));
+                                (w->m_style.outlineWidthX + w->m_style.outlineWidthY > 0) && !(w->m_ktype == 2 && time < w->m_kstart)));
             } else if (w->m_style.borderStyle == 1 && w->m_pOpaqueBox) {
-                bbox |= w->m_pOpaqueBox->Draw(spd, clipRect, pAlphaMask, x, y, sw, true, false);
+                bbox = RectUnion(bbox, w->m_pOpaqueBox->Draw(spd, clipRect, pAlphaMask, x, y, sw, true, false));
             }
         }
 
@@ -1174,13 +1170,11 @@ CRect CLine::PaintShadow(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPo
     return bbox;
 }
 
-CRect CLine::PaintOutline(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha)
+RECT CLine::PaintOutline(SubPicDesc& spd, RECT& clipRect, BYTE* pAlphaMask, POINT p, POINT org, int time, int alpha)
 {
-    CRect bbox(0, 0, 0, 0);
+    RECT bbox = MakeRect(0, 0, 0, 0);
 
-    POSITION pos = GetHeadPosition();
-    while (pos) {
-        CWord* w = GetNext(pos);
+    for (CWord*w : *this) {
 
         if (w->m_fLineBreak) {
             return bbox;    // should not happen since this class is just a line of text without any breaks
@@ -1198,12 +1192,12 @@ CRect CLine::PaintOutline(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CP
             DWORD sw[6] = {outline, DWORD_MAX};
             sw[0] = ColorConvTable::ColorCorrection(sw[0]);
 
-            w->Paint(CPoint(x, y), org);
+            w->Paint(MakePoint(x, y), org);
 
             if (w->m_style.borderStyle == 0) {
-                bbox |= w->Draw(spd, clipRect, pAlphaMask, x, y, sw, !w->m_style.alpha[0] && !w->m_style.alpha[1] && !alpha, true);
+                bbox = RectUnion(bbox, w->Draw(spd, clipRect, pAlphaMask, x, y, sw, !w->m_style.alpha[0] && !w->m_style.alpha[1] && !alpha, true));
             } else if (w->m_style.borderStyle == 1 && w->m_pOpaqueBox) {
-                bbox |= w->m_pOpaqueBox->Draw(spd, clipRect, pAlphaMask, x, y, sw, true, false);
+                bbox = RectUnion(bbox, w->m_pOpaqueBox->Draw(spd, clipRect, pAlphaMask, x, y, sw, true, false));
             }
         }
 
@@ -1213,13 +1207,11 @@ CRect CLine::PaintOutline(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CP
     return bbox;
 }
 
-CRect CLine::PaintBody(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoint p, CPoint org, int time, int alpha)
+RECT CLine::PaintBody(SubPicDesc& spd, RECT& clipRect, BYTE* pAlphaMask, POINT p, POINT org, int time, int alpha)
 {
-    CRect bbox(0, 0, 0, 0);
+    RECT bbox = MakeRect(0, 0, 0, 0);
 
-    POSITION pos = GetHeadPosition();
-    while (pos) {
-        CWord* w = GetNext(pos);
+    for (CWord*w : *this) {
 
         if (w->m_fLineBreak) {
             return bbox;    // should not happen since this class is just a line of text without any breaks
@@ -1277,7 +1269,7 @@ CRect CLine::PaintBody(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoin
             bluradjust += 8;
         }
 
-        w->Paint(CPoint(x, y), org);
+        w->Paint(MakePoint(x, y), org);
 
         sw[0] = ColorConvTable::ColorCorrection(sw[0]);
         sw[2] = ColorConvTable::ColorCorrection(sw[2]);
@@ -1285,7 +1277,7 @@ CRect CLine::PaintBody(SubPicDesc& spd, CRect& clipRect, BYTE* pAlphaMask, CPoin
         sw[4] = sw[2];
         sw[5] = 0x00ffffff;
 
-        bbox |= w->Draw(spd, clipRect, pAlphaMask, x, y, sw, true, false);
+        bbox = RectUnion(bbox, w->Draw(spd, clipRect, pAlphaMask, x, y, sw, true, false));
         p.x += w->m_width;
     }
 
@@ -1323,15 +1315,15 @@ CSubtitle::~CSubtitle()
 
 void CSubtitle::Empty()
 {
-    POSITION pos = GetHeadPosition();
-    while (pos) {
-        delete GetNext(pos);
+    for (CLine* l : *this) {
+        delete l;
     }
+    clear();
 
-    pos = m_words.GetHeadPosition();
-    while (pos) {
-        delete m_words.GetNext(pos);
+    for (CWord* w : m_words) {
+        delete w;
     }
+    m_words.clear();
 
     EmptyEffects();
 
@@ -1349,20 +1341,19 @@ int CSubtitle::GetFullWidth()
 {
     int width = 0;
 
-    POSITION pos = m_words.GetHeadPosition();
-    while (pos) {
-        width += m_words.GetNext(pos)->m_width;
+    for (const CWord* w : m_words) {
+        width += w->m_width;
     }
 
     return width;
 }
 
-int CSubtitle::GetFullLineWidth(POSITION pos)
+int CSubtitle::GetFullLineWidth(std::list<CWord*>::iterator pos)
 {
     int width = 0;
 
-    while (pos) {
-        CWord* w = m_words.GetNext(pos);
+    for (; pos != m_words.end(); ++pos) {
+        CWord* w = *pos;
         if (w->m_fLineBreak) {
             break;
         }
@@ -1372,7 +1363,7 @@ int CSubtitle::GetFullLineWidth(POSITION pos)
     return width;
 }
 
-int CSubtitle::GetWrapWidth(POSITION pos, int maxwidth)
+int CSubtitle::GetWrapWidth(std::list<CWord*>::iterator pos, int maxwidth)
 {
     if (m_wrapStyle == 0 || m_wrapStyle == 3) {
         if (maxwidth > 0) {
@@ -1382,8 +1373,8 @@ int CSubtitle::GetWrapWidth(POSITION pos, int maxwidth)
 
             int width = 0, wordwidth = 0;
 
-            while (pos && width < minwidth) {
-                CWord* w = m_words.GetNext(pos);
+            while (pos != m_words.end() && width < minwidth) {
+                CWord* w = *pos++;
                 wordwidth = w->m_width;
                 if (abs(width + wordwidth) < abs(maxwidth)) {
                     width += wordwidth;
@@ -1404,17 +1395,16 @@ int CSubtitle::GetWrapWidth(POSITION pos, int maxwidth)
     return maxwidth;
 }
 
-CLine* CSubtitle::GetNextLine(POSITION& pos, int maxwidth)
+CLine* CSubtitle::GetNextLine(std::list<CWord*>::iterator& pos, int maxwidth)
 {
-    if (pos == nullptr) {
+    if (pos == m_words.end()) {
         return nullptr;
     }
 
     CLine* ret;
     try {
-        ret = DEBUG_NEW CLine();
-    } catch (CMemoryException* e) {
-        e->Delete();
+        ret = new CLine();
+    } catch (const std::bad_alloc&) {
         return nullptr;
     }
 
@@ -1424,8 +1414,8 @@ CLine* CSubtitle::GetNextLine(POSITION& pos, int maxwidth)
 
     bool fEmptyLine = true;
 
-    while (pos) {
-        CWord* w = m_words.GetNext(pos);
+    while (pos != m_words.end()) {
+        CWord* w = *pos++;
 
         if (ret->m_ascent < w->m_ascent) {
             ret->m_ascent = w->m_ascent;
@@ -1457,31 +1447,28 @@ CLine* CSubtitle::GetNextLine(POSITION& pos, int maxwidth)
         bool fWSC = w->m_fWhiteSpaceChar;
 
         int width = w->m_width;
-        POSITION pos2 = pos;
-        while (pos2) {
-            if (m_words.GetAt(pos2)->m_fWhiteSpaceChar != fWSC
-                    || m_words.GetAt(pos2)->m_fLineBreak) {
+        auto pos2 = pos;
+        while (pos2 != m_words.end()) {
+            if ((*pos2)->m_fWhiteSpaceChar != fWSC
+                    || (*pos2)->m_fLineBreak) {
                 break;
             }
 
-            CWord* w2 = m_words.GetNext(pos2);
+            CWord* w2 = *pos2++;
             width += w2->m_width;
         }
 
-        if ((ret->m_width += width) <= maxwidth || ret->IsEmpty()) {
-            ret->AddTail(w->Copy());
+        if ((ret->m_width += width) <= maxwidth || ret->empty()) {
+            ret->push_back(w->Copy());
 
             while (pos != pos2) {
-                ret->AddTail(m_words.GetNext(pos)->Copy());
+                ret->push_back((*pos++)->Copy());
             }
 
             pos = pos2;
         } else {
-            if (pos) {
-                m_words.GetPrev(pos);
-            } else {
-                pos = m_words.GetTailPosition();
-            }
+            // take the word back
+            --pos;
 
             ret->m_width -= width;
 
@@ -1494,20 +1481,19 @@ CLine* CSubtitle::GetNextLine(POSITION& pos, int maxwidth)
     return ret;
 }
 
-void CSubtitle::CreateClippers(CSize size)
+void CSubtitle::CreateClippers(SIZE size)
 {
     size.cx >>= 3;
     size.cy >>= 3;
 
-    auto createClipper = [this](const CSize & size) {
+    auto createClipper = [this](const SIZE & size) {
         ASSERT(!m_pClipper);
-        CStringW str;
-        str.Format(L"m %d %d l %d %d %d %d %d %d", 0, 0, size.cx, 0, size.cx, size.cy, 0, size.cy);
+        std::wstring str;
+        str = ::Format(L"m %d %d l %d %d %d %d %d %d", 0, 0, size.cx, 0, size.cx, size.cy, 0, size.cy);
 
         try {
-            m_pClipper = std::make_shared<CClipper>(str, size, 1.0, 1.0, false, CPoint(0, 0), m_renderingCaches);
-        } catch (CMemoryException* e) {
-            e->Delete();
+            m_pClipper = std::make_shared<CClipper>(str, size, 1.0, 1.0, false, MakePoint(0, 0), m_renderingCaches);
+        } catch (const std::bad_alloc&) {
         }
 
         return !!m_pClipper;
@@ -1526,9 +1512,9 @@ void CSubtitle::CreateClippers(CSize size)
     }
 }
 
-void CSubtitle::MakeLines(CSize size, const CRect& marginRect)
+void CSubtitle::MakeLines(SIZE size, const RECT& marginRect)
 {
-    CSize spaceNeeded(0, 0);
+    SIZE spaceNeeded = MakeSize(0, 0);
 
     bool fFirstLine = true;
 
@@ -1536,8 +1522,8 @@ void CSubtitle::MakeLines(CSize size, const CRect& marginRect)
 
     CLine* l = nullptr;
 
-    POSITION pos = m_words.GetHeadPosition();
-    while (pos) {
+    auto pos = m_words.begin();
+    while (pos != m_words.end()) {
         l = GetNextLine(pos, size.cx - marginRect.left - marginRect.right);
         if (!l) {
             break;
@@ -1551,15 +1537,15 @@ void CSubtitle::MakeLines(CSize size, const CRect& marginRect)
         spaceNeeded.cx = std::max<long>(l->m_width + l->m_borderX, spaceNeeded.cx);
         spaceNeeded.cy += l->m_ascent + l->m_descent;
 
-        AddTail(l);
+        push_back(l);
     }
 
     if (l) {
         m_bottomborder = l->m_borderY;
     }
 
-    m_rect = CRect(
-                 CPoint((m_scrAlignment % 3) == 1 ? marginRect.left
+    m_rect = MakeRect(
+                 MakePoint((m_scrAlignment % 3) == 1 ? marginRect.left
                         : (m_scrAlignment % 3) == 2 ? (marginRect.left + (size.cx - marginRect.right) - spaceNeeded.cx + 1) / 2
                         : (size.cx - marginRect.right - spaceNeeded.cx),
                         m_scrAlignment <= 3 ? (size.cy - marginRect.bottom - spaceNeeded.cy)
@@ -1572,21 +1558,18 @@ void CSubtitle::MakeLines(CSize size, const CRect& marginRect)
 
 void CScreenLayoutAllocator::Empty()
 {
-    m_subrects.RemoveAll();
+    m_subrects.clear();
 }
 
-void CScreenLayoutAllocator::AdvanceToSegment(int segment, const CAtlArray<int>& sa)
+void CScreenLayoutAllocator::AdvanceToSegment(int segment, const std::vector<int>& sa)
 {
-    POSITION pos = m_subrects.GetHeadPosition();
-    while (pos) {
-        POSITION prev = pos;
-
-        SubRect& sr = m_subrects.GetNext(pos);
+    for (auto it = m_subrects.begin(); it != m_subrects.end();) {
+        SubRect& sr = *it;
 
         bool fFound = false;
 
         if (abs(sr.segment - segment) <= 1) { // using abs() makes it possible to play the subs backwards, too :)
-            for (size_t i = 0; i < sa.GetCount() && !fFound; i++) {
+            for (size_t i = 0; i < sa.size() && !fFound; i++) {
                 if (sa[i] == sr.entry) {
                     sr.segment = segment;
                     fFound = true;
@@ -1595,24 +1578,24 @@ void CScreenLayoutAllocator::AdvanceToSegment(int segment, const CAtlArray<int>&
         }
 
         if (!fFound) {
-            m_subrects.RemoveAt(prev);
+            it = m_subrects.erase(it);
+        } else {
+            ++it;
         }
     }
 }
 
-CRect CScreenLayoutAllocator::AllocRect(const CSubtitle* s, int segment, int entry, int layer, int collisions)
+RECT CScreenLayoutAllocator::AllocRect(const CSubtitle* s, int segment, int entry, int layer, int collisions)
 {
     // TODO: handle collisions == 1 (reversed collisions)
 
-    POSITION pos = m_subrects.GetHeadPosition();
-    while (pos) {
-        SubRect& sr = m_subrects.GetNext(pos);
+    for (SubRect&sr : m_subrects) {
         if (sr.segment == segment && sr.entry == entry) {
-            return (sr.r + CRect(0, -s->m_topborder, 0, -s->m_bottomborder));
+            return RectInflate(sr.r, MakeRect(0, -s->m_topborder, 0, -s->m_bottomborder));
         }
     }
 
-    CRect r = s->m_rect + CRect(0, s->m_topborder, 0, s->m_bottomborder);
+    RECT r = RectInflate(s->m_rect, MakeRect(0, s->m_topborder, 0, s->m_bottomborder));
 
     bool fSearchDown = s->m_scrAlignment > 3;
 
@@ -1621,16 +1604,14 @@ CRect CScreenLayoutAllocator::AllocRect(const CSubtitle* s, int segment, int ent
     do {
         fOK = true;
 
-        pos = m_subrects.GetHeadPosition();
-        while (pos) {
-            SubRect& sr = m_subrects.GetNext(pos);
+        for (SubRect&sr : m_subrects) {
 
-            if (layer == sr.layer && !(r & sr.r).IsRectEmpty()) {
+            if (layer == sr.layer && !RectIsEmpty(RectIntersect(r, sr.r))) {
                 if (fSearchDown) {
-                    r.bottom = sr.r.bottom + r.Height();
+                    r.bottom = sr.r.bottom + RectHeight(r);
                     r.top = sr.r.bottom;
                 } else {
-                    r.top = sr.r.top - r.Height();
+                    r.top = sr.r.top - RectHeight(r);
                     r.bottom = sr.r.top;
                 }
 
@@ -1644,14 +1625,14 @@ CRect CScreenLayoutAllocator::AllocRect(const CSubtitle* s, int segment, int ent
     sr.segment = segment;
     sr.entry = entry;
     sr.layer = layer;
-    m_subrects.AddTail(sr);
+    m_subrects.push_back(sr);
 
-    return (sr.r + CRect(0, -s->m_topborder, 0, -s->m_bottomborder));
+    return RectInflate(sr.r, MakeRect(0, -s->m_topborder, 0, -s->m_bottomborder));
 }
 
 // CRenderedTextSubtitle
 
-CAtlMap<CStringW, SSATagCmd, CStringElementTraits<CStringW>> CRenderedTextSubtitle::s_SSATagCmds;
+std::map<std::wstring, SSATagCmd> CRenderedTextSubtitle::s_SSATagCmds;
 
 CRenderedTextSubtitle::CRenderedTextSubtitle(CCritSec* pLock)
     : CSubPicProviderImpl(pLock)
@@ -1667,10 +1648,10 @@ CRenderedTextSubtitle::CRenderedTextSubtitle(CCritSec* pLock)
     , m_polygonBaselineOffset(0)
     , m_bOverrideStyle(false)
     , m_bOverridePlacement(false)
-    , m_overridePlacement(50, 90)
+    , m_overridePlacement(MakeSize(50, 90))
     , m_webvtt_allow_clear(false)
 {
-    m_size = CSize(0, 0);
+    m_size = MakeSize(0, 0);
 
     if (g_hDC_refcnt == 0) {
         g_hDC = CreateCompatibleDC(nullptr);
@@ -1681,7 +1662,7 @@ CRenderedTextSubtitle::CRenderedTextSubtitle(CCritSec* pLock)
 
     g_hDC_refcnt++;
 
-    if (s_SSATagCmds.IsEmpty()) {
+    if (s_SSATagCmds.empty()) {
         s_SSATagCmds[L"1c"] = SSA_1c;
         s_SSATagCmds[L"2c"] = SSA_2c;
         s_SSATagCmds[L"3c"] = SSA_3c;
@@ -1753,7 +1734,7 @@ void CRenderedTextSubtitle::Copy(CSimpleTextSubtitle& sts)
 {
     __super::Copy(sts);
 
-    m_size = CSize(0, 0);
+    m_size = MakeSize(0, 0);
 
     if (CRenderedTextSubtitle* pRTS = dynamic_cast<CRenderedTextSubtitle*>(&sts)) {
         m_size = pRTS->m_size;
@@ -1772,30 +1753,26 @@ void CRenderedTextSubtitle::OnChanged()
     __super::OnChanged();
     CAutoLock cAutoLock(&renderLock);
 
-    POSITION pos = m_subtitleCache.GetStartPosition();
-    while (pos) {
-        int i;
-        CSubtitle* s;
-        m_subtitleCache.GetNextAssoc(pos, i, s);
-        delete s;
+    for (const auto& cached : m_subtitleCache) {
+        delete cached.second;
     }
 
-    m_subtitleCache.RemoveAll();
+    m_subtitleCache.clear();
 
     m_sla.Empty();
 }
 
-bool CRenderedTextSubtitle::Init(CSize size, const CRect& vidrect)
+bool CRenderedTextSubtitle::Init(SIZE size, const RECT& vidrect)
 {
-    if (!vidrect.Width()) {
+    if (!RectWidth(vidrect)) {
         return false;
     }
 
     CAutoLock cAutoLock(&renderLock);
-    CRect newVidRect = CRect(vidrect.left * 8, vidrect.top * 8, vidrect.right * 8, vidrect.bottom * 8);
-    CSize newSize = CSize(size.cx * 8, size.cy * 8);
-    if (m_size != newSize || m_vidrect != newVidRect) {
-        TRACE(_T("Change RTS sizes: %dx%d | %dx%d\n"), size.cx, size.cy, vidrect.Width(), vidrect.Height());
+    RECT newVidRect = MakeRect(vidrect.left * 8, vidrect.top * 8, vidrect.right * 8, vidrect.bottom * 8);
+    SIZE newSize = MakeSize(size.cx * 8, size.cy * 8);
+    if (m_size != newSize || !RectEqual(m_vidrect, newVidRect)) {
+        TRACE(_T("Change RTS sizes: %dx%d | %dx%d\n"), size.cx, size.cy, RectWidth(vidrect), RectHeight(vidrect));
         Deinit();
         m_size = newSize;
         m_vidrect = newVidRect;
@@ -1807,37 +1784,33 @@ bool CRenderedTextSubtitle::Init(CSize size, const CRect& vidrect)
 void CRenderedTextSubtitle::Deinit()
 {
     CAutoLock cAutoLock(&renderLock);
-    POSITION pos = m_subtitleCache.GetStartPosition();
-    while (pos) {
-        int i;
-        CSubtitle* s;
-        m_subtitleCache.GetNextAssoc(pos, i, s);
-        delete s;
+    for (const auto& cached : m_subtitleCache) {
+        delete cached.second;
     }
-    m_subtitleCache.RemoveAll();
+    m_subtitleCache.clear();
 
     m_sla.Empty();
 
-    m_size = CSize(0, 0);
-    m_vidrect.SetRectEmpty();
+    m_size = MakeSize(0, 0);
+    ::SetRectEmpty(&m_vidrect);
 }
 
-void CRenderedTextSubtitle::ParseEffect(CSubtitle* sub, CString str)
+void CRenderedTextSubtitle::ParseEffect(CSubtitle* sub, tstring str)
 {
-    str.Trim();
-    if (!sub || str.IsEmpty()) {
+    StringTrim(str);
+    if (!sub || str.empty()) {
         return;
     }
 
-    const TCHAR* s = _tcschr(str, ';');
+    const TCHAR* s = _tcschr(str.c_str(), ';');
     if (!s) {
-        s = (LPTSTR)(LPCTSTR)str;
-        s += str.GetLength() - 1;
+        s = (LPTSTR)str.c_str();
+        s += int(str.size()) - 1;
     }
     s++;
-    CString effect = str.Left(int(s - str));
+    tstring effect = StringLeft(str, int(s - str.c_str()));
 
-    if (!effect.CompareNoCase(_T("Banner;"))) {
+    if (!StringICompare(effect, _T("Banner;"))) {
         sub->m_bIsAnimated = true;
 
         int delay, lefttoright = 0, fadeawaywidth = 0;
@@ -1847,9 +1820,8 @@ void CRenderedTextSubtitle::ParseEffect(CSubtitle* sub, CString str)
 
         Effect* e;
         try {
-            e = DEBUG_NEW Effect;
-        } catch (CMemoryException* e) {
-            e->Delete();
+            e = new Effect;
+        } catch (const std::bad_alloc&) {
             return;
         }
 
@@ -1859,7 +1831,7 @@ void CRenderedTextSubtitle::ParseEffect(CSubtitle* sub, CString str)
         e->param[2] = std::lround(sub->m_total_scale_x * fadeawaywidth);
 
         sub->m_wrapStyle = 2;
-    } else if (!effect.CompareNoCase(_T("Scroll up;")) || !effect.CompareNoCase(_T("Scroll down;"))) {
+    } else if (!StringICompare(effect, _T("Scroll up;")) || !StringICompare(effect, _T("Scroll down;"))) {
         sub->m_bIsAnimated = true;
 
         int top, bottom, delay, fadeawayheight = 0;
@@ -1875,9 +1847,8 @@ void CRenderedTextSubtitle::ParseEffect(CSubtitle* sub, CString str)
 
         Effect* e;
         try {
-            e = DEBUG_NEW Effect;
-        } catch (CMemoryException* e) {
-            e->Delete();
+            e = new Effect;
+        } catch (const std::bad_alloc&) {
             return;
         }
 
@@ -1885,23 +1856,23 @@ void CRenderedTextSubtitle::ParseEffect(CSubtitle* sub, CString str)
         e->param[0] = std::lround(sub->m_total_scale_y * top * 8.0);
         e->param[1] = std::lround(sub->m_total_scale_y * bottom * 8.0);
         e->param[2] = (int)(std::max(double(delay) / sub->m_total_scale_y, 1.0));
-        e->param[3] = (effect.GetLength() == 12);
+        e->param[3] = (int(effect.size()) == 12);
         e->param[4] = std::lround(sub->m_total_scale_y * fadeawayheight);
     }
 }
 
-void CRenderedTextSubtitle::ParseString(CSubtitle* sub, CStringW str, STSStyle& style)
+void CRenderedTextSubtitle::ParseString(CSubtitle* sub, std::wstring str, STSStyle& style)
 {
     if (!sub) {
         return;
     }
 
-    str.Replace(L"<br>", L"\n");
-    str.Replace(L"\\N", L"\n");
-    str.Replace(L"\\n", (sub->m_wrapStyle < 2 || sub->m_wrapStyle == 3) ? L" " : L"\n");
-    str.Replace(L"\\h", L"\x00A0"); // no-break space
+    StringReplace(str, L"<br>", L"\n");
+    StringReplace(str, L"\\N", L"\n");
+    StringReplace(str, L"\\n", (sub->m_wrapStyle < 2 || sub->m_wrapStyle == 3) ? L" " : L"\n");
+    StringReplace(str, L"\\h", L"\x00A0"); // no-break space
 
-    for (int i = 0, j = 0, len = str.GetLength(); j <= len; j++) {
+    for (int i = 0, j = 0, len = int(str.size()); j <= len; j++) {
         WCHAR c = str[j];
 
         if (c != L'\n' && c != L' ' && c != 0) {
@@ -1909,20 +1880,20 @@ void CRenderedTextSubtitle::ParseString(CSubtitle* sub, CStringW str, STSStyle& 
         }
 
         if (i < j) {
-            if (CWord* w = DEBUG_NEW CText(style, str.Mid(i, j - i), m_ktype, m_kstart, m_kend, sub->m_target_scale_x, sub->m_target_scale_y, m_renderingCaches)) {
-                sub->m_words.AddTail(w);
+            if (CWord* w = new CText(style, StringMid(str, i, j - i), m_ktype, m_kstart, m_kend, sub->m_target_scale_x, sub->m_target_scale_y, m_renderingCaches)) {
+                sub->m_words.push_back(w);
                 m_kstart = m_kend;
             }
         }
 
         if (c == L'\n') {
-            if (CWord* w = DEBUG_NEW CText(style, CStringW(), m_ktype, m_kstart, m_kend, sub->m_target_scale_x, sub->m_target_scale_y, m_renderingCaches)) {
-                sub->m_words.AddTail(w);
+            if (CWord* w = new CText(style, std::wstring(), m_ktype, m_kstart, m_kend, sub->m_target_scale_x, sub->m_target_scale_y, m_renderingCaches)) {
+                sub->m_words.push_back(w);
                 m_kstart = m_kend;
             }
         } else if (c == L' ') {
-            if (CWord* w = DEBUG_NEW CText(style, CStringW(c), m_ktype, m_kstart, m_kend, sub->m_target_scale_x, sub->m_target_scale_y, m_renderingCaches)) {
-                sub->m_words.AddTail(w);
+            if (CWord* w = new CText(style, std::wstring(1, c), m_ktype, m_kstart, m_kend, sub->m_target_scale_x, sub->m_target_scale_y, m_renderingCaches)) {
+                sub->m_words.push_back(w);
                 m_kstart = m_kend;
             }
         }
@@ -1933,23 +1904,23 @@ void CRenderedTextSubtitle::ParseString(CSubtitle* sub, CStringW str, STSStyle& 
     return;
 }
 
-void CRenderedTextSubtitle::ParsePolygon(CSubtitle* sub, CStringW str, STSStyle& style)
+void CRenderedTextSubtitle::ParsePolygon(CSubtitle* sub, std::wstring str, STSStyle& style)
 {
-    if (!sub || !str.GetLength() || !m_nPolygon) {
+    if (!sub || !int(str.size()) || !m_nPolygon) {
         return;
     }
 
     int s = 1 << (m_nPolygon - 1);
-    if (CWord* w = DEBUG_NEW CPolygon(style, str, m_ktype, m_kstart, m_kend,
+    if (CWord* w = new CPolygon(style, str, m_ktype, m_kstart, m_kend,
                                       sub->m_total_scale_x / s, sub->m_total_scale_y / s,
                                       m_polygonBaselineOffset,
                                       m_renderingCaches)) {
-        sub->m_words.AddTail(w);
+        sub->m_words.push_back(w);
         m_kstart = m_kend;
     }
 }
 
-bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& str)
+bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const std::wstring& str)
 {
     if (m_renderingCaches.SSATagsCache.Lookup(str, tagsList)) {
         //TRACE(_T("ParseSSATag (cached): %s\n"), str.GetString());
@@ -1958,17 +1929,17 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
     //TRACE(_T("ParseSSATag: %s\n"), str.GetString());
 
     int nTags = 0, nUnrecognizedTags = 0;
-    tagsList.reset(DEBUG_NEW CAtlList<SSATag>());
+    tagsList.reset(new std::list<SSATag>());
 
-    for (int i = 0, j; (j = str.Find(L'\\', i)) >= 0; i = j) {
+    for (int i = 0, j; (j = StringFind(str, L'\\', i)) >= 0; i = j) {
         int jOld;
         // find the end of the current tag or the start of its parameters
         for (jOld = ++j; str[j] && str[j] != L'(' && str[j] != L'\\'; ++j) {
             ;
         }
-        CStringW cmd = str.Mid(jOld, j - jOld);
+        std::wstring cmd = StringMid(str, jOld, j - jOld);
         FastTrim(cmd);
-        if (cmd.IsEmpty()) {
+        if (cmd.empty()) {
             continue;
         }
 
@@ -1976,8 +1947,8 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
 
         SSATag tag;
         tag.cmd = SSA_unknown;
-        for (int cmdLength = std::min(SSA_CMD_MAX_LENGTH, cmd.GetLength()), cmdLengthMin = SSA_CMD_MIN_LENGTH; cmdLength >= cmdLengthMin; cmdLength--) {
-            if (s_SSATagCmds.Lookup(cmd.Left(cmdLength), tag.cmd)) {
+        for (int cmdLength = std::min(SSA_CMD_MAX_LENGTH, int(cmd.size())), cmdLengthMin = SSA_CMD_MIN_LENGTH; cmdLength >= cmdLengthMin; cmdLength--) {
+            if (Lookup(s_SSATagCmds, StringLeft(cmd, cmdLength), tag.cmd)) {
                 break;
             }
         }
@@ -2000,24 +1971,24 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
                     break;
                 }
             }
-            CStringW param = str.Mid(jOld, j - jOld);
+            std::wstring param = StringMid(str, jOld, j - jOld);
             FastTrim(param);
 
-            while (!param.IsEmpty()) {
-                int k = param.Find(L','), l = param.Find(L'\\');
+            while (!param.empty()) {
+                int k = StringFind(param, L','), l = StringFind(param, L'\\');
 
                 if (k >= 0 && (l < 0 || k < l)) {
-                    CStringW s = param.Left(k).Trim();
-                    if (!s.IsEmpty()) {
-                        tag.params.Add(s);
+                    std::wstring s = StringTrim(StringLeft(param, k));
+                    if (!s.empty()) {
+                        tag.params.push_back(s);
                     }
-                    param = k + 1 < param.GetLength() ? param.Mid(k + 1).GetString() : L"";
+                    param = k + 1 < int(param.size()) ? StringMid(param, k + 1).c_str() : L"";
                 } else {
                     FastTrim(param);
-                    if (!param.IsEmpty()) {
-                        tag.params.Add(param);
+                    if (!param.empty()) {
+                        tag.params.push_back(param);
                     }
-                    param.Empty();
+                    param.clear();
                 }
             }
         }
@@ -2031,13 +2002,13 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
             case SSA_2a:
             case SSA_3a:
             case SSA_4a:
-                if (cmd.GetLength() > 2) {
-                    tag.paramsInt.Add(wcstol(cmd.Mid(2).Trim(L"&H"), nullptr, 16));
+                if (int(cmd.size()) > 2) {
+                    tag.paramsInt.push_back(ParseHexTag(StringMid(cmd, 2)));
                 }
                 break;
             case SSA_alpha:
-                if (cmd.GetLength() > 5) {
-                    tag.paramsInt.Add(wcstol(cmd.Mid(5).Trim(L"&H"), nullptr, 16));
+                if (int(cmd.size()) > 5) {
+                    tag.paramsInt.push_back(ParseHexTag(StringMid(cmd, 5)));
                 }
                 break;
             case SSA_an:
@@ -2046,25 +2017,25 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
             case SSA_kt:
             case SSA_kf:
             case SSA_ko:
-                if (cmd.GetLength() > 2) {
-                    tag.paramsInt.Add(wcstol(cmd.Mid(2), nullptr, 10));
+                if (int(cmd.size()) > 2) {
+                    tag.paramsInt.push_back(wcstol(StringMid(cmd, 2).c_str(), nullptr, 10));
                 }
                 break;
             case SSA_fn:
-                tag.params.Add(cmd.Mid(2));
+                tag.params.push_back(StringMid(cmd, 2));
                 break;
             case SSA_fr:
-                if (cmd.GetLength() > 2) {
-                    tag.paramsReal.Add(wcstod(cmd.Mid(2), nullptr));
+                if (int(cmd.size()) > 2) {
+                    tag.paramsReal.push_back(wcstod(StringMid(cmd, 2).c_str(), nullptr));
                 }
                 break;
             case SSA_fs:
-                if (cmd.GetLength() > 2) {
+                if (int(cmd.size()) > 2) {
                     int s = 2;
                     if (cmd[s] == L'+' || cmd[s] == L'-') {
-                        tag.params.Add(cmd.Mid(s, 1));
+                        tag.params.push_back(StringMid(cmd, s, 1));
                     }
-                    tag.paramsInt.Add(wcstol(cmd.Mid(s), nullptr, 10));
+                    tag.paramsInt.push_back(wcstol(StringMid(cmd, s).c_str(), nullptr, 10));
                 }
                 break;
             case SSA_a:
@@ -2076,73 +2047,73 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
             case SSA_q:
             case SSA_s:
             case SSA_u:
-                if (cmd.GetLength() > 1) {
-                    tag.paramsInt.Add(wcstol(cmd.Mid(1), nullptr, 10));
+                if (int(cmd.size()) > 1) {
+                    tag.paramsInt.push_back(wcstol(StringMid(cmd, 1).c_str(), nullptr, 10));
                 }
                 break;
             case SSA_r:
-                tag.params.Add(cmd.Mid(1));
+                tag.params.push_back(StringMid(cmd, 1));
                 break;
             case SSA_blur:
             case SSA_bord:
             case SSA_fscx:
             case SSA_fscy:
             case SSA_shad:
-                if (cmd.GetLength() > 4) {
-                    tag.paramsReal.Add(wcstod(cmd.Mid(4), nullptr));
+                if (int(cmd.size()) > 4) {
+                    tag.paramsReal.push_back(wcstod(StringMid(cmd, 4).c_str(), nullptr));
                 }
                 break;
             case SSA_clip:
             case SSA_iclip: {
-                size_t nParams = tag.params.GetCount();
+                size_t nParams = tag.params.size();
                 if (nParams == 2) {
-                    tag.paramsInt.Add(wcstol(tag.params[0], nullptr, 10));
-                    tag.params.RemoveAt(0);
+                    tag.paramsInt.push_back(wcstol(tag.params[0].c_str(), nullptr, 10));
+                    tag.params.erase(tag.params.begin() + 0);
                 } else if (nParams == 4) {
                     for (size_t n = 0; n < nParams; n++) {
-                        tag.paramsInt.Add(wcstol(tag.params[n], nullptr, 10));
+                        tag.paramsInt.push_back(wcstol(tag.params[n].c_str(), nullptr, 10));
                     }
-                    tag.params.RemoveAll();
+                    tag.params.clear();
                 }
             }
             break;
             case SSA_fade: {
-                size_t nParams = tag.params.GetCount();
+                size_t nParams = tag.params.size();
                 if (nParams == 7 || nParams == 2) {
                     for (size_t n = 0; n < nParams; n++) {
-                        tag.paramsInt.Add(wcstol(tag.params[n], nullptr, 10));
+                        tag.paramsInt.push_back(wcstol(tag.params[n].c_str(), nullptr, 10));
                     }
-                    tag.params.RemoveAll();
+                    tag.params.clear();
                 }
             }
             break;
             case SSA_move: {
-                size_t nParams = tag.params.GetCount();
+                size_t nParams = tag.params.size();
                 if (nParams == 4 || nParams == 6) {
                     for (size_t n = 0; n < 4; n++) {
-                        tag.paramsReal.Add(wcstod(tag.params[n], nullptr));
+                        tag.paramsReal.push_back(wcstod(tag.params[n].c_str(), nullptr));
                     }
                     for (size_t n = 4; n < nParams; n++) {
-                        tag.paramsInt.Add(wcstol(tag.params[n], nullptr, 10));
+                        tag.paramsInt.push_back(wcstol(tag.params[n].c_str(), nullptr, 10));
                     }
-                    tag.params.RemoveAll();
+                    tag.params.clear();
                 }
             }
             break;
             case SSA_org:
             case SSA_pos: {
-                size_t nParams = tag.params.GetCount();
+                size_t nParams = tag.params.size();
                 if (nParams == 2) {
                     for (size_t n = 0; n < nParams; n++) {
-                        tag.paramsReal.Add(wcstod(tag.params[n], nullptr));
+                        tag.paramsReal.push_back(wcstod(tag.params[n].c_str(), nullptr));
                     }
-                    tag.params.RemoveAll();
+                    tag.params.clear();
                 }
             }
             break;
             case SSA_c:
-                if (cmd.GetLength() > 1) {
-                    tag.paramsInt.Add(wcstol(cmd.Mid(1).Trim(L"&H"), nullptr, 16));
+                if (int(cmd.size()) > 1) {
+                    tag.paramsInt.push_back(ParseHexTag(StringMid(cmd, 1)));
                 }
                 break;
             case SSA_frx:
@@ -2152,45 +2123,45 @@ bool CRenderedTextSubtitle::ParseSSATag(SSATagsList& tagsList, const CStringW& s
             case SSA_fay:
             case SSA_fsc:
             case SSA_fsp:
-                if (cmd.GetLength() > 3) {
-                    tag.paramsReal.Add(wcstod(cmd.Mid(3), nullptr));
+                if (int(cmd.size()) > 3) {
+                    tag.paramsReal.push_back(wcstod(StringMid(cmd, 3).c_str(), nullptr));
                 }
                 break;
             case SSA_pbo:
-                if (cmd.GetLength() > 3) {
-                    tag.paramsInt.Add(wcstol(cmd.Mid(3), nullptr, 10));
+                if (int(cmd.size()) > 3) {
+                    tag.paramsInt.push_back(wcstol(StringMid(cmd, 3).c_str(), nullptr, 10));
                 }
                 break;
             case SSA_t: {
-                size_t nParams = tag.params.GetCount();
+                size_t nParams = tag.params.size();
                 if (nParams >= 1 && nParams <= 4) {
                     if (nParams == 2) {
-                        tag.paramsReal.Add(wcstod(tag.params[0], nullptr));
+                        tag.paramsReal.push_back(wcstod(tag.params[0].c_str(), nullptr));
                     } else if (nParams == 3) {
-                        tag.paramsReal.Add(wcstod(tag.params[0], nullptr));
-                        tag.paramsReal.Add(wcstod(tag.params[1], nullptr));
+                        tag.paramsReal.push_back(wcstod(tag.params[0].c_str(), nullptr));
+                        tag.paramsReal.push_back(wcstod(tag.params[1].c_str(), nullptr));
                     } else if (nParams == 4) {
-                        tag.paramsInt.Add(wcstol(tag.params[0], nullptr, 10));
-                        tag.paramsInt.Add(wcstol(tag.params[1], nullptr, 10));
-                        tag.paramsReal.Add(wcstod(tag.params[2], nullptr));
+                        tag.paramsInt.push_back(wcstol(tag.params[0].c_str(), nullptr, 10));
+                        tag.paramsInt.push_back(wcstol(tag.params[1].c_str(), nullptr, 10));
+                        tag.paramsReal.push_back(wcstod(tag.params[2].c_str(), nullptr));
                     }
 
                     ParseSSATag(tag.subTagsList, tag.params[nParams - 1]);
                 }
-                tag.params.RemoveAll();
+                tag.params.clear();
             }
             break;
             case SSA_xbord:
             case SSA_xshad:
             case SSA_ybord:
             case SSA_yshad:
-                if (cmd.GetLength() > 5) {
-                    tag.paramsReal.Add(wcstod(cmd.Mid(5), nullptr));
+                if (int(cmd.size()) > 5) {
+                    tag.paramsReal.push_back(wcstod(StringMid(cmd, 5).c_str(), nullptr));
                 }
                 break;
         }
 
-        tagsList->AddTail(tag);
+        tagsList->push_back(tag);
     }
 
     m_renderingCaches.SSATagsCache.SetAt(str, tagsList);
@@ -2206,9 +2177,7 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
         return false;
     }
 
-    POSITION pos = tagsList->GetHeadPosition();
-    while (pos) {
-        const SSATag& tag = tagsList->GetNext(pos);
+    for (const SSATag& tag : *tagsList) {
 
         // TODO: call ParseStyleModifier(cmd, params, ..) and move the rest there
 
@@ -2219,7 +2188,7 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
             case SSA_4c: {
                 int k = tag.cmd - SSA_1c;
 
-                if (!tag.paramsInt.IsEmpty()) {
+                if (!tag.paramsInt.empty()) {
                     DWORD c = tag.paramsInt[0];
                     style.colors[k] = (((int)CalcAnimation(c & 0xff, style.colors[k] & 0xff, fAnimate)) & 0xff
                                        | ((int)CalcAnimation(c & 0xff00, style.colors[k] & 0xff00, fAnimate)) & 0xff00
@@ -2235,34 +2204,34 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
             case SSA_4a: {
                 int k = tag.cmd - SSA_1a;
 
-                style.alpha[k] = !tag.paramsInt.IsEmpty()
+                style.alpha[k] = !tag.paramsInt.empty()
                                  ? (BYTE)CalcAnimation(tag.paramsInt[0] & 0xff, style.alpha[k], fAnimate)
                                  : org.alpha[k];
             }
             break;
             case SSA_alpha:
                 for (ptrdiff_t k = 0; k < 4; k++) {
-                    style.alpha[k] = !tag.paramsInt.IsEmpty()
+                    style.alpha[k] = !tag.paramsInt.empty()
                                      ? (BYTE)CalcAnimation(tag.paramsInt[0] & 0xff, style.alpha[k], fAnimate)
                                      : org.alpha[k];
                 }
                 break;
             case SSA_an: {
-                int n = !tag.paramsInt.IsEmpty() ? tag.paramsInt[0] : 0;
+                int n = !tag.paramsInt.empty() ? tag.paramsInt[0] : 0;
                 if (sub->m_scrAlignment < 0) {
                     sub->m_scrAlignment = (n > 0 && n < 10) ? n : org.scrAlignment;
                 }
             }
             break;
             case SSA_a: {
-                int n = !tag.paramsInt.IsEmpty() ? tag.paramsInt[0] : 0;
+                int n = !tag.paramsInt.empty() ? tag.paramsInt[0] : 0;
                 if (sub->m_scrAlignment < 0) {
                     sub->m_scrAlignment = (n > 0 && n < 12) ? ((((n - 1) & 3) + 1) + ((n & 4) ? 6 : 0) + ((n & 8) ? 3 : 0)) : org.scrAlignment;
                 }
             }
             break;
             case SSA_blur:
-                if (!tag.paramsReal.IsEmpty()) {
+                if (!tag.paramsReal.empty()) {
                     double n = CalcAnimation(tag.paramsReal[0], style.fGaussianBlur, fAnimate);
                     style.fGaussianBlur = (n < 0 ? 0 : n * sub->m_target_scale_y);
                 } else {
@@ -2270,7 +2239,7 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
                 }
                 break;
             case SSA_bord:
-                if (!tag.paramsReal.IsEmpty()) {
+                if (!tag.paramsReal.empty()) {
                     double nx = CalcAnimation(tag.paramsReal[0], style.outlineWidthX, fAnimate);
                     style.outlineWidthX = (nx < 0 ? 0 : nx);
                     double ny = CalcAnimation(tag.paramsReal[0], style.outlineWidthY, fAnimate);
@@ -2281,24 +2250,24 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
                 }
                 break;
             case SSA_be:
-                style.fBlur = !tag.paramsInt.IsEmpty()
+                style.fBlur = !tag.paramsInt.empty()
                               ? (int)(CalcAnimation(tag.paramsInt[0], style.fBlur, fAnimate) + 0.5)
                               : org.fBlur;
                 break;
             case SSA_b: {
-                int n = !tag.paramsInt.IsEmpty() ? tag.paramsInt[0] : -1;
+                int n = !tag.paramsInt.empty() ? tag.paramsInt[0] : -1;
                 style.fontWeight = (n == 0 ? FW_NORMAL : n == 1 ? FW_BOLD : n >= 100 ? n : org.fontWeight);
             }
             break;
             case SSA_clip:
             case SSA_iclip: {
                 bool invert = (tag.cmd == SSA_iclip);
-                size_t nParams = tag.params.GetCount();
-                size_t nParamsInt = tag.paramsInt.GetCount();
+                size_t nParams = tag.params.size();
+                size_t nParamsInt = tag.paramsInt.size();
 
                 if (nParams == 1 && nParamsInt == 0 && !sub->m_pClipper) {
-                    sub->m_pClipper = std::make_shared<CClipper>(tag.params[0], CSize(m_size.cx >> 3, m_size.cy >> 3), sub->m_total_scale_x, sub->m_total_scale_y,
-                                                                 invert, (sub->m_relativeTo == STSStyle::VIDEO) ? CPoint(m_vidrect.left, m_vidrect.top) : CPoint(0, 0),
+                    sub->m_pClipper = std::make_shared<CClipper>(tag.params[0], MakeSize(m_size.cx >> 3, m_size.cy >> 3), sub->m_total_scale_x, sub->m_total_scale_y,
+                                                                 invert, (sub->m_relativeTo == STSStyle::VIDEO) ? MakePoint(m_vidrect.left, m_vidrect.top) : MakePoint(0, 0),
                                                                  m_renderingCaches);
                 } else if (nParams == 1 && nParamsInt == 1 && !sub->m_pClipper) {
                     long scale = tag.paramsInt[0];
@@ -2306,9 +2275,9 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
                         scale = 1;
                     }
                     long scalediv = (1 << (scale - 1));
-                    sub->m_pClipper = std::make_shared<CClipper>(tag.params[0], CSize(m_size.cx >> 3, m_size.cy >> 3),
+                    sub->m_pClipper = std::make_shared<CClipper>(tag.params[0], MakeSize(m_size.cx >> 3, m_size.cy >> 3),
                                                                  sub->m_total_scale_x / scalediv, sub->m_total_scale_y / scalediv, invert,
-                                                                 (sub->m_relativeTo == STSStyle::VIDEO) ? CPoint(m_vidrect.left, m_vidrect.top) : CPoint(0, 0),
+                                                                 (sub->m_relativeTo == STSStyle::VIDEO) ? MakePoint(m_vidrect.left, m_vidrect.top) : MakePoint(0, 0),
                                                                  m_renderingCaches);
                 } else if (nParamsInt == 4) {
                     sub->m_clipInverse = invert;
@@ -2327,7 +2296,7 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
                         dBottom += dOffsetY;
                     }
 
-                    sub->m_clip.SetRect(
+                    ::SetRect(&sub->m_clip, 
                         static_cast<int>(CalcAnimation(dLeft, sub->m_clip.left, fAnimate)),
                         static_cast<int>(CalcAnimation(dTop, sub->m_clip.top, fAnimate)),
                         static_cast<int>(CalcAnimation(dRight, sub->m_clip.right, fAnimate)),
@@ -2336,7 +2305,7 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
             }
             break;
             case SSA_c:
-                if (!tag.paramsInt.IsEmpty()) {
+                if (!tag.paramsInt.empty()) {
                     DWORD c = tag.paramsInt[0];
                     style.colors[0] = (((int)CalcAnimation(c & 0xff, style.colors[0] & 0xff, fAnimate)) & 0xff
                                        | ((int)CalcAnimation(c & 0xff00, style.colors[0] & 0xff00, fAnimate)) & 0xff00
@@ -2348,8 +2317,8 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
             case SSA_fade: {
                 sub->m_bIsAnimated = true;
 
-                if (tag.paramsInt.GetCount() == 7 && !sub->m_effects[EF_FADE]) { // {\fade(a1=param[0], a2=param[1], a3=param[2], t1=t[0], t2=t[1], t3=t[2], t4=t[3])
-                    if (Effect* e = DEBUG_NEW Effect) {
+                if (tag.paramsInt.size() == 7 && !sub->m_effects[EF_FADE]) { // {\fade(a1=param[0], a2=param[1], a3=param[2], t1=t[0], t2=t[1], t3=t[2], t4=t[3])
+                    if (Effect* e = new Effect) {
                         for (size_t k = 0; k < 3; k++) {
                             e->param[k] = tag.paramsInt[k];
                         }
@@ -2359,8 +2328,8 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
 
                         sub->m_effects[EF_FADE] = e;
                     }
-                } else if (tag.paramsInt.GetCount() == 2 && !sub->m_effects[EF_FADE]) { // {\fad(t1=t[1], t2=t[2])
-                    if (Effect* e = DEBUG_NEW Effect) {
+                } else if (tag.paramsInt.size() == 2 && !sub->m_effects[EF_FADE]) { // {\fad(t1=t[1], t2=t[2])
+                    if (Effect* e = new Effect) {
                         e->param[0] = e->param[2] = 0xff;
                         e->param[1] = 0x00;
                         for (size_t k = 1; k < 3; k++) {
@@ -2374,23 +2343,23 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
             }
             break;
             case SSA_fax:
-                style.fontShiftX = !tag.paramsReal.IsEmpty()
+                style.fontShiftX = !tag.paramsReal.empty()
                                    ? CalcAnimation(tag.paramsReal[0], style.fontShiftX, fAnimate)
                                    : org.fontShiftX;
                 break;
             case SSA_fay:
-                style.fontShiftY = !tag.paramsReal.IsEmpty()
+                style.fontShiftY = !tag.paramsReal.empty()
                                    ? CalcAnimation(tag.paramsReal[0], style.fontShiftY, fAnimate)
                                    : org.fontShiftY;
                 break;
             case SSA_fe:
-                style.charSet = !tag.paramsInt.IsEmpty()
+                style.charSet = !tag.paramsInt.empty()
                                 ? tag.paramsInt[0]
                                 : org.charSet;
                 break;
             case SSA_fn:
-                style.fontName = (!tag.params.IsEmpty() && !tag.params[0].IsEmpty() && tag.params[0] != L"0")
-                                 ? CString(tag.params[0]).Trim()
+                style.fontName = (!tag.params.empty() && !tag.params[0].empty() && tag.params[0] != L"0")
+                                 ? StringTrim(tstring(tag.params[0]))
                                  : org.fontName;
                 if (style.fontName == _T("splatter")) {
                     /* workaround for slow rendering with this font
@@ -2400,23 +2369,23 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
                 }
                 break;
             case SSA_frx:
-                style.fontAngleX = !tag.paramsReal.IsEmpty()
+                style.fontAngleX = !tag.paramsReal.empty()
                                    ? CalcAnimation(tag.paramsReal[0], style.fontAngleX, fAnimate)
                                    : org.fontAngleX;
                 break;
             case SSA_fry:
-                style.fontAngleY = !tag.paramsReal.IsEmpty()
+                style.fontAngleY = !tag.paramsReal.empty()
                                    ? CalcAnimation(tag.paramsReal[0], style.fontAngleY, fAnimate)
                                    : org.fontAngleY;
                 break;
             case SSA_frz:
             case SSA_fr:
-                style.fontAngleZ = !tag.paramsReal.IsEmpty()
+                style.fontAngleZ = !tag.paramsReal.empty()
                                    ? CalcAnimation(tag.paramsReal[0], style.fontAngleZ, fAnimate)
                                    : org.fontAngleZ;
                 break;
             case SSA_fscx:
-                if (!tag.paramsReal.IsEmpty()) {
+                if (!tag.paramsReal.empty()) {
                     double n = CalcAnimation(tag.paramsReal[0], style.fontScaleX, fAnimate);
                     style.fontScaleX = (n < 0 ? 0 : n);
                 } else {
@@ -2424,7 +2393,7 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
                 }
                 break;
             case SSA_fscy:
-                if (!tag.paramsReal.IsEmpty()) {
+                if (!tag.paramsReal.empty()) {
                     double n = CalcAnimation(tag.paramsReal[0], style.fontScaleY, fAnimate);
                     style.fontScaleY = (n < 0 ? 0 : n);
                 } else {
@@ -2436,13 +2405,13 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
                 style.fontScaleY = org.fontScaleY;
                 break;
             case SSA_fsp:
-                style.fontSpacing = !tag.paramsReal.IsEmpty()
+                style.fontSpacing = !tag.paramsReal.empty()
                                     ? CalcAnimation(tag.paramsReal[0], style.fontSpacing, fAnimate)
                                     : org.fontSpacing;
                 break;
             case SSA_fs:
-                if (!tag.paramsInt.IsEmpty()) {
-                    if (!tag.params.IsEmpty() && (tag.params[0][0] == L'-' || tag.params[0][0] == L'+')) {
+                if (!tag.paramsInt.empty()) {
+                    if (!tag.params.empty() && (tag.params[0][0] == L'-' || tag.params[0][0] == L'+')) {
                         double n = CalcAnimation(style.fontSize + style.fontSize * tag.paramsInt[0] / 10, style.fontSize, fAnimate);
                         style.fontSize = (n > 0) ? n : org.fontSize;
                     } else {
@@ -2454,14 +2423,14 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
                 }
                 break;
             case SSA_i: {
-                int n = !tag.paramsInt.IsEmpty() ? tag.paramsInt[0] : -1;
+                int n = !tag.paramsInt.empty() ? tag.paramsInt[0] : -1;
                 style.fItalic = (n == 0 ? false : n == 1 ? true : org.fItalic);
             }
             break;
             case SSA_kt:
                 sub->m_bIsAnimated = true;
 
-                m_kstart = !tag.paramsInt.IsEmpty()
+                m_kstart = !tag.paramsInt.empty()
                            ? tag.paramsInt[0] * 10
                            : 0;
                 m_kend = m_kstart;
@@ -2472,7 +2441,7 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
 
                 m_ktype = 1;
                 m_kstart = m_kend;
-                m_kend += !tag.paramsInt.IsEmpty()
+                m_kend += !tag.paramsInt.empty()
                           ? tag.paramsInt[0] * 10
                           : 1000;
                 break;
@@ -2481,7 +2450,7 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
 
                 m_ktype = 2;
                 m_kstart = m_kend;
-                m_kend += !tag.paramsInt.IsEmpty()
+                m_kend += !tag.paramsInt.empty()
                           ? tag.paramsInt[0] * 10
                           : 1000;
                 break;
@@ -2490,22 +2459,22 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
 
                 m_ktype = 0;
                 m_kstart = m_kend;
-                m_kend += !tag.paramsInt.IsEmpty()
+                m_kend += !tag.paramsInt.empty()
                           ? tag.paramsInt[0] * 10
                           : 1000;
                 break;
             case SSA_move: // {\move(x1=param[0], y1=param[1], x2=param[2], y2=param[3][, t1=t[0], t2=t[1]])}
                 sub->m_bIsAnimated = true;
 
-                if (tag.paramsReal.GetCount() == 4 && !sub->m_effects[EF_MOVE]) {
-                    if (Effect* e = DEBUG_NEW Effect) {
+                if (tag.paramsReal.size() == 4 && !sub->m_effects[EF_MOVE]) {
+                    if (Effect* e = new Effect) {
                         e->param[0] = std::lround(sub->m_total_scale_x * tag.paramsReal[0] * 8.0);
                         e->param[1] = std::lround(sub->m_total_scale_y * tag.paramsReal[1] * 8.0);
                         e->param[2] = std::lround(sub->m_total_scale_x * tag.paramsReal[2] * 8.0);
                         e->param[3] = std::lround(sub->m_total_scale_y * tag.paramsReal[3] * 8.0);
                         e->t[0] = e->t[1] = -1;
 
-                        if (tag.paramsInt.GetCount() == 2) {
+                        if (tag.paramsInt.size() == 2) {
                             for (size_t k = 0; k < 2; k++) {
                                 e->t[k] = tag.paramsInt[k];
                             }
@@ -2516,8 +2485,8 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
                 }
                 break;
             case SSA_org: // {\org(x=param[0], y=param[1])}
-                if (tag.paramsReal.GetCount() == 2 && !sub->m_effects[EF_ORG]) {
-                    if (Effect* e = DEBUG_NEW Effect) {
+                if (tag.paramsReal.size() == 2 && !sub->m_effects[EF_ORG]) {
+                    if (Effect* e = new Effect) {
                         e->param[0] = std::lround(sub->m_total_scale_x * tag.paramsReal[0] * 8.0);
                         e->param[1] = std::lround(sub->m_total_scale_y * tag.paramsReal[1] * 8.0);
 
@@ -2531,11 +2500,11 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
                 }
                 break;
             case SSA_pbo:
-                m_polygonBaselineOffset = !tag.paramsInt.IsEmpty() ? tag.paramsInt[0] : 0;
+                m_polygonBaselineOffset = !tag.paramsInt.empty() ? tag.paramsInt[0] : 0;
                 break;
             case SSA_pos:
-                if (tag.paramsReal.GetCount() == 2 && !sub->m_effects[EF_MOVE]) {
-                    if (Effect* e = DEBUG_NEW Effect) {
+                if (tag.paramsReal.size() == 2 && !sub->m_effects[EF_MOVE]) {
+                    if (Effect* e = new Effect) {
                         e->param[0] = e->param[2] = std::lround(sub->m_total_scale_x * tag.paramsReal[0] * 8.0);
                         e->param[1] = e->param[3] = std::lround(sub->m_total_scale_y * tag.paramsReal[1] * 8.0);
                         e->t[0] = e->t[1] = 0;
@@ -2545,24 +2514,24 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
                 }
                 break;
             case SSA_p: {
-                int n = !tag.paramsInt.IsEmpty() ? tag.paramsInt[0] : 0;
+                int n = !tag.paramsInt.empty() ? tag.paramsInt[0] : 0;
                 m_nPolygon = (n <= 0 ? 0 : n);
             }
             break;
             case SSA_q: {
-                int n = !tag.paramsInt.IsEmpty() ? tag.paramsInt[0] : -1;
+                int n = !tag.paramsInt.empty() ? tag.paramsInt[0] : -1;
                 sub->m_wrapStyle = (0 <= n && n <= 3)
                                    ? n
                                    : m_defaultWrapStyle;
             }
             break;
             case SSA_r:
-                if (tag.params[0].IsEmpty() || !GetStyle(tag.params[0], style)) {
+                if (tag.params[0].empty() || !GetStyle(tag.params[0], style)) {
                     style = org;
                 }
                 break;
             case SSA_shad:
-                if (!tag.paramsReal.IsEmpty()) {
+                if (!tag.paramsReal.empty()) {
                     double nx = CalcAnimation(tag.paramsReal[0], style.shadowDepthX, fAnimate);
                     style.shadowDepthX = (nx < 0 ? 0 : nx);
                     double ny = CalcAnimation(tag.paramsReal[0], style.shadowDepthY, fAnimate);
@@ -2573,7 +2542,7 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
                 }
                 break;
             case SSA_s: {
-                int n = !tag.paramsInt.IsEmpty() ? tag.paramsInt[0] : -1;
+                int n = !tag.paramsInt.empty() ? tag.paramsInt[0] : -1;
                 style.fStrikeOut = (n == 0 ? false : n == 1 ? true : org.fStrikeOut);
             }
             break;
@@ -2584,7 +2553,7 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
                     m_animStart = m_animEnd = 0;
                     m_animAccel = 1;
 
-                    size_t nParams = tag.paramsInt.GetCount() + tag.paramsReal.GetCount();
+                    size_t nParams = tag.paramsInt.size() + tag.paramsReal.size();
                     if (nParams == 1) {
                         m_animAccel = tag.paramsReal[0];
                     } else if (nParams == 2) {
@@ -2602,12 +2571,12 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
                 }
                 break;
             case SSA_u: {
-                int n = !tag.paramsInt.IsEmpty() ? tag.paramsInt[0] : -1;
+                int n = !tag.paramsInt.empty() ? tag.paramsInt[0] : -1;
                 style.fUnderline = (n == 0 ? false : n == 1 ? true : org.fUnderline);
             }
             break;
             case SSA_xbord:
-                if (!tag.paramsReal.IsEmpty()) {
+                if (!tag.paramsReal.empty()) {
                     double nx = CalcAnimation(tag.paramsReal[0], style.outlineWidthX, fAnimate);
                     style.outlineWidthX = (nx < 0 ? 0 : nx);
                 } else {
@@ -2615,12 +2584,12 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
                 }
                 break;
             case SSA_xshad:
-                style.shadowDepthX = !tag.paramsReal.IsEmpty()
+                style.shadowDepthX = !tag.paramsReal.empty()
                                      ? CalcAnimation(tag.paramsReal[0], style.shadowDepthX, fAnimate)
                                      : org.shadowDepthX;
                 break;
             case SSA_ybord:
-                if (!tag.paramsReal.IsEmpty()) {
+                if (!tag.paramsReal.empty()) {
                     double ny = CalcAnimation(tag.paramsReal[0], style.outlineWidthY, fAnimate);
                     style.outlineWidthY = (ny < 0 ? 0 : ny);
                 } else {
@@ -2628,7 +2597,7 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
                 }
                 break;
             case SSA_yshad:
-                style.shadowDepthY = !tag.paramsReal.IsEmpty()
+                style.shadowDepthY = !tag.paramsReal.empty()
                                      ? CalcAnimation(tag.paramsReal[0], style.shadowDepthY, fAnimate)
                                      : org.shadowDepthY;
                 break;
@@ -2638,42 +2607,42 @@ bool CRenderedTextSubtitle::CreateSubFromSSATag(CSubtitle* sub, const SSATagsLis
     return true;
 }
 
-bool CRenderedTextSubtitle::ParseHtmlTag(CSubtitle* sub, CStringW str, STSStyle& style, const STSStyle& org)
+bool CRenderedTextSubtitle::ParseHtmlTag(CSubtitle* sub, std::wstring str, STSStyle& style, const STSStyle& org)
 {
-    if (str.Find(L"!--") == 0) {
+    if (StringFind(str, L"!--") == 0) {
         return true;
     }
 
     bool fClosing = str[0] == '/';
-    str.Trim(L" /");
+    StringTrim(str, L" /");
 
-    int i = str.Find(' ');
+    int i = StringFind(str, ' ');
     if (i < 0) {
-        i = str.GetLength();
+        i = int(str.size());
     }
 
-    CStringW tag = str.Left(i).MakeLower();
-    str = str.Mid(i).Trim();
+    std::wstring tag = StringLowered(StringLeft(str, i));
+    str = StringTrim(StringMid(str, i));
 
-    CAtlArray<CStringW> attribs, params;
-    while ((i = str.Find('=')) > 0) {
-        attribs.Add(str.Left(i).Trim().MakeLower());
-        str = str.Mid(i + 1);
+    std::vector<std::wstring> attribs, params;
+    while ((i = StringFind(str, '=')) > 0) {
+        attribs.push_back(StringLowered(StringTrim(StringLeft(str, i))));
+        str = StringMid(str, i + 1);
         for (i = 0; _istspace(str[i]); i++) {
             ;
         }
-        str = str.Mid(i);
+        str = StringMid(str, i);
         if (str[0] == '\"') {
-            str = str.Mid(1);
-            i = str.Find('\"');
+            str = StringMid(str, 1);
+            i = StringFind(str, '\"');
         } else {
-            i = str.Find(' ');
+            i = StringFind(str, ' ');
         }
         if (i < 0) {
-            i = str.GetLength();
+            i = int(str.size());
         }
-        params.Add(str.Left(i).Trim().MakeLower());
-        str = str.Mid(i + 1);
+        params.push_back(StringLowered(StringTrim(StringLeft(str, i))));
+        str = StringMid(str, i + 1);
     }
 
     if (tag == L"text" || tag == L"span") {
@@ -2688,8 +2657,8 @@ bool CRenderedTextSubtitle::ParseHtmlTag(CSubtitle* sub, CStringW str, STSStyle&
         style.fStrikeOut = !fClosing ? true : org.fStrikeOut;
     } else if (tag == L"font") {
         if (!fClosing) {
-            for (size_t j = 0; j < attribs.GetCount(); j++) {
-                if (params[j].IsEmpty()) {
+            for (size_t j = 0; j < attribs.size(); j++) {
+                if (params[j].empty()) {
                     continue;
                 }
 
@@ -2699,30 +2668,30 @@ bool CRenderedTextSubtitle::ParseHtmlTag(CSubtitle* sub, CStringW str, STSStyle&
                     style.fontName = params[j];
                 } else if (attribs[j] == L"size") {
                     if (params[j][0] == '+') {
-                        style.fontSize += wcstol(params[j], nullptr, 10);
+                        style.fontSize += wcstol(params[j].c_str(), nullptr, 10);
                     } else if (params[j][0] == '-') {
-                        style.fontSize -= wcstol(params[j], nullptr, 10);
+                        style.fontSize -= wcstol(params[j].c_str(), nullptr, 10);
                     } else {
-                        style.fontSize = wcstol(params[j], nullptr, 10);
+                        style.fontSize = wcstol(params[j].c_str(), nullptr, 10);
                     }
                 } else if (attribs[j] == L"color") {
                     nColor = 0;
                 } else if (attribs[j] == L"outline-color") {
                     nColor = 2;
                 } else if (attribs[j] == L"outline-level") {
-                    style.outlineWidthX = style.outlineWidthY = wcstol(params[j], nullptr, 10);
+                    style.outlineWidthX = style.outlineWidthY = wcstol(params[j].c_str(), nullptr, 10);
                 } else if (attribs[j] == L"shadow-color") {
                     nColor = 3;
                 } else if (attribs[j] == L"shadow-level") {
-                    style.shadowDepthX = style.shadowDepthY = wcstol(params[j], nullptr, 10);
+                    style.shadowDepthX = style.shadowDepthY = wcstol(params[j].c_str(), nullptr, 10);
                 }
 
                 if (nColor >= 0 && nColor < 4) {
-                    CString key = WToT(params[j]).TrimLeft('#');
+                    tstring key = StringTrimLeft(WToT(params[j]), '#');
                     DWORD val;
-                    if (g_colors.Lookup(key, val)) {
+                    if (Lookup(g_colors, key, val)) {
                         style.colors[nColor] = val;
-                    } else if ((style.colors[nColor] = _tcstol(key, nullptr, 16)) == 0) {
+                    } else if ((style.colors[nColor] = _tcstol(key.c_str(), nullptr, 16)) == 0) {
                         style.colors[nColor] = 0x00ffffff;    // default is white
                     }
                     style.colors[nColor] = ((style.colors[nColor] >> 16) & 0xff) | ((style.colors[nColor] & 0xff) << 16) | (style.colors[nColor] & 0x00ff00);
@@ -2733,10 +2702,10 @@ bool CRenderedTextSubtitle::ParseHtmlTag(CSubtitle* sub, CStringW str, STSStyle&
             style.fontSize = org.fontSize;
             style.colors = org.colors;
         }
-    } else if (tag == L"k" && attribs.GetCount() == 1 && attribs[0] == L"t") {
+    } else if (tag == L"k" && attribs.size() == 1 && attribs[0] == L"t") {
         m_ktype = 1;
         m_kstart = m_kend;
-        m_kend += wcstol(params[0], nullptr, 10);
+        m_kend += wcstol(params[0].c_str(), nullptr, 10);
     } else {
         return false;
     }
@@ -2766,7 +2735,7 @@ CSubtitle* CRenderedTextSubtitle::GetSubtitle(int entry)
 {
     CAutoLock cAutoLock(&renderLock);
     CSubtitle* sub;
-    if (m_subtitleCache.Lookup(entry, sub)) {
+    if (Lookup(m_subtitleCache, entry, sub)) {
         if (sub->m_fAnimated) {
             delete sub;
             sub = nullptr;
@@ -2776,17 +2745,16 @@ CSubtitle* CRenderedTextSubtitle::GetSubtitle(int entry)
     }
 
     try {
-        sub = DEBUG_NEW CSubtitle(m_renderingCaches);
-    } catch (CMemoryException* e) {
-        e->Delete();
+        sub = new CSubtitle(m_renderingCaches);
+    } catch (const std::bad_alloc&) {
         return nullptr;
     }
 
-    CStringW str = GetStrW(entry, true);
+    std::wstring str = GetStrW(entry, true);
 
     if (m_playRes.cx <= 0 || m_playRes.cy <= 0) {
         ASSERT(false);
-        m_playRes = CSize(384, 288);
+        m_playRes = MakeSize(384, 288);
     }
     if (m_storageRes.cx <= 0 || m_storageRes.cy <= 0) {
         ASSERT(false);
@@ -2857,8 +2825,8 @@ CSubtitle* CRenderedTextSubtitle::GetSubtitle(int entry)
     sub->m_wrapStyle = m_defaultWrapStyle;
     sub->m_fAnimated = false;
     sub->m_relativeTo = stss.relativeTo;
-    sub->m_target_scale_x = m_vidrect.Width()  > 0 && m_storageRes.cx > 0 ? double((sub->m_relativeTo == STSStyle::VIDEO) ? m_vidrect.Width()  : m_size.cx) / (m_storageRes.cx * 8.0) : 1.0;
-    sub->m_target_scale_y = m_vidrect.Height() > 0 && m_storageRes.cy > 0 ? double((sub->m_relativeTo == STSStyle::VIDEO) ? m_vidrect.Height() : m_size.cy) / (m_storageRes.cy * 8.0) : 1.0;
+    sub->m_target_scale_x = RectWidth(m_vidrect)  > 0 && m_storageRes.cx > 0 ? double((sub->m_relativeTo == STSStyle::VIDEO) ? RectWidth(m_vidrect)  : m_size.cx) / (m_storageRes.cx * 8.0) : 1.0;
+    sub->m_target_scale_y = RectHeight(m_vidrect) > 0 && m_storageRes.cy > 0 ? double((sub->m_relativeTo == STSStyle::VIDEO) ? RectHeight(m_vidrect) : m_size.cy) / (m_storageRes.cy * 8.0) : 1.0;
     if (m_playRes.cx == 0 || m_playRes.cy == 0 || m_playRes == m_storageRes) {
         sub->m_script_scale_x = 1.0;
         sub->m_script_scale_y = 1.0;
@@ -2871,8 +2839,8 @@ CSubtitle* CRenderedTextSubtitle::GetSubtitle(int entry)
         sub->m_total_scale_y = sub->m_target_scale_y * sub->m_script_scale_y;
     }
 
-    const STSEntry& stse = GetAt(entry);
-    CRect marginRect = stse.marginRect;
+    const STSEntry& stse = at(entry);
+    RECT marginRect = stse.marginRect;
     if (marginRect.left == 0) {
         marginRect.left = orgstss.marginRect.left;
     }
@@ -2893,7 +2861,7 @@ CSubtitle* CRenderedTextSubtitle::GetSubtitle(int entry)
 
     if (sub->m_relativeTo == STSStyle::VIDEO) {
         // Account for the user trying to fool the renderer by setting negative margins
-        CRect clipRect = m_vidrect;
+        RECT clipRect = m_vidrect;
         if (marginRect.left < 0) {
             clipRect.left = std::max(0l, clipRect.left + marginRect.left);
         }
@@ -2907,9 +2875,9 @@ CSubtitle* CRenderedTextSubtitle::GetSubtitle(int entry)
             clipRect.bottom = std::min(m_size.cy, clipRect.bottom - marginRect.bottom);
         }
 
-        sub->m_clip.SetRect(clipRect.left >> 3, clipRect.top >> 3, clipRect.right >> 3, clipRect.bottom >> 3);
+        ::SetRect(&sub->m_clip, clipRect.left >> 3, clipRect.top >> 3, clipRect.right >> 3, clipRect.bottom >> 3);
     } else {
-        sub->m_clip.SetRect(0, 0, m_size.cx >> 3, m_size.cy >> 3);
+        ::SetRect(&sub->m_clip, 0, 0, m_size.cx >> 3, m_size.cy >> 3);
     }
 
     if (sub->m_relativeTo == STSStyle::VIDEO) {
@@ -2926,18 +2894,18 @@ CSubtitle* CRenderedTextSubtitle::GetSubtitle(int entry)
     m_polygonBaselineOffset = 0;
     ParseEffect(sub, stse.effect);
 
-    for (int iStart = 0, iEnd; iStart < str.GetLength(); iStart = iEnd) {
+    for (int iStart = 0, iEnd; iStart < int(str.size()); iStart = iEnd) {
         bool bParsed = false;
 
-        if (str[iStart] == L'{' && (iEnd = str.Find(L'}', iStart)) > 0) {
+        if (str[iStart] == L'{' && (iEnd = StringFind(str, L'}', iStart)) > 0) {
             SSATagsList tagsList;
-            bParsed = ParseSSATag(tagsList, str.Mid(iStart + 1, iEnd - iStart - 1));
+            bParsed = ParseSSATag(tagsList, StringMid(str, iStart + 1, iEnd - iStart - 1));
             if (bParsed) {
                 CreateSubFromSSATag(sub, tagsList, stss, orgstss);
                 iStart = iEnd + 1;
             }
-        } else if (str[iStart] == L'<' && (iEnd = str.Find(L'>', iStart)) > 0) {
-            bParsed = ParseHtmlTag(sub, str.Mid(iStart + 1, iEnd - iStart - 1), stss, orgstss);
+        } else if (str[iStart] == L'<' && (iEnd = StringFind(str, L'>', iStart)) > 0) {
+            bParsed = ParseHtmlTag(sub, StringMid(str, iStart + 1, iEnd - iStart - 1), stss, orgstss);
             if (bParsed) {
                 iStart = iEnd + 1;
             }
@@ -2946,7 +2914,7 @@ CSubtitle* CRenderedTextSubtitle::GetSubtitle(int entry)
         if (bParsed) {
             iEnd = FindOneOf(str, L"{<", iStart);
             if (iEnd < 0) {
-                iEnd = str.GetLength();
+                iEnd = int(str.size());
             }
             if (iEnd == iStart) {
                 continue;
@@ -2954,7 +2922,7 @@ CSubtitle* CRenderedTextSubtitle::GetSubtitle(int entry)
         } else {
             iEnd = FindOneOf(str, L"{<", iStart + 1);
             if (iEnd < 0) {
-                iEnd = str.GetLength();
+                iEnd = int(str.size());
             }
         }
 
@@ -2968,14 +2936,14 @@ CSubtitle* CRenderedTextSubtitle::GetSubtitle(int entry)
         tmp.shadowDepthY  *= (fScaledBAS ? sub->m_total_scale_y : sub->m_script_scale_y) * 8.0;
 
         if (m_nPolygon) {
-            ParsePolygon(sub, str.Mid(iStart, iEnd - iStart), tmp);
+            ParsePolygon(sub, StringMid(str, iStart, iEnd - iStart), tmp);
         } else {
             if (m_ePARCompensationType != EPCTDisabled) {
                 tmp.fontScaleX *= dFontScaleXCompensation;
                 tmp.fontScaleY *= dFontScaleYCompensation;
             }
 
-            ParseString(sub, str.Mid(iStart, iEnd - iStart), tmp);
+            ParseString(sub, StringMid(str, iStart, iEnd - iStart), tmp);
         }
     }
 
@@ -3024,8 +2992,8 @@ STDMETHODIMP_(POSITION) CRenderedTextSubtitle::GetStartPosition(REFERENCE_TIME r
     return GetNext((POSITION)(INT_PTR)iSegment);
 }
 
-CString CRenderedTextSubtitle::GetPath() {
-    if (m_provider == _T("Local") && !m_path.IsEmpty()) return m_path;
+tstring CRenderedTextSubtitle::GetPath() {
+    if (m_provider == _T("Local") && !m_path.empty()) return m_path;
     else return _T("");
 }
 
@@ -3035,7 +3003,7 @@ STDMETHODIMP_(POSITION) CRenderedTextSubtitle::GetNext(POSITION pos)
     int iSegment = (int)(INT_PTR)pos;
 
     const STSSegment* stss = GetSegment(iSegment);
-    while (stss && stss->subs.IsEmpty()) {
+    while (stss && stss->subs.empty()) {
         iSegment++;
         stss = GetSegment(iSegment);
     }
@@ -3062,7 +3030,7 @@ STDMETHODIMP_(bool) CRenderedTextSubtitle::IsAnimated(POSITION pos)
 
     const STSSegment* stss = GetSegment(iSegment);
     if (stss) {
-        for (size_t i = 0, count = stss->subs.GetCount(); i < count; i++) {
+        for (size_t i = 0, count = stss->subs.size(); i < count; i++) {
             CSubtitle* sub = GetSubtitle(stss->subs[i]);
             if (sub && sub->m_bIsAnimated) {
                 return true;
@@ -3092,7 +3060,7 @@ namespace {
 }
 
 #if USE_LIBASS
-void AssFlatten(ASS_Image* image, SubPicDesc& spd, CRect &rcDirty) {
+void AssFlatten(ASS_Image* image, SubPicDesc& spd, RECT &rcDirty) {
     if (image) {
         RECT pRect = { 0 };
         for (auto i = image; i != nullptr; i = i->next) {
@@ -3103,7 +3071,7 @@ void AssFlatten(ASS_Image* image, SubPicDesc& spd, CRect &rcDirty) {
 
         const POINT pixelsPoint = GetRectPos(pRect);
         const SIZE pixelsSize = GetRectSize(pRect);
-        rcDirty.IntersectRect(CRect(pixelsPoint, pixelsSize), CRect(0, 0, spd.w, spd.h));
+        rcDirty = RectIntersect(MakeRect(pixelsPoint, pixelsSize), MakeRect(0, 0, spd.w, spd.h));
 
         BYTE* pixelBytes = (BYTE*)(spd.bits + spd.pitch * rcDirty.top + rcDirty.left * 4);
 
@@ -3150,8 +3118,8 @@ STDMETHODIMP CRenderedTextSubtitle::Render(SubPicDesc& spd, REFERENCE_TIME rt, d
             LoadASSFont(m_pPin, m_ass.get(), m_renderer.get());
         }
 
-        m_size = CSize(spd.w, spd.h);
-        m_vidrect = CRect(spd.vidrect.left, spd.vidrect.top, spd.vidrect.right, spd.vidrect.bottom);
+        m_size = MakeSize(spd.w, spd.h);
+        m_vidrect = MakeRect(spd.vidrect.left, spd.vidrect.top, spd.vidrect.right, spd.vidrect.bottom);
         ass_set_frame_size(m_renderer.get(), spd.w, spd.h);
 
         int changed = 1;
@@ -3161,7 +3129,7 @@ STDMETHODIMP CRenderedTextSubtitle::Render(SubPicDesc& spd, REFERENCE_TIME rt, d
             return E_FAIL;
         }
 
-        CRect rcDirty;
+        RECT rcDirty = {};
         AssFlatten(image, spd, rcDirty);
 
         bbox = rcDirty;
@@ -3169,7 +3137,7 @@ STDMETHODIMP CRenderedTextSubtitle::Render(SubPicDesc& spd, REFERENCE_TIME rt, d
     }
 #endif
 
-    Init(CSize(spd.w, spd.h), spd.vidrect);
+    Init(MakeSize(spd.w, spd.h), spd.vidrect);
 
     int segment;
     const STSSegment* stss = SearchSubs(rt, fps, &segment);
@@ -3178,40 +3146,37 @@ STDMETHODIMP CRenderedTextSubtitle::Render(SubPicDesc& spd, REFERENCE_TIME rt, d
         return S_FALSE;
     }
 
-    CRect bbox2(0, 0, 0, 0);
+    RECT bbox2 = MakeRect(0, 0, 0, 0);
 
     // clear any cached subs that is behind current time
     {
-        POSITION pos = m_subtitleCache.GetStartPosition();
-        while (pos) {
-            int entry;
-            CSubtitle* pSub;
-            m_subtitleCache.GetNextAssoc(pos, entry, pSub);
-
-            STSEntry& stse = GetAt(entry);
+        for (auto cached = m_subtitleCache.begin(); cached != m_subtitleCache.end();) {
+            STSEntry& stse = at(cached->first);
             if (stse.end < rt) {
-                delete pSub;
-                m_subtitleCache.RemoveKey(entry);
+                delete cached->second;
+                cached = m_subtitleCache.erase(cached);
+            } else {
+                ++cached;
             }
         }
     }
 
     m_sla.AdvanceToSegment(segment, stss->subs);
 
-    CAtlArray<LSub> subs;
+    std::vector<LSub> subs;
 
-    for (ptrdiff_t i = 0, j = stss->subs.GetCount(); i < j; i++) {
+    for (ptrdiff_t i = 0, j = stss->subs.size(); i < j; i++) {
         const auto idx = stss->subs[i];
-        const auto& sts_entry = GetAt(idx);
-        subs.Add({ idx, sts_entry.layer, sts_entry.readorder });
+        const auto& sts_entry = at(idx);
+        subs.push_back({ idx, sts_entry.layer, sts_entry.readorder });
     }
 
-    std::sort(subs.GetData(), subs.GetData() + subs.GetCount());
+    std::sort(subs.data(), subs.data() + subs.size());
 
-    for (ptrdiff_t i = 0, j = subs.GetCount(); i < j; i++) {
+    for (ptrdiff_t i = 0, j = subs.size(); i < j; i++) {
         int entry = subs[i].idx;
 
-        STSEntry stse = GetAt(entry);
+        STSEntry stse = at(entry);
 
         {
             REFERENCE_TIME start = TranslateStart(entry, fps);
@@ -3224,9 +3189,9 @@ STDMETHODIMP CRenderedTextSubtitle::Render(SubPicDesc& spd, REFERENCE_TIME rt, d
             continue;
         }
 
-        CRect clipRect = s->m_clip;
-        CRect r = s->m_rect;
-        CSize spaceNeeded = r.Size();
+        RECT clipRect = s->m_clip;
+        RECT r = s->m_rect;
+        SIZE spaceNeeded = RectSize(r);
 
         // apply the effects
 
@@ -3234,7 +3199,7 @@ STDMETHODIMP CRenderedTextSubtitle::Render(SubPicDesc& spd, REFERENCE_TIME rt, d
 
         int alpha = 0x00;
 
-        CPoint org2;
+        POINT org2 = {};
 
         BYTE* pAlphaMask = nullptr;
 
@@ -3252,9 +3217,9 @@ STDMETHODIMP CRenderedTextSubtitle::Render(SubPicDesc& spd, REFERENCE_TIME rt, d
 
             switch (k) {
                 case EF_MOVE: { // {\move(x1=param[0], y1=param[1], x2=param[2], y2=param[3], t1=t[0], t2=t[1])}
-                    CPoint p;
-                    CPoint p1(s->m_effects[k]->param[0], s->m_effects[k]->param[1]);
-                    CPoint p2(s->m_effects[k]->param[2], s->m_effects[k]->param[3]);
+                    POINT p = {};
+                    POINT p1 = MakePoint(s->m_effects[k]->param[0], s->m_effects[k]->param[1]);
+                    POINT p2 = MakePoint(s->m_effects[k]->param[2], s->m_effects[k]->param[3]);
                     int t1 = s->m_effects[k]->t[0];
                     int t2 = s->m_effects[k]->t[1];
 
@@ -3278,19 +3243,19 @@ STDMETHODIMP CRenderedTextSubtitle::Render(SubPicDesc& spd, REFERENCE_TIME rt, d
                     } else {
                         p = p2;
                     }
-                    r = CRect(
-                            CPoint((s->m_scrAlignment % 3) == 1 ? p.x : (s->m_scrAlignment % 3) == 0 ? p.x - spaceNeeded.cx : p.x - (spaceNeeded.cx + 1) / 2,
+                    r = MakeRect(
+                            MakePoint((s->m_scrAlignment % 3) == 1 ? p.x : (s->m_scrAlignment % 3) == 0 ? p.x - spaceNeeded.cx : p.x - (spaceNeeded.cx + 1) / 2,
                                    s->m_scrAlignment <= 3 ? p.y - spaceNeeded.cy : s->m_scrAlignment <= 6 ? p.y - (spaceNeeded.cy + 1) / 2 : p.y),
                             spaceNeeded);
 
                     if (s->m_relativeTo == STSStyle::VIDEO) {
-                        r.OffsetRect(m_vidrect.TopLeft());
+                        ::OffsetRect(&r, m_vidrect.left, m_vidrect.top);
                     }
                     fPosOverride = true;
                 }
                 break;
                 case EF_ORG: { // {\org(x=param[0], y=param[1])}
-                    org2 = CPoint(s->m_effects[k]->param[0], s->m_effects[k]->param[1]);
+                    org2 = MakePoint(s->m_effects[k]->param[0], s->m_effects[k]->param[1]);
                     fOrgOverride = true;
                 }
                 break;
@@ -3331,7 +3296,7 @@ STDMETHODIMP CRenderedTextSubtitle::Render(SubPicDesc& spd, REFERENCE_TIME rt, d
 
                     r.right = r.left + spaceNeeded.cx;
 
-                    clipRect &= CRect(left >> 3, clipRect.top, right >> 3, clipRect.bottom);
+                    clipRect = RectIntersect(clipRect, MakeRect(left >> 3, clipRect.top, right >> 3, clipRect.bottom));
 
                     fPosOverride = true;
                 }
@@ -3343,7 +3308,7 @@ STDMETHODIMP CRenderedTextSubtitle::Render(SubPicDesc& spd, REFERENCE_TIME rt, d
 
                     r.bottom = r.top + spaceNeeded.cy;
 
-                    CRect cr(0, (s->m_effects[k]->param[0] + 4) >> 3, spd.w, (s->m_effects[k]->param[1] + 4) >> 3);
+                    RECT cr = MakeRect(0, (s->m_effects[k]->param[0] + 4) >> 3, spd.w, (s->m_effects[k]->param[1] + 4) >> 3);
 
                     if (s->m_relativeTo == STSStyle::VIDEO) {
                         r.top += m_vidrect.top;
@@ -3352,7 +3317,7 @@ STDMETHODIMP CRenderedTextSubtitle::Render(SubPicDesc& spd, REFERENCE_TIME rt, d
                         cr.bottom += m_vidrect.top >> 3;
                     }
 
-                    clipRect &= cr;
+                    clipRect = RectIntersect(clipRect, cr);
 
                     fPosOverride = true;
                 }
@@ -3367,81 +3332,75 @@ STDMETHODIMP CRenderedTextSubtitle::Render(SubPicDesc& spd, REFERENCE_TIME rt, d
             r = m_sla.AllocRect(s, segment, entry, stse.layer, m_collisions);
         }
 
-        CPoint org;
-        org.x = (s->m_scrAlignment % 3) == 1 ? r.left : (s->m_scrAlignment % 3) == 2 ? r.CenterPoint().x : r.right;
-        org.y = s->m_scrAlignment <= 3 ? r.bottom : s->m_scrAlignment <= 6 ? r.CenterPoint().y : r.top;
+        POINT org = {};
+        org.x = (s->m_scrAlignment % 3) == 1 ? r.left : (s->m_scrAlignment % 3) == 2 ? RectCenter(r).x : r.right;
+        org.y = s->m_scrAlignment <= 3 ? r.bottom : s->m_scrAlignment <= 6 ? RectCenter(r).y : r.top;
 
         if (!fOrgOverride) {
             org2 = org;
         }
 
-        CPoint p, p2(0, r.top);
+        POINT p, p2 = MakePoint(0, r.top);
 
         POSITION pos;
 
         p = p2;
 
         // Rectangles for inverse clip
-        CRect iclipRect[4];
-        iclipRect[0] = CRect(0, 0, spd.w, clipRect.top);
-        iclipRect[1] = CRect(0, clipRect.top, clipRect.left, clipRect.bottom);
-        iclipRect[2] = CRect(clipRect.right, clipRect.top, spd.w, clipRect.bottom);
-        iclipRect[3] = CRect(0, clipRect.bottom, spd.w, spd.h);
+        RECT iclipRect[4];
+        iclipRect[0] = MakeRect(0, 0, spd.w, clipRect.top);
+        iclipRect[1] = MakeRect(0, clipRect.top, clipRect.left, clipRect.bottom);
+        iclipRect[2] = MakeRect(clipRect.right, clipRect.top, spd.w, clipRect.bottom);
+        iclipRect[3] = MakeRect(0, clipRect.bottom, spd.w, spd.h);
 
-        pos = s->GetHeadPosition();
-        while (pos) {
-            CLine* l = s->GetNext(pos);
+        for (CLine*l : *s) {
 
             p.x = (s->m_scrAlignment % 3) == 1 ? org.x
                   : (s->m_scrAlignment % 3) == 0 ? org.x - l->m_width
                   :                            org.x - (l->m_width / 2);
             if (s->m_clipInverse) {
-                bbox2 |= l->PaintShadow(spd, iclipRect[0], pAlphaMask, p, org2, m_time, alpha);
-                bbox2 |= l->PaintShadow(spd, iclipRect[1], pAlphaMask, p, org2, m_time, alpha);
-                bbox2 |= l->PaintShadow(spd, iclipRect[2], pAlphaMask, p, org2, m_time, alpha);
-                bbox2 |= l->PaintShadow(spd, iclipRect[3], pAlphaMask, p, org2, m_time, alpha);
+                bbox2 = RectUnion(bbox2, l->PaintShadow(spd, iclipRect[0], pAlphaMask, p, org2, m_time, alpha));
+                bbox2 = RectUnion(bbox2, l->PaintShadow(spd, iclipRect[1], pAlphaMask, p, org2, m_time, alpha));
+                bbox2 = RectUnion(bbox2, l->PaintShadow(spd, iclipRect[2], pAlphaMask, p, org2, m_time, alpha));
+                bbox2 = RectUnion(bbox2, l->PaintShadow(spd, iclipRect[3], pAlphaMask, p, org2, m_time, alpha));
             } else {
-                bbox2 |= l->PaintShadow(spd, clipRect, pAlphaMask, p, org2, m_time, alpha);
+                bbox2 = RectUnion(bbox2, l->PaintShadow(spd, clipRect, pAlphaMask, p, org2, m_time, alpha));
             }
             p.y += l->m_ascent + l->m_descent;
         }
 
         p = p2;
 
-        pos = s->GetHeadPosition();
-        while (pos) {
-            CLine* l = s->GetNext(pos);
+        for (CLine*l : *s) {
 
             p.x = (s->m_scrAlignment % 3) == 1 ? org.x
                   : (s->m_scrAlignment % 3) == 0 ? org.x - l->m_width
                   :                            org.x - (l->m_width / 2);
             if (s->m_clipInverse) {
-                bbox2 |= l->PaintOutline(spd, iclipRect[0], pAlphaMask, p, org2, m_time, alpha);
-                bbox2 |= l->PaintOutline(spd, iclipRect[1], pAlphaMask, p, org2, m_time, alpha);
-                bbox2 |= l->PaintOutline(spd, iclipRect[2], pAlphaMask, p, org2, m_time, alpha);
-                bbox2 |= l->PaintOutline(spd, iclipRect[3], pAlphaMask, p, org2, m_time, alpha);
+                bbox2 = RectUnion(bbox2, l->PaintOutline(spd, iclipRect[0], pAlphaMask, p, org2, m_time, alpha));
+                bbox2 = RectUnion(bbox2, l->PaintOutline(spd, iclipRect[1], pAlphaMask, p, org2, m_time, alpha));
+                bbox2 = RectUnion(bbox2, l->PaintOutline(spd, iclipRect[2], pAlphaMask, p, org2, m_time, alpha));
+                bbox2 = RectUnion(bbox2, l->PaintOutline(spd, iclipRect[3], pAlphaMask, p, org2, m_time, alpha));
             } else {
-                bbox2 |= l->PaintOutline(spd, clipRect, pAlphaMask, p, org2, m_time, alpha);
+                bbox2 = RectUnion(bbox2, l->PaintOutline(spd, clipRect, pAlphaMask, p, org2, m_time, alpha));
             }
             p.y += l->m_ascent + l->m_descent;
         }
 
         p = p2;
 
-        pos = s->GetHeadPosition();
-        while (pos) {
-            CLine* l = s->GetNext(pos);
+        for (CLine*l : *s) {
 
             p.x = (s->m_scrAlignment % 3) == 1 ? org.x
                   : (s->m_scrAlignment % 3) == 0 ? org.x - l->m_width
                   :                            org.x - (l->m_width / 2);
             if (s->m_clipInverse) {
-                bbox2 |= l->PaintBody(spd, iclipRect[0], pAlphaMask, p, org2, m_time, alpha);
-                bbox2 |= l->PaintBody(spd, iclipRect[1], pAlphaMask, p, org2, m_time, alpha);
-                bbox2 |= l->PaintBody(spd, iclipRect[2], pAlphaMask, p, org2, m_time, alpha);
-                bbox2 |= l->PaintBody(spd, iclipRect[3], pAlphaMask, p, org2, m_time, alpha);
+                bbox2 = RectUnion(bbox2, l->PaintBody(spd, iclipRect[0], pAlphaMask, p, org2, m_time, alpha));
+                bbox2 = RectUnion(bbox2, l->PaintBody(spd, iclipRect[1], pAlphaMask, p, org2, m_time, alpha));
+                bbox2 = RectUnion(bbox2, l->PaintBody(spd, iclipRect[2], pAlphaMask, p, org2, m_time, alpha));
+                bbox2 = RectUnion(bbox2, l->PaintBody(spd, iclipRect[3], pAlphaMask, p, org2, m_time, alpha));
             } else {
-                bbox2 |= l->PaintBody(spd, clipRect, pAlphaMask, p, org2, m_time, alpha);
+                bbox2 = RectUnion(bbox2, l->PaintBody(spd, clipRect, pAlphaMask, p, org2, m_time, alpha));
             }
             p.y += l->m_ascent + l->m_descent;
         }
@@ -3450,7 +3409,7 @@ STDMETHODIMP CRenderedTextSubtitle::Render(SubPicDesc& spd, REFERENCE_TIME rt, d
     bbox = bbox2;
 
     //TRACE(_T("render sub done: %lld\n"), rt);
-    return (subs.GetCount() && !bbox2.IsRectEmpty()) ? S_OK : S_FALSE;
+    return (subs.size() && !::IsRectEmpty(&bbox2)) ? S_OK : S_FALSE;
 }
 
 // IPersist
@@ -3478,44 +3437,44 @@ STDMETHODIMP CRenderedTextSubtitle::GetStreamInfo(int iStream, WCHAR** ppName, L
         *pLCID = m_lcid;
     }
 
-    CStringW strName;
-    if (m_langname.IsEmpty()) {
-        if (!m_provider.IsEmpty()) {
-            strName.Format(L"[%s] %s", m_provider.GetString(), m_name.GetString());
+    std::wstring strName;
+    if (m_langname.empty()) {
+        if (!m_provider.empty()) {
+            strName = ::Format(L"[%s] %s", m_provider.c_str(), m_name.c_str());
         } else {
-            strName.Format(L"%s", m_name.GetString());
+            strName = ::Format(L"%s", m_name.c_str());
         }
     } else {
-        CString strLanguage;
+        tstring strLanguage;
         if (m_lcid && m_lcid != LCID(-1)) {
             WCHAR dispName[1024];
             memset(dispName, 0, 1024 * sizeof(WCHAR));
-            if (0 == GetLocaleInfoEx(m_langname, LOCALE_SLOCALIZEDLANGUAGENAME, (LPWSTR)&dispName, 1024)) {
-                int len = GetLocaleInfo(m_lcid, LOCALE_SENGLANGUAGE, strLanguage.GetBuffer(64), 64);
-                strLanguage.ReleaseBufferSetLength(std::max(len - 1, 0));
+            if (0 == GetLocaleInfoEx(m_langname.c_str(), LOCALE_SLOCALIZEDLANGUAGENAME, (LPWSTR)&dispName, 1024)) {
+                int len = GetLocaleInfo(m_lcid, LOCALE_SENGLANGUAGE, StringBuffer(strLanguage, 64), 64);
+                StringRelease(strLanguage, std::max(len - 1, 0));
             } else {
                 strLanguage = dispName;
             }
         }
 
-        if (strLanguage.IsEmpty()) {
+        if (strLanguage.empty()) {
             strLanguage = m_langname;
         }
 
-        if (!strLanguage.IsEmpty() && m_eHearingImpaired == Subtitle::HI_YES) {
+        if (!strLanguage.empty() && m_eHearingImpaired == Subtitle::HI_YES) {
             strLanguage = strLanguage + L" [HI]";
         }
 
-        if (!m_provider.IsEmpty()) {
-            strName.Format(L"[%s] %s\t%s", m_provider.GetString(), m_name.GetString(), strLanguage.GetString());
+        if (!m_provider.empty()) {
+            strName = ::Format(L"[%s] %s\t%s", m_provider.c_str(), m_name.c_str(), strLanguage.c_str());
         } else {
-            strName.Format(L"%s\t%s", m_name.GetString(), strLanguage.GetString());
+            strName = ::Format(L"%s\t%s", m_name.c_str(), strLanguage.c_str());
         }
     }
 
-    *ppName = (WCHAR*)CoTaskMemAlloc((strName.GetLength() + 1) * sizeof(WCHAR));
+    *ppName = (WCHAR*)CoTaskMemAlloc((int(strName.size()) + 1) * sizeof(WCHAR));
     CheckPointer(*ppName, E_OUTOFMEMORY);
-    wcscpy_s(*ppName, strName.GetLength() + 1, strName);
+    wcscpy_s(*ppName, int(strName.size()) + 1, strName.c_str());
 
     return S_OK;
 }
@@ -3532,18 +3491,18 @@ STDMETHODIMP CRenderedTextSubtitle::SetStream(int iStream)
 
 STDMETHODIMP CRenderedTextSubtitle::Reload()
 {
-    if (m_path.IsEmpty() || !PathUtils::Exists(m_path)) {
+    if (m_path.empty() || !PathUtils::Exists(m_path.c_str())) {
         return E_FAIL;
     }
     return Open(m_path, DEFAULT_CHARSET, m_name) ? S_OK : E_FAIL;
 }
 
-STDMETHODIMP CRenderedTextSubtitle::SetSourceTargetInfo(CString yuvVideoMatrix, int targetBlackLevel, int targetWhiteLevel)
+STDMETHODIMP CRenderedTextSubtitle::SetSourceTargetInfo(tstring yuvVideoMatrix, int targetBlackLevel, int targetWhiteLevel)
 {
-    auto parseMatrixString = [&](const CString& input, ColorConvTable::YuvRangeType& yuvRange, ColorConvTable::YuvMatrixType& yuvMatrix) {
+    auto parseMatrixString = [&](const tstring& input, ColorConvTable::YuvRangeType& yuvRange, ColorConvTable::YuvMatrixType& yuvMatrix) {
         int nPos = 0;
-        CString range = input.Tokenize(_T("."), nPos);
-        CString matrix = input.Mid(nPos);
+        tstring range = StringTokenize(input, _T("."), nPos);
+        tstring matrix = StringMid(input, nPos);
 
         if (range == _T("PC")) {
             yuvRange = ColorConvTable::RANGE_PC;
@@ -3567,8 +3526,8 @@ STDMETHODIMP CRenderedTextSubtitle::SetSourceTargetInfo(CString yuvVideoMatrix, 
     ColorConvTable::YuvMatrixType video_matrix = ColorConvTable::AUTO;
     ColorConvTable::YuvRangeType video_range = ColorConvTable::RANGE_TV;
 
-    yuvVideoMatrix.MakeUpper();
-    if (!yuvVideoMatrix.IsEmpty() && yuvVideoMatrix != _T("NONE")) {
+    StringUpper(yuvVideoMatrix);
+    if (!yuvVideoMatrix.empty() && yuvVideoMatrix != _T("NONE")) {
         parseMatrixString(yuvVideoMatrix, video_range, video_matrix);
     }
 
@@ -3577,7 +3536,7 @@ STDMETHODIMP CRenderedTextSubtitle::SetSourceTargetInfo(CString yuvVideoMatrix, 
         ColorConvTable::YuvMatrixType script_matrix = ColorConvTable::BT601;
         ColorConvTable::YuvRangeType script_range = ColorConvTable::RANGE_TV;
 
-        if (!m_sYCbCrMatrix.IsEmpty()) {
+        if (!m_sYCbCrMatrix.empty()) {
             if (m_sYCbCrMatrix == _T("NONE")) {
                 script_matrix = ColorConvTable::NONE_RGB;
                 script_range = ColorConvTable::RANGE_PC;

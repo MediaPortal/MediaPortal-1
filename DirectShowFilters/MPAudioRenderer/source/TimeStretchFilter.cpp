@@ -406,19 +406,19 @@ DWORD CTimeStretchFilter::ThreadProc()
   SetThreadName(0, "TimeStretchFilter");
 
   AudioSinkCommand command;
-  CComPtr<IMediaSample> sample;
+  Microsoft::WRL::ComPtr<IMediaSample> sample;
 
   while (true)
   {
     m_csResources.Unlock();
-    HRESULT hr = GetNextSampleOrCommand(&command, &sample.p, INFINITE, &m_hSampleEvents, &m_dwSampleWaitObjects);
+    HRESULT hr = GetNextSampleOrCommand(&command, sample.GetAddressOf(), INFINITE, &m_hSampleEvents, &m_dwSampleWaitObjects);
     m_csResources.Lock();
 
     if (hr == MPAR_S_THREAD_STOPPING)
     {
       Log("CTimeStretchFilter::timestretch thread - closing down - thread ID: %d", m_ThreadId);
       SetEvent(m_hCurrentSampleReleased);
-      clear();
+      clearIfConfigured();
       CloseThread();
       m_csResources.Unlock();
       return 0;
@@ -431,11 +431,11 @@ DWORD CTimeStretchFilter::ThreadProc()
         m_rtInSampleTime = m_rtNextIncomingSampleTime = 0;
         m_rtLastOuputStart = m_rtLastOuputEnd = -1;
         if (m_pNextOutSample)
-          m_pNextOutSample.Release();
+          m_pNextOutSample.Reset();
 
-        clear();
+        clearIfConfigured();
         m_pClock->Flush();
-        sample.Release();
+        sample.Reset();
         SetEvent(m_hCurrentSampleReleased);
       }
       else if (command == ASC_Pause || command == ASC_Resume)
@@ -453,13 +453,13 @@ DWORD CTimeStretchFilter::ThreadProc()
 
         REFERENCE_TIME rtDrained = 0;
 
-        if (CheckSample(sample, &rtDrained) == S_FALSE)
+        if (CheckSample(sample.Get(), &rtDrained) == S_FALSE)
         {
           DeleteMediaType(m_pMediaType);
           sample->GetMediaType(&m_pMediaType);
         }
 
-        CheckStreamContinuity(sample, rtDrained);
+        CheckStreamContinuity(sample.Get(), rtDrained);
 
         m_nSampleNum++;
 
@@ -597,6 +597,15 @@ void CTimeStretchFilter::clear()
 
   if (m_Stream)
       m_Stream->clear(); 
+}
+
+void CTimeStretchFilter::clearIfConfigured()
+{
+  CAutoLock streamLock(&m_csStreamLock);
+
+  // the invariant that clear() asserts: a stream, or bitstreaming (then there is nothing to empty)
+  if (m_Stream || m_bBitstreaming)
+    clear();
 }
 
 void CTimeStretchFilter::flush() 

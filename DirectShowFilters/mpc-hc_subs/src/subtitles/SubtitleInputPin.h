@@ -40,7 +40,7 @@ class CSubtitleInputPin : public CBaseInputPin
     CCritSec m_csReceive;
 
     CCritSec* m_pSubLock;
-    CComPtr<ISubStream> m_pSubStream;
+    ComPtr<ISubStream> m_pSubStream;
 
     struct SubtitleSample {
         REFERENCE_TIME rtStart, rtStop;
@@ -82,5 +82,5 @@ public:
     STDMETHODIMP Receive(IMediaSample* pSample);
     STDMETHODIMP EndOfStream(void);
 
-    ISubStream* GetSubStream() { return m_pSubStream; }
+    ISubStream* GetSubStream() { return m_pSubStream.Get(); }
 };

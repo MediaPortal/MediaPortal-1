@@ -23,9 +23,6 @@
 
 #include "StdAfx.h"
 
-#include <afx.h>
-#include <atlbase.h>
-#include <atlcoll.h>
 #include <vector>
 #include "Playlist.h"
 #include "Packet.h"

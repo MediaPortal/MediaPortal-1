@@ -212,7 +212,7 @@ STDMETHODIMP CCcDataProcessor::put_XformType( ICcParser_CCTYPE iTransformType )
 	return S_OK;
 }
 
-void CCcDataProcessor::ProcessData( int cbData, const BYTE* pSrc, BYTE* pToTransform, CAtlArray<WORD>* pCCData, bool bIsSubtypeAVC1, DWORD dwFlags, REFERENCE_TIME sourceTime )
+void CCcDataProcessor::ProcessData( int cbData, const BYTE* pSrc, BYTE* pToTransform, std::vector<WORD>* pCCData, bool bIsSubtypeAVC1, DWORD dwFlags, REFERENCE_TIME sourceTime )
 {
   ASSERT( !m_pSrcData );
   ASSERT( !m_pCCData );
@@ -243,7 +243,7 @@ bool CCcDataProcessor::OnCc( int nType, int iField, CCWORD ccField )
 	{	
 		if( m_profile.IsFieldOK( iField ))
 		{
-			m_pCCData->Add( ccField );
+			m_pCCData->push_back( ccField );
 		}
 	}
 

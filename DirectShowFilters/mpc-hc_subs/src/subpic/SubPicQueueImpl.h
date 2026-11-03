@@ -39,9 +39,9 @@ protected:
         std::mutex m_mutex;
 
     public:
-        const CComPtr<ISubPicProvider> pSubPicProvider;
+        const ComPtr<ISubPicProvider> pSubPicProvider;
 
-        SubPicProviderWithSharedLock(const CComPtr<ISubPicProvider>& pSubPicProvider)
+        SubPicProviderWithSharedLock(const ComPtr<ISubPicProvider>& pSubPicProvider)
             : pSubPicProvider(pSubPicProvider) {
         }
 
@@ -94,7 +94,7 @@ protected:
 
     SubPicQueueSettings m_settings;
 
-    CComPtr<ISubPicAllocator> m_pAllocator;
+    ComPtr<ISubPicAllocator> m_pAllocator;
 
     std::shared_ptr<SubPicProviderWithSharedLock> GetSubPicProviderWithSharedLock() {
         CAutoLock cAutoLock(&m_csSubPicProvider);
@@ -120,7 +120,7 @@ public:
     /*
     STDMETHODIMP Invalidate(REFERENCE_TIME rtInvalidate = -1) PURE;
     STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, ISubPic** ppSubPic) PURE;
-    STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, bool bAdviseBlocking, CComPtr<ISubPic>& pSubPic);
+    STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, bool bAdviseBlocking, ComPtr<ISubPic>& pSubPic);
 
     STDMETHODIMP GetStats(int& nSubPics, REFERENCE_TIME& rtNow, REFERENCE_TIME& rtStart, REFERENCE_TIME& rtStop) PURE;
     STDMETHODIMP GetStats(int nSubPics, REFERENCE_TIME& rtStart, REFERENCE_TIME& rtStop) PURE;
@@ -132,8 +132,8 @@ class CSubPicQueue : public CSubPicQueueImpl, protected CAMThread
 protected:
     bool m_bExitThread;
 
-    CComPtr<ISubPic> m_pSubPic;
-    CInterfaceList<ISubPic> m_queue;
+    ComPtr<ISubPic> m_pSubPic;
+    std::list<ComPtr<ISubPic>> m_queue;
 
     std::mutex m_mutexSubpic; // to protect m_pSubPic
     std::mutex m_mutexQueue; // to protect m_queue
@@ -147,7 +147,7 @@ protected:
     bool m_bInvalidate;
     REFERENCE_TIME m_rtInvalidate;
 
-    bool EnqueueSubPic(CComPtr<ISubPic>& pSubPic, bool bBlocking);
+    bool EnqueueSubPic(ComPtr<ISubPic>& pSubPic, bool bBlocking);
     REFERENCE_TIME GetCurrentRenderingTime();
 
     // CAMThread
@@ -163,8 +163,8 @@ public:
     STDMETHODIMP SetTime(REFERENCE_TIME rtNow);
 
     STDMETHODIMP Invalidate(REFERENCE_TIME rtInvalidate = -1);
-    STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, CComPtr<ISubPic>& pSubPic);
-    STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, bool bAdviseBlocking, CComPtr<ISubPic>& pSubPic);
+    STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, ComPtr<ISubPic>& pSubPic);
+    STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, bool bAdviseBlocking, ComPtr<ISubPic>& pSubPic);
 
     STDMETHODIMP GetStats(int& nSubPics, REFERENCE_TIME& rtNow, REFERENCE_TIME& rtStart, REFERENCE_TIME& rtStop);
     STDMETHODIMP GetStats(int nSubPic, REFERENCE_TIME& rtStart, REFERENCE_TIME& rtStop);
@@ -174,7 +174,7 @@ class CSubPicQueueNoThread : public CSubPicQueueImpl
 {
 protected:
     CCritSec m_csLock;
-    CComPtr<ISubPic> m_pSubPic;
+    ComPtr<ISubPic> m_pSubPic;
 
 public:
     CSubPicQueueNoThread(SubPicQueueSettings settings, ISubPicAllocator* pAllocator, HRESULT* phr);
@@ -185,8 +185,8 @@ public:
     STDMETHODIMP SetFPS(double fps);
 
     STDMETHODIMP Invalidate(REFERENCE_TIME rtInvalidate = -1);
-    STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, CComPtr<ISubPic>& pSubPic);
-    STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, bool bAdviseBlocking, CComPtr<ISubPic>& pSubPic);
+    STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, ComPtr<ISubPic>& pSubPic);
+    STDMETHODIMP_(bool) LookupSubPic(REFERENCE_TIME rtNow, bool bAdviseBlocking, ComPtr<ISubPic>& pSubPic);
 
     STDMETHODIMP GetStats(int& nSubPics, REFERENCE_TIME& rtNow, REFERENCE_TIME& rtStart, REFERENCE_TIME& rtStop);
     STDMETHODIMP GetStats(int nSubPic, REFERENCE_TIME& rtStart, REFERENCE_TIME& rtStop);

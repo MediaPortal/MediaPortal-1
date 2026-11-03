@@ -31,15 +31,17 @@ double W7GetRefreshRate(int monitorIdx)
   DISPLAYCONFIG_TOPOLOGY_ID* pCurrentTopologyId = NULL;
   LONG result;
   double refreshRate = -1;
-  DISPLAY_DEVICE displayDevice;
+  DISPLAY_DEVICE displayDevice = {};
   displayDevice.cb = sizeof(DISPLAY_DEVICE);
-  DEVMODE devMode;
+  DEVMODE devMode = {};
   devMode.dmSize = sizeof(DEVMODE);
   DEVMODE *paDeviceMode;
 
-  if(EnumDisplayDevices(NULL, monitorIdx, &displayDevice, 0))
+  // a monitor that is not there has no refresh rate
+  if(!EnumDisplayDevices(NULL, monitorIdx, &displayDevice, 0) ||
+     !EnumDisplaySettings(displayDevice.DeviceName, ENUM_CURRENT_SETTINGS, &devMode))
   {
-    EnumDisplaySettings(displayDevice.DeviceName, ENUM_CURRENT_SETTINGS, &devMode);
+    return(refreshRate);
   }
   paDeviceMode = &devMode;
 

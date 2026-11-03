@@ -39,8 +39,8 @@ class CXySubPicProvider
     , public ISubPicProvider
     , public IXyCompatProvider
 {
-    CComPtr<ISubRenderProvider> m_pSubRenderProvider;
-    CComPtr<ISubRenderFrame> m_pSubFrame;
+    ComPtr<ISubRenderProvider> m_pSubRenderProvider;
+    ComPtr<ISubRenderFrame> m_pSubFrame;
     CCritSec m_csSubRenderProvider;
 
     REFERENCE_TIME  m_rtStart;

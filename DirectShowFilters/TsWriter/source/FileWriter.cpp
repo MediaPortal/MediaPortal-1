@@ -44,7 +44,6 @@
 #pragma warning(disable : 4995)
 #include <streams.h>
 #include "FileWriter.h"
-#include <atlbase.h>
 
 extern void LogDebug(const char *fmt, ...) ;
 extern void LogDebug(const wchar_t *fmt, ...) ;
@@ -81,7 +80,7 @@ HRESULT FileWriter::SetFileName(LPCWSTR pszFileName)
 	long length = wcslen(pszFileName);
 
 	if(length > MAX_PATH)
-		return ERROR_FILENAME_EXCED_RANGE;
+		return HRESULT_FROM_WIN32(ERROR_FILENAME_EXCED_RANGE);
 
 	// Take a copy of the filename
 
@@ -113,7 +112,7 @@ HRESULT FileWriter::OpenFile()
 	// Has a filename been set yet
 	if (m_pFileName == NULL)
 	{
-		return ERROR_INVALID_NAME;
+		return HRESULT_FROM_WIN32(ERROR_INVALID_NAME);
 	}
 
 	// Check if the file is being read by another process.

@@ -38,106 +38,25 @@
 !endif 
 
 #---------------------------------------------------------------------------
-# BUILD sources
+# libbluray comes only from the NuGet package MediaPortal.libbluray (BDReader\packages.config).
+# The package is restored by NuGet before the installer is built.
+# Defines: GIT_LIBBLURAY_VERSION, Libbluray_nuget_path
 #---------------------------------------------------------------------------
-; comment one of the following lines to disable the preBuild and use Nuget instead (if version match)
-!define BUILD_Libbluray_DLL
-
-; uncomment one of the following lines to force build otherwise use Nuget package (if available). 
-;!define FORCE_BUILD_Libbluray_JAR
-
-#---------------------------------------------------------------------------
-# Check section
-#---------------------------------------------------------------------------
-
-!macro macro_build_libbluray_jar
-
-!ifndef $%ANT_HOME%
-!define ANT_HOME "${git_NugetPackages}\ANT.1.10.7\tools\bin\"
-!echo "BUILD MESSAGE: ant_home variable system not found - Using ANT Nuget Package"
-!else
-!echo "local ANT_HOME system variable found to $%ANT_HOME% and use it"
-!define ANT_HOME ""
-!endif
-!system '${ANT_HOME}ant -f ${LibblurayJAR} -Dsrc_awt=:java-j2se' = 0
-
-!macroend 
-
-Section libbluray
-	; Order of detection 
-	; 1: Forced nuget package to use with MediaPortal.libbluray_to_use.txt in root nuget packages folder (Value set to 0.0.0 will force build)
-	; 2: Use Nuget version set in BDReader project
-	; 3: Build libbluray from git submodule directly
-	
-	;Force Mode
-	;using FORCE_BUILD_Libbluray_JAR from nsi file
-	
-
-# check if files exists 
-!insertmacro CompileTimeIfFileExist "${git_NugetPackages}\MediaPortal.libbluray_to_use.txt" force_libbluray_version_is_present
+!ifndef Libbluray_nuget_path
 !insertmacro CompileTimeIfFileExist "${git_DirectShowFilters}\BDReader\packages.config" BDReader_packages_config_is_present
-!insertmacro CompileTimeIfFileExist "${git_Libbluray}\src\libbluray\bluray-version.h" bluray-version_h_is_present
-!insertmacro CompileTimeIfFileExist "${git_Libbluray}\libbluray.vcxproj" libbluray_vcxproj_is_present
-	
-!ifdef force_libbluray_version_is_present
-	# file MediaPortal.libbluray_to_use.txt must contain text as example: #define BLURAY_VERSION_STRING "1.1.2" if set to 0.0.0 it will use git libbluray
-	!searchparse /noerrors /file "${git_NugetPackages}\MediaPortal.libbluray_to_use.txt" `#define BLURAY_VERSION_STRING "` GIT_LIBBLURAY_VERSION `"`
-	!echo "BUILD MESSAGE: MediaPortal.libbluray_to_use.txt point to ${GIT_LIBBLURAY_VERSION} and found in ${git_NugetPackages}"
-		!if ${GIT_LIBBLURAY_VERSION} != "0.0.0"
-			!define _Libbluray_NugetCheck
-			!echo "BUILD MESSAGE: MediaPortal.libbluray_to_use.txt defined to ${GIT_LIBBLURAY_VERSION}"
-		!else
-			!echo "BUILD MESSAGE: MediaPortal.libbluray_to_use.txt set as forced build with 0.0.0 value"
-		!endif
-!else
-	# Give libbluray Nuget package from package.config BDReader project
-	!ifdef BDReader_packages_config_is_present
-		!searchparse /noerrors /file "${git_DirectShowFilters}\BDReader\packages.config" `<package id="MediaPortal.libbluray" version="` GIT_LIBBLURAY_VERSION `"`
-		!echo "BUILD MESSAGE: Libbluray version read from BDReader project : ${GIT_LIBBLURAY_VERSION}"
-		!ifdef GIT_LIBBLURAY_VERSION
-		!define _Libbluray_NugetCheck
-		!else 
-		!echo "BUILD MESSAGE: Libbluray version read from BDReader project is wrong, use build libbluray"
-		!endif
-	!else
-		# Give libbluray version from bluray-version file available in libbluray submodule
-		!ifdef bluray-version_h_is_present
-			!searchparse /noerrors /file "${git_Libbluray}\src\libbluray\bluray-version.h" `#define BLURAY_VERSION_STRING "` GIT_LIBBLURAY_VERSION `"`
-			!echo "BUILD MESSAGE: Local Git Libbluray Version : ${GIT_LIBBLURAY_VERSION}"
-			!define _Libbluray_NugetCheck
-		!else 
-			!echo "BUILD MESSAGE: Bluray-version.h is missing, build will stop here"
-		!endif
-	!endif
+!ifndef BDReader_packages_config_is_present
+	!error "BuildError: ${git_DirectShowFilters}\BDReader\packages.config is missing"
 !endif
 
-# Check if Nuget package is the same version than Git Libbluray submodule otherwise build lib with MP
-!ifdef _Libbluray_NugetCheck
-!insertmacro CompileTimeIfFileExist "${git_NugetPackages}\MediaPortal.libbluray.${GIT_LIBBLURAY_VERSION}\" libbluray_nuget_is_present
+!searchparse /noerrors /file "${git_DirectShowFilters}\BDReader\packages.config" `<package id="MediaPortal.libbluray" version="` GIT_LIBBLURAY_VERSION `"`
+!ifndef GIT_LIBBLURAY_VERSION
+	!error "BuildError: package MediaPortal.libbluray is not listed in BDReader\packages.config"
 !endif
 
-!ifdef FORCE_BUILD_Libbluray_JAR
-!ifdef libbluray_nuget_is_present
-!undef libbluray_nuget_is_present
+!define Libbluray_nuget_path "${git_NugetPackages}\MediaPortal.libbluray.${GIT_LIBBLURAY_VERSION}"
+!insertmacro CompileTimeIfFileExist "${Libbluray_nuget_path}\" libbluray_nuget_is_present
+!ifndef libbluray_nuget_is_present
+	!error "BuildError: NuGet package MediaPortal.libbluray ${GIT_LIBBLURAY_VERSION} is not restored in ${git_NugetPackages}"
 !endif
-!echo "BUILD MESSAGE : Flag Force Build detected"
+!echo "BUILD MESSAGE: Libbluray NuGet package ${GIT_LIBBLURAY_VERSION}"
 !endif
-
-# If nuget present and not forced, use it, else build with installer
-!ifdef libbluray_nuget_is_present
-	!echo "BUILD MESSAGE: Libbluray Nuget Package is present and match to wanted version : ${GIT_LIBBLURAY_VERSION} "
-	!define Libbluray_use_Nuget_JAR
-	!ifndef libbluray_vcxproj_is_present || BUILD_Libbluray_DLL
-	!define Libbluray_use_Nuget_DLL
-	!else 
-	!define Libbluray_use_Build
-	!endif
-	!define Libbluray_nuget_path "${git_NugetPackages}\MediaPortal.libbluray.${GIT_LIBBLURAY_VERSION}"
-!else 
-	!echo "BUILD MESSAGE: Libbluray build forced by user or missing nuget package > only using local git submodule"
-	!insertmacro macro_Build_libbluray_jar	
-	!searchparse /noerrors /file "${git_Libbluray}\src\libbluray\bluray-version.h" `#define BLURAY_VERSION_STRING "` GIT_LIBBLURAY_VERSION `"`
-	!echo "BUILD MESSAGE: Local Git Libbluray Version : ${GIT_LIBBLURAY_VERSION}"
-    !define Libbluray_use_Build
-!endif
-SectionEnd

@@ -398,11 +398,11 @@ const VIH2 vih2s[] = {
 
 extern const UINT VIHSIZE = _countof(vihs);
 
-CString VIH2String(int i)
+tstring VIH2String(int i)
 {
-    CString ret(GuidNames[*vihs[i].subtype]);
-    if (!ret.Left(13).CompareNoCase(_T("MEDIASUBTYPE_"))) {
-        ret = ret.Mid(13);
+    tstring ret = StringToT(GuidNames[*vihs[i].subtype]);
+    if (!StringICompare(StringLeft(ret, 13), _T("MEDIASUBTYPE_"))) {
+        ret = StringMid(ret, 13);
     }
     if (vihs[i].vih.bmiHeader.biCompression == 3) {
         ret += _T(" BITF");
@@ -413,11 +413,11 @@ CString VIH2String(int i)
     return ret;
 }
 
-CString Subtype2String(const GUID& subtype)
+tstring Subtype2String(const GUID& subtype)
 {
-    CString ret(GuidNames[subtype]);
-    if (!ret.Left(13).CompareNoCase(_T("MEDIASUBTYPE_"))) {
-        ret = ret.Mid(13);
+    tstring ret = StringToT(GuidNames[subtype]);
+    if (!StringICompare(StringLeft(ret, 13), _T("MEDIASUBTYPE_"))) {
+        ret = StringMid(ret, 13);
     }
     if (subtype == MEDIASUBTYPE_I420) {
         ret = _T("I420");    // FIXME

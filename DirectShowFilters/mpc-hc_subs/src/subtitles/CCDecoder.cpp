@@ -23,7 +23,7 @@
 #include "CCDecoder.h"
 #include "SubtitleHelpers.h"
 
-CCDecoder::CCDecoder(CString fn, CString rawfn) : m_fn(fn), m_rawfn(rawfn)
+CCDecoder::CCDecoder(tstring fn, tstring rawfn) : m_fn(fn), m_rawfn(rawfn)
 {
     m_sts.CreateDefaultStyle(ANSI_CHARSET);
 
@@ -31,27 +31,27 @@ CCDecoder::CCDecoder(CString fn, CString rawfn) : m_fn(fn), m_rawfn(rawfn)
     m_fEndOfCaption = false;
     ZeroMemory(m_buff, sizeof(m_buff));
     ZeroMemory(m_disp, sizeof(m_disp));
-    m_cursor = CPoint(0, 0);
+    m_cursor = MakePoint(0, 0);
 
-    if (!m_rawfn.IsEmpty()) {
-        _tremove(m_rawfn);
+    if (!m_rawfn.empty()) {
+        _tremove(m_rawfn.c_str());
     }
 }
 
 CCDecoder::~CCDecoder()
 {
-    if (!m_sts.IsEmpty() && !m_fn.IsEmpty()) {
+    if (!m_sts.empty() && !m_fn.empty()) {
         m_sts.Sort();
         m_sts.SaveAs(m_fn, Subtitle::SRT, -1, 0, CTextFile::DEFAULT_ENCODING);
-        m_sts.SaveAs(m_fn.Left(m_fn.ReverseFind('.') + 1) + _T("utf8.srt"), Subtitle::SRT, -1, 0, CTextFile::UTF8);
-        m_sts.SaveAs(m_fn.Left(m_fn.ReverseFind('.') + 1) + _T("utf16le.srt"), Subtitle::SRT, -1, 0, CTextFile::LE16);
-        m_sts.SaveAs(m_fn.Left(m_fn.ReverseFind('.') + 1) + _T("utf16be.srt"), Subtitle::SRT, -1, 0, CTextFile::BE16);
+        m_sts.SaveAs(StringLeft(m_fn, StringRFind(m_fn, '.') + 1) + _T("utf8.srt"), Subtitle::SRT, -1, 0, CTextFile::UTF8);
+        m_sts.SaveAs(StringLeft(m_fn, StringRFind(m_fn, '.') + 1) + _T("utf16le.srt"), Subtitle::SRT, -1, 0, CTextFile::LE16);
+        m_sts.SaveAs(StringLeft(m_fn, StringRFind(m_fn, '.') + 1) + _T("utf16be.srt"), Subtitle::SRT, -1, 0, CTextFile::BE16);
     }
 }
 
 void CCDecoder::MoveCursor(int x, int y)
 {
-    m_cursor = CPoint(x, y);
+    m_cursor = MakePoint(x, y);
     if (m_cursor.x < 0) {
         m_cursor.x = 0;
     }
@@ -79,19 +79,19 @@ void CCDecoder::PutChar(WCHAR c)
 
 void CCDecoder::SaveDisp(__int64 time)
 {
-    CStringW str;
+    std::wstring str;
 
     for (size_t row = 0; row < 16; row++) {
         bool fNonEmptyRow = false;
 
         for (size_t col = 0; col < 32; col++) {
             if (m_disp[row][col]) {
-                CStringW str2(&m_disp[row][col]);
+                std::wstring str2(&m_disp[row][col]);
                 if (fNonEmptyRow) {
                     str += L' ';
                 }
                 str += str2;
-                col += str2.GetLength();
+                col += int(str2.size());
                 fNonEmptyRow = true;
             }
         }
@@ -101,7 +101,7 @@ void CCDecoder::SaveDisp(__int64 time)
         }
     }
 
-    if (str.IsEmpty()) {
+    if (str.empty()) {
         return;
     }
 
@@ -110,9 +110,9 @@ void CCDecoder::SaveDisp(__int64 time)
 
 void CCDecoder::DecodeCC(const BYTE* buff, int len, __int64 time)
 {
-    if (!m_rawfn.IsEmpty()) {
+    if (!m_rawfn.empty()) {
         FILE* f = nullptr;
-        if (!_tfopen_s(&f, m_rawfn, _T("at"))) {
+        if (!_tfopen_s(&f, m_rawfn.c_str(), _T("at"))) {
             _ftprintf_s(f, _T("%02d:%02d:%02d.%03d\n"),
                         (int)(time / 1000 / 60 / 60),
                         (int)((time / 1000 / 60) % 60),
@@ -337,8 +337,8 @@ void CCDecoder::ExtractCC(BYTE* buff, int len, __int64 time)
             if (nBytes > 0) {
                 nBytes = (nBytes + 1) & ~1;
 
-                BYTE* pData1 = DEBUG_NEW BYTE[nBytes];
-                BYTE* pData2 = DEBUG_NEW BYTE[nBytes];
+                BYTE* pData1 = new BYTE[nBytes];
+                BYTE* pData2 = new BYTE[nBytes];
 
                 if (pData1 && pData2) {
                     int nBytes1 = 0, nBytes2 = 0;

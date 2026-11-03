@@ -21,13 +21,5 @@
 
 #pragma once
 
-class CFilterApp : public CWinApp
-{
-public:
-	CFilterApp();
-
-	BOOL InitInstance();
-	BOOL ExitInstance();
-
-	DECLARE_MESSAGE_MAP()
-};
+// The entry point of the DLL: no application object (MFC) is needed, the DirectShow class factories are set up by
+// DllEntryPoint of the base classes.

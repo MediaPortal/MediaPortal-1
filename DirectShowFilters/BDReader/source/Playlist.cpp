@@ -162,7 +162,7 @@ bool CPlaylist::CreateNewClip(int clipNumber, REFERENCE_TIME clipStart, REFERENC
     CClip* videoClip = NULL;
     CClip* audioClip = NULL;
 
-    int clipsSize = m_vecClips.size();
+    int clipsSize = (int)m_vecClips.size();
 
     if (clipsSize > 0)
     {
@@ -432,10 +432,10 @@ void CPlaylist::PushClips()
 {
   if (m_vecClips.size() > 0)
   {
-    m_itCurrentAudioPlayBackClipPos = m_itCurrentAudioPlayBackClip - m_vecClips.begin();
-    m_itCurrentVideoPlayBackClipPos = m_itCurrentVideoPlayBackClip - m_vecClips.begin();
-    m_itCurrentAudioSubmissionClipPos = m_itCurrentAudioSubmissionClip - m_vecClips.begin();
-    m_itCurrentVideoSubmissionClipPos = m_itCurrentVideoSubmissionClip - m_vecClips.begin();
+    m_itCurrentAudioPlayBackClipPos = (int)(m_itCurrentAudioPlayBackClip - m_vecClips.begin());
+    m_itCurrentVideoPlayBackClipPos = (int)(m_itCurrentVideoPlayBackClip - m_vecClips.begin());
+    m_itCurrentAudioSubmissionClipPos = (int)(m_itCurrentAudioSubmissionClip - m_vecClips.begin());
+    m_itCurrentVideoSubmissionClipPos = (int)(m_itCurrentVideoSubmissionClip - m_vecClips.begin());
   }
 }
 

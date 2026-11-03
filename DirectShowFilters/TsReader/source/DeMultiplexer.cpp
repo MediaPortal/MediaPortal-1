@@ -625,9 +625,9 @@ void CDeMultiplexer::FlushVideo(bool isMidStream)
     m_vecVideoBuffers.clear();
   }
     
-  m_p.Free();
+  m_p.reset();
   m_lastStart = 0;
-  m_pl.RemoveAll();
+  m_pl.clear();
 
   m_FirstVideoSample = 0x7FFFFFFF00000000LL;
   m_LastVideoSample = 0;
@@ -2305,7 +2305,7 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
 
   if(!m_p)
   {
-    m_p.Attach(new Packet());
+    m_p.reset(new Packet());
     m_p->rtStart = Packet::INVALID_TIME;
     m_p->rtPrevStart = Packet::INVALID_TIME; 
     m_lastStart = 0;
@@ -2326,27 +2326,27 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
 
   if (header.PayloadUnitStart)
   {
-    m_WaitHeaderPES = m_p->GetCount();
+    m_WaitHeaderPES = m_p->size();
     m_mVideoValidPES = m_VideoValidPES;
     LOG_SAMPLES_HEVC("DeMultiplexer::FillVideoHEVC PayLoad Unit Start");
   }
   
-  CAutoPtr<Packet> p(new Packet());
+  std::unique_ptr<Packet> p(new Packet());
 
   if (headerlen < 188)
   {            
     int dataLen = 188-headerlen;
   
-    p->SetCount(dataLen);
+    p->resize(dataLen);
     p->SetData(&tsPacket[headerlen],dataLen);
 
-    m_p->Append(*p);
+    m_p->insert(m_p->end(), p->begin(), p->end());
 
-    if (m_p->GetCount() > 4194303) //Sanity check
+    if (m_p->size() > 4194303) //Sanity check
     {
       //Let's start again...
-      m_p.Free();
-      m_pl.RemoveAll();
+      m_p.reset();
+      m_pl.clear();
       m_bSetVideoDiscontinuity = true;
       m_mpegParserReset = true;
       m_VideoValidPES = false;
@@ -2363,8 +2363,8 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
 
   if (m_WaitHeaderPES >= 0)
   {
-    ptrdiff_t AvailablePESlength = m_p->GetCount()-m_WaitHeaderPES ;
-    BYTE* start = m_p->GetData() + m_WaitHeaderPES;
+    ptrdiff_t AvailablePESlength = m_p->size()-m_WaitHeaderPES ;
+    BYTE* start = m_p->data() + m_WaitHeaderPES;
     
     if (AvailablePESlength < 9)
     {
@@ -2495,7 +2495,7 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
           }
         }
         m_lastStart -= 9+start[8];
-        m_p->RemoveAt(m_WaitHeaderPES, 9+start[8]);
+        m_p->erase(m_p->begin() + (m_WaitHeaderPES), m_p->begin() + (m_WaitHeaderPES) + (9+start[8]));
                 
         if (pts.IsValid)
         {
@@ -2511,10 +2511,10 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
     }
   }
 
-  if (m_p->GetCount())
+  if (m_p->size())
   {
-    BYTE* start = m_p->GetData();
-    BYTE* end = start + m_p->GetCount();
+    BYTE* start = m_p->data();
+    BYTE* end = start + m_p->size();
     bool fourByte;
 
     MOVE_TO_HEVC_START_CODE(start, end, fourByte);
@@ -2523,20 +2523,20 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
     while(start <= end-4)
     {
       BYTE* next = start+1;
-      if (next < m_p->GetData() + m_lastStart)
+      if (next < m_p->data() + m_lastStart)
       {
-        next = m_p->GetData() + m_lastStart;
+        next = m_p->data() + m_lastStart;
       }
 
       MOVE_TO_HEVC_START_CODE(next, end, fourByte);
 
       if(next >= end-4)
       {
-        m_lastStart = next - m_p->GetData();
+        m_lastStart = next - m_p->data();
         break;
       }
         
-      CAutoPtr<Packet> p2(new Packet());
+      std::unique_ptr<Packet> p2(new Packet());
       p2->rtStart = Packet::INVALID_TIME;
       bool isNewTimestamp = false;
 
@@ -2549,8 +2549,8 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
       if ((size <= 0) || (size > 4194303)) //Sanity check
       {
         //Let's start again...
-        m_p.Free();
-        m_pl.RemoveAll();
+        m_p.reset();
+        m_pl.clear();
         m_bSetVideoDiscontinuity = true;
         m_mpegParserReset = true;
         m_VideoValidPES = false;
@@ -2565,15 +2565,15 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
 
       //LogDebug("DeMux: NALU size %d", size);
 
-      p2->SetCount (size+sizeof(dwNalStart));
+      p2->resize(size+sizeof(dwNalStart));
       
-      memcpy (p2->GetData(), &dwNalStart, sizeof(dwNalStart)); //Insert NAL start code
-      memcpy (p2->GetData()+sizeof(dwNalStart), (start+3), size);
+      memcpy (p2->data(), &dwNalStart, sizeof(dwNalStart)); //Insert NAL start code
+      memcpy (p2->data()+sizeof(dwNalStart), (start+3), size);
 
       //Get the NAL ID
-      char nalIDp2 = ((*(p2->GetData()+4) & 0xfe) >> 1); //Note the 'forbidden_zero_bit' is included i.e. it must be zero for a valid NAL ID
+      char nalIDp2 = ((*(p2->data()+4) & 0xfe) >> 1); //Note the 'forbidden_zero_bit' is included i.e. it must be zero for a valid NAL ID
       
-      LOG_SAMPLES_HEVC("HEVC: Input p2 NALU Type: %d (%d), m_p->rtStart: %d, m_p->rtPrevStart: %d", nalIDp2, p2->GetCount(), (int)m_p->rtStart, (int)m_p->rtPrevStart);
+      LOG_SAMPLES_HEVC("HEVC: Input p2 NALU Type: %d (%d), m_p->rtStart: %d, m_p->rtPrevStart: %d", nalIDp2, p2->size(), (int)m_p->rtStart, (int)m_p->rtPrevStart);
       
       if ((m_p->rtStart != m_p->rtPrevStart) && (m_p->rtPrevStart != Packet::INVALID_TIME))
       {
@@ -2597,17 +2597,17 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
       if((nalIDp2 == HEVC_NAL_AUD) || (!m_fHasAccessUnitDelimiters && m_isNewNALUTimestamp)) //Check for AUD
       {
         m_isNewNALUTimestamp = false;
-        if ((m_pl.GetCount()>0) && m_mVideoValidPES)
+        if ((m_pl.size()>0) && m_mVideoValidPES)
         {
           //Transfer NALU packets to output sample
           bool Gop = false;
           bool foundIRAP = false;
           
           //Copy available NALUs into new packet 'p' (for the next video buffer)
-          CAutoPtr<Packet> p(new Packet());
+          std::unique_ptr<Packet> p(new Packet());
           p->rtStart = Packet::INVALID_TIME;
 
-          LOG_OUTSAMPLES_HEVC("HEVC: Transfer to p, p->len = %d, m_pl.len = %d, hasAUD = %d", p->GetCount(), m_pl.GetCount(), m_fHasAccessUnitDelimiters);
+          LOG_OUTSAMPLES_HEVC("HEVC: Transfer to p, p->len = %d, m_pl.len = %d, hasAUD = %d", p->size(), m_pl.size(), m_fHasAccessUnitDelimiters);
 
           if (!m_fHasAccessUnitDelimiters)
           {
@@ -2615,28 +2615,28 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
             DWORD dwNalStart = 0x01000000;  //Insert NAL start code 
             DWORD dwFakeAUD  = 0x00500146;  //AUD with IPB pic_type        
               
-            p->SetCount (sizeof(dwNalStart)+sizeof(dwFakeAUD));
+            p->resize(sizeof(dwNalStart)+sizeof(dwFakeAUD));
             
-            memcpy (p->GetData(), &dwNalStart, sizeof(dwNalStart));  //Insert NAL start code
-            memcpy (p->GetData()+sizeof(dwNalStart), &dwFakeAUD, sizeof(dwFakeAUD));            
-            //LogDebug("HEVC: Insert Fake AUD: %x %x %x %x %x %x %x %x",  p->GetAt(0), p->GetAt(1), p->GetAt(2), p->GetAt(3), p->GetAt(4), p->GetAt(5), p->GetAt(6), p->GetAt(7));
+            memcpy (p->data(), &dwNalStart, sizeof(dwNalStart));  //Insert NAL start code
+            memcpy (p->data()+sizeof(dwNalStart), &dwFakeAUD, sizeof(dwFakeAUD));            
+            //LogDebug("HEVC: Insert Fake AUD: %x %x %x %x %x %x %x %x",  (*p)[0], (*p)[1], (*p)[2], (*p)[3], (*p)[4], (*p)[5], (*p)[6], (*p)[7]);
           }
           
-          while(m_pl.GetCount()>0)
+          while(m_pl.size()>0)
           {
-            CAutoPtr<Packet> p4(new Packet());
-            p4 = m_pl.RemoveHead();
+            std::unique_ptr<Packet> p4(new Packet());
+            p4 = PopHead(m_pl);
             
             //if (!iFrameScanner.SeenEnough())
             //  iFrameScanner.ProcessNALU(p2);
-            LOG_OUTSAMPLES_HEVC("HEVC: Output p4 NALU Type: %d (%d), rtStart: %d", (p4->GetAt(4) & 0xfe)>>1, p4->GetCount(), (int)p->rtStart);
+            LOG_OUTSAMPLES_HEVC("HEVC: Output p4 NALU Type: %d (%d), rtStart: %d", ((*p4)[4] & 0xfe)>>1, p4->size(), (int)p->rtStart);
             
-            char nalIDp4 = ((p4->GetAt(4) & 0xfe) >> 1);
+            char nalIDp4 = (((*p4)[4] & 0xfe) >> 1);
             //LogDebug("HEVC: All NAL, type = %d", nalIDp4);
             if ((nalIDp4 == HEVC_NAL_VPS) || (nalIDp4 == HEVC_NAL_SPS) || (nalIDp4 == HEVC_NAL_PPS)) //Process VPS, SPS & PPS data
             {
               //LogDebug("HEVC: VPS/SPS/PPS NAL, type = %d", nalIDp4);
-              Gop = m_mpegPesParser->OnTsPacket(p4->GetData(), (int)p4->GetCount(), VIDEO_STREAM_TYPE_HEVC, m_mpegParserReset);
+              Gop = m_mpegPesParser->OnTsPacket(p4->data(), (int)p4->size(), VIDEO_STREAM_TYPE_HEVC, m_mpegParserReset);
               m_mpegParserReset = false;
             }
             
@@ -2651,23 +2651,23 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
                 if (m_mpegPesParser->basicVideoInfo.spslen > 0)
                 {
                   //Insert SPS NAL
-                  size_t currCount = p->GetCount();
-                  p->SetCount (currCount + (size_t)m_mpegPesParser->basicVideoInfo.spslen);
-                  memcpy (p->GetData() + currCount, m_mpegPesParser->basicVideoInfo.sps, (size_t)m_mpegPesParser->basicVideoInfo.spslen);
+                  size_t currCount = p->size();
+                  p->resize(currCount + (size_t)m_mpegPesParser->basicVideoInfo.spslen);
+                  memcpy (p->data() + currCount, m_mpegPesParser->basicVideoInfo.sps, (size_t)m_mpegPesParser->basicVideoInfo.spslen);
                 }
                 if (m_mpegPesParser->basicVideoInfo.ppslen > 0)
                 {
                   //Insert PPS NAL
-                  size_t currCount = p->GetCount();
-                  p->SetCount (currCount + (size_t)m_mpegPesParser->basicVideoInfo.ppslen);
-                  memcpy (p->GetData() + currCount, m_mpegPesParser->basicVideoInfo.pps, (size_t)m_mpegPesParser->basicVideoInfo.ppslen);
+                  size_t currCount = p->size();
+                  p->resize(currCount + (size_t)m_mpegPesParser->basicVideoInfo.ppslen);
+                  memcpy (p->data() + currCount, m_mpegPesParser->basicVideoInfo.pps, (size_t)m_mpegPesParser->basicVideoInfo.ppslen);
                 }
                 if (m_mpegPesParser->basicVideoInfo.vpslen > 0)
                 {
                   //Insert VPS NAL
-                  size_t currCount = p->GetCount();
-                  p->SetCount (currCount + (size_t)m_mpegPesParser->basicVideoInfo.vpslen);
-                  memcpy (p->GetData() + currCount, m_mpegPesParser->basicVideoInfo.vps, (size_t)m_mpegPesParser->basicVideoInfo.vpslen);
+                  size_t currCount = p->size();
+                  p->resize(currCount + (size_t)m_mpegPesParser->basicVideoInfo.vpslen);
+                  memcpy (p->data() + currCount, m_mpegPesParser->basicVideoInfo.vps, (size_t)m_mpegPesParser->basicVideoInfo.vpslen);
                 }
               }
             }
@@ -2675,15 +2675,15 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
             if (p->rtStart == Packet::INVALID_TIME)
             {
               p->rtStart = p4->rtStart;
-              //LogDebug("Fake AUD2: %x %x %x %x %x %x",  p4->GetAt(0), p4->GetAt(1), p4->GetAt(2), p4->GetAt(3), p4->GetAt(4), p4->GetAt(5));
+              //LogDebug("Fake AUD2: %x %x %x %x %x %x",  (*p4)[0], (*p4)[1], (*p4)[2], (*p4)[3], (*p4)[4], (*p4)[5]);
             }
-            if (p->GetCount()>0)
+            if (p->size()>0)
             {
-              p->Append(*p4);
+              p->insert(p->end(), p4->begin(), p4->end());
             }
             else
             {
-              p = p4;
+              p = std::move(p4);
             }           
           }
 
@@ -2703,13 +2703,13 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
             timestamp.PcrReferenceBase = p->rtStart;
             timestamp.IsValid=true;
           }
-          //LogDebug("NALU Type: %d (%d) %d, p->timestamp %f, p->rtStart %d",  p->GetAt(4)&0x1f, p->GetCount(), timestamp.ToClock(), (int)p->rtStart);
+          //LogDebug("NALU Type: %d (%d) %d, p->timestamp %f, p->rtStart %d",  (*p)[4]&0x1f, p->size(), timestamp.ToClock(), (int)p->rtStart);
 
 
           if ((Gop || m_bFirstGopFound) && m_filter.GetVideoPin()->IsConnected())
           {
             //Bitrate info calculation for MP player
-            m_byteRead = m_byteRead + p->GetCount();
+            m_byteRead = m_byteRead + p->size();
           	m_sampleTime = (float)timestamp.ToClock();
           	float elapsedTime = m_sampleTime - m_sampleTimePrev;
           	          
@@ -2728,12 +2728,12 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
           	}
 
             CRefTime Ref;
-            CBuffer *pCurrentVideoBuffer = new CBuffer((unsigned long)p->GetCount());
-            pCurrentVideoBuffer->Add(p->GetData(), (int)p->GetCount());
+            CBuffer *pCurrentVideoBuffer = new CBuffer((unsigned long)p->size());
+            pCurrentVideoBuffer->Add(p->data(), (int)p->size());
             pCurrentVideoBuffer->SetPts(timestamp);   
             pCurrentVideoBuffer->SetPcr(m_duration.FirstStartPcr(),m_duration.MaxPcr());
             pCurrentVideoBuffer->MediaTime(Ref);
-            LOG_OUTSAMPLES_HEVC("...> HEVC: Store NALU type (length) = %d (%d), p->rtStart = %d, timestamp %f, IRAP = %d", (*(p->GetData()+4) & 0x1F), p->GetCount(), (int)p->rtStart, timestamp.ToClock(), foundIRAP) ;
+            LOG_OUTSAMPLES_HEVC("...> HEVC: Store NALU type (length) = %d (%d), p->rtStart = %d, timestamp %f, IRAP = %d", (*(p->data()+4) & 0x1F), p->size(), (int)p->rtStart, timestamp.ToClock(), foundIRAP) ;
             // Must use p->rtStart as CPcr is UINT64 and INVALID_TIME is LONGLONG
             // Too risky to change CPcr implementation at this time 
             if(p->rtStart != Packet::INVALID_TIME)
@@ -2844,25 +2844,25 @@ void CDeMultiplexer::FillVideoHEVC(CTsHeader& header, byte* tsPacket)
           m_bSetVideoDiscontinuity = !m_mVideoValidPES;
         }
         
-        m_pl.RemoveAll();
+        m_pl.clear();
           
         //p2->rtStart = m_p->rtStart; 
         //m_p->rtStart = Packet::INVALID_TIME;
       }
 
-      LOG_OUTSAMPLES_HEVC(".......> HEVC: Store NALU type (length) = %d (%d), p2->rtStart = %d, newtimestamp = %d", (*(p2->GetData()+4) & 0x7e)>>1, p2->GetCount(), (int)p2->rtStart, isNewTimestamp) ;
-      m_pl.AddTail(p2);
+      LOG_OUTSAMPLES_HEVC(".......> HEVC: Store NALU type (length) = %d (%d), p2->rtStart = %d, newtimestamp = %d", (*(p2->data()+4) & 0x7e)>>1, p2->size(), (int)p2->rtStart, isNewTimestamp) ;
+      m_pl.push_back(std::move(p2));
       m_isNewNALUTimestamp = isNewTimestamp;
       isNewTimestamp = false;
 
       start = next;
-      m_lastStart = start - m_p->GetData() + 1;
+      m_lastStart = start - m_p->data() + 1;
     }
 
-    if(start > m_p->GetData())
+    if(start > m_p->data())
     {
-      m_lastStart -= (start - m_p->GetData());
-      m_p->RemoveAt(0, start - m_p->GetData());
+      m_lastStart -= (start - m_p->data());
+      m_p->erase(m_p->begin() + (0), m_p->begin() + (0) + (start - m_p->data()));
     }
   }
   return;
@@ -2874,7 +2874,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
 
   if(!m_p)
   {
-    m_p.Attach(new Packet());
+    m_p.reset(new Packet());
     m_p->rtStart = Packet::INVALID_TIME;
     m_p->rtPrevStart = Packet::INVALID_TIME; 
     m_lastStart = 0;
@@ -2895,27 +2895,27 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
 
   if (header.PayloadUnitStart)
   {
-    m_WaitHeaderPES = m_p->GetCount();
+    m_WaitHeaderPES = m_p->size();
     m_mVideoValidPES = m_VideoValidPES;
     LOG_SAMPLES("DeMultiplexer::FillVideoH264 PayLoad Unit Start");
   }
   
-  CAutoPtr<Packet> p(new Packet());
+  std::unique_ptr<Packet> p(new Packet());
 
   if (headerlen < 188)
   {            
     int dataLen = 188-headerlen;
 
-    p->SetCount(dataLen);
+    p->resize(dataLen);
     p->SetData(&tsPacket[headerlen],dataLen);
 
-    m_p->Append(*p);
+    m_p->insert(m_p->end(), p->begin(), p->end());
 
-    if (m_p->GetCount() > 4194303) //Sanity check
+    if (m_p->size() > 4194303) //Sanity check
     {
       //Let's start again...
-      m_p.Free();
-      m_pl.RemoveAll();
+      m_p.reset();
+      m_pl.clear();
       m_bSetVideoDiscontinuity = true;
       m_mpegParserReset = true;
       m_VideoValidPES = false;
@@ -2932,8 +2932,8 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
 
   if (m_WaitHeaderPES >= 0)
   {
-    ptrdiff_t AvailablePESlength = m_p->GetCount()-m_WaitHeaderPES ;
-    BYTE* start = m_p->GetData() + m_WaitHeaderPES;
+    ptrdiff_t AvailablePESlength = m_p->size()-m_WaitHeaderPES ;
+    BYTE* start = m_p->data() + m_WaitHeaderPES;
     
     if (AvailablePESlength < 9)
     {
@@ -3064,7 +3064,7 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
           }
         }
         m_lastStart -= 9+start[8];
-        m_p->RemoveAt(m_WaitHeaderPES, 9+start[8]);
+        m_p->erase(m_p->begin() + (m_WaitHeaderPES), m_p->begin() + (m_WaitHeaderPES) + (9+start[8]));
                 
         if (pts.IsValid)
         {
@@ -3080,10 +3080,10 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
     }
   }
 
-  if (m_p->GetCount())
+  if (m_p->size())
   {
-    BYTE* start = m_p->GetData();
-    BYTE* end = start + m_p->GetCount();
+    BYTE* start = m_p->data();
+    BYTE* end = start + m_p->size();
     bool fourByte;
 
     MOVE_TO_H264_START_CODE(start, end, fourByte);
@@ -3092,20 +3092,20 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
     while(start <= end-4)
     {
       BYTE* next = start+1;
-      if (next < m_p->GetData() + m_lastStart)
+      if (next < m_p->data() + m_lastStart)
       {
-        next = m_p->GetData() + m_lastStart;
+        next = m_p->data() + m_lastStart;
       }
 
       MOVE_TO_H264_START_CODE(next, end, fourByte);
 
       if(next >= end-4)
       {
-        m_lastStart = next - m_p->GetData();
+        m_lastStart = next - m_p->data();
         break;
       }
         
-      CAutoPtr<Packet> p2(new Packet());
+      std::unique_ptr<Packet> p2(new Packet());
       p2->rtStart = Packet::INVALID_TIME;
       bool isNewTimestamp = false;
 
@@ -3118,8 +3118,8 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
       if ((size <= 0) || (size > 4194303)) //Sanity check
       {
         //Let's start again...
-        m_p.Free();
-        m_pl.RemoveAll();
+        m_p.reset();
+        m_pl.clear();
         m_bSetVideoDiscontinuity = true;
         m_mpegParserReset = true;
         m_VideoValidPES = false;
@@ -3133,15 +3133,15 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
 
       //LogDebug("DeMux: NALU size %d", size);
 
-      p2->SetCount (size+sizeof(dwNalLength));
+      p2->resize(size+sizeof(dwNalLength));
       
-      memcpy (p2->GetData(), &dwNalLength, sizeof(dwNalLength));
-      memcpy (p2->GetData()+sizeof(dwNalLength), (start+3), size);
+      memcpy (p2->data(), &dwNalLength, sizeof(dwNalLength));
+      memcpy (p2->data()+sizeof(dwNalLength), (start+3), size);
       
       //Get the NAL ID
-      char nalIDp2 = (*(p2->GetData()+4)&0x9f); //Note the 'forbidden_zero_bit' is included i.e. it must be zero for a valid NAL ID
+      char nalIDp2 = (*(p2->data()+4)&0x9f); //Note the 'forbidden_zero_bit' is included i.e. it must be zero for a valid NAL ID
 
-      LOG_SAMPLES("Input p2 NALU Type: %d (%d), m_p->rtStart: %d, m_p->rtPrevStart: %d", nalIDp2, p2->GetCount(), (int)m_p->rtStart, (int)m_p->rtPrevStart);
+      LOG_SAMPLES("Input p2 NALU Type: %d (%d), m_p->rtStart: %d, m_p->rtPrevStart: %d", nalIDp2, p2->size(), (int)m_p->rtStart, (int)m_p->rtPrevStart);
       
       if ((m_p->rtStart != m_p->rtPrevStart) && (m_p->rtPrevStart != Packet::INVALID_TIME))
       {
@@ -3166,14 +3166,14 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
       if((nalIDp2 == H264_NAL_AUD) || (!m_fHasAccessUnitDelimiters && m_isNewNALUTimestamp))
       {
         m_isNewNALUTimestamp = false;
-        if ((m_pl.GetCount()>0) && m_mVideoValidPES)
+        if ((m_pl.size()>0) && m_mVideoValidPES)
         {
           //Transfer NALU packets to output sample
           bool Gop = false;
           bool foundIRAP = false;
           
           //Copy available NALUs into new packet 'p' (for the next video buffer)
-          CAutoPtr<Packet> p(new Packet());
+          std::unique_ptr<Packet> p(new Packet());
           p->rtStart = Packet::INVALID_TIME;
 
           if (!m_fHasAccessUnitDelimiters)
@@ -3183,29 +3183,29 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
             WORD data9 = 0xF009;            
             DWORD dwNalLength = _byteswap_ulong(size);  //dwNalLength is big-endian format
               
-            p->SetCount (size+sizeof(dwNalLength));
+            p->resize(size+sizeof(dwNalLength));
             
-            memcpy (p->GetData(), &dwNalLength, sizeof(dwNalLength));
-            memcpy (p->GetData()+sizeof(dwNalLength), &data9, size);
-            //LogDebug("Fake AUD: %x %x %x %x %x %x",  p->GetAt(0), p->GetAt(1), p->GetAt(2), p->GetAt(3), p->GetAt(4), p->GetAt(5));
+            memcpy (p->data(), &dwNalLength, sizeof(dwNalLength));
+            memcpy (p->data()+sizeof(dwNalLength), &data9, size);
+            //LogDebug("Fake AUD: %x %x %x %x %x %x",  (*p)[0], (*p)[1], (*p)[2], (*p)[3], (*p)[4], (*p)[5]);
           }
           
-          while(m_pl.GetCount()>0)
+          while(m_pl.size()>0)
           {
-            CAutoPtr<Packet> p4(new Packet());
-            p4 = m_pl.RemoveHead();
+            std::unique_ptr<Packet> p4(new Packet());
+            p4 = PopHead(m_pl);
             
             //if (!iFrameScanner.SeenEnough())
             //  iFrameScanner.ProcessNALU(p2);
-            LOG_OUTSAMPLES("Output p4 NALU Type: %d (%d), rtStart: %d", p4->GetAt(4)&0x1f, p4->GetCount(), (int)p->rtStart);
+            LOG_OUTSAMPLES("Output p4 NALU Type: %d (%d), rtStart: %d", (*p4)[4]&0x1f, p4->size(), (int)p->rtStart);
             
-            char nalIDp4     = p4->GetAt(4) & 0x9f; //Note the 'forbidden_zero_bit' is included i.e. it must be zero for a valid NAL ID
-            char nalRefIdcp4 = (p4->GetAt(4) & 0x60) >> 5;
-            //LogDebug("H264: All NAL, type = %d, nalRefIDC = %d, nextByte = 0x%x", nalIDp4, nalRefIdcp4, p4->GetAt(5));
+            char nalIDp4     = (*p4)[4] & 0x9f; //Note the 'forbidden_zero_bit' is included i.e. it must be zero for a valid NAL ID
+            char nalRefIdcp4 = ((*p4)[4] & 0x60) >> 5;
+            //LogDebug("H264: All NAL, type = %d, nalRefIDC = %d, nextByte = 0x%x", nalIDp4, nalRefIdcp4, (*p4)[5]);
             
             if (((nalIDp4 == H264_NAL_SPS) || (nalIDp4 == H264_NAL_PPS)) && (nalRefIdcp4 != 0)) //Process SPS & PPS data
             {
-              Gop = m_mpegPesParser->OnTsPacket(p4->GetData(), (int)p4->GetCount(), VIDEO_STREAM_TYPE_H264, m_mpegParserReset);
+              Gop = m_mpegPesParser->OnTsPacket(p4->data(), (int)p4->size(), VIDEO_STREAM_TYPE_H264, m_mpegParserReset);
               m_mpegParserReset = false;
               
               if (Gop && !m_bFirstGopParsed)
@@ -3215,47 +3215,47 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
               }
             }
 
-            //if(nalIDp4 == H264_NAL_SEI && p4->GetAt(5) == 0x06) //recovery_point SEI
+            //if(nalIDp4 == H264_NAL_SEI && (*p4)[5] == 0x06) //recovery_point SEI
             //{
             //  LogDebug("H264: recovery_point SEI");
             //}
             //
-            //if(nalIDp4 == H264_NAL_SEI && p4->GetAt(5) == 0x04) //closed-caption SEI
+            //if(nalIDp4 == H264_NAL_SEI && (*p4)[5] == 0x04) //closed-caption SEI
             //{
             //  LogDebug("demux: p2 H264 SEI CC");
             //}
 
             //Find random-access entry points in the stream - check nalID, nal_ref_idc, first_mb_in_slice and slice-type values
             if (((nalIDp4 == H264_NAL_IDR) || (nalIDp4 == H264_NAL_SLICE)) && (nalRefIdcp4 != 0) && 
-              ((p4->GetAt(5) & 0xF0) == 0xB0 ||  // first_mb_in_slice=0 and  I-slice type 2
-               (p4->GetAt(5) & 0xFC) == 0x94 ||  // first_mb_in_slice=0 and SI-slice type 4
-               (p4->GetAt(5) & 0xFF) == 0x88 ||  // first_mb_in_slice=0 and  I-slice type 7
-               (p4->GetAt(5) & 0xFF) == 0x8A )   // first_mb_in_slice=0 and SI-slice type 9
+              (((*p4)[5] & 0xF0) == 0xB0 ||  // first_mb_in_slice=0 and  I-slice type 2
+               ((*p4)[5] & 0xFC) == 0x94 ||  // first_mb_in_slice=0 and SI-slice type 4
+               ((*p4)[5] & 0xFF) == 0x88 ||  // first_mb_in_slice=0 and  I-slice type 7
+               ((*p4)[5] & 0xFF) == 0x8A )   // first_mb_in_slice=0 and SI-slice type 9
              )
             {
               foundIRAP = true;
-              //LogDebug("H264: Random access point, nalID = %d, nalRefIdc = %d, slice_header = 0x%x", nalIDp4, nalRefIdcp4, p4->GetAt(5));
+              //LogDebug("H264: Random access point, nalID = %d, nalRefIdc = %d, slice_header = 0x%x", nalIDp4, nalRefIdcp4, (*p4)[5]);
               
               if (!m_bFrame0Found && m_bFirstGopFound)  //First random access point after stream start or seek - add SPS/PPS
               {
-                LogDebug("H264: Random access point, nalID = %d, nalRefIdc = %d, slice_header = 0x%x, SPS(%I64d), PPS(%I64d)", nalIDp4, nalRefIdcp4, p4->GetAt(5), m_mpegPesParser->basicVideoInfo.spslen, m_mpegPesParser->basicVideoInfo.ppslen);
+                LogDebug("H264: Random access point, nalID = %d, nalRefIdc = %d, slice_header = 0x%x, SPS(%I64d), PPS(%I64d)", nalIDp4, nalRefIdcp4, (*p4)[5], m_mpegPesParser->basicVideoInfo.spslen, m_mpegPesParser->basicVideoInfo.ppslen);
                 if (m_mpegPesParser->basicVideoInfo.spslen > 0)
                 {
                   //Insert SPS NAL
-                  size_t currCount = p->GetCount();                  
+                  size_t currCount = p->size();                  
                   DWORD dwNalLength = _byteswap_ulong((unsigned long)m_mpegPesParser->basicVideoInfo.spslen);  //dwNalLength is big-endian format
-                  p->SetCount (currCount + (size_t)m_mpegPesParser->basicVideoInfo.spslen + sizeof(dwNalLength));
-                  memcpy (p->GetData() + currCount, &dwNalLength, sizeof(dwNalLength)); //Insert NAL length                  
-                  memcpy (p->GetData() + currCount + sizeof(dwNalLength), m_mpegPesParser->basicVideoInfo.sps, (size_t)m_mpegPesParser->basicVideoInfo.spslen);
+                  p->resize(currCount + (size_t)m_mpegPesParser->basicVideoInfo.spslen + sizeof(dwNalLength));
+                  memcpy (p->data() + currCount, &dwNalLength, sizeof(dwNalLength)); //Insert NAL length                  
+                  memcpy (p->data() + currCount + sizeof(dwNalLength), m_mpegPesParser->basicVideoInfo.sps, (size_t)m_mpegPesParser->basicVideoInfo.spslen);
                 }
                 if (m_mpegPesParser->basicVideoInfo.ppslen > 0)
                 {
                   //Insert PPS NAL
-                  size_t currCount = p->GetCount();                  
+                  size_t currCount = p->size();                  
                   DWORD dwNalLength = _byteswap_ulong((unsigned long)m_mpegPesParser->basicVideoInfo.ppslen);  //dwNalLength is big-endian format
-                  p->SetCount (currCount + (size_t)m_mpegPesParser->basicVideoInfo.ppslen + sizeof(dwNalLength));
-                  memcpy (p->GetData() + currCount, &dwNalLength, sizeof(dwNalLength)); //Insert NAL length                  
-                  memcpy (p->GetData() + currCount + sizeof(dwNalLength), m_mpegPesParser->basicVideoInfo.pps, (size_t)m_mpegPesParser->basicVideoInfo.ppslen);
+                  p->resize(currCount + (size_t)m_mpegPesParser->basicVideoInfo.ppslen + sizeof(dwNalLength));
+                  memcpy (p->data() + currCount, &dwNalLength, sizeof(dwNalLength)); //Insert NAL length                  
+                  memcpy (p->data() + currCount + sizeof(dwNalLength), m_mpegPesParser->basicVideoInfo.pps, (size_t)m_mpegPesParser->basicVideoInfo.ppslen);
                 }
               }              
             }
@@ -3263,15 +3263,15 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
             if (p->rtStart == Packet::INVALID_TIME)
             {
               p->rtStart = p4->rtStart;
-              //LogDebug("Fake AUD2: %x %x %x %x %x %x",  p4->GetAt(0), p4->GetAt(1), p4->GetAt(2), p4->GetAt(3), p4->GetAt(4), p4->GetAt(5));
+              //LogDebug("Fake AUD2: %x %x %x %x %x %x",  (*p4)[0], (*p4)[1], (*p4)[2], (*p4)[3], (*p4)[4], (*p4)[5]);
             }
-            if (p->GetCount()>0)
+            if (p->size()>0)
             {
-              p->Append(*p4);
+              p->insert(p->end(), p4->begin(), p4->end());
             }
             else
             {
-              p = p4;
+              p = std::move(p4);
             }
           }
 
@@ -3281,13 +3281,13 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
             timestamp.PcrReferenceBase = p->rtStart;
             timestamp.IsValid=true;
           }
-          //LogDebug("NALU Type: %d (%d) %d, p->timestamp %f, p->rtStart %d",  p->GetAt(4)&0x1f, p->GetCount(), timestamp.ToClock(), (int)p->rtStart);
+          //LogDebug("NALU Type: %d (%d) %d, p->timestamp %f, p->rtStart %d",  (*p)[4]&0x1f, p->size(), timestamp.ToClock(), (int)p->rtStart);
 
 
           if ((Gop || m_bFirstGopFound) && m_filter.GetVideoPin()->IsConnected())
           {
             //Bitrate info calculation for MP player
-            m_byteRead = m_byteRead + p->GetCount();
+            m_byteRead = m_byteRead + p->size();
           	m_sampleTime = (float)timestamp.ToClock();
           	float elapsedTime = m_sampleTime - m_sampleTimePrev;
           
@@ -3306,12 +3306,12 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
           	}
 
             CRefTime Ref;
-            CBuffer *pCurrentVideoBuffer = new CBuffer((unsigned long)p->GetCount());
-            pCurrentVideoBuffer->Add(p->GetData(), (int)p->GetCount());
+            CBuffer *pCurrentVideoBuffer = new CBuffer((unsigned long)p->size());
+            pCurrentVideoBuffer->Add(p->data(), (int)p->size());
             pCurrentVideoBuffer->SetPts(timestamp);   
             pCurrentVideoBuffer->SetPcr(m_duration.FirstStartPcr(),m_duration.MaxPcr());
             pCurrentVideoBuffer->MediaTime(Ref);
-            LOG_OUTSAMPLES("...> Store NALU type (length) = %d (%d), p->rtStart = %d, timestamp %f", (*(p->GetData()+4) & 0x1F), p->GetCount(), (int)p->rtStart, timestamp.ToClock()) ;
+            LOG_OUTSAMPLES("...> Store NALU type (length) = %d (%d), p->rtStart = %d, timestamp %f", (*(p->data()+4) & 0x1F), p->size(), (int)p->rtStart, timestamp.ToClock()) ;
             // Must use p->rtStart as CPcr is UINT64 and INVALID_TIME is LONGLONG
             // Too risky to change CPcr implementation at this time 
             if(p->rtStart != Packet::INVALID_TIME)
@@ -3422,25 +3422,25 @@ void CDeMultiplexer::FillVideoH264(CTsHeader& header, byte* tsPacket)
           m_bSetVideoDiscontinuity = !m_mVideoValidPES;
         }
         
-        m_pl.RemoveAll();
+        m_pl.clear();
           
         //p2->rtStart = m_p->rtStart; 
         //m_p->rtStart = Packet::INVALID_TIME;
       }
 
-      //LogDebug(".......> Store NALU type (length) = %d (%d), p2->rtStart = %d", (*(p2->GetData()+4) & 0x1F), p2->GetCount(), (int)p2->rtStart) ;
-      m_pl.AddTail(p2);
+      //LogDebug(".......> Store NALU type (length) = %d (%d), p2->rtStart = %d", (*(p2->data()+4) & 0x1F), p2->size(), (int)p2->rtStart) ;
+      m_pl.push_back(std::move(p2));
       m_isNewNALUTimestamp = isNewTimestamp;
       isNewTimestamp = false;
 
       start = next;
-      m_lastStart = start - m_p->GetData() + 1;
+      m_lastStart = start - m_p->data() + 1;
     }
 
-    if(start > m_p->GetData())
+    if(start > m_p->data())
     {
-      m_lastStart -= (start - m_p->GetData());
-      m_p->RemoveAt(0, start - m_p->GetData());
+      m_lastStart -= (start - m_p->data());
+      m_p->erase(m_p->begin() + (0), m_p->begin() + (0) + (start - m_p->data()));
     }
   }
   return;
@@ -3459,7 +3459,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
 
   if(!m_p)
   {
-    m_p.Attach(new Packet());
+    m_p.reset(new Packet());
     m_p->rtStart = Packet::INVALID_TIME;
     m_lastStart = 0;
     m_bInBlock=false;
@@ -3481,27 +3481,27 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
 
   if (header.PayloadUnitStart)
   {
-    m_WaitHeaderPES = m_p->GetCount();
+    m_WaitHeaderPES = m_p->size();
     m_mVideoValidPES = m_VideoValidPES;
     //LogDebug("DeMultiplexer::FillVideo PayLoad Unit Start");
   }
 
-  CAutoPtr<Packet> p(new Packet());
+  std::unique_ptr<Packet> p(new Packet());
   
   if (headerlen < 188)
   {
     int dataLen = 188-headerlen;
 
-    p->SetCount(dataLen);
+    p->resize(dataLen);
     p->SetData(&tsPacket[headerlen],dataLen);
 
-    m_p->Append(*p);
+    m_p->insert(m_p->end(), p->begin(), p->end());
 
-    if (m_p->GetCount() > 4194303) //Sanity check
+    if (m_p->size() > 4194303) //Sanity check
     {
       //Let's start again...
-      m_p.Free();
-      m_pl.RemoveAll();
+      m_p.reset();
+      m_pl.clear();
       m_bSetVideoDiscontinuity = true;
       m_mpegParserReset = true;
       m_VideoValidPES = false;
@@ -3516,8 +3516,8 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
 
   if (m_WaitHeaderPES >= 0)
   {
-    ptrdiff_t AvailablePESlength = m_p->GetCount()-m_WaitHeaderPES;
-    BYTE* start = m_p->GetData() + m_WaitHeaderPES;
+    ptrdiff_t AvailablePESlength = m_p->size()-m_WaitHeaderPES;
+    BYTE* start = m_p->data() + m_WaitHeaderPES;
 
     if (AvailablePESlength < 9)
     {
@@ -3628,17 +3628,17 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
           m_VideoPts = pts;
         }
         m_lastStart -= 9+start[8];
-        m_p->RemoveAt(m_WaitHeaderPES, 9+start[8]);
+        m_p->erase(m_p->begin() + (m_WaitHeaderPES), m_p->begin() + (m_WaitHeaderPES) + (9+start[8]));
 
         m_WaitHeaderPES = -1;
       }
     }
   }
 
-  if (m_p->GetCount())
+  if (m_p->size())
   {
-    BYTE* start = m_p->GetData();
-    BYTE* end = start + m_p->GetCount();
+    BYTE* start = m_p->data();
+    BYTE* end = start + m_p->size();
     // 000001B3 sequence_header_code
     // 00000100 picture_start_code
 
@@ -3660,29 +3660,29 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
     if(start <= end-4)
     {
       BYTE* next = start+1;
-      if (next < m_p->GetData() + m_lastStart)
+      if (next < m_p->data() + m_lastStart)
       {
-        next = m_p->GetData() + m_lastStart;
+        next = m_p->data() + m_lastStart;
       }
 
       while(next <= end-4 && ((*(DWORD*)next & 0xFFFFFFFF) != 0xb3010000) && ((*(DWORD*)next & 0xFFFFFFFF) != 0x00010000)) next++;
 
       if(next >= end-4)
       {
-        m_lastStart = next - m_p->GetData();
+        m_lastStart = next - m_p->data();
       }
       else
       {
         m_bInBlock=false ;
         ptrdiff_t size = next - start;
 
-        CAutoPtr<Packet> p2(new Packet());		
-        p2->SetCount(size);
-        memcpy (p2->GetData(), m_p->GetData(), size);
+        std::unique_ptr<Packet> p2(new Packet());		
+        p2->resize(size);
+        memcpy (p2->data(), m_p->data(), size);
 
-        if (*(DWORD*)p2->GetData() == 0x00010000)     // picture_start_code ?
+        if (*(DWORD*)p2->data() == 0x00010000)     // picture_start_code ?
         {
-          BYTE *p = p2->GetData() ; 
+          BYTE *p = p2->data() ; 
           char frame_type = tc[((p[5]>>3)&7)];                     // Extract frame type (IBP). Just info.
           int frame_count = (p[5]>>6)+(p[4]<<2);                   // Extract temporal frame count to rebuild timestamp ( if required )
 
@@ -3692,25 +3692,25 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
             //double rate = 0.0;
             //m_filter.GetVideoPin()->GetRate(&rate);
 
-          m_pl.AddTail(p2);
+          m_pl.push_back(std::move(p2));
           //LogDebug("DeMultiplexer::FillVideo Frame length : %d %x %x", size, *(DWORD*)start, *(DWORD*)next);
 
           if (m_mVideoValidPES)
           {
-            CAutoPtr<Packet> p(new Packet());
-            p = m_pl.RemoveHead();
-            //LogDebug("Output Type(p): %x %d", *(DWORD*)p->GetData(),p->GetCount());
+            std::unique_ptr<Packet> p(new Packet());
+            p = PopHead(m_pl);
+            //LogDebug("Output Type(p): %x %d", *(DWORD*)p->data(),p->size());
 
-            while(m_pl.GetCount())
+            while(m_pl.size())
             {
-              CAutoPtr<Packet> p2 = m_pl.RemoveHead();
-              //LogDebug("Output Type(p2): %x %d", *(DWORD*)p2->GetData(),p2->GetCount());
-              p->Append(*p2);
+              std::unique_ptr<Packet> p2 = PopHead(m_pl);
+              //LogDebug("Output Type(p2): %x %d", *(DWORD*)p2->data(),p2->size());
+              p->insert(p->end(), p2->begin(), p2->end());
             }
 
-            // LogDebug("frame len %d decoded PTS %f (framerate %f), %c(%d)", p->GetCount(), m_CurrentVideoPts.IsValid ? (float)m_CurrentVideoPts.ToClock() : 0.0f,(float)m_curFramePeriod,frame_type,frame_count);
+            // LogDebug("frame len %d decoded PTS %f (framerate %f), %c(%d)", p->size(), m_CurrentVideoPts.IsValid ? (float)m_CurrentVideoPts.ToClock() : 0.0f,(float)m_curFramePeriod,frame_type,frame_count);
 
-            bool Gop = m_mpegPesParser->OnTsPacket(p->GetData(), (int)p->GetCount(), VIDEO_STREAM_TYPE_MPEG2, m_mpegParserReset);
+            bool Gop = m_mpegPesParser->OnTsPacket(p->data(), (int)p->size(), VIDEO_STREAM_TYPE_MPEG2, m_mpegParserReset);
             if (Gop)
             {
               m_mpegParserReset = true; //Reset next time around (so that it always searches for a full 'Gop' header)
@@ -3751,7 +3751,7 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
               }
 
               //Bitrate info calculation for MP player
-              m_byteRead = m_byteRead + p->GetCount();
+              m_byteRead = m_byteRead + p->size();
               m_sampleTime = (float)m_CurrentVideoPts.ToClock();
               float elapsedTime = m_sampleTime - m_sampleTimePrev;
             
@@ -3770,8 +3770,8 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
               }
 
               CRefTime Ref;
-              CBuffer *pCurrentVideoBuffer = new CBuffer((unsigned long)p->GetCount());
-              pCurrentVideoBuffer->Add(p->GetData(), (int)p->GetCount());
+              CBuffer *pCurrentVideoBuffer = new CBuffer((unsigned long)p->size());
+              pCurrentVideoBuffer->Add(p->data(), (int)p->size());
               pCurrentVideoBuffer->SetPts(m_CurrentVideoPts);   
               pCurrentVideoBuffer->SetPcr(m_duration.FirstStartPcr(),m_duration.MaxPcr());
               pCurrentVideoBuffer->MediaTime(Ref);
@@ -3877,21 +3877,21 @@ void CDeMultiplexer::FillVideoMPEG2(CTsHeader& header, byte* tsPacket)
             m_bSetVideoDiscontinuity = !m_mVideoValidPES;
           }
           //m_VideoValidPES=true ;                                    // We've just completed a frame, set flag until problem clears it 
-          m_pl.RemoveAll() ;                                        
+          m_pl.clear() ;                                        
         }
         else                                                        // sequence_header_code
         {
-          m_curFramePeriod = frame_rate[*(p2->GetData()+7) & 0x0F] ;  // Extract frame period in seconds.
-   	      m_pl.AddTail(p2);                                         // Add sequence header.
+          m_curFramePeriod = frame_rate[*(p2->data()+7) & 0x0F] ;  // Extract frame period in seconds.
+   	      m_pl.push_back(std::move(p2));                                         // Add sequence header.
    	    }
 
         start = next;
-        m_lastStart = start - m_p->GetData() + 1;
+        m_lastStart = start - m_p->data() + 1;
       }
-      if(start > m_p->GetData())
+      if(start > m_p->data())
       {
-        m_lastStart -= (start - m_p->GetData());
-        m_p->RemoveAt(0, start - m_p->GetData());
+        m_lastStart -= (start - m_p->data());
+        m_p->erase(m_p->begin() + (0), m_p->begin() + (0) + (start - m_p->data()));
       }
     }
   }

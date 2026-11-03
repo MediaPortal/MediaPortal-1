@@ -71,15 +71,15 @@ public:
 	}
 };
 
-class CPacketQueue2 : protected std::deque<CAutoPtr<CPacket>>
+class CPacketQueue2 : protected std::deque<std::unique_ptr<CPacket>>
 {
 	size_t m_size = 0;
 	std::mutex m_mutex;
 
 public:
-	void Add(CAutoPtr<CPacket> p);
-	CAutoPtr<CPacket> Remove();
-	void RemoveSafe(CAutoPtr<CPacket>& p, size_t& count);
+	void Add(std::unique_ptr<CPacket> p);
+	std::unique_ptr<CPacket> Remove();
+	void RemoveSafe(std::unique_ptr<CPacket>& p, size_t& count);
 	void RemoveAll();
 	const size_t GetCount();
 	const size_t GetSize();

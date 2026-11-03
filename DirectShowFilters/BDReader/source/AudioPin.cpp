@@ -23,8 +23,6 @@
 #pragma warning(disable:4995)
 
 #include "StdAfx.h"
-#include <afx.h>
-#include <afxwin.h>
 
 #include <streams.h>
 #include "bdreader.h"
@@ -493,7 +491,7 @@ HRESULT CAudioPin::FillBuffer(IMediaSample *pSample)
               BYTE* pSampleBuffer = NULL;
               pSample->SetActualDataLength(buffer->GetDataSize());
               pSample->GetPointer(&pSampleBuffer);
-              memcpy(pSampleBuffer, buffer->GetData(), buffer->GetDataSize());
+              memcpy(pSampleBuffer, buffer->data(), buffer->GetDataSize());
 
 #ifdef LOG_AUDIO_PIN_SAMPLES
              LogDebug("aud: %6.3f corr %6.3f Playlist time %6.3f clip: %d playlist: %d", buffer->rtStart / 10000000.0, rtCorrectedStartTime / 10000000.0,

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- vcpkg integration for every native project under DirectShowFilters, see Directory.Build.props -->
+<Project>
+  <Import Project="$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.targets"
+          Condition="'$(VcpkgRoot)' != '' and Exists('$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.targets')" />
+
+  <Target Name="MediaPortalCheckVcpkg" BeforeTargets="PrepareForBuild"
+          Condition="'$(VcpkgRoot)' == '' or !Exists('$(VcpkgRoot)scripts\buildsystems\msbuild\vcpkg.targets')">
+    <Error Text="vcpkg was not found. Install vcpkg (https://learn.microsoft.com/vcpkg/get_started/get-started-msbuild) and set the VCPKG_ROOT environment variable to its folder. See DirectShowFilters\VS Environment Setup.txt." />
+  </Target>
+</Project>

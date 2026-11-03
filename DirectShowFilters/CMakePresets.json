@@ -1,0 +1,248 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 25,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "description": "vcpkg manifest mode with the project triplets (same install tree as MSBuild: vcpkg_installed/<triplet>)",
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+      "cacheVariables": {
+        "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/vcpkg-triplets",
+        "VCPKG_MANIFEST_DIR": "${sourceDir}"
+      }
+    },
+    {
+      "name": "x64",
+      "hidden": true,
+      "inherits": "base",
+      "architecture": {
+        "value": "x64",
+        "strategy": "set"
+      },
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-windows-mp",
+        "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkg_installed/x64-windows-mp"
+      }
+    },
+    {
+      "name": "x86",
+      "hidden": true,
+      "inherits": "base",
+      "architecture": {
+        "value": "Win32",
+        "strategy": "set"
+      },
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x86-windows-mp",
+        "VCPKG_INSTALLED_DIR": "${sourceDir}/vcpkg_installed/x86-windows-mp"
+      }
+    },
+    {
+      "name": "unicode",
+      "hidden": true,
+      "cacheVariables": {
+        "MP_CHARSET": "UNICODE"
+      }
+    },
+    {
+      "name": "mbcs",
+      "hidden": true,
+      "cacheVariables": {
+        "MP_CHARSET": "MBCS"
+      }
+    },
+    {
+      "name": "vs2026",
+      "hidden": true,
+      "generator": "Visual Studio 18 2026"
+    },
+    {
+      "name": "vs2022",
+      "hidden": true,
+      "generator": "Visual Studio 17 2022"
+    },
+    {
+      "name": "vs2026-x64-unicode",
+      "displayName": "Visual Studio 2026 x64 UNICODE",
+      "inherits": [
+        "vs2026",
+        "x64",
+        "unicode"
+      ],
+      "binaryDir": "${sourceDir}/build/vs2026-x64-unicode"
+    },
+    {
+      "name": "vs2026-x64-mbcs",
+      "displayName": "Visual Studio 2026 x64 MBCS",
+      "inherits": [
+        "vs2026",
+        "x64",
+        "mbcs"
+      ],
+      "binaryDir": "${sourceDir}/build/vs2026-x64-mbcs"
+    },
+    {
+      "name": "vs2026-x86-unicode",
+      "displayName": "Visual Studio 2026 x86 UNICODE",
+      "inherits": [
+        "vs2026",
+        "x86",
+        "unicode"
+      ],
+      "binaryDir": "${sourceDir}/build/vs2026-x86-unicode"
+    },
+    {
+      "name": "vs2026-x86-mbcs",
+      "displayName": "Visual Studio 2026 x86 MBCS",
+      "inherits": [
+        "vs2026",
+        "x86",
+        "mbcs"
+      ],
+      "binaryDir": "${sourceDir}/build/vs2026-x86-mbcs"
+    },
+    {
+      "name": "vs2022-x64-unicode",
+      "displayName": "Visual Studio 2022 x64 UNICODE",
+      "inherits": [
+        "vs2022",
+        "x64",
+        "unicode"
+      ],
+      "binaryDir": "${sourceDir}/build/vs2022-x64-unicode"
+    },
+    {
+      "name": "vs2022-x64-mbcs",
+      "displayName": "Visual Studio 2022 x64 MBCS",
+      "inherits": [
+        "vs2022",
+        "x64",
+        "mbcs"
+      ],
+      "binaryDir": "${sourceDir}/build/vs2022-x64-mbcs"
+    },
+    {
+      "name": "vs2022-x86-unicode",
+      "displayName": "Visual Studio 2022 x86 UNICODE",
+      "inherits": [
+        "vs2022",
+        "x86",
+        "unicode"
+      ],
+      "binaryDir": "${sourceDir}/build/vs2022-x86-unicode"
+    },
+    {
+      "name": "vs2022-x86-mbcs",
+      "displayName": "Visual Studio 2022 x86 MBCS",
+      "inherits": [
+        "vs2022",
+        "x86",
+        "mbcs"
+      ],
+      "binaryDir": "${sourceDir}/build/vs2022-x86-mbcs"
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "vs2026-x64-unicode-release",
+      "displayName": "Visual Studio 2026 x64 UNICODE Release",
+      "configurePreset": "vs2026-x64-unicode",
+      "configuration": "Release"
+    },
+    {
+      "name": "vs2026-x64-unicode-debug",
+      "displayName": "Visual Studio 2026 x64 UNICODE Debug",
+      "configurePreset": "vs2026-x64-unicode",
+      "configuration": "Debug"
+    },
+    {
+      "name": "vs2026-x64-mbcs-release",
+      "displayName": "Visual Studio 2026 x64 MBCS Release",
+      "configurePreset": "vs2026-x64-mbcs",
+      "configuration": "Release"
+    },
+    {
+      "name": "vs2026-x64-mbcs-debug",
+      "displayName": "Visual Studio 2026 x64 MBCS Debug",
+      "configurePreset": "vs2026-x64-mbcs",
+      "configuration": "Debug"
+    },
+    {
+      "name": "vs2026-x86-unicode-release",
+      "displayName": "Visual Studio 2026 x86 UNICODE Release",
+      "configurePreset": "vs2026-x86-unicode",
+      "configuration": "Release"
+    },
+    {
+      "name": "vs2026-x86-unicode-debug",
+      "displayName": "Visual Studio 2026 x86 UNICODE Debug",
+      "configurePreset": "vs2026-x86-unicode",
+      "configuration": "Debug"
+    },
+    {
+      "name": "vs2026-x86-mbcs-release",
+      "displayName": "Visual Studio 2026 x86 MBCS Release",
+      "configurePreset": "vs2026-x86-mbcs",
+      "configuration": "Release"
+    },
+    {
+      "name": "vs2026-x86-mbcs-debug",
+      "displayName": "Visual Studio 2026 x86 MBCS Debug",
+      "configurePreset": "vs2026-x86-mbcs",
+      "configuration": "Debug"
+    },
+    {
+      "name": "vs2022-x64-unicode-release",
+      "displayName": "Visual Studio 2022 x64 UNICODE Release",
+      "configurePreset": "vs2022-x64-unicode",
+      "configuration": "Release"
+    },
+    {
+      "name": "vs2022-x64-unicode-debug",
+      "displayName": "Visual Studio 2022 x64 UNICODE Debug",
+      "configurePreset": "vs2022-x64-unicode",
+      "configuration": "Debug"
+    },
+    {
+      "name": "vs2022-x64-mbcs-release",
+      "displayName": "Visual Studio 2022 x64 MBCS Release",
+      "configurePreset": "vs2022-x64-mbcs",
+      "configuration": "Release"
+    },
+    {
+      "name": "vs2022-x64-mbcs-debug",
+      "displayName": "Visual Studio 2022 x64 MBCS Debug",
+      "configurePreset": "vs2022-x64-mbcs",
+      "configuration": "Debug"
+    },
+    {
+      "name": "vs2022-x86-unicode-release",
+      "displayName": "Visual Studio 2022 x86 UNICODE Release",
+      "configurePreset": "vs2022-x86-unicode",
+      "configuration": "Release"
+    },
+    {
+      "name": "vs2022-x86-unicode-debug",
+      "displayName": "Visual Studio 2022 x86 UNICODE Debug",
+      "configurePreset": "vs2022-x86-unicode",
+      "configuration": "Debug"
+    },
+    {
+      "name": "vs2022-x86-mbcs-release",
+      "displayName": "Visual Studio 2022 x86 MBCS Release",
+      "configurePreset": "vs2022-x86-mbcs",
+      "configuration": "Release"
+    },
+    {
+      "name": "vs2022-x86-mbcs-debug",
+      "displayName": "Visual Studio 2022 x86 MBCS Debug",
+      "configurePreset": "vs2022-x86-mbcs",
+      "configuration": "Debug"
+    }
+  ]
+}

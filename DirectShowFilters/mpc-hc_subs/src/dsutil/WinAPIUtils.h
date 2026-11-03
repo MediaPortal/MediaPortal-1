@@ -25,7 +25,7 @@ struct IDirect3D9;
 
 bool SetPrivilege(LPCTSTR privilege, bool bEnable = true);
 
-bool ExportRegistryKey(CStdioFile& file, HKEY hKeyRoot, CString keyName = _T(""));
+bool ExportRegistryKey(FILE* file, HKEY hKeyRoot, tstring keyName = _T(""));
 
 UINT GetAdapter(IDirect3D9* pD3D, HWND hWnd);
 
@@ -36,7 +36,7 @@ bool IsFontInstalled(LPCTSTR lpszFont);
 
 bool ExploreToFile(LPCTSTR path);
 
-HRESULT FileDelete(CString file, HWND hWnd, bool recycle = true);
+HRESULT FileDelete(tstring file, HWND hWnd, bool recycle = true);
 
 class CoInitializeHelper
 {
@@ -48,8 +48,8 @@ public:
 class CClipboard
 {
 public:
-    CClipboard(CWnd* pWnd = nullptr) {
-        m_bOpened = ::OpenClipboard(pWnd->GetSafeHwnd());
+    CClipboard(HWND hWnd = nullptr) {
+        m_bOpened = ::OpenClipboard(hWnd);
     }
     ~CClipboard() {
         if(m_bOpened) {
@@ -57,7 +57,7 @@ public:
         }
     }
 
-    BOOL SetText(const CString& text) const;
+    BOOL SetText(const tstring& text) const;
 
 protected:
     BOOL m_bOpened;
