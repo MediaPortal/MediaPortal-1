@@ -533,6 +533,7 @@ public class MediaPortalApp : D3D, IRender
       }
     }
 
+    MediaPortal.DomainManager.CustomDomainManager.DoLog = true;
     Thread.CurrentThread.Name = "MPMain";
 
     if (Environment.OSVersion.Version.Major >= 6)
