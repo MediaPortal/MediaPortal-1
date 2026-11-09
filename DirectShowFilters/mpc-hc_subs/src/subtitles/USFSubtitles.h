@@ -21,70 +21,69 @@
 
 #pragma once
 
-#include <atlcoll.h>
 #include "STS.h"
 
 // metadata
 struct author_t {
-    CStringW name, email, url;
+    std::wstring name, email, url;
 };
 
 struct language_t {
-    CStringW code, text;
+    std::wstring code, text;
 };
 
 struct metadata_t {
-    CStringW title, date, comment;
+    std::wstring title, date, comment;
     author_t author;
     language_t language, languageext;
 };
 
 // style
 struct posattriblist_t {
-    CStringW alignment, relativeto, horizontal_margin, vertical_margin, rotate[3];
+    std::wstring alignment, relativeto, horizontal_margin, vertical_margin, rotate[3];
 };
 
 struct fontstyle_t {
-    CStringW face, size, color[4], weight, italic, underline, alpha, outline, shadow, wrap;
+    std::wstring face, size, color[4], weight, italic, underline, alpha, outline, shadow, wrap;
 };
 
 struct style_t {
-    CStringW name;
+    std::wstring name;
     fontstyle_t fontstyle;
     posattriblist_t pal;
 };
 
 // effect
 struct keyframe_t {
-    CStringW position;
+    std::wstring position;
     fontstyle_t fontstyle;
     posattriblist_t pal;
 };
 
 struct effect_t {
-    CStringW name;
-    CAutoPtrList<keyframe_t> keyframes;
+    std::wstring name;
+    std::list<std::unique_ptr<keyframe_t>> keyframes;
 };
 
 // subtitle/text
 struct text_t {
     int start, stop;
-    CStringW effect, style, str;
+    std::wstring effect, style, str;
     posattriblist_t pal;
 };
 
 class CUSFSubtitles
 {
-    bool ParseUSFSubtitles(CComPtr<IXMLDOMNode> pNode);
-    void ParseMetadata(CComPtr<IXMLDOMNode> pNode, metadata_t& m);
-    void ParseStyle(CComPtr<IXMLDOMNode> pNode, style_t* s);
-    void ParseFontstyle(CComPtr<IXMLDOMNode> pNode, fontstyle_t& fs);
-    void ParsePal(CComPtr<IXMLDOMNode> pNode, posattriblist_t& pal);
-    void ParseEffect(CComPtr<IXMLDOMNode> pNode, effect_t* e);
-    void ParseKeyframe(CComPtr<IXMLDOMNode> pNode, keyframe_t* k);
-    void ParseSubtitle(CComPtr<IXMLDOMNode> pNode, int start, int stop);
-    void ParseText(CComPtr<IXMLDOMNode> pNode, CStringW& assstr);
-    void ParseShape(CComPtr<IXMLDOMNode> pNode);
+    bool ParseUSFSubtitles(ComPtr<IXMLDOMNode> pNode);
+    void ParseMetadata(ComPtr<IXMLDOMNode> pNode, metadata_t& m);
+    void ParseStyle(ComPtr<IXMLDOMNode> pNode, style_t* s);
+    void ParseFontstyle(ComPtr<IXMLDOMNode> pNode, fontstyle_t& fs);
+    void ParsePal(ComPtr<IXMLDOMNode> pNode, posattriblist_t& pal);
+    void ParseEffect(ComPtr<IXMLDOMNode> pNode, effect_t* e);
+    void ParseKeyframe(ComPtr<IXMLDOMNode> pNode, keyframe_t* k);
+    void ParseSubtitle(ComPtr<IXMLDOMNode> pNode, int start, int stop);
+    void ParseText(ComPtr<IXMLDOMNode> pNode, std::wstring& assstr);
+    void ParseShape(ComPtr<IXMLDOMNode> pNode);
 
 public:
     CUSFSubtitles();
@@ -94,9 +93,9 @@ public:
     //bool Write(LPCTSTR fn); // TODO
 
     metadata_t metadata;
-    CAutoPtrList<style_t> styles;
-    CAutoPtrList<effect_t> effects;
-    CAutoPtrList<text_t> texts;
+    std::list<std::unique_ptr<style_t>> styles;
+    std::list<std::unique_ptr<effect_t>> effects;
+    std::list<std::unique_ptr<text_t>> texts;
 
     bool ConvertToSTS(CSimpleTextSubtitle& sts);
     //bool ConvertFromSTS(CSimpleTextSubtitle& sts); // TODO

@@ -17,7 +17,6 @@
 #pragma warning(disable: 4244)
 
 #include <streams.h>
-#include <atlbase.h>
 #include <d3dx9.h>
 #include <vmr9.h>
 
@@ -307,7 +306,7 @@ void CVMR9AllocatorPresenter::Paint(IDirect3DSurface9* pSurface, SIZE szAspectRa
     if (m_pCallback==NULL || pSurface == NULL)
       return;
 
-    CComPtr<IDirect3DTexture9> pTexture = NULL;
+    Com::SmartPtr<IDirect3DTexture9> pTexture = NULL;
     pSurface->GetContainer(IID_IDirect3DTexture9, (void**)&pTexture);
     m_pCallback->PresentImage(m_iVideoWidth, m_iVideoHeight, m_iARX,m_iARY, (IDirect3DTexture9*)pTexture, (IDirect3DSurface9*)pSurface);
   }

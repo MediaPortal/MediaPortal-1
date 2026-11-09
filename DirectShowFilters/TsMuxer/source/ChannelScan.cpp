@@ -26,15 +26,20 @@
 
 extern void LogDebug(const char *fmt, ...) ;
 
+#define CHANNELSCAN_BUFFER_SIZE 20000
+
 CChannelScan::CChannelScan(LPUNKNOWN pUnk, HRESULT *phr ) 
 :CUnknown( NAME ("TsMuxerChannelScan"), pUnk)
 {
 	LogDebug("CChannelScan::ctor()");
 	strcpy(m_sServiceName,"                    ");
 	m_iBufferPos=0;
-	m_pBuffer = new byte[20000];
-	m_pBufferTemp = new byte[20000];
+	m_pBuffer = new byte[CHANNELSCAN_BUFFER_SIZE];
+	m_pBufferTemp = new byte[CHANNELSCAN_BUFFER_SIZE];
 	m_bIsScanning = false;
+	m_bChannelFound = FALSE;
+	m_bScanningPossible = FALSE;
+	m_pCallback = NULL;
 }
 CChannelScan::~CChannelScan(void)
 {
@@ -91,6 +96,13 @@ void CChannelScan::OnTeletextData(byte* sampleData, int sampleLen)
 			byte magazine_and_packet_address2;
 			byte mag;
 			byte packetNumber;
+			if (sampleData==NULL || sampleLen<=0) return;
+			if (sampleLen > CHANNELSCAN_BUFFER_SIZE - m_iBufferPos)
+			{
+				// more than fits: start again with this sample (a sample is a few lines, never as many as the buffer holds)
+				m_iBufferPos = 0;
+				if (sampleLen > CHANNELSCAN_BUFFER_SIZE) return;
+			}
 			memcpy(&m_pBuffer[m_iBufferPos], sampleData,sampleLen);
 			m_iBufferPos += sampleLen;
 			// Is at least one line in the buffer?

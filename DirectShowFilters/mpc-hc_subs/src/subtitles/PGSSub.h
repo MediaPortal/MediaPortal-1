@@ -31,7 +31,7 @@ class CGolombBuffer;
 class CPGSSub : public CRLECodedSubtitle
 {
 public:
-    CPGSSub(CCritSec* pLock, const CString& name, LCID lcid);
+    CPGSSub(CCritSec* pLock, const tstring& name, LCID lcid);
     virtual ~CPGSSub();
 
     // ISubPicProvider
@@ -115,8 +115,8 @@ private:
     size_t            m_nSegBufferPos;
     size_t            m_nSegSize;
 
-    CAutoPtr<HDMV_PRESENTATION_SEGMENT>     m_pCurrentPresentationSegment;
-    CAutoPtrList<HDMV_PRESENTATION_SEGMENT> m_pPresentationSegments;
+    std::unique_ptr<HDMV_PRESENTATION_SEGMENT>     m_pCurrentPresentationSegment;
+    std::list<std::unique_ptr<HDMV_PRESENTATION_SEGMENT>> m_pPresentationSegments;
 
     std::array<HDMV_CLUT, 256> m_CLUTs;
     std::array<CompositionObject, 64> m_compositionObjects;
@@ -132,7 +132,7 @@ private:
     void ParseCompositionDescriptor(CGolombBuffer* pGBuffer, COMPOSITION_DESCRIPTOR* pCompositionDescriptor);
     bool ParseCompositionObject(CGolombBuffer* pGBuffer, const std::unique_ptr<CompositionObject>& pCompositionObject);
 
-    POSITION FindPresentationSegment(REFERENCE_TIME rt) const;
+    std::list<std::unique_ptr<HDMV_PRESENTATION_SEGMENT>>::const_iterator FindPresentationSegment(REFERENCE_TIME rt) const;
 
     void RemoveOldSegments(REFERENCE_TIME rt);
 };
@@ -146,15 +146,15 @@ public:
     // ISubPicProvider
     STDMETHODIMP Render(SubPicDesc& spd, REFERENCE_TIME rt, double fps, RECT& bbox);
 
-    bool Open(CString fn, CString name = _T(""), CString videoName = _T(""));
-    CString GetPath();
+    bool Open(tstring fn, tstring name = _T(""), tstring videoName = _T(""));
+    tstring GetPath();
 
 private:
     static const WORD PGS_SYNC_CODE = 'PG';
 
     bool m_bStopParsing;
     std::thread m_parsingThread;
-    CString m_path;
+    tstring m_path;
 
-    void ParseFile(CString fn);
+    void ParseFile(tstring fn);
 };

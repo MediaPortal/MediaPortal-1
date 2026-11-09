@@ -21,10 +21,12 @@
 
 #pragma once
 
-#include <atlbase.h>
-#include <atlcoll.h>
 #include "CoordGeom.h"
 #include "strmif.h"
+
+// The cursor of ISubPicProvider: an opaque value made by the provider, nullptr means "no more"
+struct __POSITION;
+typedef __POSITION* POSITION;
 
 #pragma pack(push, 1)
 struct SubPicDesc {
@@ -164,12 +166,12 @@ public IUnknown {
     STDMETHOD(SetTime)(REFERENCE_TIME rtNow /*[in]*/) PURE;
 
     STDMETHOD(Invalidate)(REFERENCE_TIME rtInvalidate = -1) PURE;
-    STDMETHOD_(bool, LookupSubPic)(REFERENCE_TIME rtNow /*[in]*/, CComPtr<ISubPic>& pSubPic /*[out]*/) PURE;
+    STDMETHOD_(bool, LookupSubPic)(REFERENCE_TIME rtNow /*[in]*/, ComPtr<ISubPic>& pSubPic /*[out]*/) PURE;
 
     STDMETHOD(GetStats)(int& nSubPics, REFERENCE_TIME & rtNow, REFERENCE_TIME & rtStart, REFERENCE_TIME& rtStop /*[out]*/) PURE;
     STDMETHOD(GetStats)(int nSubPic /*[in]*/, REFERENCE_TIME & rtStart, REFERENCE_TIME& rtStop /*[out]*/) PURE;
 
-    STDMETHOD_(bool, LookupSubPic)(REFERENCE_TIME rtNow /*[in]*/, bool bAdviseBlocking, CComPtr<ISubPic>& pSubPic /*[out]*/) PURE;
+    STDMETHOD_(bool, LookupSubPic)(REFERENCE_TIME rtNow /*[in]*/, bool bAdviseBlocking, ComPtr<ISubPic>& pSubPic /*[out]*/) PURE;
 };
 
 //
@@ -249,8 +251,8 @@ public IPersist {
     STDMETHOD_(int, GetStream)() PURE;
     STDMETHOD(SetStream)(int iStream) PURE;
     STDMETHOD(Reload)() PURE;
-    STDMETHOD(SetSourceTargetInfo)(CString yuvMatrix, int targetBlackLevel, int targetWhiteLevel) PURE;
-    virtual CString GetPath() { return _T(""); }
+    STDMETHOD(SetSourceTargetInfo)(tstring yuvMatrix, int targetBlackLevel, int targetWhiteLevel) PURE;
+    virtual tstring GetPath() { return _T(""); }
 
     // TODO: get rid of IPersist to identify type and use only
     // interface functions to modify the settings of the substream

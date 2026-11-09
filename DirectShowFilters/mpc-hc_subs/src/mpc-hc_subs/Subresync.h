@@ -9,11 +9,11 @@ public:
 	
 	void AddShift(REFERENCE_TIME time, REFERENCE_TIME val);
 	void RemoveAll();
-	bool IsModified() { return !m_delayTime.IsEmpty(); };
-	bool SaveToDisk(ISubStream* pSubStream, double fps, const CString & movieName);
+	bool IsModified() { return !m_delayTime.empty(); };
+	bool SaveToDisk(ISubStream* pSubStream, double fps, const tstring & movieName);
 private:
-	CAtlArray<REFERENCE_TIME> m_delayTime;
-	CAtlArray<REFERENCE_TIME> m_delayVal;
+	std::vector<REFERENCE_TIME> m_delayTime;
+	std::vector<REFERENCE_TIME> m_delayVal;
 
 	enum {NONE = 0, VOBSUB, TEXTSUB};
 	int m_mode;

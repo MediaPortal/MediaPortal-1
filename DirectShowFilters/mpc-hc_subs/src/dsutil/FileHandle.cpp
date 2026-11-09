@@ -24,34 +24,34 @@
 //
 // Returns the file portion from a path
 //
-CStringW GetFileOnly(LPCWSTR Path)
+std::wstring GetFileOnly(LPCWSTR Path)
 {
-	CStringW cs = Path;
-	::PathStripPathW(cs.GetBuffer(0));
-	cs.ReleaseBuffer(-1);
+	std::wstring cs = Path;
+	::PathStripPathW(StringBuffer(cs, 0));
+	StringRelease(cs, -1);
 	return cs;
 }
 
 //
 // Returns the folder portion from a path
 //
-CStringW GetFolderOnly(LPCWSTR Path)
+std::wstring GetFolderOnly(LPCWSTR Path)
 {
-	CStringW cs = Path; // Force CStringW to make a copy
-	::PathRemoveFileSpecW(cs.GetBuffer(0));
-	cs.ReleaseBuffer(-1);
+	std::wstring cs = Path; // Force std::wstring to make a copy
+	::PathRemoveFileSpecW(StringBuffer(cs, 0));
+	StringRelease(cs, -1);
 	return cs;
 }
 
 //
 // Adds a backslash to the end of a path if it is needed
 //
-CStringW AddSlash(LPCWSTR Path)
+std::wstring AddSlash(LPCWSTR Path)
 {
-	CStringW cs = Path;
-	::PathAddBackslashW(cs.GetBuffer(MAX_PATH));
-	cs.ReleaseBuffer(-1);
-	if(cs.IsEmpty()) {
+	std::wstring cs = Path;
+	::PathAddBackslashW(StringBuffer(cs, MAX_PATH));
+	StringRelease(cs, -1);
+	if(cs.empty()) {
 		cs = L"\\";
 	}
 	return cs;
@@ -60,54 +60,54 @@ CStringW AddSlash(LPCWSTR Path)
 //
 // Removes a backslash from the end of a path if it is there
 //
-CStringW RemoveSlash(LPCWSTR Path)
+std::wstring RemoveSlash(LPCWSTR Path)
 {
-	CString cs = Path;
-	::PathRemoveBackslashW(cs.GetBuffer(MAX_PATH));
-	cs.ReleaseBuffer(-1);
+	tstring cs = Path;
+	::PathRemoveBackslashW(StringBuffer(cs, MAX_PATH));
+	StringRelease(cs, -1);
 	return cs;
 }
 
 //
 // Returns just the .ext part of the file path
 //
-CStringW GetFileExt(LPCWSTR Path)
+std::wstring GetFileExt(LPCWSTR Path)
 {
     if (::PathIsURLW(Path)) {
         auto q = wcschr(Path, '?');
         if (q) {
-            CStringW ext = ::PathFindExtensionW(CStringW(Path, q - Path));
+            std::wstring ext = ::PathFindExtensionW(std::wstring(Path, q - Path).c_str());
             return ext;
         }
     }
-    CStringW ext = ::PathFindExtensionW(Path);
+    std::wstring ext = ::PathFindExtensionW(Path);
     return ext;
 }
 
 //
 // Exchanges one file extension for another and returns the new file path
 //
-CStringW RenameFileExt(LPCWSTR Path, LPCWSTR Ext)
+std::wstring RenameFileExt(LPCWSTR Path, LPCWSTR Ext)
 {
-	CStringW cs = Path;
-	::PathRenameExtensionW(cs.GetBuffer(MAX_PATH), Ext);
+	std::wstring cs = Path;
+	::PathRenameExtensionW(StringBuffer(cs, MAX_PATH), Ext);
 	return cs;
 }
 
 //
 // Removes the file name extension from a path, if one is present
 //
-CStringW RemoveFileExt(LPCWSTR Path)
+std::wstring RemoveFileExt(LPCWSTR Path)
 {
-	CStringW cs = Path;
-	::PathRemoveExtensionW(cs.GetBuffer(MAX_PATH));
+	std::wstring cs = Path;
+	::PathRemoveExtensionW(StringBuffer(cs, MAX_PATH));
 	return cs;
 }
 
 //
 // Generate temporary files with any extension
 //
-BOOL GetTemporaryFilePath(CStringW strExtension, CStringW& strFileName)
+BOOL GetTemporaryFilePath(std::wstring strExtension, std::wstring& strFileName)
 {
 	WCHAR lpszTempPath[MAX_PATH] = { 0 };
 	if (!GetTempPathW(MAX_PATH, lpszTempPath)) {
@@ -123,10 +123,10 @@ BOOL GetTemporaryFilePath(CStringW strExtension, CStringW& strFileName)
 		DeleteFile(lpszFilePath);
 
 		strFileName = lpszFilePath;
-		strFileName.Replace(L".tmp", strExtension);
+		StringReplace(strFileName, L".tmp", strExtension);
 
-		DeleteFile(strFileName);
-	} while (_waccess(strFileName, 00) != -1);
+		DeleteFile(strFileName.c_str());
+	} while (_waccess(strFileName.c_str(), 00) != -1);
 
 	return TRUE;
 }
@@ -134,11 +134,11 @@ BOOL GetTemporaryFilePath(CStringW strExtension, CStringW& strFileName)
 //
 // Compact Path
 //
-CStringW CompactPath(LPCWSTR Path, UINT cchMax)
+std::wstring CompactPath(LPCWSTR Path, UINT cchMax)
 {
-	CStringW cs = Path;
+	std::wstring cs = Path;
 	WCHAR pathbuf[MAX_PATH] = { 0 };
-	if (::PathCompactPathExW(pathbuf, cs, cchMax, 0)) {
+	if (::PathCompactPathExW(pathbuf, cs.c_str(), cchMax, 0)) {
 		cs = pathbuf;
 	}
 
@@ -148,28 +148,28 @@ CStringW CompactPath(LPCWSTR Path, UINT cchMax)
 //
 // Get path of specified module
 //
-CStringW GetModulePath(HMODULE hModule)
+std::wstring GetModulePath(HMODULE hModule)
 {
-	CStringW path;
+	std::wstring path;
 	DWORD bufsize = MAX_PATH;
 	DWORD len = 0;
 	while (1) {
-		len = GetModuleFileNameW(hModule, path.GetBuffer(bufsize), bufsize);
+		len = GetModuleFileNameW(hModule, StringBuffer(path, bufsize), bufsize);
 		if (len < bufsize) {
 			break;
 		}
 		bufsize *= 2;
 	}
-	path.ReleaseBufferSetLength(len);
+	StringRelease(path, len);
 
-	ASSERT(path.GetLength());
+	ASSERT(int(path.size()));
 	return path;
 }
 
 //
 // Get path of the executable file of the current process.
 //
-CStringW GetProgramPath()
+std::wstring GetProgramPath()
 {
 	return GetModulePath(nullptr);
 }
@@ -177,10 +177,10 @@ CStringW GetProgramPath()
 //
 // Get program directory with backslash
 //
-CStringW GetProgramDir()
+std::wstring GetProgramDir()
 {
-	CStringW path = GetModulePath(nullptr);
-	path.Truncate(path.ReverseFind('\\') + 1); // do not use this method for random paths
+	std::wstring path = GetModulePath(nullptr);
+	StringTruncate(path, StringRFind(path, '\\') + 1); // do not use this method for random paths
 
 	return path;
 }
@@ -188,13 +188,13 @@ CStringW GetProgramDir()
 // wFunc can be FO_MOVE or FO_COPY.
 // To move a folder, add "\" to the end of the source path.
 // To copy a folder, add "\*" to the end of the source path.
-int FileOperation(const CStringW& source, const CStringW& target, const UINT wFunc)
+int FileOperation(const std::wstring& source, const std::wstring& target, const UINT wFunc)
 {
-	auto from_str = std::make_unique<WCHAR[]>(source.GetLength() + 2);
-	wcscpy_s(from_str.get(), source.GetLength()+1, source);
+	auto from_str = std::make_unique<WCHAR[]>(int(source.size()) + 2);
+	wcscpy_s(from_str.get(), int(source.size())+1, source.c_str());
 
-	auto to_str = std::make_unique<WCHAR[]>(target.GetLength() + 2);
-	wcscpy_s(to_str.get(), target.GetLength()+1, target);
+	auto to_str = std::make_unique<WCHAR[]>(int(target.size()) + 2);
+	wcscpy_s(to_str.get(), int(target.size())+1, target.c_str());
 
 	// set double null-terminated string
 	from_str[wcslen(from_str.get())+1] = 0;

@@ -43,11 +43,12 @@ STDMETHODIMP IDSMPropertyBagImpl::Read(LPCOLESTR pszPropName, VARIANT* pVar, IEr
     if (pVar->vt != VT_EMPTY) {
         return E_INVALIDARG;
     }
-    CStringW value = Lookup(pszPropName);
-    if (value.IsEmpty()) {
+    std::wstring value = Lookup(pszPropName);
+    if (value.empty()) {
         return E_FAIL;
     }
-    CComVariant(value).Detach(pVar);
+    VariantClear(pVar);
+    *pVar = _variant_t(value.c_str()).Detach();
     return S_OK;
 }
 
@@ -64,7 +65,8 @@ STDMETHODIMP IDSMPropertyBagImpl::Read(ULONG cProperties, PROPBAG2* pPropBag, IE
     CheckPointer(pvarValue, E_POINTER);
     CheckPointer(phrError, E_POINTER);
     for (ULONG i = 0; i < cProperties; phrError[i] = S_OK, i++) {
-        CComVariant(Lookup(pPropBag[i].pstrName)).Detach(pvarValue);
+        VariantClear(pvarValue);
+        *pvarValue = _variant_t(Lookup(pPropBag[i].pstrName).c_str()).Detach();
     }
     return S_OK;
 }
@@ -91,12 +93,12 @@ STDMETHODIMP IDSMPropertyBagImpl::GetPropertyInfo(ULONG iProperty, ULONG cProper
     CheckPointer(pPropBag, E_POINTER);
     CheckPointer(pcProperties, E_POINTER);
     for (ULONG i = 0; i < cProperties; i++, iProperty++, (*pcProperties)++) {
-        CStringW key = GetKeyAt(iProperty);
-        pPropBag[i].pstrName = (BSTR)CoTaskMemAlloc((key.GetLength() + 1) * sizeof(WCHAR));
+        std::wstring key = GetKeyAt(iProperty);
+        pPropBag[i].pstrName = (BSTR)CoTaskMemAlloc((int(key.size()) + 1) * sizeof(WCHAR));
         if (!pPropBag[i].pstrName) {
             return E_FAIL;
         }
-        wcscpy_s(pPropBag[i].pstrName, key.GetLength() + 1, key);
+        wcscpy_s(pPropBag[i].pstrName, int(key.size()) + 1, key.c_str());
     }
     return S_OK;
 }
@@ -112,7 +114,7 @@ HRESULT IDSMPropertyBagImpl::SetProperty(LPCWSTR key, LPCWSTR value)
 {
     CheckPointer(key, E_POINTER);
     CheckPointer(value, E_POINTER);
-    if (!Lookup(key).IsEmpty()) {
+    if (!Lookup(key).empty()) {
         SetAt(key, value);
     } else {
         Add(key, value);
@@ -138,7 +140,7 @@ HRESULT IDSMPropertyBagImpl::GetProperty(LPCWSTR key, BSTR* value)
     if (i < 0) {
         return E_FAIL;
     }
-    *value = GetValueAt(i).AllocSysString();
+    *value = StringAllocSys(GetValueAt(i));
     return S_OK;
 }
 
@@ -158,14 +160,14 @@ HRESULT IDSMPropertyBagImpl::DelProperty(LPCWSTR key)
 //
 
 CCritSec CDSMResource::m_csResources;
-CAtlMap<uintptr_t, CDSMResource*> CDSMResource::m_resources;
+std::map<uintptr_t, CDSMResource*> CDSMResource::m_resources;
 
 CDSMResource::CDSMResource()
     : tag(0)
     , mime(_T("application/octet-stream"))
 {
     CAutoLock cAutoLock(&m_csResources);
-    m_resources.SetAt(reinterpret_cast<uintptr_t>(this), this);
+    m_resources[reinterpret_cast<uintptr_t>(this)] = this;
 }
 
 CDSMResource::CDSMResource(const CDSMResource& r)
@@ -173,7 +175,7 @@ CDSMResource::CDSMResource(const CDSMResource& r)
     *this = r;
 
     CAutoLock cAutoLock(&m_csResources);
-    m_resources.SetAt(reinterpret_cast<uintptr_t>(this), this);
+    m_resources[reinterpret_cast<uintptr_t>(this)] = this;
 }
 
 CDSMResource::CDSMResource(LPCWSTR name, LPCWSTR desc, LPCWSTR mime, BYTE* pData, int len, DWORD_PTR tag)
@@ -181,18 +183,18 @@ CDSMResource::CDSMResource(LPCWSTR name, LPCWSTR desc, LPCWSTR mime, BYTE* pData
     this->name = name;
     this->desc = desc;
     this->mime = mime;
-    data.SetCount(len);
-    memcpy(data.GetData(), pData, data.GetCount());
+    data.resize(len);
+    memcpy(data.data(), pData, data.size());
     this->tag = tag;
 
     CAutoLock cAutoLock(&m_csResources);
-    m_resources.SetAt(reinterpret_cast<uintptr_t>(this), this);
+    m_resources[reinterpret_cast<uintptr_t>(this)] = this;
 }
 
 CDSMResource::~CDSMResource()
 {
     CAutoLock cAutoLock(&m_csResources);
-    m_resources.RemoveKey(reinterpret_cast<uintptr_t>(this));
+    m_resources.erase(reinterpret_cast<uintptr_t>(this));
 }
 
 CDSMResource& CDSMResource::operator = (const CDSMResource& r)
@@ -202,7 +204,7 @@ CDSMResource& CDSMResource::operator = (const CDSMResource& r)
         name = r.name;
         desc = r.desc;
         mime = r.mime;
-        data.Copy(r.data);
+        data = r.data;
     }
     return *this;
 }
@@ -219,7 +221,7 @@ IDSMResourceBagImpl::IDSMResourceBagImpl()
 
 STDMETHODIMP_(DWORD) IDSMResourceBagImpl::ResGetCount()
 {
-    return (DWORD)m_resources.GetCount();
+    return (DWORD)m_resources.size();
 }
 
 STDMETHODIMP IDSMResourceBagImpl::ResGet(DWORD iIndex, BSTR* ppName, BSTR* ppDesc, BSTR* ppMime, BYTE** ppData, DWORD* pDataLen, DWORD_PTR* pTag)
@@ -228,24 +230,24 @@ STDMETHODIMP IDSMResourceBagImpl::ResGet(DWORD iIndex, BSTR* ppName, BSTR* ppDes
         CheckPointer(pDataLen, E_POINTER);
     }
 
-    if (iIndex >= m_resources.GetCount()) {
+    if (iIndex >= m_resources.size()) {
         return E_INVALIDARG;
     }
 
     CDSMResource& r = m_resources[iIndex];
 
     if (ppName) {
-        *ppName = r.name.AllocSysString();
+        *ppName = StringAllocSys(r.name);
     }
     if (ppDesc) {
-        *ppDesc = r.desc.AllocSysString();
+        *ppDesc = StringAllocSys(r.desc);
     }
     if (ppMime) {
-        *ppMime = r.mime.AllocSysString();
+        *ppMime = StringAllocSys(r.mime);
     }
     if (ppData) {
-        *pDataLen = (DWORD)r.data.GetCount();
-        memcpy(*ppData = (BYTE*)CoTaskMemAlloc(*pDataLen), r.data.GetData(), *pDataLen);
+        *pDataLen = (DWORD)r.data.size();
+        memcpy(*ppData = (BYTE*)CoTaskMemAlloc(*pDataLen), r.data.data(), *pDataLen);
     }
     if (pTag) {
         *pTag = r.tag;
@@ -256,7 +258,7 @@ STDMETHODIMP IDSMResourceBagImpl::ResGet(DWORD iIndex, BSTR* ppName, BSTR* ppDes
 
 STDMETHODIMP IDSMResourceBagImpl::ResSet(DWORD iIndex, LPCWSTR pName, LPCWSTR pDesc, LPCWSTR pMime, const BYTE* pData, DWORD len, DWORD_PTR tag)
 {
-    if (iIndex >= m_resources.GetCount()) {
+    if (iIndex >= m_resources.size()) {
         return E_INVALIDARG;
     }
 
@@ -272,9 +274,9 @@ STDMETHODIMP IDSMResourceBagImpl::ResSet(DWORD iIndex, LPCWSTR pName, LPCWSTR pD
         r.mime = pMime;
     }
     if (pData || len == 0) {
-        r.data.SetCount(len);
+        r.data.resize(len);
         if (pData) {
-            memcpy(r.data.GetData(), pData, r.data.GetCount());
+            memcpy(r.data.data(), pData, r.data.size());
         }
     }
     r.tag = tag;
@@ -284,16 +286,17 @@ STDMETHODIMP IDSMResourceBagImpl::ResSet(DWORD iIndex, LPCWSTR pName, LPCWSTR pD
 
 STDMETHODIMP IDSMResourceBagImpl::ResAppend(LPCWSTR pName, LPCWSTR pDesc, LPCWSTR pMime, BYTE* pData, DWORD len, DWORD_PTR tag)
 {
-    return ResSet((DWORD)m_resources.Add(CDSMResource()), pName, pDesc, pMime, pData, len, tag);
+    m_resources.emplace_back();
+    return ResSet((DWORD)(m_resources.size() - 1), pName, pDesc, pMime, pData, len, tag);
 }
 
 STDMETHODIMP IDSMResourceBagImpl::ResRemoveAt(DWORD iIndex)
 {
-    if (iIndex >= m_resources.GetCount()) {
+    if (iIndex >= m_resources.size()) {
         return E_INVALIDARG;
     }
 
-    m_resources.RemoveAt(iIndex);
+    m_resources.erase(m_resources.begin() + iIndex);
 
     return S_OK;
 }
@@ -301,13 +304,13 @@ STDMETHODIMP IDSMResourceBagImpl::ResRemoveAt(DWORD iIndex)
 STDMETHODIMP IDSMResourceBagImpl::ResRemoveAll(DWORD_PTR tag)
 {
     if (tag) {
-        for (ptrdiff_t i = m_resources.GetCount() - 1; i >= 0; i--) {
+        for (ptrdiff_t i = m_resources.size() - 1; i >= 0; i--) {
             if (m_resources[i].tag == tag) {
-                m_resources.RemoveAt(i);
+                m_resources.erase(m_resources.begin() + i);
             }
         }
     } else {
-        m_resources.RemoveAll();
+        m_resources.clear();
     }
 
     return S_OK;
@@ -355,12 +358,12 @@ IDSMChapterBagImpl::IDSMChapterBagImpl()
 
 STDMETHODIMP_(DWORD) IDSMChapterBagImpl::ChapGetCount()
 {
-    return (DWORD)m_chapters.GetCount();
+    return (DWORD)m_chapters.size();
 }
 
 STDMETHODIMP IDSMChapterBagImpl::ChapGet(DWORD iIndex, REFERENCE_TIME* prt, BSTR* ppName)
 {
-    if (iIndex >= m_chapters.GetCount()) {
+    if (iIndex >= m_chapters.size()) {
         return E_INVALIDARG;
     }
 
@@ -370,7 +373,7 @@ STDMETHODIMP IDSMChapterBagImpl::ChapGet(DWORD iIndex, REFERENCE_TIME* prt, BSTR
         *prt = c.rt;
     }
     if (ppName) {
-        *ppName = c.name.AllocSysString();
+        *ppName = StringAllocSys(c.name);
     }
 
     return S_OK;
@@ -378,7 +381,7 @@ STDMETHODIMP IDSMChapterBagImpl::ChapGet(DWORD iIndex, REFERENCE_TIME* prt, BSTR
 
 STDMETHODIMP IDSMChapterBagImpl::ChapSet(DWORD iIndex, REFERENCE_TIME rt, LPCWSTR pName)
 {
-    if (iIndex >= m_chapters.GetCount()) {
+    if (iIndex >= m_chapters.size()) {
         return E_INVALIDARG;
     }
 
@@ -396,23 +399,24 @@ STDMETHODIMP IDSMChapterBagImpl::ChapSet(DWORD iIndex, REFERENCE_TIME rt, LPCWST
 
 STDMETHODIMP IDSMChapterBagImpl::ChapAppend(REFERENCE_TIME rt, LPCWSTR pName)
 {
-    return ChapSet((DWORD)m_chapters.Add(CDSMChapter()), rt, pName);
+    m_chapters.emplace_back();
+    return ChapSet((DWORD)(m_chapters.size() - 1), rt, pName);
 }
 
 STDMETHODIMP IDSMChapterBagImpl::ChapRemoveAt(DWORD iIndex)
 {
-    if (iIndex >= m_chapters.GetCount()) {
+    if (iIndex >= m_chapters.size()) {
         return E_INVALIDARG;
     }
 
-    m_chapters.RemoveAt(iIndex);
+    m_chapters.erase(m_chapters.begin() + iIndex);
 
     return S_OK;
 }
 
 STDMETHODIMP IDSMChapterBagImpl::ChapRemoveAll()
 {
-    m_chapters.RemoveAll();
+    m_chapters.clear();
 
     m_fSorted = false;
 
@@ -422,7 +426,7 @@ STDMETHODIMP IDSMChapterBagImpl::ChapRemoveAll()
 STDMETHODIMP_(long) IDSMChapterBagImpl::ChapLookup(REFERENCE_TIME* prt, BSTR* ppName)
 {
     CheckPointer(prt, -1);
-    if (m_chapters.IsEmpty()) {
+    if (m_chapters.empty()) {
         return -1;
     }
 
@@ -433,7 +437,7 @@ STDMETHODIMP_(long) IDSMChapterBagImpl::ChapLookup(REFERENCE_TIME* prt, BSTR* pp
     }
     else {
         // assume first entry is best, find better match
-        for (size_t i = 1; i < m_chapters.GetCount(); ++i) {
+        for (size_t i = 1; i < m_chapters.size(); ++i) {
             if (*prt >= m_chapters[i].rt && m_chapters[i].rt >= m_chapters[result].rt) {
                 result = i;
             }
@@ -447,7 +451,7 @@ STDMETHODIMP_(long) IDSMChapterBagImpl::ChapLookup(REFERENCE_TIME* prt, BSTR* pp
     if (result != MAXSIZE_T) {
         *prt = m_chapters[result].rt;
         if (ppName) {
-            *ppName = m_chapters[result].name.AllocSysString();
+            *ppName = StringAllocSys(m_chapters[result].name);
         }
     }
 
@@ -458,7 +462,7 @@ STDMETHODIMP_(long) IDSMChapterBagImpl::ChapLookupPrevious(REFERENCE_TIME* prt, 
 {
     CheckPointer(prt, -1);
 
-    size_t chapcount = m_chapters.GetCount();
+    size_t chapcount = m_chapters.size();
     if (chapcount < 1 || *prt < 0) {
         return -1;
     }
@@ -478,7 +482,7 @@ STDMETHODIMP_(long) IDSMChapterBagImpl::ChapLookupPrevious(REFERENCE_TIME* prt, 
 
     *prt = m_chapters[result].rt;
     if (ppName) {
-        *ppName = m_chapters[result].name.AllocSysString();
+        *ppName = StringAllocSys(m_chapters[result].name);
     }
 
     return (long)result;
@@ -488,7 +492,7 @@ STDMETHODIMP_(long) IDSMChapterBagImpl::ChapLookupNext(REFERENCE_TIME* prt, BSTR
 {
     CheckPointer(prt, -1);
 
-    size_t chapcount = m_chapters.GetCount();
+    size_t chapcount = m_chapters.size();
     if (chapcount < 1) {
         return -1;
     }
@@ -507,7 +511,7 @@ STDMETHODIMP_(long) IDSMChapterBagImpl::ChapLookupNext(REFERENCE_TIME* prt, BSTR
 
     *prt = m_chapters[result].rt;
     if (ppName) {
-        *ppName = m_chapters[result].name.AllocSysString();
+        *ppName = StringAllocSys(m_chapters[result].name);
     }
 
     return (long)result;
@@ -518,7 +522,7 @@ STDMETHODIMP IDSMChapterBagImpl::ChapSort()
     if (m_fSorted) {
         return S_FALSE;
     }
-    std::sort(m_chapters.GetData(), m_chapters.GetData() + m_chapters.GetCount());
+    std::sort(m_chapters.data(), m_chapters.data() + m_chapters.size());
     m_fSorted = true;
     return S_OK;
 }

@@ -40,13 +40,19 @@ class MPRTSPServer : public RTSPServer
     {
       friend class MPRTSPServer;
       public:
+        // IPv4 address of the client (the server only listens on IPv4)
         struct sockaddr_in ClientAddress()
         {
-          return fClientAddr;
+          struct sockaddr_in address = {};
+          if (fClientAddr.ss_family == AF_INET)
+          {
+            address = *(struct sockaddr_in const*)&fClientAddr;
+          }
+          return address;
         }
 
       protected:
-        MPRTSPClientConnection(MPRTSPServer& ourServer, int clientSocket, struct sockaddr_in clientAddr);
+        MPRTSPClientConnection(MPRTSPServer& ourServer, int clientSocket, struct sockaddr_storage const& clientAddr);
         virtual ~MPRTSPClientConnection();
     };
 
@@ -90,9 +96,10 @@ class MPRTSPServer : public RTSPServer
 
         virtual void handleCmd_PLAY(RTSPClientConnection* ourClientConnection,
                                     ServerMediaSubsession* subsession,
-                                    const char* fullRequestStr);
+                                    const char* fullRequestStr) override;
         virtual void handleCmd_PAUSE(RTSPClientConnection* ourClientConnection,
-                                      ServerMediaSubsession* subsession);
+                                      ServerMediaSubsession* subsession,
+                                      const char* fullRequestStr) override;
 
       private:
         struct sockaddr_in m_clientAddress;
@@ -107,7 +114,7 @@ class MPRTSPServer : public RTSPServer
   protected:
     // called only by createNew();
     MPRTSPServer(UsageEnvironment& env,
-                  int ourSocket,
+                  int ourSocketIPv4,
                   Port ourPort,
                   UserAuthenticationDatabase* authDatabase,
                   unsigned reclamationTimeSeconds);
@@ -115,11 +122,11 @@ class MPRTSPServer : public RTSPServer
 
     // If you subclass "RTSPClientConnection", then you must also redefine this virtual function in order
     // to create new objects of your subclass:
-    virtual ClientConnection* createNewClientConnection(int clientSocket, struct sockaddr_in clientAddr);
+    virtual ClientConnection* createNewClientConnection(int clientSocket, struct sockaddr_storage const& clientAddr) override;
 
     // If you subclass "RTSPClientSession", then you should also redefine this virtual function in order
     // to create new objects of your subclass:
-    virtual ClientSession* createNewClientSession(u_int32_t sessionId);
+    virtual ClientSession* createNewClientSession(u_int32_t sessionId) override;
 
   private:
     map<u_int32_t, MPRTSPClientSession*> m_clientSessions;

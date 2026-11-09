@@ -60,8 +60,15 @@
 #pragma warning (pop)
 #pragma warning (default : 4005)
 
-#include <afx.h>
-#include <afxwin.h>         // MFC core and standard components
+#include <MfcCompat.h>
+#include <windows.h>
+#include <objbase.h>
+#include <tchar.h>
+#include <process.h>
+#include <string>
+#include <vector>
+#include <list>
+#include <memory>
 
 
 // TODO: reference additional headers your program requires here

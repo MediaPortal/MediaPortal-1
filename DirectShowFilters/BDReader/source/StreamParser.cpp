@@ -37,6 +37,13 @@ using namespace HEVC;
 
 extern void LogDebug(const char *fmt, ...) ;
 
+// whole frames per second from a frame time in 100 ns units; 0 when the stream gives a frame time below 1 ms
+static int FpsFromFrameTime(__int64 avgTimePerFrame)
+{
+	__int64 ms = avgTimePerFrame / 10000;
+	return ms > 0 ? (int)(1000 / ms) : 0;
+}
+
 StreamParser::StreamParser()
 {
 	pmt = CMediaType();
@@ -48,7 +55,7 @@ StreamParser::StreamParser()
 bool StreamParser::Parse(byte* tsPacket, int serviceType)
 {
 	bool parsed = false;
-	__int64 framesize = hdrParser.GetSize();
+	int framesize = hdrParser.GetSize();
 
 	if (serviceType == BLURAY_STREAM_TYPE_VIDEO_MPEG1 ||
       serviceType == BLURAY_STREAM_TYPE_VIDEO_MPEG2)
@@ -59,7 +66,7 @@ bool StreamParser::Parse(byte* tsPacket, int serviceType)
 			//hdrParser.DumpSequenceHeader(seq);
 			basicVideoInfo.width=seq.width;
 			basicVideoInfo.height=seq.height;
-			basicVideoInfo.fps=1000 / (seq.ifps /10000);
+			basicVideoInfo.fps = FpsFromFrameTime(seq.ifps);
 			basicVideoInfo.arx=seq.arx;
 			basicVideoInfo.ary=seq.ary;
 			if (seq.progressive==0)
@@ -78,7 +85,7 @@ bool StreamParser::Parse(byte* tsPacket, int serviceType)
 		{
 			basicVideoInfo.width = hevc.width;
 			basicVideoInfo.height = hevc.height;
-			basicVideoInfo.fps = 1000 / (hevc.AvgTimePerFrame / 10000);
+			basicVideoInfo.fps = FpsFromFrameTime(hevc.AvgTimePerFrame);
 			basicVideoInfo.isInterlaced = 0;
 			basicVideoInfo.streamType = 4; // HEVC
 			basicVideoInfo.isValid = true;
@@ -93,7 +100,7 @@ bool StreamParser::Parse(byte* tsPacket, int serviceType)
 			//hdrParser.DumpAvcHeader(avc);
 			basicVideoInfo.width = avc.width;
 			basicVideoInfo.height = avc.height;
-			basicVideoInfo.fps = 1000 / (avc.AvgTimePerFrame / 10000);
+			basicVideoInfo.fps = FpsFromFrameTime(avc.AvgTimePerFrame);
 			//basicVideoInfo.arx=avc.arx;
 			//basicVideoInfo.ary=avc.ary;
 			if (!avc.progressive)

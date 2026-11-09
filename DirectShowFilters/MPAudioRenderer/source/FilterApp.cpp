@@ -20,33 +20,12 @@
  */
 
 #include "stdafx.h"
-#include "FilterApp.h"
 
+// Entry point of the DLL. The DirectShow base classes (dllentry.cpp) do the real work
+// in DllEntryPoint(); there is no MFC application object (CWinApp) any more.
 extern "C" BOOL WINAPI DllEntryPoint(HINSTANCE, ULONG, LPVOID);
-extern void StopLogger();
 
-CFilterApp::CFilterApp()
+extern "C" BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID pReserved)
 {
+  return DllEntryPoint(hInstance, dwReason, pReserved);
 }
-
-BOOL CFilterApp::InitInstance()
-{
-  if(!__super::InitInstance()) 
-    return FALSE;
-	
-  //SetRegistryKey(_T("Gabest"));
-	
-  DllEntryPoint(AfxGetInstanceHandle(), DLL_PROCESS_ATTACH, 0);
-
-  return TRUE;
-}
-
-BOOL CFilterApp::ExitInstance()
-{
-  DllEntryPoint(AfxGetInstanceHandle(), DLL_PROCESS_DETACH, 0);
-  return __super::ExitInstance();
-}
-
-BEGIN_MESSAGE_MAP(CFilterApp, CWinApp)
-END_MESSAGE_MAP()
-

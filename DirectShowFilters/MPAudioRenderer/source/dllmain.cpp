@@ -104,14 +104,19 @@ HRESULT CopyWaveFormatEx(WAVEFORMATEXTENSIBLE** dst, const WAVEFORMATEXTENSIBLE*
   if (!dst)
     return E_POINTER;
 
-  int	size = sizeof(WAVEFORMATEXTENSIBLE) + src->Format.cbSize;
+  // The size of the source is the header plus cbSize (40 bytes for WAVEFORMATEXTENSIBLE). The copy used to be
+  // sizeof(WAVEFORMATEXTENSIBLE) + cbSize = 62 bytes, which read 22 bytes behind the source. The copy always has the room of a
+  // WAVEFORMATEXTENSIBLE, the part that the source does not have is zero.
+  size_t srcSize = sizeof(WAVEFORMATEX) + src->Format.cbSize;
+  size_t size = srcSize > sizeof(WAVEFORMATEXTENSIBLE) ? srcSize : sizeof(WAVEFORMATEXTENSIBLE);
 
   *dst = (WAVEFORMATEXTENSIBLE *)new BYTE[size];
 
   if (!*dst)
     return E_OUTOFMEMORY;
 
-  memcpy(*dst, src, size);
+  memset(*dst, 0, size);
+  memcpy(*dst, src, srcSize);
 
   return S_OK;
 }

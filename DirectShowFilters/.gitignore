@@ -8,4 +8,5 @@ ipch/
 *.opensdf
 *.lib
 *.obj
+*.idb
 Core-CC-Parser/cc decode log 1.txt

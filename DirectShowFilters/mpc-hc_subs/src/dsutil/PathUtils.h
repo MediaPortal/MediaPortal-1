@@ -22,29 +22,29 @@
 
 namespace PathUtils
 {
-    CString BaseName(LPCTSTR path);
-    CString DirName(LPCTSTR path);
-    CString FileName(LPCTSTR path);
-    CString FileExt(LPCTSTR path);
-    CString GetModulePath(HMODULE hModule);
-    CString GetAfxModulePath(bool bWithModuleName = false);
-    CString GetProgramPath(bool bWithExeName = false);
-    CString CombinePaths(LPCTSTR dir, LPCTSTR path);
-    CString FilterInvalidCharsFromFileName(LPCTSTR fn, TCHAR replacementChar = _T('_'));
-    CString Unquote(LPCTSTR path);
-    CString StripPathOrUrl(LPCTSTR path);
+    tstring BaseName(LPCTSTR path);
+    tstring DirName(LPCTSTR path);
+    tstring FileName(LPCTSTR path);
+    tstring FileExt(LPCTSTR path);
+    tstring GetModulePath(HMODULE hModule);
+    tstring GetAfxModulePath(bool bWithModuleName = false);
+    tstring GetProgramPath(bool bWithExeName = false);
+    tstring CombinePaths(LPCTSTR dir, LPCTSTR path);
+    tstring FilterInvalidCharsFromFileName(LPCTSTR fn, TCHAR replacementChar = _T('_'));
+    tstring Unquote(LPCTSTR path);
+    tstring StripPathOrUrl(LPCTSTR path);
     bool IsInDir(LPCTSTR path, LPCTSTR dir);
-    CString ToRelative(LPCTSTR dir, const LPCTSTR path, bool* pbRelative = nullptr);
+    tstring ToRelative(LPCTSTR dir, const LPCTSTR path, bool* pbRelative = nullptr);
     bool IsRelative(LPCTSTR path);
     bool Exists(LPCTSTR path);
     bool IsFile(LPCTSTR path);
     bool IsDir(LPCTSTR path);
     bool IsLinkFile(LPCTSTR path);
     bool CreateDirRecursive(LPCTSTR path);
-    CString ResolveLinkFile(LPCTSTR path);
-    void RecurseAddDir(LPCTSTR path, CAtlList<CString>& sl);
-    void ParseDirs(CAtlList<CString>& pathsList);
+    tstring ResolveLinkFile(LPCTSTR path);
+    void RecurseAddDir(LPCTSTR path, std::list<tstring>& sl);
+    void ParseDirs(std::list<tstring>& pathsList);
 
-    bool IsURL(CString& fn);
-    bool IsFullFilePath(CString& fn);
+    bool IsURL(tstring& fn);
+    bool IsFullFilePath(tstring& fn);
 }

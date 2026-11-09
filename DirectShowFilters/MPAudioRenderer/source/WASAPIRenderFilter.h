@@ -116,6 +116,7 @@ private:
 
   bool                m_bIsAudioClientStarted;
   bool                m_bDeviceInitialized;
+  unsigned int        m_nClientGeneration;   // changes whenever the audio client is discarded; guarded by m_csResources
 
   HANDLE              m_hDataEvent;
   HANDLE              m_hTimerEvent;

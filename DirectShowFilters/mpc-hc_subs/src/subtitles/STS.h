@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include <atlcoll.h>
 #include <array>
 #include "TextFile.h"
 #include "SubtitleHelpers.h"
@@ -43,7 +42,7 @@ public:
         AUTO // ~video for SSA/ASS, ~window for the rest
     };
 
-    CRect      marginRect;             // measured from the sides
+    RECT      marginRect;             // measured from the sides
     int        scrAlignment;           // 1 - 9: as on the numpad, 0: default
     int        borderStyle;            // 0: outline, 1: opaque box
     double     outlineWidthX, outlineWidthY;
@@ -51,7 +50,7 @@ public:
     std::array<COLORREF, 4> colors;    // usually: {primary, secondary, outline/background, shadow}
     std::array<BYTE, 4> alpha;
     int        charSet;
-    CString    fontName;
+    tstring    fontName;
     double     fontSize;               // height
     double     fontScaleX, fontScaleY; // percent
     double     fontSpacing;            // +/- pixels
@@ -72,7 +71,7 @@ public:
     DWORD      SrtResY = 1080;
     bool       Kerning = false;
     bool       ScaledBorderAndShadow = false;
-    CString    customTags;
+    tstring    customTags;
 #endif
 
     STSStyle();
@@ -90,11 +89,11 @@ public:
     friend LOGFONTA& operator <<= (LOGFONTA& lfa, const STSStyle& s);
     friend LOGFONTW& operator <<= (LOGFONTW& lfw, const STSStyle& s);
 
-    friend CString& operator <<= (CString& style, const STSStyle& s);
-    friend STSStyle& operator <<= (STSStyle& s, const CString& style);
+    friend tstring& operator <<= (tstring& style, const STSStyle& s);
+    friend STSStyle& operator <<= (STSStyle& s, const tstring& style);
 };
 
-class CSTSStyleMap : public CAtlMap<CString, STSStyle*, CStringElementTraits<CString>>
+class CSTSStyleMap : public std::map<tstring, STSStyle*>
 {
 public:
     CSTSStyleMap() {}
@@ -103,10 +102,10 @@ public:
 };
 
 struct STSEntry {
-    CStringW str;
+    std::wstring str;
     bool fUnicode;
-    CString style, actor, effect;
-    CRect marginRect;
+    tstring style, actor, effect;
+    RECT marginRect = {};
     int layer;
     REFERENCE_TIME start, end;
     int readorder;
@@ -116,7 +115,7 @@ class STSSegment
 {
 public:
     REFERENCE_TIME start, end;
-    CAtlArray<int> subs;
+    std::vector<int> subs;
 
     STSSegment()
         : start(0)
@@ -132,42 +131,42 @@ public:
         if (this != &stss) {
             start = stss.start;
             end = stss.end;
-            subs.Copy(stss.subs);
+            subs = stss.subs;
         }
         return *this;
     }
 };
 
-class CSimpleTextSubtitle : public CAtlArray<STSEntry>
+class CSimpleTextSubtitle : public std::vector<STSEntry>
 {
     friend class CSubtitleEditorDlg;
     friend class SubtitlesProvider;
 
 protected:
-    CAtlArray<STSSegment> m_segments;
+    std::vector<STSSegment> m_segments;
     virtual void OnChanged() {}
 
 public:
-    CString m_name;
+    tstring m_name;
     LCID m_lcid;
-    CString m_langname;
+    tstring m_langname;
     Subtitle::SubType m_subtitleType;
     tmode m_mode;
     CTextFile::enc m_encoding;
-    CString m_path;
+    tstring m_path;
 
-    CString m_provider;
+    tstring m_provider;
 
     Subtitle::HearingImpairedType m_eHearingImpaired;
 
-    CSize m_storageRes;
-    CSize m_playRes;
-    CSize m_layoutRes;
+    SIZE m_storageRes = {};
+    SIZE m_playRes = {};
+    SIZE m_layoutRes = {};
 
     int m_defaultWrapStyle;
     int m_collisions;
     bool m_fScaledBAS;
-    CString m_sYCbCrMatrix;
+    tstring m_sYCbCrMatrix;
 
     bool m_bUsingPlayerDefaultStyle;
 
@@ -196,18 +195,18 @@ public:
 
     void Append(CSimpleTextSubtitle& sts, REFERENCE_TIME timeoff = -1);
 
-    bool Open(CString fn, int CharSet, CString name = _T(""), CString videoName = _T(""));
-    bool Open(CTextFile* f, int CharSet, CString name);
-    bool Open(BYTE* data, int length, int CharSet, CString provider, CString lang, CString ext = _T(""));
-    bool Open(CString data, CTextFile::enc SaveCharSet, int ReadCharSet, CString provider, CString lang, CString ext = _T(""));
-    bool Open(BYTE* data, int len, int CharSet, CString name);
-    bool Open(CString provider, BYTE* data, int len, int CharSet, CString name, Subtitle::HearingImpairedType eHearingImpaired, LCID lcid);
-    bool SaveAs(CString fn, Subtitle::SubType type, double fps = -1, LONGLONG delay = 0, CTextFile::enc e = CTextFile::DEFAULT_ENCODING, bool bCreateExternalStyleFile = true);
+    bool Open(tstring fn, int CharSet, tstring name = _T(""), tstring videoName = _T(""));
+    bool Open(CTextFile* f, int CharSet, tstring name);
+    bool Open(BYTE* data, int length, int CharSet, tstring provider, tstring lang, tstring ext = _T(""));
+    bool Open(tstring data, CTextFile::enc SaveCharSet, int ReadCharSet, tstring provider, tstring lang, tstring ext = _T(""));
+    bool Open(BYTE* data, int len, int CharSet, tstring name);
+    bool Open(tstring provider, BYTE* data, int len, int CharSet, tstring name, Subtitle::HearingImpairedType eHearingImpaired, LCID lcid);
+    bool SaveAs(tstring fn, Subtitle::SubType type, double fps = -1, LONGLONG delay = 0, CTextFile::enc e = CTextFile::DEFAULT_ENCODING, bool bCreateExternalStyleFile = true);
 
-    void Add(CStringW str, bool fUnicode, REFERENCE_TIME start, REFERENCE_TIME end, CString style = _T("Default"), CString actor = _T(""), CString effect = _T(""), const CRect& marginRect = CRect(0, 0, 0, 0), int layer = 0, int readorder = -1);
+    void Add(std::wstring str, bool fUnicode, REFERENCE_TIME start, REFERENCE_TIME end, tstring style = _T("Default"), tstring actor = _T(""), tstring effect = _T(""), const RECT& marginRect = MakeRect(0, 0, 0, 0), int layer = 0, int readorder = -1);
     STSStyle* CreateDefaultStyle(int CharSet);
     void ChangeUnknownStylesToDefault();
-    void AddStyle(CString name, STSStyle* style); // style will be stored and freed in Empty() later
+    void AddStyle(tstring name, STSStyle* style); // style will be stored and freed in Empty() later
     bool CopyStyles(const CSTSStyleMap& styles, bool fAppend = false);
 
     bool SetDefaultStyle(const STSStyle& s);
@@ -224,22 +223,22 @@ public:
     REFERENCE_TIME TranslateSegmentEnd(int i, double fps);
     const STSSegment* SearchSubs(REFERENCE_TIME t, double fps, /*[out]*/ int* iSegment = nullptr, int* nSegments = nullptr);
     const STSSegment* GetSegment(int iSegment) {
-        return iSegment >= 0 && iSegment < (int)m_segments.GetCount() ? &m_segments[iSegment] : nullptr;
+        return iSegment >= 0 && iSegment < (int)m_segments.size() ? &m_segments[iSegment] : nullptr;
     }
 
     STSStyle* GetStyle(int i);
     bool GetStyle(int i, STSStyle& stss);
-    bool GetStyle(CString styleName, STSStyle& stss);
+    bool GetStyle(tstring styleName, STSStyle& stss);
     int GetCharSet(int i);
     bool IsEntryUnicode(int i);
     void ConvertUnicode(int i, bool fUnicode);
 
-    CStringA GetStrA(int i, bool fSSA = false);
-    CStringW GetStrW(int i, bool fSSA = false);
-    CStringW GetStrWA(int i, bool fSSA = false);
+    std::string GetStrA(int i, bool fSSA = false);
+    std::wstring GetStrW(int i, bool fSSA = false);
+    std::wstring GetStrWA(int i, bool fSSA = false);
 
-    void SetStr(int i, CStringA str, bool fUnicode /* ignored */);
-    void SetStr(int i, CStringW str, bool fUnicode);
+    void SetStr(int i, std::string str, bool fUnicode /* ignored */);
+    void SetStr(int i, std::wstring str, bool fUnicode);
 
 public:
     STSStyle m_styleOverride; // the app can decide to use this style instead of a built-in one
@@ -279,7 +278,7 @@ extern const BYTE CharSetList[];
 extern const TCHAR* CharSetNames[];
 extern const int CharSetLen;
 
-class CHtmlColorMap : public CAtlMap<CString, DWORD, CStringElementTraits<CString>>
+class CHtmlColorMap : public std::map<tstring, DWORD>
 {
 public:
     CHtmlColorMap();

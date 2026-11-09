@@ -25,16 +25,22 @@
 #include "SharedInclude.h"
 
 #define WIN32_LEAN_AND_MEAN
-#define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS
 
 #ifndef VC_EXTRALEAN
 #define VC_EXTRALEAN
 #endif
+#include <windows.h>
+#include <objbase.h>
+#include <tchar.h>
+#include <process.h>
 
-#include <afx.h>
-#include <afxwin.h>         // MFC core and standard components
 #include <streams.h>
 #include <dvdmedia.h>
+#include <wrl/client.h>
+#include <string>
+#include <vector>
+#include <list>
+#include <memory>
 
 #define SAFE_DELETE(p)       { if(p) { delete (p);     (p)=NULL; } }
 #define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }

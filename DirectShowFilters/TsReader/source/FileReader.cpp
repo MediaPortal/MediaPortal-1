@@ -27,9 +27,13 @@
 #include "FileReader.h"
 #include <Mmsystem.h>
 #include <comdef.h>
+#include "../../shared/TcharConv.h"
+#include "../../shared/WStringUtil.h"
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
+
+
 
 extern void LogDebug(const char *fmt, ...) ;
 
@@ -87,7 +91,7 @@ HRESULT FileReader::SetFileName(LPCOLESTR pszFileName)
   //CheckPointer(pszFileName,E_POINTER);
 
   if(wcslen(pszFileName) > MAX_PATH)
-    return ERROR_FILENAME_EXCED_RANGE;
+    return HRESULT_FROM_WIN32(ERROR_FILENAME_EXCED_RANGE);
 
   // Take a copy of the filename
 
@@ -131,7 +135,7 @@ HRESULT FileReader::OpenFile()
 	if (m_pFileName == NULL) 
   {
     LogDebug("FileReader::OpenFile() no filename");
-		return ERROR_INVALID_NAME;
+		return HRESULT_FROM_WIN32(ERROR_INVALID_NAME);
 	}
 	
   m_bIsStopping = false;
@@ -149,14 +153,14 @@ HRESULT FileReader::OpenFile()
 	  {
   		if ((wcsstr(pFileName, L".ts.tsbuffer") != NULL)) //timeshift file only
   		{  	  
-    	  CString tempFileName = pFileName;
+    	  std::wstring tempFileName = pFileName;
     	  
-    	  int replCount = tempFileName.Replace(L".ts.tsbuffer", randomStrGen(12));
+    	  int replCount = ReplaceAll(tempFileName, L".ts.tsbuffer", randomStrGen(12));
   
         if (replCount > 0)
         {
     	    //LogDebug("FileReader::OpenFile(), try to write dummy file to update SMB2 cache - %ws", tempFileName);
-      		hFileUnbuff = ::CreateFileW(tempFileName,		// The filename
+      		hFileUnbuff = ::CreateFileW(tempFileName.c_str(),		// The filename
       							(DWORD) (GENERIC_READ | GENERIC_WRITE),				// File access
       							(DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE), // Share access
       							NULL,						            // Security
@@ -171,7 +175,7 @@ HRESULT FileReader::OpenFile()
             ::WriteFile(hFileUnbuff, tempData, 16, &bytesWritten, NULL);  
           	::CloseHandle(hFileUnbuff); //File is deleted on CloseHandle since FILE_FLAG_DELETE_ON_CLOSE was used
           	hFileUnbuff = INVALID_HANDLE_VALUE; // Invalidate the file
-    	      //LogDebug("FileReader::OpenFile(), dummy file write %d bytes to %ws", bytesWritten, tempFileName);
+    	      //LogDebug("FileReader::OpenFile(), dummy file write %d bytes to %ws", bytesWritten, tempFileName.c_str());
       		}
       	}
       }
@@ -218,13 +222,13 @@ HRESULT FileReader::OpenFile()
   	  if (m_bUseDummyWrites)  //enable SMB2/SMB3 file existence cache workaround
   	  {
   		  //Not succeeded in opening file yet, try WRITE_THROUGH dummy file write
-    	  CString tempFileName = pFileName;
-    	  int replCount = tempFileName.Replace(L".ts.tsbuffer", randomStrGen(12));
+    	  std::wstring tempFileName = pFileName;
+    	  int replCount = ReplaceAll(tempFileName, L".ts.tsbuffer", randomStrGen(12));
   
         if (replCount > 0)
         {
     	    // LogDebug("FileReader::OpenFile(), try to write dummy file to update SMB2 cache - %ws", tempFileName);
-      		hFileUnbuff = ::CreateFileW(tempFileName,		// The filename
+      		hFileUnbuff = ::CreateFileW(tempFileName.c_str(),		// The filename
       							(DWORD) (GENERIC_READ | GENERIC_WRITE),				// File access
       							(DWORD) (FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE), // Share access
       							NULL,						            // Security
@@ -240,7 +244,7 @@ HRESULT FileReader::OpenFile()
             Sleep(50);   		  
           	::CloseHandle(hFileUnbuff); //File is deleted on CloseHandle since FILE_FLAG_DELETE_ON_CLOSE was used
           	hFileUnbuff = INVALID_HANDLE_VALUE; // Invalidate the file
-    	      LogDebug("FileReader::OpenFile(), dummy file WRITE_THROUGH write %d bytes to %ws", bytesWritten, tempFileName);
+    	      LogDebug("FileReader::OpenFile(), dummy file WRITE_THROUGH write %d bytes to %ws", bytesWritten, tempFileName.c_str());
       		}
       	}
       }
@@ -275,7 +279,7 @@ HRESULT FileReader::OpenFile()
 	else
 	{
 	  HRESULT lastErr = HRESULT_FROM_WIN32(GetLastError());	  
-		LogDebug("FileReader::OpenFile(), open file failed. Error 0x%x, %ws, filename = %ws", lastErr, HresultToCString(lastErr), pFileName);    
+		LogDebug("FileReader::OpenFile(), open file failed. Error 0x%x, %ws, filename = %ws", lastErr, HresultToCString(lastErr).c_str(), pFileName);    
 		return E_FAIL;
 	}
 
@@ -375,7 +379,7 @@ HRESULT FileReader::Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes)
   	  HRESULT lastErr = HRESULT_FROM_WIN32(GetLastError());	    	  
   	  if (lastErr != 0x80090006) //Do not log "Invalid Signature" (2148073478) errors on SMB3 connections - these can be normal...
   	  {
-        LogDebug("FileReader::Read() read failed, Error = 0x%x, %ws, filename = %ws", lastErr, HresultToCString(lastErr), m_pFileName);
+        LogDebug("FileReader::Read() read failed, Error = 0x%x, %ws, filename = %ws", lastErr, HresultToCString(lastErr).c_str(), m_pFileName);
       }
     }
     *dwReadBytes = 0;
@@ -420,18 +424,18 @@ __int64 FileReader::GetFileSize()
   }
   
   HRESULT lastErr = HRESULT_FROM_WIN32(GetLastError());	  
-	LogDebug("FileReader::GetFileSize() failed. Error 0x%x, %ws, filename = %ws", lastErr, HresultToCString(lastErr), m_pFileName);    
+	LogDebug("FileReader::GetFileSize() failed. Error 0x%x, %ws, filename = %ws", lastErr, HresultToCString(lastErr).c_str(), m_pFileName);    
   return -1;
 }
 
-CString FileReader::randomStrGen(int length) 
+std::wstring FileReader::randomStrGen(int length) 
 {
-    CString charset = ("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890");
-    CString result ( 'x', length );
+    const std::wstring charset = L"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+    std::wstring result(length, L'x');
 
     srand((unsigned int)timeGetTime());
     for (int i = 0; i < length; i++)
-        result.SetAt(i, charset[rand() % charset.GetLength()]);
+        result[i] = charset[rand() % charset.size()];
 
     return result;
 }
@@ -471,11 +475,10 @@ void FileReader::SetStopping(BOOL isStopping)
 	}
 }
 
-CString FileReader::HresultToCString(HRESULT errToConvert)
+std::wstring FileReader::HresultToCString(HRESULT errToConvert)
 {
   _com_error error(errToConvert);
-  CString errorText = error.ErrorMessage();
-  return errorText;
+  return ToWide(error.ErrorMessage());
 }
 
 void FileReader::CancelPendingIO()

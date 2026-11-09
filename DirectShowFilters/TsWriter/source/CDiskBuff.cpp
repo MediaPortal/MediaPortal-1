@@ -43,7 +43,7 @@ CDiskBuff::~CDiskBuff()
 // Adds data to this buffer
 int CDiskBuff::Add(byte* data, int len)
 {
-  if((m_iSize >= m_iLength + len ) && data) 
+  if((len >= 0) && (m_iSize >= m_iLength + len ) && data) 
   {
     memcpy(&m_pBuffer[m_iLength], data, len);
     m_iLength+=len;

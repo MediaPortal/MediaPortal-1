@@ -61,7 +61,7 @@ public:
     STDMETHODIMP get_XformType( ICcParser_CCTYPE* piType );
     STDMETHODIMP put_XformType( ICcParser_CCTYPE piType );
 
-	void ProcessData( int cbData, const BYTE* pSrc, BYTE* pToTransform, CAtlArray<WORD>* pCCData, bool bIsSubtypeAVC1, DWORD dwFlags, REFERENCE_TIME sourceTime );
+	void ProcessData( int cbData, const BYTE* pSrc, BYTE* pToTransform, std::vector<WORD>* pCCData, bool bIsSubtypeAVC1, DWORD dwFlags, REFERENCE_TIME sourceTime );
 
 	//	CCcParser
 	virtual bool OnCc( int nType, int iField, CCWORD ccField );
@@ -76,7 +76,7 @@ private:
     auto_pif<ICcDataSink> m_pifDataSink; //TODO: multiple
 
 	const BYTE* m_pSrcData;
-	CAtlArray<WORD>* m_pCCData;
+	std::vector<WORD>* m_pCCData;
 	BYTE* m_pDataToTransform;
 
 	ICcParser_CCTYPE m_nRecentlyRecognizedType;

@@ -39,7 +39,6 @@
 #include "Include\ib2c2mpeg2avctrl.h"
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
 #endif
 
 #define MAX_IP_PIDS			34
@@ -94,8 +93,6 @@ typedef enum
 
 
 
-BEGIN_MESSAGE_MAP(CdvblibApp, CWinApp)
-END_MESSAGE_MAP()
 
 static char* logbuffer=NULL;
 
@@ -110,7 +107,7 @@ void Log(const char *fmt, ...)
 
 	int tmp;
 	va_start(ap,fmt);
-	tmp=vsprintf(logbuffer, fmt, ap);
+	tmp=_vsnprintf_s(logbuffer, 100000, _TRUNCATE, fmt, ap);
 	va_end(ap); 
 
 	FILE* fp = fopen("log/dvb.log","a+");
@@ -126,28 +123,6 @@ void Log(const char *fmt, ...)
 	}
 };
 
-// CdvblibApp-Erstellung
-
-CdvblibApp::CdvblibApp()
-{
-	// TODO: Hier Code zur Konstruktion einfügen
-	// Alle wichtigen Initialisierungen in InitInstance positionieren
-
-}
-
-
-// Das einzige CdvblibApp-Objekt
-
-CdvblibApp theApp;
-
-
-// CdvblibApp Initialisierung
-
-BOOL CdvblibApp::InitInstance()
-{
-	CWinApp::InitInstance();
-	return TRUE;
-}
 HRESULT GetSNR(IB2C2MPEG2TunerCtrl2 *pTunerCtrl,long *sigStrength,long *sigQuality)
 {
 	pTunerCtrl->GetSignalStrength(sigStrength);
@@ -561,6 +536,11 @@ HRESULT SetupDemuxerPin(IPin *pVideo,int videoPID, int elementary_stream, bool u
 	try
 	{
 		Log("map pid:%x", videoPID);
+		if (pVideo==NULL)
+		{
+			delete[] pm;
+			return S_OK; // no pin: nothing to map
+		}
 		// video
 		if (pVideo!=NULL)
 		{

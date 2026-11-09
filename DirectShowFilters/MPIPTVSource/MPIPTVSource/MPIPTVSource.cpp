@@ -31,7 +31,7 @@
 #define METHOD_SET_CONNECT_INFO_NAME                              _T("SetConnectInfo()")
 
 CMPIPTVSource::CMPIPTVSource(IUnknown *pUnk, HRESULT *phr)
-  : CSource(NAME(_T("MediaPortal IPTV Source")), pUnk, CLSID_MPIPTVSource)
+  : CSource(NAME("MediaPortal IPTV Source"), pUnk, CLSID_MPIPTVSource)
 {
   this->logger.Log(LOGGER_INFO, METHOD_START_FORMAT, MODULE_NAME, METHOD_CONSTRUCTOR_NAME);
 

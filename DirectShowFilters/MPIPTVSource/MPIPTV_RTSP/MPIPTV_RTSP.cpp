@@ -327,8 +327,8 @@ int CMPIPTV_RTSP::OpenConnection(void)
     // we find one free port, we assume the next one is also free.
     if (this->rtspRtpClientPortRangeStart > 0)
     {
-      struct in_addr destinationAddress;
-      destinationAddress.s_addr = our_inet_addr("127.0.0.1");
+      struct sockaddr_storage destinationAddress = {}; // Groupsock takes a generic socket address
+      ((struct sockaddr_in&)destinationAddress).sin_family = AF_INET; ((struct sockaddr_in&)destinationAddress).sin_addr.s_addr = htonl(INADDR_LOOPBACK);
       unsigned int port = this->rtspRtpClientPortRangeStart;
       Groupsock *groupsock = NULL;
       do
@@ -426,8 +426,8 @@ int CMPIPTV_RTSP::OpenConnection(void)
   }
 
   // create UDP socket and start playing
-  struct in_addr destinationAddress;
-  destinationAddress.s_addr = our_inet_addr("127.0.0.1");
+  struct sockaddr_storage destinationAddress = {}; // Groupsock takes a generic socket address
+  ((struct sockaddr_in&)destinationAddress).sin_family = AF_INET; ((struct sockaddr_in&)destinationAddress).sin_addr.s_addr = htonl(INADDR_LOOPBACK);
 
   unsigned int port = this->rtspUdpPortRangeStart;
   do

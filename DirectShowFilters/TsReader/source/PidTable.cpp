@@ -22,11 +22,11 @@
 
 #include "StdAfx.h"
 
-#include <atlbase.h>
 #include "PidTable.h"
 
 // For more details for memory leak detection see the alloctracing.h header
 #include "..\..\alloctracing.h"
+#include "../../shared/TcharConv.h"
 
 void LogDebug(const char *fmt, ...) ; 
 
@@ -129,7 +129,6 @@ bool CPidTable::HasTeletextPageInfo(int page)
 
 void CPidTable::LogPIDs()
 {
-  USES_CONVERSION;
 
   LogDebug(" pcr      pid: 0x%04x ",PcrPid);
   LogDebug(" pmt      pid: 0x%04x ",PmtPid);
@@ -139,7 +138,7 @@ void CPidTable::LogPIDs()
   {
     LogDebug(" Video    pid: 0x%04x type: %s (0x%02x) DescriptorData: 0x%02x",
       videoPids[i].Pid, 
-      T2A(StreamFormatAsString(videoPids[i].VideoServiceType)),
+      ToAnsi(StreamFormatAsString(videoPids[i].VideoServiceType)).c_str(),
       videoPids[i].VideoServiceType,
       videoPids[i].DescriptorData);
   }
@@ -149,7 +148,7 @@ void CPidTable::LogPIDs()
   {
 	  LogDebug(" Audio    pid: 0x%04x type: %s (0x%02x) language: %3s",
       audioPids[i].Pid, 
-      T2A(StreamFormatAsString(audioPids[i].AudioServiceType)),
+      ToAnsi(StreamFormatAsString(audioPids[i].AudioServiceType)).c_str(),
       audioPids[i].AudioServiceType,
       audioPids[i].Lang);
   }
@@ -159,7 +158,7 @@ void CPidTable::LogPIDs()
   {
 	  LogDebug(" Subtitle pid: 0x%04x type: %s (0x%02x) language: %3s",
       subtitlePids[i].Pid, 
-      T2A(StreamFormatAsString(subtitlePids[i].SubtitleServiceType)),
+      ToAnsi(StreamFormatAsString(subtitlePids[i].SubtitleServiceType)).c_str(),
       subtitlePids[i].SubtitleServiceType, 
       subtitlePids[i].Lang); 
   }  
@@ -169,7 +168,7 @@ void CPidTable::LogPIDs()
   {
 	  LogDebug(" Teletext pid: 0x%04x type: %s (0x%02x) language: %3s",
       TeletextPid, 
-      T2A(TeletextTypeAsString(TeletextInfo[i].type)),
+      ToAnsi(TeletextTypeAsString(TeletextInfo[i].type)).c_str(),
       TeletextInfo[i].type, 
       TeletextInfo[i].lang); 
   }  

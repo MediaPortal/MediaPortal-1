@@ -22,7 +22,7 @@
 
 #include <vector>
 #include <memory>
-#include <atlcoll.h>
+#include <list>
 
 class CEllipse
 {
@@ -99,10 +99,10 @@ struct SpanEndPoint {
 class CEllipseCenterGroup
 {
     const CEllipseSharedPtr& m_pEllipse;
-    CAtlList<EllipseCenter> m_leftCenters, m_rightCenters;
+    std::list<EllipseCenter> m_leftCenters, m_rightCenters;
 
     template<typename IntersectFunction>
-    void AddPoint(CAtlList<EllipseCenter>& centers, IntersectFunction intersect, int x, int y);
+    void AddPoint(std::list<EllipseCenter>& centers, IntersectFunction intersect, int x, int y);
 
 public:
     enum Position {
@@ -115,14 +115,14 @@ public:
         : m_pEllipse(pEllipse) {}
 
     CEllipseCenterGroup(const CEllipseCenterGroup& ellipseGroup)
-        : m_pEllipse(ellipseGroup.m_pEllipse) {
-        m_leftCenters.AddHeadList(&ellipseGroup.m_leftCenters);
-        m_rightCenters.AddHeadList(&ellipseGroup.m_rightCenters);
+        : m_pEllipse(ellipseGroup.m_pEllipse)
+        , m_leftCenters(ellipseGroup.m_leftCenters)
+        , m_rightCenters(ellipseGroup.m_rightCenters) {
     }
 
     bool IsEmpty() const {
-        ASSERT(m_leftCenters.IsEmpty() == m_rightCenters.IsEmpty());
-        return m_leftCenters.IsEmpty();
+        ASSERT(m_leftCenters.empty() == m_rightCenters.empty());
+        return m_leftCenters.empty();
     }
 
     Position GetRelativePosition(int xLeft, int y);

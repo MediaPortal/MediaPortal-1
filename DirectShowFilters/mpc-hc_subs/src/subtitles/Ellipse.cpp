@@ -77,20 +77,20 @@ int CEllipse::GetLeftIntersect(int dx, int dy)
 }
 
 template<typename IntersectFunction>
-void CEllipseCenterGroup::AddPoint(CAtlList<EllipseCenter>& centers, IntersectFunction intersect, int x, int y)
+void CEllipseCenterGroup::AddPoint(std::list<EllipseCenter>& centers, IntersectFunction intersect, int x, int y)
 {
-    POSITION pos = centers.GetTailPosition();
-    while (pos) {
-        POSITION posCur = pos;
-        auto& center = centers.GetPrev(pos);
+    auto it = centers.end();
+    while (it != centers.begin()) {
+        --it;
+        auto& center = *it;
 
         int dyIntersect = intersect(x - center.x, y - center.y);
         if (dyIntersect != CEllipse::NO_INTERSECT_INNER) {
             int yIntersect = (dyIntersect == CEllipse::NO_INTERSECT_OUTER) ? (y - m_pEllipse->GetYRadius() - 1) : (center.y + dyIntersect);
             if (yIntersect < center.yStopDrawing) {
                 center.yStopDrawing = yIntersect;
-                if (pos && center.yStopDrawing <= centers.GetAt(pos).yStopDrawing) {
-                    centers.RemoveAt(posCur);
+                if (it != centers.begin() && center.yStopDrawing <= std::prev(it)->yStopDrawing) {
+                    it = centers.erase(it);
                 }
             } else {
                 break;
@@ -98,7 +98,8 @@ void CEllipseCenterGroup::AddPoint(CAtlList<EllipseCenter>& centers, IntersectFu
         }
     }
 
-    auto& center = centers.GetAt(centers.AddTail());
+    centers.emplace_back();
+    auto& center = centers.back();
     center.x = x;
     center.y = y;
     center.yStopDrawing = y + m_pEllipse->GetYRadius();
@@ -119,8 +120,8 @@ CEllipseCenterGroup::Position CEllipseCenterGroup::GetRelativePosition(int xLeft
     if (IsEmpty()) {
         return INSIDE;
     } else {
-        int dx = xLeft - m_leftCenters.GetTail().x;
-        int dy = y - m_leftCenters.GetTail().y;
+        int dx = xLeft - m_leftCenters.back().x;
+        int dy = y - m_leftCenters.back().y;
 
         int dyIntersect = m_pEllipse->GetLeftIntersect(dx, dy);
         if (dyIntersect != CEllipse::NO_INTERSECT_INNER && dyIntersect != CEllipse::NO_INTERSECT_OUTER) {
@@ -135,37 +136,33 @@ CEllipseCenterGroup::Position CEllipseCenterGroup::GetRelativePosition(int xLeft
 
 void CEllipseCenterGroup::FlushLine(int y, std::vector<SpanEndPoint>& wideSpanEndPoints)
 {
-    POSITION posLeft = m_leftCenters.GetHeadPosition();
-    while (posLeft) {
-        POSITION posPrec = posLeft;
-        auto& leftCenter = m_leftCenters.GetNext(posLeft);
+    for (auto it = m_leftCenters.begin(); it != m_leftCenters.end();) {
+        const EllipseCenter& leftCenter = *it;
         if (y <= leftCenter.yStopDrawing) {
             int dx = m_pEllipse->GetArc(leftCenter.y - y);
             wideSpanEndPoints.emplace_back(leftCenter.x - dx, false);
 
             if (y == leftCenter.yStopDrawing) {
-                m_leftCenters.RemoveAt(posPrec);
+                m_leftCenters.erase(it);
             }
             break;
         } else {
-            m_leftCenters.RemoveAt(posPrec);
+            it = m_leftCenters.erase(it);
         }
     }
 
-    POSITION posRight = m_rightCenters.GetHeadPosition();
-    while (posRight) {
-        POSITION posPrec = posRight;
-        auto& rightCenter = m_rightCenters.GetNext(posRight);
+    for (auto it = m_rightCenters.begin(); it != m_rightCenters.end();) {
+        const EllipseCenter& rightCenter = *it;
         if (y <= rightCenter.yStopDrawing) {
             int dx = m_pEllipse->GetArc(rightCenter.y - y);
             wideSpanEndPoints.emplace_back(rightCenter.x + dx, true);
 
             if (y == rightCenter.yStopDrawing) {
-                m_rightCenters.RemoveAt(posPrec);
+                m_rightCenters.erase(it);
             }
             break;
         } else {
-            m_rightCenters.RemoveAt(posPrec);
+            it = m_rightCenters.erase(it);
         }
     }
 }

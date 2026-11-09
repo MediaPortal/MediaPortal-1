@@ -93,7 +93,7 @@ static HRESULT DumpTexture2D(ID3D11DeviceContext* pDeviceContext, ID3D11Texture2
 	}
 
 	HRESULT hr = S_OK;
-	CComPtr<ID3D11Texture2D> pTexture2DShared;
+	ComPtr<ID3D11Texture2D> pTexture2DShared;
 
 	if (desc.CPUAccessFlags & D3D11_CPU_ACCESS_READ) {
 		pTexture2DShared = pTexture2D;
@@ -143,8 +143,8 @@ CDX11SubPic::CDX11SubPic(MemPic_t&& pMemPic, CDX11SubPicAllocator *pAllocator)
 	: m_MemPic(std::move(pMemPic))
 	, m_pAllocator(pAllocator)
 {
-	m_maxsize.SetSize(m_MemPic.w, m_MemPic.h);
-	m_rcDirty.SetRect(0, 0, m_maxsize.cx, m_maxsize.cy);
+	m_maxsize = MakeSize(m_MemPic.w, m_MemPic.h);
+	::SetRect(&m_rcDirty, 0, 0, m_maxsize.cx, m_maxsize.cy);
 }
 
 CDX11SubPic::~CDX11SubPic()
@@ -189,13 +189,13 @@ STDMETHODIMP CDX11SubPic::CopyTo(ISubPic* pSubPic)
 		return hr;
 	}
 
-	if (m_rcDirty.IsRectEmpty()) {
+	if (::IsRectEmpty(&m_rcDirty)) {
 		return S_FALSE;
 	}
 
 	auto pDstMemPic = reinterpret_cast<MemPic_t*>(pSubPic->GetObject());
 
-	CRect copyRect(m_rcDirty);
+	RECT copyRect = m_rcDirty;
 #if 1
     if (copyRect.left > 0) {
         copyRect.left--;
@@ -215,8 +215,8 @@ STDMETHODIMP CDX11SubPic::CopyTo(ISubPic* pSubPic)
         return S_FALSE;
     }
 
-	const UINT copyW_bytes = copyRect.Width() * 4;
-	UINT copyH = copyRect.Height();
+	const UINT copyW_bytes = RectWidth(copyRect) * 4;
+	UINT copyH = RectHeight(copyRect);
 	auto src = m_MemPic.data.get() + m_MemPic.w * copyRect.top + copyRect.left;
 	auto dst = pDstMemPic->data.get() + pDstMemPic->w * copyRect.top + copyRect.left;
 
@@ -231,23 +231,23 @@ STDMETHODIMP CDX11SubPic::CopyTo(ISubPic* pSubPic)
 
 STDMETHODIMP CDX11SubPic::ClearDirtyRect()
 {
-	if (m_rcDirty.IsRectEmpty()) {
+	if (::IsRectEmpty(&m_rcDirty)) {
 		return S_FALSE;
 	}
 
-	m_rcDirty.IntersectRect(m_rcDirty, CRect(0, 0, m_MemPic.w, m_MemPic.h));
+	m_rcDirty = RectIntersect(m_rcDirty, MakeRect(0, 0, m_MemPic.w, m_MemPic.h));
 
 	uint32_t* ptr = m_MemPic.data.get() + m_MemPic.w * m_rcDirty.top + m_rcDirty.left;
-	UINT dirtyH = m_rcDirty.Height();
+	UINT dirtyH = RectHeight(m_rcDirty);
     const DWORD color = m_bInvAlpha ? 0x00000000 : 0xFF000000;
-    const UINT w4 = m_rcDirty.Width() * 4;
+    const UINT w4 = RectWidth(m_rcDirty) * 4;
 
 	while (dirtyH-- > 0) {
 		memsetd(ptr, color, w4);
 		ptr += m_MemPic.w;
 	}
 
-	m_rcDirty.SetRectEmpty();
+	::SetRectEmpty(&m_rcDirty);
 
 	return S_OK;
 }
@@ -272,12 +272,12 @@ STDMETHODIMP CDX11SubPic::Lock(SubPicDesc& spd)
 STDMETHODIMP CDX11SubPic::Unlock(RECT* pDirtyRect)
 {
 	if (pDirtyRect) {
-        m_rcDirty = pDirtyRect;
-        if (!m_rcDirty.IsRectEmpty()) {
-            m_rcDirty.IntersectRect(m_rcDirty, CRect(0, 0, m_MemPic.w, m_MemPic.h));
+        m_rcDirty = *pDirtyRect;
+        if (!::IsRectEmpty(&m_rcDirty)) {
+            m_rcDirty = RectIntersect(m_rcDirty, MakeRect(0, 0, m_MemPic.w, m_MemPic.h));
         }
 	} else {
-		m_rcDirty = CRect(CPoint(0, 0), m_size);
+		m_rcDirty = MakeRect(MakePoint(0, 0), m_size);
 	}
 
 	return S_OK;
@@ -295,7 +295,7 @@ STDMETHODIMP CDX11SubPic::AlphaBlt(RECT* pSrc, RECT* pDst, SubPicDesc* pTarget)
         return E_FAIL;
     }
 
-	CRect rSrc(*pSrc), rDst(*pDst);
+	RECT rSrc = *pSrc, rDst = *pDst;
 
 	return m_pAllocator->Render(m_MemPic, m_rcDirty, rSrc, rDst);
 }
@@ -336,8 +336,8 @@ void CDX11SubPicAllocator::ClearCache()
 	m_AllocatedSurfaces.clear();
 	m_FreeSurfaces.clear();
 
-	m_pOutputShaderResource.Release();
-	m_pOutputTexture.Release();
+	m_pOutputShaderResource.Reset();
+	m_pOutputTexture.Reset();
 }
 
 // ISubPicAllocator
@@ -345,7 +345,7 @@ void CDX11SubPicAllocator::ClearCache()
 STDMETHODIMP CDX11SubPicAllocator::ChangeDevice(IUnknown* pDev)
 {
 	ClearCache();
-	CComQIPtr<ID3D11Device> pDevice = pDev;
+	auto pDevice = ComQuery<ID3D11Device>(pDev);
 	if (!pDevice) {
 		return E_NOINTERFACE;
 	}
@@ -382,7 +382,7 @@ STDMETHODIMP_(void) CDX11SubPicAllocator::SetInverseAlpha(bool bInverted)
 {
 	if (m_bInvAlpha != bInverted) {
 		m_bInvAlpha = bInverted;
-		m_pAlphaBlendState.Release();
+		m_pAlphaBlendState.Reset();
 		CreateBlendState();
 	}
 }
@@ -391,10 +391,10 @@ HRESULT CDX11SubPicAllocator::CreateOutputTex()
 {
 	bool bDynamicTex = false;
 
-	CComPtr<IDXGIDevice> pDxgiDevice;
+	ComPtr<IDXGIDevice> pDxgiDevice;
 	HRESULT hr = m_pDevice->QueryInterface(IID_PPV_ARGS(&pDxgiDevice));
 	if (SUCCEEDED(hr)) {
-		CComPtr<IDXGIAdapter> pDxgiAdapter;
+		ComPtr<IDXGIAdapter> pDxgiAdapter;
 		hr = pDxgiDevice->GetAdapter(&pDxgiAdapter);
 		if (SUCCEEDED(hr)) {
 			DXGI_ADAPTER_DESC desc;
@@ -436,9 +436,9 @@ HRESULT CDX11SubPicAllocator::CreateOutputTex()
 	srvDesc.Texture2D.MipLevels = 1;
 	srvDesc.Texture2D.MostDetailedMip = 0;
 
-	hr = m_pDevice->CreateShaderResourceView(m_pOutputTexture, &srvDesc, &m_pOutputShaderResource);
+	hr = m_pDevice->CreateShaderResourceView(m_pOutputTexture.Get(), &srvDesc, &m_pOutputShaderResource);
 	if (FAILED(hr)) {
-		m_pOutputTexture.Release();
+		m_pOutputTexture.Reset();
 	}
 
 	return hr;
@@ -479,13 +479,13 @@ void CDX11SubPicAllocator::CreateOtherStates()
 
 void CDX11SubPicAllocator::ReleaseAllStates()
 {
-	m_pAlphaBlendState.Release();
-	m_pVertexBuffer.Release();
-	m_pSamplerPoint.Release();
-	m_pSamplerLinear.Release();
+	m_pAlphaBlendState.Reset();
+	m_pVertexBuffer.Reset();
+	m_pSamplerPoint.Reset();
+	m_pSamplerLinear.Reset();
 }
 
-HRESULT CDX11SubPicAllocator::Render(const MemPic_t& memPic, const CRect& dirtyRect, const CRect& srcRect, const CRect& dstRect)
+HRESULT CDX11SubPicAllocator::Render(const MemPic_t& memPic, const RECT& dirtyRect, const RECT& srcRect, const RECT& dstRect)
 {
 	HRESULT hr = S_OK;
 
@@ -496,16 +496,17 @@ HRESULT CDX11SubPicAllocator::Render(const MemPic_t& memPic, const CRect& dirtyR
 		}
 	}
 
-	bool stretching = (srcRect.Size() != dstRect.Size());
+	bool stretching = (RectSize(srcRect) != RectSize(dstRect));
 
-	CRect copyRect(dirtyRect);
+	RECT copyRect = dirtyRect;
 	if (stretching) {
         RECT subpicRect = { 0, 0, memPic.w, memPic.h };
-        copyRect.InflateRect(1, 1);
-        EXECUTE_ASSERT(copyRect.IntersectRect(copyRect, &subpicRect));
+        ::InflateRect(&copyRect, 1, 1);
+        copyRect = RectIntersect(copyRect, subpicRect);
+        ASSERT(!RectIsEmpty(copyRect));
 	}
 
-	CComPtr<ID3D11DeviceContext> pDeviceContext;
+	ComPtr<ID3D11DeviceContext> pDeviceContext;
 	m_pDevice->GetImmediateContext(&pDeviceContext);
 
 	D3D11_TEXTURE2D_DESC texDesc = {};
@@ -515,22 +516,22 @@ HRESULT CDX11SubPicAllocator::Render(const MemPic_t& memPic, const CRect& dirtyR
 	if (texDesc.Usage == D3D11_USAGE_DYNAMIC) {
 		// workaround for an Intel driver bug where frequent UpdateSubresource calls caused high memory consumption
 		D3D11_MAPPED_SUBRESOURCE mr;
-		hr = pDeviceContext->Map(m_pOutputTexture, 0, D3D11_MAP_WRITE_DISCARD, 0, &mr);
+		hr = pDeviceContext->Map(m_pOutputTexture.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mr);
 		if (SUCCEEDED(hr)) {
 			BYTE* dst = (BYTE*)mr.pData + mr.RowPitch * copyRect.top + (copyRect.left * 4);
-			const UINT copyW_bytes = copyRect.Width() * 4;
-			UINT copyH = copyRect.Height();
+			const UINT copyW_bytes = RectWidth(copyRect) * 4;
+			UINT copyH = RectHeight(copyRect);
 			while (copyH-- > 0) {
 				memcpy(dst, src, copyW_bytes);
 				src += memPic.w;
 				dst += mr.RowPitch;
 			}
-			pDeviceContext->Unmap(m_pOutputTexture, 0);
+			pDeviceContext->Unmap(m_pOutputTexture.Get(), 0);
 		}
 	}
 	else {
 		D3D11_BOX dstBox = { copyRect.left, copyRect.top, 0, copyRect.right, copyRect.bottom, 1 };
-		pDeviceContext->UpdateSubresource(m_pOutputTexture, 0, &dstBox, src, memPic.w * 4, 0);
+		pDeviceContext->UpdateSubresource(m_pOutputTexture.Get(), 0, &dstBox, src, memPic.w * 4, 0);
 	}
 
 	const float src_dx = 1.0f / texDesc.Width;
@@ -559,29 +560,30 @@ HRESULT CDX11SubPicAllocator::Render(const MemPic_t& memPic, const CRect& dirtyR
 	};
 
 	D3D11_MAPPED_SUBRESOURCE mr;
-	hr = pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mr);
+	hr = pDeviceContext->Map(m_pVertexBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mr);
 	if (FAILED(hr)) {
 		return hr;
 	}
 
 	memcpy(mr.pData, &Vertices, sizeof(Vertices));
-	pDeviceContext->Unmap(m_pVertexBuffer, 0);
+	pDeviceContext->Unmap(m_pVertexBuffer.Get(), 0);
 
 	UINT Stride = sizeof(VERTEX);
 	UINT Offset = 0;
-	pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer.p, &Stride, &Offset);
+	pDeviceContext->IASetVertexBuffers(0, 1, m_pVertexBuffer.GetAddressOf(), &Stride, &Offset);
 	pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 
-	pDeviceContext->PSSetSamplers(0, 1, &(stretching ? m_pSamplerLinear.p : m_pSamplerPoint.p));
-	pDeviceContext->PSSetShaderResources(0, 1, &m_pOutputShaderResource.p);
+	ID3D11SamplerState* pSampler = (stretching ? m_pSamplerLinear : m_pSamplerPoint).Get();
+	pDeviceContext->PSSetSamplers(0, 1, &pSampler);
+	pDeviceContext->PSSetShaderResources(0, 1, m_pOutputShaderResource.GetAddressOf());
 
-	pDeviceContext->OMSetBlendState(m_pAlphaBlendState, nullptr, D3D11_DEFAULT_SAMPLE_MASK);
+	pDeviceContext->OMSetBlendState(m_pAlphaBlendState.Get(), nullptr, D3D11_DEFAULT_SAMPLE_MASK);
 
 	D3D11_VIEWPORT vp;
 	vp.TopLeftX = dstRect.left;
 	vp.TopLeftY = dstRect.top;
-	vp.Width    = dstRect.Width();
-	vp.Height   = dstRect.Height();
+	vp.Width    = RectWidth(dstRect);
+	vp.Height   = RectHeight(dstRect);
 	vp.MinDepth = 0.0f;
 	vp.MaxDepth = 1.0f;
 	pDeviceContext->RSSetViewports(1, &vp);
@@ -591,8 +593,8 @@ HRESULT CDX11SubPicAllocator::Render(const MemPic_t& memPic, const CRect& dirtyR
 #if _DEBUG & ENABLE_DUMP_SUBPIC
 	{
 		static int counter = 0;
-		CString filepath;
-		filepath.Format(L"C:\\Temp\\subpictex%04d.bmp", counter++);
+		tstring filepath;
+		filepath = ::Format(L"C:\\Temp\\subpictex%04d.bmp", counter++);
 		DumpTexture2D(pDeviceContext, m_pOutputTexture, filepath);
 	}
 #endif

@@ -46,9 +46,9 @@ CMediaTypeEx::~CMediaTypeEx()
 {
 }
 
-CString CMediaTypeEx::ToString(IPin* pPin)
+tstring CMediaTypeEx::ToString(IPin* pPin)
 {
-    CString packing, type, codec, dim, rate, dur;
+    tstring packing, type, codec, dim, rate, dur;
 
     // TODO
 
@@ -73,7 +73,7 @@ CString CMediaTypeEx::ToString(IPin* pPin)
             codec = GetVideoCodecName(subtype, bih.biCompression);
         }
 
-        if (codec.IsEmpty()) {
+        if (codec.empty()) {
             if (formattype == FORMAT_MPEGVideo) {
                 codec = _T("MPEG1 Video");
             } else if (formattype == FORMAT_MPEG2_VIDEO) {
@@ -84,37 +84,37 @@ CString CMediaTypeEx::ToString(IPin* pPin)
         }
 
         if (fDim) {
-            dim.Format(_T("%dx%d"), w, h);
+            dim = ::Format(_T("%dx%d"), w, h);
             if (w * ary != h * arx) {
-                dim.AppendFormat(_T(" (%d:%d)"), arx, ary);
+                dim += ::Format(_T(" (%d:%d)"), arx, ary);
             }
         }
 
         if (formattype == FORMAT_VideoInfo || formattype == FORMAT_MPEGVideo) {
             VIDEOINFOHEADER* vih = (VIDEOINFOHEADER*)pbFormat;
             if (vih->AvgTimePerFrame) {
-                rate.Format(_T("%0.3f"), 10000000.0f / vih->AvgTimePerFrame);
-                rate.TrimRight(_T('0')); // remove trailing zeros
-                rate.TrimRight(_T('.')); // remove the trailing dot
+                rate = ::Format(_T("%0.3f"), 10000000.0f / vih->AvgTimePerFrame);
+                StringTrimRight(rate, _T('0')); // remove trailing zeros
+                StringTrimRight(rate, _T('.')); // remove the trailing dot
                 rate += _T("fps ");
             }
             if (vih->dwBitRate) {
-                rate.AppendFormat(_T("%ukbps"), vih->dwBitRate / 1000);
+                rate += ::Format(_T("%ukbps"), vih->dwBitRate / 1000);
             }
         } else if (formattype == FORMAT_VideoInfo2 || formattype == FORMAT_MPEG2_VIDEO || formattype == FORMAT_DiracVideoInfo) {
             VIDEOINFOHEADER2* vih = (VIDEOINFOHEADER2*)pbFormat;
             if (vih->AvgTimePerFrame) {
-                rate.Format(_T("%0.3f"), 10000000.0f / vih->AvgTimePerFrame);
-                rate.TrimRight(_T('0')); // remove trailing zeros
-                rate.TrimRight(_T('.')); // remove the trailing dot
+                rate = ::Format(_T("%0.3f"), 10000000.0f / vih->AvgTimePerFrame);
+                StringTrimRight(rate, _T('0')); // remove trailing zeros
+                StringTrimRight(rate, _T('.')); // remove the trailing dot
                 rate += _T("fps ");
             }
             if (vih->dwBitRate) {
-                rate.AppendFormat(_T("%ukbps"), vih->dwBitRate / 1000);
+                rate += ::Format(_T("%ukbps"), vih->dwBitRate / 1000);
             }
         }
 
-        rate.TrimRight();
+        StringTrimRight(rate);
 
         if (subtype == MEDIASUBTYPE_DVD_SUBPICTURE) {
             type = _T("Subtitle");
@@ -130,44 +130,44 @@ CString CMediaTypeEx::ToString(IPin* pPin)
             && wfe->wFormatTag != WAVE_FORMAT_IEEE_FLOAT*/
                     || subtype != GUID_NULL) {
                 codec = GetAudioCodecName(subtype, wfe->wFormatTag);
-                dim.Format(_T("%uHz"), wfe->nSamplesPerSec);
+                dim = ::Format(_T("%uHz"), wfe->nSamplesPerSec);
                 if (wfe->nChannels == 1) {
                     dim += _T(" mono");
                 } else if (wfe->nChannels == 2) {
                     dim += _T(" stereo");
                 } else {
-                    dim.AppendFormat(_T(" %uch"), wfe->nChannels);
+                    dim += ::Format(_T(" %uch"), wfe->nChannels);
                 }
                 if (wfe->nAvgBytesPerSec) {
-                    rate.Format(_T("%ukbps"), wfe->nAvgBytesPerSec * 8 / 1000);
+                    rate = ::Format(_T("%ukbps"), wfe->nAvgBytesPerSec * 8 / 1000);
                 }
             }
         } else if (formattype == FORMAT_VorbisFormat) {
             VORBISFORMAT* vf = (VORBISFORMAT*)Format();
 
             codec = GetAudioCodecName(subtype, 0);
-            dim.Format(_T("%luHz"), vf->nSamplesPerSec);
+            dim = ::Format(_T("%luHz"), vf->nSamplesPerSec);
             if (vf->nChannels == 1) {
                 dim += _T(" mono");
             } else if (vf->nChannels == 2) {
                 dim += _T(" stereo");
             } else {
-                dim.AppendFormat(_T(" %uch"), vf->nChannels);
+                dim += ::Format(_T(" %uch"), vf->nChannels);
             }
             if (vf->nAvgBitsPerSec) {
-                rate.Format(_T("%lukbps"), vf->nAvgBitsPerSec / 1000);
+                rate = ::Format(_T("%lukbps"), vf->nAvgBitsPerSec / 1000);
             }
         } else if (formattype == FORMAT_VorbisFormat2) {
             VORBISFORMAT2* vf = (VORBISFORMAT2*)Format();
 
             codec = GetAudioCodecName(subtype, 0);
-            dim.Format(_T("%luHz"), vf->SamplesPerSec);
+            dim = ::Format(_T("%luHz"), vf->SamplesPerSec);
             if (vf->Channels == 1) {
                 dim += _T(" mono");
             } else if (vf->Channels == 2) {
                 dim += _T(" stereo");
             } else {
-                dim.AppendFormat(_T(" %luch"), vf->Channels);
+                dim += ::Format(_T(" %luch"), vf->Channels);
             }
         }
     } else if (majortype == MEDIATYPE_Text) {
@@ -179,7 +179,7 @@ CString CMediaTypeEx::ToString(IPin* pPin)
         type = _T("Unknown");
     }
 
-    if (CComQIPtr<IMediaSeeking> pMS = pPin) {
+    if (auto pMS = ComQuery<IMediaSeeking>(pPin)) {
         REFERENCE_TIME rtDur = 0;
         if (SUCCEEDED(pMS->GetDuration(&rtDur)) && rtDur) {
             rtDur /= 10000000;
@@ -189,31 +189,31 @@ CString CMediaTypeEx::ToString(IPin* pPin)
             rtDur /= 60;
             int h = (int)rtDur;
             if (h) {
-                dur.Format(_T("%d:%02d:%02d"), h, m, s);
+                dur = ::Format(_T("%d:%02d:%02d"), h, m, s);
             } else if (m) {
-                dur.Format(_T("%02d:%02d"), m, s);
+                dur = ::Format(_T("%02d:%02d"), m, s);
             } else if (s) {
-                dur.Format(_T("%ds"), s);
+                dur = ::Format(_T("%ds"), s);
             }
         }
     }
 
-    CString str;
-    if (!codec.IsEmpty()) {
+    tstring str;
+    if (!codec.empty()) {
         str += codec + _T(" ");
     }
-    if (!dim.IsEmpty()) {
+    if (!dim.empty()) {
         str += dim + _T(" ");
     }
-    if (!rate.IsEmpty()) {
+    if (!rate.empty()) {
         str += rate + _T(" ");
     }
-    if (!dur.IsEmpty()) {
+    if (!dur.empty()) {
         str += dur + _T(" ");
     }
-    str.Trim(_T(" ,"));
+    StringTrim(str, _T(" ,"));
 
-    if (!str.IsEmpty()) {
+    if (!str.empty()) {
         str = type + _T(": ") + str;
     } else {
         str = type;
@@ -222,13 +222,13 @@ CString CMediaTypeEx::ToString(IPin* pPin)
     return str;
 }
 
-CString CMediaTypeEx::GetVideoCodecName(const GUID& subtype, DWORD biCompression)
+tstring CMediaTypeEx::GetVideoCodecName(const GUID& subtype, DWORD biCompression)
 {
-    CString str = _T("");
+    tstring str = _T("");
 
-    static CAtlMap<DWORD, CString> names;
+    static std::map<DWORD, tstring> names;
 
-    if (names.IsEmpty()) {
+    if (names.empty()) {
         names['WMV1'] = _T("Windows Media Video 7");
         names['WMV2'] = _T("Windows Media Video 8");
         names['WMV3'] = _T("Windows Media Video 9");
@@ -265,15 +265,15 @@ CString CMediaTypeEx::GetVideoCodecName(const GUID& subtype, DWORD biCompression
             }
         }
 
-        if (!names.Lookup(MAKEFOURCC(b[3], b[2], b[1], b[0]), str)) {
+        if (!Lookup(names, MAKEFOURCC(b[3], b[2], b[1], b[0]), str)) {
             if (subtype == MEDIASUBTYPE_DiracVideo) {
                 str = _T("Dirac Video");
             }
             // else if (subtype == ) str = _T("");
             else if (biCompression < 256) {
-                str.Format(_T("%lu"), biCompression);
+                str = ::Format(_T("%lu"), biCompression);
             } else {
-                str.Format(_T("%4.4hs"), &biCompression);
+                str = ::Format(_T("%4.4hs"), &biCompression);
             }
         }
     } else {
@@ -291,13 +291,13 @@ CString CMediaTypeEx::GetVideoCodecName(const GUID& subtype, DWORD biCompression
     return str;
 }
 
-CString CMediaTypeEx::GetAudioCodecName(const GUID& subtype, WORD wFormatTag)
+tstring CMediaTypeEx::GetAudioCodecName(const GUID& subtype, WORD wFormatTag)
 {
-    CString str;
+    tstring str;
 
-    static CAtlMap<WORD, CString> names;
+    static std::map<WORD, tstring> names;
 
-    if (names.IsEmpty()) {
+    if (names.empty()) {
         // MMReg.h
         names[WAVE_FORMAT_ADPCM]                 = _T("MS ADPCM");
         names[WAVE_FORMAT_IEEE_FLOAT]            = _T("IEEE Float");
@@ -421,21 +421,26 @@ CString CMediaTypeEx::GetAudioCodecName(const GUID& subtype, WORD wFormatTag)
     } else if (subtype == MEDIASUBTYPE_OPUS) {
         str = _T("Opus");
     } // If the subtype wasn't enough to find the codec name, we try the format tag
-    else if (!names.Lookup(wFormatTag, str)) {
+    else if (!Lookup(names, wFormatTag, str)) {
         // If that fails, we have an unknown audio codec
-        str.Format(_T("0x%04x"), wFormatTag);
+        str = ::Format(_T("0x%04x"), wFormatTag);
     }
 
     return str;
 }
 
-CString CMediaTypeEx::GetSubtitleCodecName(const GUID& subtype)
+tstring CMediaTypeEx::GetSubtitleCodecName(const GUID& subtype)
 {
-    CString str;
+    tstring str;
 
-    static CAtlMap<GUID, CString> names;
+    struct GuidLess {
+        bool operator()(const GUID& a, const GUID& b) const {
+            return memcmp(&a, &b, sizeof(GUID)) < 0;
+        }
+    };
+    static std::map<GUID, tstring, GuidLess> names;
 
-    if (names.IsEmpty()) {
+    if (names.empty()) {
         names[MEDIASUBTYPE_UTF8] = _T("UTF-8");
         names[MEDIASUBTYPE_SSA] = _T("SubStation Alpha");
         names[MEDIASUBTYPE_ASS] = _T("Advanced SubStation Alpha");
@@ -447,44 +452,44 @@ CString CMediaTypeEx::GetSubtitleCodecName(const GUID& subtype)
         names[MEDIASUBTYPE_WEBVTT] = _T("WebVTT");
     }
 
-    if (names.Lookup(subtype, str)) {
+    if (Lookup(names, subtype, str)) {
 
     }
 
     return str;
 }
 
-void CMediaTypeEx::Dump(CAtlList<CString>& sl)
+void CMediaTypeEx::Dump(std::list<tstring>& sl)
 {
-    CString str;
+    tstring str;
 
-    sl.RemoveAll();
+    sl.clear();
 
     int fmtsize = 0;
 
-    CString major = CStringFromGUID(majortype);
-    CString sub = CStringFromGUID(subtype);
-    CString format = CStringFromGUID(formattype);
+    tstring major = CStringFromGUID(majortype);
+    tstring sub = CStringFromGUID(subtype);
+    tstring format = CStringFromGUID(formattype);
 
-    sl.AddTail(ToString() + _T("\n"));
+    sl.push_back(ToString() + _T("\n"));
 
-    sl.AddTail(_T("AM_MEDIA_TYPE: "));
-    str.Format(_T("majortype: %S %s"), GuidNames[majortype], major.GetString());
-    sl.AddTail(str);
-    str.Format(_T("subtype: %S %s"), GuidNames[subtype], sub.GetString());
-    sl.AddTail(str);
-    str.Format(_T("formattype: %S %s"), GuidNames[formattype], format.GetString());
-    sl.AddTail(str);
-    str.Format(_T("bFixedSizeSamples: %d"), bFixedSizeSamples);
-    sl.AddTail(str);
-    str.Format(_T("bTemporalCompression: %d"), bTemporalCompression);
-    sl.AddTail(str);
-    str.Format(_T("lSampleSize: %lu"), lSampleSize);
-    sl.AddTail(str);
-    str.Format(_T("cbFormat: %lu"), cbFormat);
-    sl.AddTail(str);
+    sl.push_back(_T("AM_MEDIA_TYPE: "));
+    str = ::Format(_T("majortype: %S %s"), GuidNames[majortype], major.c_str());
+    sl.push_back(str);
+    str = ::Format(_T("subtype: %S %s"), GuidNames[subtype], sub.c_str());
+    sl.push_back(str);
+    str = ::Format(_T("formattype: %S %s"), GuidNames[formattype], format.c_str());
+    sl.push_back(str);
+    str = ::Format(_T("bFixedSizeSamples: %d"), bFixedSizeSamples);
+    sl.push_back(str);
+    str = ::Format(_T("bTemporalCompression: %d"), bTemporalCompression);
+    sl.push_back(str);
+    str = ::Format(_T("lSampleSize: %lu"), lSampleSize);
+    sl.push_back(str);
+    str = ::Format(_T("cbFormat: %lu"), cbFormat);
+    sl.push_back(str);
 
-    sl.AddTail(_T(""));
+    sl.push_back(_T(""));
 
     if (formattype == FORMAT_VideoInfo || formattype == FORMAT_VideoInfo2
             || formattype == FORMAT_MPEGVideo || formattype == FORMAT_MPEG2_VIDEO) {
@@ -498,98 +503,98 @@ void CMediaTypeEx::Dump(CAtlList<CString>& sl)
         VIDEOINFOHEADER& vih = *(VIDEOINFOHEADER*)pbFormat;
         BITMAPINFOHEADER* bih = &vih.bmiHeader;
 
-        sl.AddTail(_T("VIDEOINFOHEADER:"));
-        str.Format(_T("rcSource: (%ld,%ld)-(%ld,%ld)"), vih.rcSource.left, vih.rcSource.top, vih.rcSource.right, vih.rcSource.bottom);
-        sl.AddTail(str);
-        str.Format(_T("rcTarget: (%ld,%ld)-(%ld,%ld)"), vih.rcTarget.left, vih.rcTarget.top, vih.rcTarget.right, vih.rcTarget.bottom);
-        sl.AddTail(str);
-        str.Format(_T("dwBitRate: %u"), vih.dwBitRate);
-        sl.AddTail(str);
-        str.Format(_T("dwBitErrorRate: %u"), vih.dwBitErrorRate);
-        sl.AddTail(str);
-        str.Format(_T("AvgTimePerFrame: %I64d"), vih.AvgTimePerFrame);
-        sl.AddTail(str);
+        sl.push_back(_T("VIDEOINFOHEADER:"));
+        str = ::Format(_T("rcSource: (%ld,%ld)-(%ld,%ld)"), vih.rcSource.left, vih.rcSource.top, vih.rcSource.right, vih.rcSource.bottom);
+        sl.push_back(str);
+        str = ::Format(_T("rcTarget: (%ld,%ld)-(%ld,%ld)"), vih.rcTarget.left, vih.rcTarget.top, vih.rcTarget.right, vih.rcTarget.bottom);
+        sl.push_back(str);
+        str = ::Format(_T("dwBitRate: %u"), vih.dwBitRate);
+        sl.push_back(str);
+        str = ::Format(_T("dwBitErrorRate: %u"), vih.dwBitErrorRate);
+        sl.push_back(str);
+        str = ::Format(_T("AvgTimePerFrame: %I64d"), vih.AvgTimePerFrame);
+        sl.push_back(str);
 
-        sl.AddTail(_T(""));
+        sl.push_back(_T(""));
 
         if (formattype == FORMAT_VideoInfo2 || formattype == FORMAT_MPEG2_VIDEO) {
             VIDEOINFOHEADER2& vih2 = *(VIDEOINFOHEADER2*)pbFormat;
             bih = &vih2.bmiHeader;
 
-            sl.AddTail(_T("VIDEOINFOHEADER2:"));
-            str.Format(_T("dwInterlaceFlags: 0x%08x"), vih2.dwInterlaceFlags);
-            sl.AddTail(str);
-            str.Format(_T("dwCopyProtectFlags: 0x%08x"), vih2.dwCopyProtectFlags);
-            sl.AddTail(str);
-            str.Format(_T("dwPictAspectRatioX: %u"), vih2.dwPictAspectRatioX);
-            sl.AddTail(str);
-            str.Format(_T("dwPictAspectRatioY: %u"), vih2.dwPictAspectRatioY);
-            sl.AddTail(str);
-            str.Format(_T("dwControlFlags: 0x%08x"), vih2.dwControlFlags);
-            sl.AddTail(str);
-            str.Format(_T("dwReserved2: 0x%08x"), vih2.dwReserved2);
-            sl.AddTail(str);
+            sl.push_back(_T("VIDEOINFOHEADER2:"));
+            str = ::Format(_T("dwInterlaceFlags: 0x%08x"), vih2.dwInterlaceFlags);
+            sl.push_back(str);
+            str = ::Format(_T("dwCopyProtectFlags: 0x%08x"), vih2.dwCopyProtectFlags);
+            sl.push_back(str);
+            str = ::Format(_T("dwPictAspectRatioX: %u"), vih2.dwPictAspectRatioX);
+            sl.push_back(str);
+            str = ::Format(_T("dwPictAspectRatioY: %u"), vih2.dwPictAspectRatioY);
+            sl.push_back(str);
+            str = ::Format(_T("dwControlFlags: 0x%08x"), vih2.dwControlFlags);
+            sl.push_back(str);
+            str = ::Format(_T("dwReserved2: 0x%08x"), vih2.dwReserved2);
+            sl.push_back(str);
 
-            sl.AddTail(_T(""));
+            sl.push_back(_T(""));
         }
 
         if (formattype == FORMAT_MPEGVideo) {
             MPEG1VIDEOINFO& mvih = *(MPEG1VIDEOINFO*)pbFormat;
 
-            sl.AddTail(_T("MPEG1VIDEOINFO:"));
-            str.Format(_T("dwStartTimeCode: %u"), mvih.dwStartTimeCode);
-            sl.AddTail(str);
-            str.Format(_T("cbSequenceHeader: %u"), mvih.cbSequenceHeader);
-            sl.AddTail(str);
+            sl.push_back(_T("MPEG1VIDEOINFO:"));
+            str = ::Format(_T("dwStartTimeCode: %u"), mvih.dwStartTimeCode);
+            sl.push_back(str);
+            str = ::Format(_T("cbSequenceHeader: %u"), mvih.cbSequenceHeader);
+            sl.push_back(str);
 
-            sl.AddTail(_T(""));
+            sl.push_back(_T(""));
         } else if (formattype == FORMAT_MPEG2_VIDEO) {
             MPEG2VIDEOINFO& mvih = *(MPEG2VIDEOINFO*)pbFormat;
 
-            sl.AddTail(_T("MPEG2VIDEOINFO:"));
-            str.Format(_T("dwStartTimeCode: %u"), mvih.dwStartTimeCode);
-            sl.AddTail(str);
-            str.Format(_T("cbSequenceHeader: %u"), mvih.cbSequenceHeader);
-            sl.AddTail(str);
-            str.Format(_T("dwProfile: 0x%08x"), mvih.dwProfile);
-            sl.AddTail(str);
-            str.Format(_T("dwLevel: 0x%08x"), mvih.dwLevel);
-            sl.AddTail(str);
-            str.Format(_T("dwFlags: 0x%08x"), mvih.dwFlags);
-            sl.AddTail(str);
+            sl.push_back(_T("MPEG2VIDEOINFO:"));
+            str = ::Format(_T("dwStartTimeCode: %u"), mvih.dwStartTimeCode);
+            sl.push_back(str);
+            str = ::Format(_T("cbSequenceHeader: %u"), mvih.cbSequenceHeader);
+            sl.push_back(str);
+            str = ::Format(_T("dwProfile: 0x%08x"), mvih.dwProfile);
+            sl.push_back(str);
+            str = ::Format(_T("dwLevel: 0x%08x"), mvih.dwLevel);
+            sl.push_back(str);
+            str = ::Format(_T("dwFlags: 0x%08x"), mvih.dwFlags);
+            sl.push_back(str);
 
-            sl.AddTail(_T(""));
+            sl.push_back(_T(""));
         }
 
-        sl.AddTail(_T("BITMAPINFOHEADER:"));
-        str.Format(_T("biSize: %u"), bih->biSize);
-        sl.AddTail(str);
-        str.Format(_T("biWidth: %ld"), bih->biWidth);
-        sl.AddTail(str);
-        str.Format(_T("biHeight: %ld"), bih->biHeight);
-        sl.AddTail(str);
-        str.Format(_T("biPlanes: %u"), bih->biPlanes);
-        sl.AddTail(str);
-        str.Format(_T("biBitCount: %u"), bih->biBitCount);
-        sl.AddTail(str);
+        sl.push_back(_T("BITMAPINFOHEADER:"));
+        str = ::Format(_T("biSize: %u"), bih->biSize);
+        sl.push_back(str);
+        str = ::Format(_T("biWidth: %ld"), bih->biWidth);
+        sl.push_back(str);
+        str = ::Format(_T("biHeight: %ld"), bih->biHeight);
+        sl.push_back(str);
+        str = ::Format(_T("biPlanes: %u"), bih->biPlanes);
+        sl.push_back(str);
+        str = ::Format(_T("biBitCount: %u"), bih->biBitCount);
+        sl.push_back(str);
         if (bih->biCompression < 256) {
-            str.Format(_T("biCompression: %u"), bih->biCompression);
+            str = ::Format(_T("biCompression: %u"), bih->biCompression);
         } else {
-            str.Format(_T("biCompression: %4.4hs"), &bih->biCompression);
+            str = ::Format(_T("biCompression: %4.4hs"), &bih->biCompression);
         }
-        sl.AddTail(str);
-        str.Format(_T("biSizeImage: %u"), bih->biSizeImage);
-        sl.AddTail(str);
-        str.Format(_T("biXPelsPerMeter: %ld"), bih->biXPelsPerMeter);
-        sl.AddTail(str);
-        str.Format(_T("biYPelsPerMeter: %ld"), bih->biYPelsPerMeter);
-        sl.AddTail(str);
-        str.Format(_T("biClrUsed: %u"), bih->biClrUsed);
-        sl.AddTail(str);
-        str.Format(_T("biClrImportant: %u"), bih->biClrImportant);
-        sl.AddTail(str);
+        sl.push_back(str);
+        str = ::Format(_T("biSizeImage: %u"), bih->biSizeImage);
+        sl.push_back(str);
+        str = ::Format(_T("biXPelsPerMeter: %ld"), bih->biXPelsPerMeter);
+        sl.push_back(str);
+        str = ::Format(_T("biYPelsPerMeter: %ld"), bih->biYPelsPerMeter);
+        sl.push_back(str);
+        str = ::Format(_T("biClrUsed: %u"), bih->biClrUsed);
+        sl.push_back(str);
+        str = ::Format(_T("biClrImportant: %u"), bih->biClrImportant);
+        sl.push_back(str);
 
-        sl.AddTail(_T(""));
+        sl.push_back(_T(""));
     } else if (formattype == FORMAT_WaveFormatEx || formattype == FORMAT_WaveFormatExFFMPEG) {
         WAVEFORMATEX* pWfe = nullptr;
         if (formattype == FORMAT_WaveFormatExFFMPEG) {
@@ -598,10 +603,10 @@ void CMediaTypeEx::Dump(CAtlList<CString>& sl)
             WAVEFORMATEXFFMPEG* wfeff = (WAVEFORMATEXFFMPEG*)pbFormat;
             pWfe = &wfeff->wfex;
 
-            sl.AddTail(_T("WAVEFORMATEXFFMPEG:"));
-            str.Format(_T("nCodecId: 0x%04x"), wfeff->nCodecId);
-            sl.AddTail(str);
-            sl.AddTail(_T(""));
+            sl.push_back(_T("WAVEFORMATEXFFMPEG:"));
+            str = ::Format(_T("nCodecId: 0x%04x"), wfeff->nCodecId);
+            sl.push_back(str);
+            sl.push_back(_T(""));
         } else {
             fmtsize = sizeof(WAVEFORMATEX);
             pWfe = (WAVEFORMATEX*)pbFormat;
@@ -609,23 +614,23 @@ void CMediaTypeEx::Dump(CAtlList<CString>& sl)
 
         WAVEFORMATEX& wfe = *pWfe;
 
-        sl.AddTail(_T("WAVEFORMATEX:"));
-        str.Format(_T("wFormatTag: 0x%04x"), wfe.wFormatTag);
-        sl.AddTail(str);
-        str.Format(_T("nChannels: %u"), wfe.nChannels);
-        sl.AddTail(str);
-        str.Format(_T("nSamplesPerSec: %u"), wfe.nSamplesPerSec);
-        sl.AddTail(str);
-        str.Format(_T("nAvgBytesPerSec: %u"), wfe.nAvgBytesPerSec);
-        sl.AddTail(str);
-        str.Format(_T("nBlockAlign: %u"), wfe.nBlockAlign);
-        sl.AddTail(str);
-        str.Format(_T("wBitsPerSample: %u"), wfe.wBitsPerSample);
-        sl.AddTail(str);
-        str.Format(_T("cbSize: %u (extra bytes)"), wfe.cbSize);
-        sl.AddTail(str);
+        sl.push_back(_T("WAVEFORMATEX:"));
+        str = ::Format(_T("wFormatTag: 0x%04x"), wfe.wFormatTag);
+        sl.push_back(str);
+        str = ::Format(_T("nChannels: %u"), wfe.nChannels);
+        sl.push_back(str);
+        str = ::Format(_T("nSamplesPerSec: %u"), wfe.nSamplesPerSec);
+        sl.push_back(str);
+        str = ::Format(_T("nAvgBytesPerSec: %u"), wfe.nAvgBytesPerSec);
+        sl.push_back(str);
+        str = ::Format(_T("nBlockAlign: %u"), wfe.nBlockAlign);
+        sl.push_back(str);
+        str = ::Format(_T("wBitsPerSample: %u"), wfe.wBitsPerSample);
+        sl.push_back(str);
+        str = ::Format(_T("cbSize: %u (extra bytes)"), wfe.cbSize);
+        sl.push_back(str);
 
-        sl.AddTail(_T(""));
+        sl.push_back(_T(""));
 
         if (wfe.wFormatTag != WAVE_FORMAT_PCM && wfe.cbSize > 0 && formattype == FORMAT_WaveFormatEx) {
             if (wfe.wFormatTag == WAVE_FORMAT_EXTENSIBLE && wfe.cbSize == sizeof(WAVEFORMATEXTENSIBLE) - sizeof(WAVEFORMATEX)) {
@@ -633,37 +638,37 @@ void CMediaTypeEx::Dump(CAtlList<CString>& sl)
 
                 WAVEFORMATEXTENSIBLE& wfextensible = *(WAVEFORMATEXTENSIBLE*)pbFormat;
 
-                sl.AddTail(_T("WAVEFORMATEXTENSIBLE:"));
+                sl.push_back(_T("WAVEFORMATEXTENSIBLE:"));
                 if (wfextensible.Format.wBitsPerSample != 0) {
-                    str.Format(_T("wValidBitsPerSample: %u"), wfextensible.Samples.wValidBitsPerSample);
+                    str = ::Format(_T("wValidBitsPerSample: %u"), wfextensible.Samples.wValidBitsPerSample);
                 } else {
-                    str.Format(_T("wSamplesPerBlock: %u"), wfextensible.Samples.wSamplesPerBlock);
+                    str = ::Format(_T("wSamplesPerBlock: %u"), wfextensible.Samples.wSamplesPerBlock);
                 }
-                sl.AddTail(str);
-                str.Format(_T("dwChannelMask: 0x%08x"), wfextensible.dwChannelMask);
-                sl.AddTail(str);
-                str.Format(_T("SubFormat: %s"), CStringFromGUID(wfextensible.SubFormat).GetString());
-                sl.AddTail(str);
+                sl.push_back(str);
+                str = ::Format(_T("dwChannelMask: 0x%08x"), wfextensible.dwChannelMask);
+                sl.push_back(str);
+                str = ::Format(_T("SubFormat: %s"), CStringFromGUID(wfextensible.SubFormat).c_str());
+                sl.push_back(str);
 
-                sl.AddTail(_T(""));
+                sl.push_back(_T(""));
             } else if (wfe.wFormatTag == WAVE_FORMAT_DOLBY_AC3 && wfe.cbSize == sizeof(DOLBYAC3WAVEFORMAT) - sizeof(WAVEFORMATEX)) {
                 fmtsize = sizeof(DOLBYAC3WAVEFORMAT);
 
                 DOLBYAC3WAVEFORMAT& dawf = *(DOLBYAC3WAVEFORMAT*)pbFormat;
 
-                sl.AddTail(_T("DOLBYAC3WAVEFORMAT:"));
-                str.Format(_T("bBigEndian: %u"), dawf.bBigEndian);
-                sl.AddTail(str);
-                str.Format(_T("bsid: %u"), dawf.bsid);
-                sl.AddTail(str);
-                str.Format(_T("lfeon: %u"), dawf.lfeon);
-                sl.AddTail(str);
-                str.Format(_T("copyrightb: %u"), dawf.copyrightb);
-                sl.AddTail(str);
-                str.Format(_T("nAuxBitsCode: %u"), dawf.nAuxBitsCode);
-                sl.AddTail(str);
+                sl.push_back(_T("DOLBYAC3WAVEFORMAT:"));
+                str = ::Format(_T("bBigEndian: %u"), dawf.bBigEndian);
+                sl.push_back(str);
+                str = ::Format(_T("bsid: %u"), dawf.bsid);
+                sl.push_back(str);
+                str = ::Format(_T("lfeon: %u"), dawf.lfeon);
+                sl.push_back(str);
+                str = ::Format(_T("copyrightb: %u"), dawf.copyrightb);
+                sl.push_back(str);
+                str = ::Format(_T("nAuxBitsCode: %u"), dawf.nAuxBitsCode);
+                sl.push_back(str);
 
-                sl.AddTail(_T(""));
+                sl.push_back(_T(""));
             }
         }
     } else if (formattype == FORMAT_VorbisFormat) {
@@ -671,62 +676,62 @@ void CMediaTypeEx::Dump(CAtlList<CString>& sl)
 
         VORBISFORMAT& vf = *(VORBISFORMAT*)pbFormat;
 
-        sl.AddTail(_T("VORBISFORMAT:"));
-        str.Format(_T("nChannels: %u"), vf.nChannels);
-        sl.AddTail(str);
-        str.Format(_T("nSamplesPerSec: %lu"), vf.nSamplesPerSec);
-        sl.AddTail(str);
-        str.Format(_T("nMinBitsPerSec: %lu"), vf.nMinBitsPerSec);
-        sl.AddTail(str);
-        str.Format(_T("nAvgBitsPerSec: %lu"), vf.nAvgBitsPerSec);
-        sl.AddTail(str);
-        str.Format(_T("nMaxBitsPerSec: %lu"), vf.nMaxBitsPerSec);
-        sl.AddTail(str);
-        str.Format(_T("fQuality: %.3f"), vf.fQuality);
-        sl.AddTail(str);
+        sl.push_back(_T("VORBISFORMAT:"));
+        str = ::Format(_T("nChannels: %u"), vf.nChannels);
+        sl.push_back(str);
+        str = ::Format(_T("nSamplesPerSec: %lu"), vf.nSamplesPerSec);
+        sl.push_back(str);
+        str = ::Format(_T("nMinBitsPerSec: %lu"), vf.nMinBitsPerSec);
+        sl.push_back(str);
+        str = ::Format(_T("nAvgBitsPerSec: %lu"), vf.nAvgBitsPerSec);
+        sl.push_back(str);
+        str = ::Format(_T("nMaxBitsPerSec: %lu"), vf.nMaxBitsPerSec);
+        sl.push_back(str);
+        str = ::Format(_T("fQuality: %.3f"), vf.fQuality);
+        sl.push_back(str);
 
-        sl.AddTail(_T(""));
+        sl.push_back(_T(""));
     } else if (formattype == FORMAT_VorbisFormat2) {
         fmtsize = sizeof(VORBISFORMAT2);
 
         VORBISFORMAT2& vf = *(VORBISFORMAT2*)pbFormat;
 
-        sl.AddTail(_T("VORBISFORMAT:"));
-        str.Format(_T("Channels: %lu"), vf.Channels);
-        sl.AddTail(str);
-        str.Format(_T("SamplesPerSec: %lu"), vf.SamplesPerSec);
-        sl.AddTail(str);
-        str.Format(_T("BitsPerSample: %lu"), vf.BitsPerSample);
-        sl.AddTail(str);
-        str.Format(_T("HeaderSize: {%lu, %lu, %lu}"), vf.HeaderSize[0], vf.HeaderSize[1], vf.HeaderSize[2]);
-        sl.AddTail(str);
+        sl.push_back(_T("VORBISFORMAT:"));
+        str = ::Format(_T("Channels: %lu"), vf.Channels);
+        sl.push_back(str);
+        str = ::Format(_T("SamplesPerSec: %lu"), vf.SamplesPerSec);
+        sl.push_back(str);
+        str = ::Format(_T("BitsPerSample: %lu"), vf.BitsPerSample);
+        sl.push_back(str);
+        str = ::Format(_T("HeaderSize: {%lu, %lu, %lu}"), vf.HeaderSize[0], vf.HeaderSize[1], vf.HeaderSize[2]);
+        sl.push_back(str);
 
-        sl.AddTail(_T(""));
+        sl.push_back(_T(""));
     } else if (formattype == FORMAT_SubtitleInfo) {
         fmtsize = sizeof(SUBTITLEINFO);
 
         SUBTITLEINFO& si = *(SUBTITLEINFO*)pbFormat;
 
-        sl.AddTail(_T("SUBTITLEINFO:"));
-        str.Format(_T("dwOffset: %lu"), si.dwOffset);
-        sl.AddTail(str);
-        str.Format(_T("IsoLang: %S"), CStringA(si.IsoLang, sizeof(si.IsoLang) - 1).GetString());
-        sl.AddTail(str);
-        str.Format(_T("TrackName: %s"), CStringW(si.TrackName, sizeof(si.TrackName) - 1).GetString());
-        sl.AddTail(str);
+        sl.push_back(_T("SUBTITLEINFO:"));
+        str = ::Format(_T("dwOffset: %lu"), si.dwOffset);
+        sl.push_back(str);
+        str = ::Format(_T("IsoLang: %S"), std::string(si.IsoLang, sizeof(si.IsoLang) - 1).c_str());
+        sl.push_back(str);
+        str = ::Format(_T("TrackName: %s"), std::wstring(si.TrackName, sizeof(si.TrackName) - 1).c_str());
+        sl.push_back(str);
 
-        sl.AddTail(_T(""));
+        sl.push_back(_T(""));
     }
 
     if (cbFormat > 0) {
-        sl.AddTail(_T("pbFormat:"));
+        sl.push_back(_T("pbFormat:"));
 
         for (ptrdiff_t i = 0, j = (cbFormat + 15) & ~15; i < j; i += 16) {
-            str.Format(_T("%04Ix:"), i);
+            str = ::Format(_T("%04Ix:"), i);
 
             for (ptrdiff_t k = i, l = std::min(i + 16, (ptrdiff_t)cbFormat); k < l; k++) {
-                CString byte;
-                byte.Format(_T("%c%02x"), fmtsize > 0 && fmtsize == k ? '|' : ' ', pbFormat[k]);
+                tstring byte;
+                byte = ::Format(_T("%c%02x"), fmtsize > 0 && fmtsize == k ? '|' : ' ', pbFormat[k]);
                 str += byte;
             }
 
@@ -738,14 +743,14 @@ void CMediaTypeEx::Dump(CAtlList<CString>& sl)
 
             for (ptrdiff_t k = i, l = std::min(i + 16, (ptrdiff_t)cbFormat); k < l; k++) {
                 unsigned char c = (unsigned char)pbFormat[k];
-                CString ch;
-                ch.Format(_T("%C"), c >= 0x20 ? c : '.');
+                tstring ch;
+                ch = ::Format(_T("%C"), c >= 0x20 ? c : '.');
                 str += ch;
             }
 
-            sl.AddTail(str);
+            sl.push_back(str);
         }
 
-        sl.AddTail(_T(""));
+        sl.push_back(_T(""));
     }
 }

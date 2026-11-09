@@ -41,6 +41,26 @@ CSoundTouchEx::~CSoundTouchEx()
    SAFE_DELETE_ARRAY(m_tempBuffer);
 }
 
+uint CSoundTouchEx::flushEx()
+{
+  const uint blockSize = 128;
+  std::vector<soundtouch::SAMPLETYPE> silence(blockSize * numChannels(), 0);
+  uint nOut = numSamples();
+  uint nZerosInjected = 0;
+
+  // Feed blank samples until new processed samples appear in the output
+  // (but not more than 200 * 128 samples)
+  for (int i = 0; i < 200; i++)
+  {
+    putSamples(silence.data(), blockSize);
+    nZerosInjected += blockSize;
+    if (numSamples() != nOut)
+      break; // new samples have appeared in the output
+  }
+
+  return nZerosInjected;
+}
+
 // Queue Handling
 void CSoundTouchEx::putBuffer(const BYTE *pInBuffer, int numSamples)
 {

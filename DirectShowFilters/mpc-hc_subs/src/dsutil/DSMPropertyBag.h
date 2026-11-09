@@ -21,8 +21,6 @@
 
 #pragma once
 
-#include <atlcoll.h>
-#include <atlsimpcoll.h>
 
 // IDSMPropertyBag
 
@@ -37,13 +35,54 @@ interface __declspec(uuid("232FD5D2-4954-41E7-BF9B-09E1257B1A95"))
     STDMETHOD(DelProperty)(LPCWSTR key) PURE;
 };
 
-class IDSMPropertyBagImpl : public ATL::CSimpleMap<CStringW, CStringW>, public IDSMPropertyBag, public IPropertyBag
+class IDSMPropertyBagImpl : public IDSMPropertyBag, public IPropertyBag
 {
-    BOOL Add(const CStringW& key, const CStringW& val) {
-        return __super::Add(key, val);
+    // the properties in the order they were added
+    std::vector<std::pair<std::wstring, std::wstring>> m_properties;
+
+    int GetSize() const {
+        return int(m_properties.size());
     }
-    BOOL SetAt(const CStringW& key, const CStringW& val) {
-        return __super::SetAt(key, val);
+    int FindKey(const std::wstring& key) const {
+        for (size_t i = 0; i < m_properties.size(); i++) {
+            if (m_properties[i].first == key) {
+                return int(i);
+            }
+        }
+        return -1;
+    }
+    std::wstring Lookup(const std::wstring& key) const {
+        const int i = FindKey(key);
+        return i < 0 ? std::wstring() : m_properties[i].second;
+    }
+    const std::wstring& GetKeyAt(int i) const {
+        return m_properties[i].first;
+    }
+    const std::wstring& GetValueAt(int i) const {
+        return m_properties[i].second;
+    }
+    BOOL Add(const std::wstring& key, const std::wstring& val) {
+        m_properties.emplace_back(key, val);
+        return TRUE;
+    }
+    BOOL SetAt(const std::wstring& key, const std::wstring& val) {
+        const int i = FindKey(key);
+        if (i < 0) {
+            return FALSE;
+        }
+        m_properties[i].second = val;
+        return TRUE;
+    }
+    BOOL Remove(const std::wstring& key) {
+        const int i = FindKey(key);
+        if (i < 0) {
+            return FALSE;
+        }
+        m_properties.erase(m_properties.begin() + i);
+        return TRUE;
+    }
+    void RemoveAll() {
+        m_properties.clear();
     }
 
 public:
@@ -90,8 +129,8 @@ class CDSMResource
 {
 public:
     DWORD_PTR tag;
-    CStringW name, desc, mime;
-    CAtlArray<BYTE> data;
+    std::wstring name, desc, mime;
+    std::vector<BYTE> data;
     CDSMResource();
     CDSMResource(const CDSMResource& r);
     CDSMResource(LPCWSTR name, LPCWSTR desc, LPCWSTR mime, BYTE* pData, int len, DWORD_PTR tag = 0);
@@ -100,18 +139,18 @@ public:
 
     // global access to all resources
     static CCritSec m_csResources;
-    static CAtlMap<uintptr_t, CDSMResource*> m_resources;
+    static std::map<uintptr_t, CDSMResource*> m_resources;
 };
 
 class IDSMResourceBagImpl : public IDSMResourceBag
 {
 protected:
-    CAtlArray<CDSMResource> m_resources;
+    std::vector<CDSMResource> m_resources;
 
 public:
     IDSMResourceBagImpl();
 
-    void operator += (const CDSMResource& r) { m_resources.Add(r); }
+    void operator += (const CDSMResource& r) { m_resources.push_back(r); }
 
     // IDSMResourceBag
 
@@ -151,7 +190,7 @@ class CDSMChapter
 
 public:
     REFERENCE_TIME rt;
-    CStringW name;
+    std::wstring name;
     CDSMChapter();
     CDSMChapter(REFERENCE_TIME rt, LPCWSTR name);
     CDSMChapter& operator = (const CDSMChapter& c);
@@ -164,13 +203,13 @@ public:
 class IDSMChapterBagImpl : public IDSMChapterBag
 {
 protected:
-    CAtlArray<CDSMChapter> m_chapters;
+    std::vector<CDSMChapter> m_chapters;
     bool m_fSorted;
 
 public:
     IDSMChapterBagImpl();
 
-    void operator += (const CDSMChapter& c) { m_chapters.Add(c); m_fSorted = false; }
+    void operator += (const CDSMChapter& c) { m_chapters.push_back(c); m_fSorted = false; }
 
     // IDSMChapterBag
 
@@ -197,10 +236,10 @@ public:
 };
 
 template<class T>
-__declspec(nothrow noalias) __forceinline size_t range_bsearch(CAtlArray<T> const& tArray, REFERENCE_TIME rt)
+__declspec(nothrow noalias) __forceinline size_t range_bsearch(std::vector<T> const& tArray, REFERENCE_TIME rt)
 {
     // MAXSIZE_T is returned by this function for status invalid
-    ptrdiff_t k = tArray.GetCount() - 1;
+    ptrdiff_t k = tArray.size() - 1;
     if ((k < 0) || (rt >= tArray[k].rt)) {
         return k;
     }

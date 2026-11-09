@@ -30,7 +30,7 @@ class CGolombBuffer;
 class CDVBSub : public CRLECodedSubtitle
 {
 public:
-    CDVBSub(CCritSec* pLock, const CString& name, LCID lcid);
+    CDVBSub(CCritSec* pLock, const tstring& name, LCID lcid);
     ~CDVBSub();
 
     // ISubPicProvider
@@ -151,18 +151,18 @@ private:
     size_t                 m_nBufferReadPos;
     size_t                 m_nBufferWritePos;
     BYTE*                  m_pBuffer;
-    CAutoPtrList<DVB_PAGE> m_pages;
-    CAutoPtr<DVB_PAGE>     m_pCurrentPage;
+    std::list<std::unique_ptr<DVB_PAGE>> m_pages;
+    std::unique_ptr<DVB_PAGE>     m_pCurrentPage;
     DVB_DISPLAY            m_displayInfo;
 
     HRESULT  AddToBuffer(BYTE* pData, size_t nSize);
 
-    POSITION FindPage(REFERENCE_TIME rt) const;
-    RegionList::const_iterator FindRegion(const CAutoPtr<DVB_PAGE>& pPage, BYTE bRegionId) const;
-    ClutList::const_iterator   FindClut(const CAutoPtr<DVB_PAGE>& pPage, BYTE bClutId) const;
-    CompositionObjectList::const_iterator FindObject(const CAutoPtr<DVB_PAGE>& pPage, short sObjectId) const;
+    std::list<std::unique_ptr<DVB_PAGE>>::const_iterator FindPage(REFERENCE_TIME rt) const;
+    RegionList::const_iterator FindRegion(const std::unique_ptr<DVB_PAGE>& pPage, BYTE bRegionId) const;
+    ClutList::const_iterator   FindClut(const std::unique_ptr<DVB_PAGE>& pPage, BYTE bClutId) const;
+    CompositionObjectList::const_iterator FindObject(const std::unique_ptr<DVB_PAGE>& pPage, short sObjectId) const;
 
-    HRESULT  ParsePage(CGolombBuffer& gb, WORD wSegLength, CAutoPtr<DVB_PAGE>& pPage);
+    HRESULT  ParsePage(CGolombBuffer& gb, WORD wSegLength, std::unique_ptr<DVB_PAGE>& pPage);
     HRESULT  ParseDisplay(CGolombBuffer& gb, WORD wSegLength);
     HRESULT  ParseRegion(CGolombBuffer& gb, WORD wSegLength);
     HRESULT  ParseClut(CGolombBuffer& gb, WORD wSegLength);

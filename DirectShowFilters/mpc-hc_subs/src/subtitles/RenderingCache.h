@@ -20,73 +20,97 @@
 
 #pragma once
 
-#include <atlcoll.h>
+#include <list>
+#include <string_view>
+#include <unordered_map>
 
-template<typename K, typename V, class KTraits = CElementTraits<K>, class VTraits = CElementTraits<V>>
-class CRenderingCache : private CAtlMap<K, POSITION, KTraits>
+// The hash of a string, for the keys of the caches
+inline ULONG HashString(const wchar_t* str, size_t length)
+{
+    return static_cast<ULONG>(std::hash<std::wstring_view>()(std::wstring_view(str, length)));
+}
+
+// A cache that keeps the most recently used values (the least recently used one goes when the cache is full).
+// KTraits::Hash and KTraits::CompareElements say what the same key is.
+template<typename K, typename V, class KTraits>
+class CRenderingCache
 {
 private:
-    size_t m_maxSize;
-    struct CPositionValue {
-        POSITION pos;
-        V value;
+    struct KeyHasher {
+        size_t operator()(const K& key) const {
+            return KTraits::Hash(key);
+        }
     };
-    CAtlList<CPositionValue> m_list;
+    struct KeyEqual {
+        bool operator()(const K& key1, const K& key2) const {
+            return KTraits::CompareElements(key1, key2);
+        }
+    };
+    using List = std::list<std::pair<K, V>>;
+
+    size_t m_maxSize;
+    List m_list;    // the most recently used first
+    std::unordered_map<K, typename List::iterator, KeyHasher, KeyEqual> m_map;
 
 public:
     CRenderingCache(size_t maxSize) : m_maxSize(maxSize) {};
 
-    bool Lookup(typename KTraits::INARGTYPE key, _Out_ typename VTraits::OUTARGTYPE value) {
-        POSITION pos = nullptr;
-        bool bFound = __super::Lookup(key, pos);
-
-        if (bFound) {
-            m_list.MoveToHead(pos);
-            value = m_list.GetHead().value;
+    bool Lookup(const K& key, V& value) {
+        auto it = m_map.find(key);
+        if (it == m_map.end()) {
+            return false;
         }
 
-        return bFound;
+        m_list.splice(m_list.begin(), m_list, it->second);
+        value = m_list.front().second;
+        return true;
     };
 
-    POSITION SetAt(typename KTraits::INARGTYPE key, typename VTraits::INARGTYPE value) {
-        POSITION pos = nullptr;
-        bool bFound = __super::Lookup(key, pos);
+    void SetAt(const K& key, const V& value) {
+        auto it = m_map.find(key);
 
-        if (bFound) {
-            m_list.MoveToHead(pos);
-            CPositionValue& posVal = m_list.GetHead();
-            pos = posVal.pos;
-            posVal.value = value;
+        if (it != m_map.end()) {
+            m_list.splice(m_list.begin(), m_list, it->second);
+            m_list.front().second = value;
         } else {
-            if (m_list.GetCount() >= m_maxSize) {
-                __super::RemoveAtPos(m_list.GetTail().pos);
-                m_list.RemoveTailNoReturn();
+            if (m_list.size() >= m_maxSize && !m_list.empty()) {
+                m_map.erase(m_list.back().first);
+                m_list.pop_back();
             }
-            pos = __super::SetAt(key, m_list.AddHead());
-            CPositionValue& posVal = m_list.GetHead();
-            posVal.pos = pos;
-            posVal.value = value;
+            m_list.emplace_front(key, value);
+            m_map.emplace(m_list.front().first, m_list.begin());
         }
-
-        return pos;
     };
 
     void Clear() {
-        m_list.RemoveAll();
-        __super::RemoveAll();
+        m_map.clear();
+        m_list.clear();
     }
 };
 
 template <class Key>
-class CKeyTraits : public CElementTraits<Key>
+class CKeyTraits
 {
 public:
-    static ULONG Hash(_In_ const Key& element) {
+    static size_t Hash(const Key& element) {
         return element.GetHash();
     };
 
-    static bool CompareElements(_In_ const Key& element1, _In_ const Key& element2) {
+    static bool CompareElements(const Key& element1, const Key& element2) {
         return (element1 == element2);
+    };
+};
+
+// Keys that are strings
+class CStringKeyTraits
+{
+public:
+    static size_t Hash(const std::wstring& str) {
+        return HashString(str.c_str(), int(str.size()));
+    };
+
+    static bool CompareElements(const std::wstring& str1, const std::wstring& str2) {
+        return (str1 == str2);
     };
 };
 
@@ -98,11 +122,11 @@ private:
     ULONG m_hash;
 
 protected:
-    CString m_str;
-    CAutoPtr<STSStyle> m_style;
+    tstring m_str;
+    std::unique_ptr<STSStyle> m_style;
 
 public:
-    CTextDimsKey(const CStringW& str, const STSStyle& style);
+    CTextDimsKey(const std::wstring& str, const STSStyle& style);
     CTextDimsKey(const CTextDimsKey& textDimsKey);
 
     ULONG GetHash() const { return m_hash; };
@@ -118,11 +142,11 @@ private:
     ULONG m_hash;
 
 protected:
-    CString m_str;
+    tstring m_str;
     double m_scalex, m_scaley;
 
 public:
-    CPolygonPathKey(const CStringW& str, double scalex, double scaley);
+    CPolygonPathKey(const std::wstring& str, double scalex, double scaley);
     CPolygonPathKey(const CPolygonPathKey& polygonPathKey);
 
     ULONG GetHash() const { return m_hash; };
@@ -162,10 +186,10 @@ private:
 
 protected:
     double m_scalex, m_scaley;
-    CPoint m_org;
+    POINT m_org = {};
 
 public:
-    COutlineKey(const CWord* word, CPoint org);
+    COutlineKey(const CWord* word, POINT org);
     COutlineKey(const COutlineKey& outLineKey);
 
     ULONG GetHash() const { return m_hash; };
@@ -178,11 +202,11 @@ public:
 class COverlayKey : public COutlineKey
 {
 private:
-    CPoint m_subp;
+    POINT m_subp = {};
     ULONG m_hash;
 
 public:
-    COverlayKey(const CWord* word, CPoint p, CPoint org);
+    COverlayKey(const CWord* word, POINT p, POINT org);
     COverlayKey(const COverlayKey& overlayKey);
 
     ULONG GetHash() const { return m_hash; };

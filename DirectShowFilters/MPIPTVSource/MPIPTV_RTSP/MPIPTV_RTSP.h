@@ -110,7 +110,7 @@ protected:
   unsigned int rtspCommandResponseTimeout;
 
   // variable for signaling exit for rtspScheduler
-  char rtspThreadShouldExit;
+  EventLoopWatchVariable rtspThreadShouldExit; // set from another thread
   // variables for RTSP scheduler thread
   DWORD rtspSchedulerThreadId;
   HANDLE rtspSchedulerThreadHandle;

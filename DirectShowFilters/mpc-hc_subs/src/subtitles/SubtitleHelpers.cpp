@@ -43,95 +43,92 @@ LPCTSTR Subtitle::GetSubtitleFileExt(SubType type)
     return (type >= 0 && size_t(type) < subTypesExt.size()) ? subTypesExt[type] : nullptr;
 }
 
-bool Subtitle::IsTextSubtitleFileName(CString fileName)
+bool Subtitle::IsTextSubtitleFileName(tstring fileName)
 {
-    auto fileExt = PathUtils::FileExt(fileName).TrimLeft('.');
+    auto fileExt = StringTrimLeft(PathUtils::FileExt(fileName.c_str()), '.');
     return std::any_of(subTypesExt.cbegin(), subTypesExt.cend(), [&](LPCTSTR ext) {
         return fileExt == ext;
     });
 }
 
-void Subtitle::GetSubFileNames(CString fn, const CAtlArray<CString>& paths, CAtlArray<SubFile>& ret)
+void Subtitle::GetSubFileNames(tstring fn, const std::vector<tstring>& paths, std::vector<SubFile>& ret)
 {
-    ret.RemoveAll();
+    ret.clear();
 
-    if (fn.Find(_T("://")) > 1) {
+    if (StringFind(fn, _T("://")) > 1) {
         return;
     }
 
-    fn.Replace('/', '\\');
+    StringReplace(fn, '/', '\\');
 
     ExtendMaxPathLengthIfNeeded(fn, MAX_PATH);
 
-    int l  = fn.ReverseFind('\\') + 1;
-    int l2 = fn.ReverseFind('.');
+    int l  = StringRFind(fn, '\\') + 1;
+    int l2 = StringRFind(fn, '.');
     if (l2 < l) { // no extension, read to the end
-        l2 = fn.GetLength();
+        l2 = int(fn.size());
     }
 
-    CString orgpath = fn.Left(l);
-    CString title = fn.Mid(l, l2 - l);
-    int titleLength = title.GetLength();
+    tstring orgpath = StringLeft(fn, l);
+    tstring title = StringMid(fn, l, l2 - l);
+    int titleLength = int(title.size());
 
     WIN32_FIND_DATA wfd;
 
-    CString extListSub, regExpSub, regExpVid;
+    tstring extListSub, regExpSub, regExpVid;
     for (size_t i = 0; i < subTypesExt.size(); i++) {
-        extListSub.AppendFormat(_T("(%s)"), subTypesExt[i]);
+        extListSub += ::Format(_T("(%s)"), subTypesExt[i]);
         if (i < subTypesExt.size() - 1) {
-            extListSub.AppendChar(_T('|'));
+            extListSub.push_back(_T('|'));
         }
     }
-    regExpSub.Format(_T("([%s]+.+)?\\.(%s)$"), separators, extListSub.GetString());
-    regExpVid.Format(_T(".+\\.(%s)$"), extListVid);
+    regExpSub = ::Format(_T("([%s]+.+)?\\.(%s)$"), separators, extListSub.c_str());
+    regExpVid = ::Format(_T(".+\\.(%s)$"), extListVid);
 
     const std::wregex::flag_type reFlags = std::wregex::icase | std::wregex::optimize;
     std::wregex reSub(regExpSub, reFlags), reVid(regExpVid, reFlags);
 
-    for (size_t k = 0; k < paths.GetCount(); k++) {
-        CString path = paths[k];
-        path.Replace('/', '\\');
+    for (size_t k = 0; k < paths.size(); k++) {
+        tstring path = paths[k];
+        StringReplace(path, '/', '\\');
 
-        l = path.GetLength();
+        l = int(path.size());
         if (l > 0 && path[l - 1] != '\\') {
             path += _T('\\');
         }
 
-        if (path.Find(':') == -1 && path.Find(_T("\\\\")) != 0) {
+        if (StringFind(path, ':') == -1 && StringFind(path, _T("\\\\")) != 0) {
             path = orgpath + path;
-            path.Replace(_T("\\.\\"), _T("\\"));
+            StringReplace(path, _T("\\.\\"), _T("\\"));
             ExtendMaxPathLengthIfNeeded(path, MAX_PATH);
         }
 
-        CAtlList<CString> subs, vids;
+        std::list<tstring> subs, vids;
 
-        HANDLE hFile = FindFirstFile(path + title + _T("*"), &wfd);
+        HANDLE hFile = FindFirstFile((path + title + _T("*")).c_str(), &wfd);
         if (hFile != INVALID_HANDLE_VALUE) {
             do {
-                CString fn2 = path + wfd.cFileName;
+                tstring fn2 = path + wfd.cFileName;
                 if (std::regex_match(&wfd.cFileName[titleLength], reSub)) {
-                    subs.AddTail(fn2);
+                    subs.push_back(fn2);
                 } else if (std::regex_match(&wfd.cFileName[titleLength], reVid)) {
                     // Convert to lower-case and cut the extension for easier matching
-                    vids.AddTail(fn2.Left(fn2.ReverseFind(_T('.'))).MakeLower());
+                    vids.push_back(StringLowered(StringLeft(fn2, StringRFind(fn2, _T('.')))));
                 }
             } while (FindNextFile(hFile, &wfd));
 
             FindClose(hFile);
         }
 
-        POSITION posSub = subs.GetHeadPosition();
-        while (posSub) {
-            CString& fn2 = subs.GetNext(posSub);
+        for (tstring&fn2 : subs) {
 
             bool bMatchAnotherVid = false;
-            if (!vids.IsEmpty()) {
+            if (!vids.empty()) {
                 // Check if there is an exact match for another video file
-                CString fnlower = fn2;
-                fnlower.MakeLower();
-                POSITION posVid = vids.GetHeadPosition();
-                while (posVid) {
-                    if (fnlower.Find(vids.GetNext(posVid)) == 0) {
+                tstring fnlower = fn2;
+                StringLower(fnlower);
+                for (const tstring& vid : vids) {
+                    if (StringFind(fnlower, vid) == 0) {
                         bMatchAnotherVid = true;
                         break;
                     }
@@ -141,25 +138,25 @@ void Subtitle::GetSubFileNames(CString fn, const CAtlArray<CString>& paths, CAtl
             if (!bMatchAnotherVid) {
                 SubFile f;
                 f.fn = fn2;
-                ret.Add(f);
+                ret.push_back(f);
             }
         }
     }
 
-    if (ret.IsEmpty()) {
+    if (ret.empty()) {
         // Load all subs from folder .\Subs\FILENAME_WITHOUT_EXT
-        CString path = orgpath + L"Subs\\" + title + L"\\";
+        tstring path = orgpath + L"Subs\\" + title + L"\\";
         ExtendMaxPathLengthIfNeeded(path, MAX_PATH);
 
-        HANDLE hFile = FindFirstFile(path + L"*", &wfd);
+        HANDLE hFile = FindFirstFile((path + L"*").c_str(), &wfd);
         if (hFile != INVALID_HANDLE_VALUE) {
             do {
-                CString fn2 = path + wfd.cFileName;
-                CString ext = CPath(fn2).GetExtension();
+                tstring fn2 = path + wfd.cFileName;
+                tstring ext = PathFindExtension(fn2.c_str());
                 if (ext == L".srt" || ext == L".ass" || ext == L".ssa" || ext == L".webvtt" || ext == L".vtt") {
                     SubFile f;
                     f.fn = fn2;
-                    ret.Add(f);
+                    ret.push_back(f);
                 }
             } while (FindNextFile(hFile, &wfd));
             FindClose(hFile);
@@ -167,75 +164,75 @@ void Subtitle::GetSubFileNames(CString fn, const CAtlArray<CString>& paths, CAtl
     }
 
     // sort files, this way the user can define the order (movie.00.English.srt, movie.01.Hungarian.srt, etc)
-    std::sort(ret.GetData(), ret.GetData() + ret.GetCount());
+    std::sort(ret.data(), ret.data() + ret.size());
 }
 
-void Subtitle::GetLCIDAndLangName(CStringW subName, LCID& lcid, CString& langname, HearingImpairedType& hi, std::wregex re) {
+void Subtitle::GetLCIDAndLangName(std::wstring subName, LCID& lcid, tstring& langname, HearingImpairedType& hi, std::wregex re) {
     std::wcmatch mc;
-    if (std::regex_search((LPCTSTR)subName, mc, re)) {
+    if (std::regex_search(subName.c_str(), mc, re)) {
         ASSERT(mc.size() == 4);
         ASSERT(mc[2].matched);
 
-        CStringW langFull(mc[1].str().c_str());
-        CStringA langSimple(mc[2].str().c_str());
+        std::wstring langFull(mc[1].str().c_str());
+        std::string langSimple = StringNarrow(mc[2].str().c_str());
 
         LCID lcidFull = 0;
-        if (langFull.Find(L"-") != -1) { //only use LocaleNameToLCID when we have the longer ISO codes
-            lcidFull = LocaleNameToLCID(langFull, 0);
+        if (StringFind(langFull, L"-") != -1) { //only use LocaleNameToLCID when we have the longer ISO codes
+            lcidFull = LocaleNameToLCID(langFull.c_str(), 0);
         }
         if (lcidFull) {
             lcid = lcidFull;
             langname = langFull;
         } else {
-            langname = ISOLang::ISO639XToLanguage(langSimple, true);
+            langname = ISOLang::ISO639XToLanguage(langSimple.c_str(), true);
 
-            if (!langname.IsEmpty()) {
+            if (!langname.empty()) {
                 size_t len = mc[1].str().size();
                 if (len == 3) {
-                    lcid = ISOLang::ISO6392ToLcid(langSimple);
+                    lcid = ISOLang::ISO6392ToLcid(langSimple.c_str());
                 } else if (len == 2) {
-                    lcid = ISOLang::ISO6391ToLcid(langSimple);
+                    lcid = ISOLang::ISO6391ToLcid(langSimple.c_str());
                 }
             }
         }
-        if (!langname.IsEmpty() && langSimple.CompareNoCase("hi") == 0) {
+        if (!langname.empty() && StringICompare(langSimple, "hi") == 0) {
             hi = HI_YES;
         }
     }
 }
 
-CString Subtitle::GuessSubtitleName(const CString& fn, CString videoName, LCID& lcid, CString& langname, HearingImpairedType& hi)
+tstring Subtitle::GuessSubtitleName(const tstring& fn, tstring videoName, LCID& lcid, tstring& langname, HearingImpairedType& hi)
 {
-    CString name;
+    tstring name;
 
     // The filename of the subtitle file
-    int iExtStart = fn.ReverseFind('.');
+    int iExtStart = StringRFind(fn, '.');
     if (iExtStart < 0) {
-        iExtStart = fn.GetLength();
+        iExtStart = int(fn.size());
     }
-    CString subName = fn.Left(iExtStart).Mid(fn.ReverseFind('\\') + 1);
+    tstring subName = StringMid(StringLeft(fn, iExtStart), StringRFind(fn, '\\') + 1);
 
-    if (!videoName.IsEmpty()) {
+    if (!videoName.empty()) {
         // The filename of the video file
-        iExtStart = videoName.ReverseFind('.');
+        iExtStart = StringRFind(videoName, '.');
         if (iExtStart < 0) {
-            iExtStart = videoName.GetLength();
+            iExtStart = int(videoName.size());
         }
-        CString videoExt = videoName.Mid(iExtStart + 1).MakeLower();
-        videoName = videoName.Left(iExtStart).Mid(videoName.ReverseFind('\\') + 1);
+        tstring videoExt = StringLowered(StringMid(videoName, iExtStart + 1));
+        videoName = StringMid(StringLeft(videoName, iExtStart), StringRFind(videoName, '\\') + 1);
 
-        CString subNameNoCase = CString(subName).MakeLower();
-        CString videoNameNoCase = CString(videoName).MakeLower();
+        tstring subNameNoCase = StringLowered(tstring(subName));
+        tstring videoNameNoCase = StringLowered(tstring(videoName));
 
         // Check if the subtitle filename starts with the video filename
         // so that we can try to find a language info right after it
-        if (subNameNoCase.Find(videoNameNoCase) == 0) {
-            int iVideoNameEnd = videoName.GetLength();
+        if (StringFind(subNameNoCase, videoNameNoCase) == 0) {
+            int iVideoNameEnd = int(videoName.size());
             // Get ride of the video extension if it's in the subtitle filename
-            if (subNameNoCase.Find(videoExt, iVideoNameEnd) == iVideoNameEnd + 1) {
-                iVideoNameEnd += 1 + videoExt.GetLength();
+            if (StringFind(subNameNoCase, videoExt, iVideoNameEnd) == iVideoNameEnd + 1) {
+                iVideoNameEnd += 1 + int(videoExt.size());
             }
-            subName = subName.Mid(iVideoNameEnd);
+            subName = StringMid(subName, iVideoNameEnd);
 
             std::wregex re(_T("^[.\\-_ ]+(([^.\\-_ ]+)(?:[.\\-_ ]+([^.\\-_ ]+))?)"), std::wregex::icase);
             GetLCIDAndLangName(subName, lcid, langname, hi, re);
@@ -243,14 +240,14 @@ CString Subtitle::GuessSubtitleName(const CString& fn, CString videoName, LCID& 
     }
 
     // If we couldn't find any info yet, we try to find the language at the end of the filename
-    if (langname.IsEmpty()) {
+    if (langname.empty()) {
         std::wregex re(_T(".*?[.\\-_ ]+(([^.\\-_ ]+)(?:[.\\-_ ]+([^.\\-_ ]+))?)$"), std::wregex::icase);
         GetLCIDAndLangName(subName, lcid, langname, hi, re);
     }
 
-    name = fn.Mid(fn.ReverseFind('\\') + 1);
-    if (name.GetLength() > 100) { // Cut some part of the filename if it's too long
-        name.Format(_T("%s...%s"), name.Left(50).TrimRight(_T(".-_ ")).GetString(), name.Right(50).TrimLeft(_T(".-_ ")).GetString());
+    name = StringMid(fn, StringRFind(fn, '\\') + 1);
+    if (int(name.size()) > 100) { // Cut some part of the filename if it's too long
+        name = ::Format(_T("%s...%s"), StringTrimRight(StringLeft(name, 50), _T(".-_ ")).c_str(), StringTrimLeft(StringRight(name, 50), _T(".-_ ")).c_str());
     }
 
     return name;

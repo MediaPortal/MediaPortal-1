@@ -62,7 +62,7 @@ int CBuffer::Write(byte* data, int len, bool isStart,CPcr& pcr)
 		{
 			CPcr::DecodeFromPesHeader(data,0,m_pts,m_dts);
 			int pos=data[8]+9;
-			if (pos < len)
+			if (pos + 3 < len)
 			{
 				if (data[pos]==0 && data[pos+1]==0 && data[pos+2]==1 && data[pos+3]==0xb3)
 					m_bSequenceHeader=true;

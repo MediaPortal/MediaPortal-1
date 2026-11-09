@@ -19,7 +19,6 @@
  *
  */
 
-#include <afx.h>
 
 #include "Clip.h"
 #include <streams.h>
@@ -219,7 +218,7 @@ Packet* CClip::GenerateFakeAudio(REFERENCE_TIME rtStart)
   packet->nClipNumber = nClip;
   packet->nPlaylist = nPlaylist;
 
-  packet->SetCount(AC3_FRAME_LENGTH);
+  packet->resize(AC3_FRAME_LENGTH);
   packet->SetData(ac3_sample, AC3_FRAME_LENGTH);
   packet->rtStart = rtStart;
   packet->rtStop = packet->rtStart + FAKE_AUDIO_DURATION;

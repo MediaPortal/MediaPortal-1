@@ -86,11 +86,6 @@
   !define FilterArchitecture Win32
 !endif
 !include "${git_InstallScripts}\include\MediaPortalLibbluray.nsh"
-!ifdef libbluray_vcxproj_is_present && Libbluray_use_Build
-!insertmacro PrepareBuildReport libbluray
-!system '"${MSBuild_Path}"  /p:PlatformToolset=v142 ${logger} /target:rebuild /property:Configuration=Release_libbluray;Platform=${FilterArchitecture} "${git_DirectShowFilters}\Filters.sln"' = 0
-!insertmacro FinalizeBuildReport
-!endif
 !insertmacro PrepareBuildReport DirectShowFilters
 !system '"${MSBuild_Path}" ${logger} /target:rebuild /property:Configuration=Release;Platform=${FilterArchitecture} "${git_DirectShowFilters}\Filters.sln"' = 0
 !insertmacro FinalizeBuildReport

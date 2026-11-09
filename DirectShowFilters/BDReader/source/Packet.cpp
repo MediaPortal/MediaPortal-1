@@ -19,8 +19,6 @@
  *
  */
 
-#include <afx.h>
-#include <afxwin.h>
 
 #include <streams.h>
 #include "Packet.h"
@@ -42,13 +40,13 @@ Packet::~Packet()
 
 int Packet::GetDataSize()
 {
-  return GetCount();
+  return (int)size();
 }
 
 void Packet::SetData(const void* ptr, DWORD len)
 {
-  SetCount(len);
-  memcpy(GetData(), ptr, len);
+  resize(len);
+  memcpy(data(), ptr, len);
 }
 
 void Packet::CopyProperties(Packet& pSrc, bool pValidateStartTime)

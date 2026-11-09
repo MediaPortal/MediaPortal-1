@@ -15,14 +15,14 @@ CSubresync::~CSubresync(void)
 
 void CSubresync::AddShift(REFERENCE_TIME time, REFERENCE_TIME val)
 {
-	m_delayTime.Add(time);
-	m_delayVal.Add(val);
+	m_delayTime.push_back(time);
+	m_delayVal.push_back(val);
 }
 
 void CSubresync::RemoveAll()
 {
-	m_delayTime.RemoveAll();
-	m_delayVal.RemoveAll();
+	m_delayTime.clear();
+	m_delayVal.clear();
 }
 
 void CSubresync::SetSubtitle(ISubStream* pSubStream, double fps)
@@ -42,12 +42,12 @@ void CSubresync::SetSubtitle(ISubStream* pSubStream, double fps)
 		m_mode = VOBSUB;
 
 		ASSERT(pVSF->m_nLang >= 0);
-		CAtlArray<CVobSubFile::SubPos>& sp = pVSF->m_langs[pVSF->m_nLang].subpos;
+		std::vector<CVobSubFile::SubPos>& sp = pVSF->m_langs[pVSF->m_nLang].subpos;
 
-		for(int i = 0, j = sp.GetCount(); i < j; i++)
+		for(int i = 0, j = sp.size(); i < j; i++)
 		{
-			CString str;
-			str.Format(_T("%d,%d,%d,%d"), sp[i].vobid, sp[i].cellid, sp[i].bForced, i);
+			tstring str;
+			str = ::Format(_T("%d,%d,%d,%d"), sp[i].vobid, sp[i].cellid, sp[i].bForced, i);
 			m_sts.Add(TToW(str), false, sp[i].start, sp[i].stop);
 		}
 
@@ -71,7 +71,7 @@ void CSubresync::SetSubtitle(ISubStream* pSubStream, double fps)
 
 int CSubresync::FindNearestSub(REFERENCE_TIME rtPos)
 {
-	if (m_sts.GetCount() == 0) return -1;
+	if (m_sts.size() == 0) return -1;
 
 	REFERENCE_TIME rtCurTime = rtPos - 10000;
 
@@ -80,7 +80,7 @@ int CSubresync::FindNearestSub(REFERENCE_TIME rtPos)
 		return 0;
 	}
 
-	for(int i = 1, j = m_sts.GetCount(); i < j; i++)
+	for(int i = 1, j = m_sts.size(); i < j; i++)
 	{
 		if ((rtCurTime >= m_sts[i-1].start) && (rtCurTime < m_sts[i].start))
 		{
@@ -88,7 +88,7 @@ int CSubresync::FindNearestSub(REFERENCE_TIME rtPos)
 		}
 	}
 
-	return m_sts.GetCount() - 1;
+	return m_sts.size() - 1;
 }
 
 
@@ -97,19 +97,19 @@ void CSubresync::ShiftSubtitle(int nItem, REFERENCE_TIME rtValue)
 	while (nItem > 0 && (m_sts[nItem-1].end > m_sts[nItem].start + rtValue))
 		--nItem;
 
-	for (size_t i = nItem; i<m_sts.GetCount(); i++)
+	for (size_t i = nItem; i<m_sts.size(); i++)
 	{
 		m_sts[i].start += rtValue;
 		m_sts[i].end   += rtValue;
 	}
 }
 
-bool CSubresync::SaveToDisk(ISubStream* pSubStream, double fps, const CString & movieName)
+bool CSubresync::SaveToDisk(ISubStream* pSubStream, double fps, const tstring & movieName)
 {
-	if (m_delayTime.IsEmpty())
+	if (m_delayTime.empty())
 		return false;
 	SetSubtitle(pSubStream, fps);
-	for (size_t i=0; i<m_delayTime.GetCount(); i++)
+	for (size_t i=0; i<m_delayTime.size(); i++)
 	{
 		int nItem = FindNearestSub(m_delayTime[i]);
 		if (nItem >= 0)	ShiftSubtitle(nItem, m_delayVal[i]);
@@ -118,11 +118,11 @@ bool CSubresync::SaveToDisk(ISubStream* pSubStream, double fps, const CString & 
 	m_sts.CreateSegments();
 
 	m_sts.m_bUsingPlayerDefaultStyle = true; //prevent .style file
-	if (m_sts.m_path.IsEmpty())
+	if (m_sts.m_path.empty())
 	{//for embedded subtitles
-		int k = movieName.ReverseFind('.');
-		m_sts.m_path = (k < 0 ? movieName : movieName.Left(k));
-		if (!m_sts.m_name.IsEmpty())
+		int k = StringRFind(movieName, '.');
+		m_sts.m_path = (k < 0 ? movieName : StringLeft(movieName, k));
+		if (!m_sts.m_name.empty())
 			m_sts.m_path += L"." + m_sts.m_name;
 		m_sts.m_subtitleType = (m_mode == VOBSUB ? Subtitle::IDX : Subtitle::SRT);
 	}

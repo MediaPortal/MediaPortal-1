@@ -38,7 +38,8 @@
 #define TRAC_URL     _T("https://github.com/clsid2/mpc-hc/issues")
 #define BUGS_URL     _T("https://github.com/clsid2/mpc-hc/issues")
 
-#define USE_STATIC_UNRAR 1
+// unrar comes from vcpkg as unrar.dll (shipped next to mpcSubs.dll) and is loaded on demand
+#define USE_STATIC_UNRAR 0
 
 #define USE_LIBASS 0
 

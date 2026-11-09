@@ -49,7 +49,8 @@
       This definition is the same as the POSITION type for MFCs, so we must
       avoid defining it twice.
    */
-#ifndef __AFX_H__
+#if !defined(__AFX_H__) && !defined(__ATLCOLL_H__)
+// atlcoll.h (ATL) declares __POSITION too: include it before this header, never after.
 struct __POSITION { int unused; };
 typedef __POSITION* POSITION;
 #endif

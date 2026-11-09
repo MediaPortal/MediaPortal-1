@@ -143,9 +143,9 @@ private:
     PTR_DXVA2CreateDirect3DDeviceManager9 pfDXVA2CreateDirect3DDeviceManager9;
     PTR_DXVA2CreateVideoService pfDXVA2CreateVideoService;
 
-    CComPtr<IDirect3D9> m_pD3D;
-    CComPtr<IDirect3DDevice9> m_pD3DDev;
-    CComPtr<IDirect3DDeviceManager9> m_pD3DDeviceManager;
+    ComPtr<IDirect3D9> m_pD3D;
+    ComPtr<IDirect3DDevice9> m_pD3DDev;
+    ComPtr<IDirect3DDeviceManager9> m_pD3DDeviceManager;
     UINT m_nResetToken;
     HANDLE m_hDevice;
     HWND m_hWnd;
@@ -174,7 +174,7 @@ CNullVideoRendererInputPin::CNullVideoRendererInputPin(CBaseRenderer* pRenderer,
 
     // Initialize Device Manager with DX surface
     if (m_pD3DDev) {
-        m_pD3DDeviceManager->ResetDevice(m_pD3DDev, m_nResetToken);
+        m_pD3DDeviceManager->ResetDevice(m_pD3DDev.Get(), m_nResetToken);
         m_pD3DDeviceManager->OpenDeviceHandle(&m_hDevice);
     }
 }
@@ -228,7 +228,7 @@ STDMETHODIMP CNullVideoRendererInputPin::GetService(REFGUID guidService, REFIID 
             return m_pD3DDeviceManager->GetVideoService(m_hDevice, riid, ppvObject);
         } else if (riid == __uuidof(IDirectXVideoAccelerationService)) {
             // TODO : to be tested....
-            return pfDXVA2CreateVideoService(m_pD3DDev, riid, ppvObject);
+            return pfDXVA2CreateVideoService(m_pD3DDev.Get(), riid, ppvObject);
         } else if (riid == __uuidof(IDirectXVideoMemoryConfiguration)) {
             GetInterface((IDirectXVideoMemoryConfiguration*)this, ppvObject);
             return S_OK;
@@ -302,7 +302,7 @@ CNullUVideoRenderer::CNullUVideoRenderer(LPUNKNOWN pUnk, HRESULT* phr)
     : CNullRenderer(__uuidof(this), NAME("Null Video Renderer (Uncompressed)"), pUnk, phr)
 {
 #ifdef USE_DXVA
-    m_pInputPin = DEBUG_NEW CNullVideoRendererInputPin(this, phr, L"In");
+    m_pInputPin = new CNullVideoRendererInputPin(this, phr, L"In");
 #endif
 }
 
@@ -347,9 +347,9 @@ HRESULT CNullUVideoRenderer::CheckMediaType(const CMediaType* pmt)
 HRESULT CNullUVideoRenderer::DoRenderSample(IMediaSample* pSample)
 {
 #ifdef USE_DXVA
-    CComQIPtr<IMFGetService> pService = pSample;
+    auto pService = ComQuery<IMFGetService>(pSample);
     if (pService != nullptr) {
-        CComPtr<IDirect3DSurface9>  pSurface;
+        ComPtr<IDirect3DSurface9>  pSurface;
         if (SUCCEEDED(pService->GetService(MR_BUFFER_SERVICE, IID_PPV_ARGS(&pSurface)))) {
             // TODO : render surface...
         }
@@ -449,5 +449,5 @@ HRESULT CNullTextRenderer::CTextInputPin::CheckMediaType(const CMediaType* pmt)
 CNullTextRenderer::CNullTextRenderer(LPUNKNOWN pUnk, HRESULT* phr)
     : CBaseFilter(NAME("CNullTextRenderer"), pUnk, this, __uuidof(this), phr)
 {
-    m_pInput.Attach(DEBUG_NEW CTextInputPin(this, this, phr));
+    m_pInput.reset(new CTextInputPin(this, this, phr));
 }

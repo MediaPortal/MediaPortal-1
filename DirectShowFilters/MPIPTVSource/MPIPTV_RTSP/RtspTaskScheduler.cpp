@@ -35,7 +35,7 @@ RtspTaskScheduler::~RtspTaskScheduler()
 {
 }
 
-void RtspTaskScheduler::doEventLoop(volatile char* watchVariable)
+void RtspTaskScheduler::doEventLoop(EventLoopWatchVariable* watchVariable)
 {
   while(true)
   {

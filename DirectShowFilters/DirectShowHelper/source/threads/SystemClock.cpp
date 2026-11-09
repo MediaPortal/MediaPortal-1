@@ -38,5 +38,5 @@ namespace XbmcThreads
     }
     return (unsigned int)(now_time - start_time);
   }
-  const unsigned int EndTime::InfiniteValue = 490000000000;
+  const unsigned int EndTime::InfiniteValue = (std::numeric_limits<unsigned int>::max)(); // parentheses: windows.h defines max
 }

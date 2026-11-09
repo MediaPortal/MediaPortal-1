@@ -100,7 +100,7 @@ int CPatParser::Count()
 bool CPatParser::GetChannel(int index, CChannelInfo& info)
 {
 	static CChannelInfo unknownChannel;
-  if (index < 0 || index > Count()) 
+  if (index < 0 || index >= Count()) 
 	{
 		return false;
 	}

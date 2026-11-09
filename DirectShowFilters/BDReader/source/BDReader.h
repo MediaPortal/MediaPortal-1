@@ -224,7 +224,7 @@ private:
   IMediaSeeking*  m_pMediaSeeking;
   IMediaControl*  m_pMediaControl;
 
-  char            m_pathToBD[MAX_PATH];
+  char            m_pathToBD[4096];
 
   // Seek thread
   static DWORD WINAPI CommandThreadEntryPoint(LPVOID lpParameter);

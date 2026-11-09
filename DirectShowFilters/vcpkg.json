@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "mediaportal-directshowfilters",
+  "version-string": "1.39",
+  "description": "Third-party libraries of the MediaPortal native DirectShow filters (Filters.sln)",
+  "builtin-baseline": "14a4527a25ad40e67319337d77d5aa9ea52d2b0d",
+  "dependencies": [
+    {
+      "name": "freetype",
+      "default-features": false,
+      "features": [ "zlib" ]
+    },
+    "libsamplerate",
+    "live555",
+    "soundtouch",
+    "unrar",
+    "zlib"
+  ],
+  "features": {
+    "tests": {
+      "description": "Unit and integration tests of the filters (GoogleTest)",
+      "dependencies": [ "gtest" ]
+    }
+  }
+}

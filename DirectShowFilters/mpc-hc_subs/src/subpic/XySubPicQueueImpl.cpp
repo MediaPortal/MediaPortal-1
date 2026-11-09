@@ -71,9 +71,9 @@ DWORD CXySubPicQueue::ThreadProc()
 
         int nMaxSubPic = m_nMaxSubPic;
 
-        CComPtr<ISubPicProvider> pSubPicProvider;
+        ComPtr<ISubPicProvider> pSubPicProvider;
         GetSubPicProvider(&pSubPicProvider);
-        CComQIPtr<IXyCompatProvider> pXySubPicProvider = pSubPicProvider;
+        auto pXySubPicProvider = ComQuery<IXyCompatProvider>(pSubPicProvider);
         if (pXySubPicProvider && SUCCEEDED(pSubPicProvider->Lock())) {
             for (REFERENCE_TIME rtStart = rtNow; !m_bBreakBuffering && GetQueueCount() < nMaxSubPic; rtStart += rtTimePerFrame) {
                 REFERENCE_TIME rtStop = rtStart + rtTimePerFrame;
@@ -107,31 +107,31 @@ DWORD CXySubPicQueue::ThreadProc()
                         }
 
                         if (m_llSubId == id && !m_queue.IsEmpty()) { // same subtitle as last time
-                            CComPtr<ISubPic> pSubPic = m_queue.GetTail();
+                            ComPtr<ISubPic> pSubPic = m_queue.GetTail();
                             pSubPic->SetStop(rtStop);
 #if SUBPIC_TRACE_LEVEL > 1
-                            CRect r;
+                            RECT r = {};
                             pSubPic->GetDirtyRect(&r);
-                            TRACE(_T("Skip:   %f->%f      %dx%d\n"), double(pSubPic->GetStart()) / 10000000.0, double(pSubPic->GetStop()) / 10000000.0, r.Width(), r.Height());
+                            TRACE(_T("Skip:   %f->%f      %dx%d\n"), double(pSubPic->GetStart()) / 10000000.0, double(pSubPic->GetStop()) / 10000000.0, RectWidth(r), RectHeight(r));
 #endif
                             continue;
                         } else {
-                            CComPtr<ISubPic> pStatic;
+                            ComPtr<ISubPic> pStatic;
                             if (FAILED(m_pAllocator->GetStatic(&pStatic))) {
                                 break;
                             }
 
                             hr = RenderTo(pStatic, rtStart, rtStop, fps, true);
 #if SUBPIC_TRACE_LEVEL > 0
-                            CRect r;
+                            RECT r = {};
                             pStatic->GetDirtyRect(&r);
-                            TRACE(_T("Render: %f->%f      %dx%d\n"), double(rtStart) / 10000000.0, double(rtStop) / 10000000.0, r.Width(), r.Height());
+                            TRACE(_T("Render: %f->%f      %dx%d\n"), double(rtStart) / 10000000.0, double(rtStop) / 10000000.0, RectWidth(r), RectHeight(r));
 #endif
                             if (FAILED(hr)) {
                                 break;
                             }
 
-                            CComPtr<ISubPic> pDynamic;
+                            ComPtr<ISubPic> pDynamic;
                             if (FAILED(m_pAllocator->AllocDynamic(&pDynamic))
                                     || FAILED(pStatic->CopyTo(pDynamic))) {
                                 break;
@@ -163,10 +163,8 @@ DWORD CXySubPicQueue::ThreadProc()
 
             REFERENCE_TIME rtInvalidate = m_rtInvalidate;
 
-            POSITION Iter = m_queue.GetHeadPosition();
-            while (Iter) {
-                POSITION ThisPos = Iter;
-                ISubPic* pSubPic = m_queue.GetNext(Iter);
+            for (auto Iter = m_queue.begin(); Iter != m_queue.end();) {
+                ISubPic* pSubPic = Iter->Get();
 
                 REFERENCE_TIME rtStart = pSubPic->GetStart();
                 REFERENCE_TIME rtStop = pSubPic->GetStop();
@@ -175,9 +173,10 @@ DWORD CXySubPicQueue::ThreadProc()
 #if SUBPIC_TRACE_LEVEL >= 0
                     TRACE(_T("Removed subtitle because of invalidation: %f->%f\n"), double(rtStart) / 10000000.0, double(rtStop) / 10000000.0);
 #endif
-                    m_queue.RemoveAt(ThisPos);
+                    Iter = m_queue.erase(Iter);
                     continue;
                 }
+                ++Iter;
             }
 
             /*
@@ -221,20 +220,20 @@ STDMETHODIMP CXySubPicQueueNoThread::Invalidate(REFERENCE_TIME rtInvalidate)
     return __super::Invalidate(rtInvalidate);
 }
 
-STDMETHODIMP_(bool) CXySubPicQueueNoThread::LookupSubPic(REFERENCE_TIME rtNow, CComPtr<ISubPic>& ppSubPic)
+STDMETHODIMP_(bool) CXySubPicQueueNoThread::LookupSubPic(REFERENCE_TIME rtNow, ComPtr<ISubPic>& ppSubPic)
 {
     // CXySubPicQueueNoThread is always blocking so bAdviseBlocking doesn't matter anyway
     return LookupSubPic(rtNow, true, ppSubPic);
 }
 
-STDMETHODIMP_(bool) CXySubPicQueueNoThread::LookupSubPic(REFERENCE_TIME rtNow, bool /*bAdviseBlocking*/, CComPtr<ISubPic>& ppSubPic)
+STDMETHODIMP_(bool) CXySubPicQueueNoThread::LookupSubPic(REFERENCE_TIME rtNow, bool /*bAdviseBlocking*/, ComPtr<ISubPic>& ppSubPic)
 {
     // CXySubPicQueueNoThread is always blocking so we ignore bAdviseBlocking
 
-    CComPtr<ISubPic> pSubPic;
-    CComPtr<ISubPicProvider> pSubPicProvider;
+    ComPtr<ISubPic> pSubPic;
+    ComPtr<ISubPicProvider> pSubPicProvider;
     GetSubPicProvider(&pSubPicProvider);
-    CComQIPtr<IXyCompatProvider> pXySubPicProvider = pSubPicProvider;
+    auto pXySubPicProvider = ComQuery<IXyCompatProvider>(pSubPicProvider);
 
     {
         CAutoLock cAutoLock(&m_csLock);
@@ -271,7 +270,7 @@ STDMETHODIMP_(bool) CXySubPicQueueNoThread::LookupSubPic(REFERENCE_TIME rtNow, b
                 if (bAllocSubPic) {
                     CAutoLock cAutoLock(&m_csLock);
 
-                    m_pSubPic.Release();
+                    m_pSubPic.Reset();
 
                     if (FAILED(m_pAllocator->AllocDynamic(&m_pSubPic))) {
                         return false;
@@ -284,20 +283,20 @@ STDMETHODIMP_(bool) CXySubPicQueueNoThread::LookupSubPic(REFERENCE_TIME rtNow, b
                     pSubPic->SetStop(rtStop);
                     ppSubPic = pSubPic;
                 } else if (m_pAllocator->IsDynamicWriteOnly()) {
-                    CComPtr<ISubPic> pStatic;
+                    ComPtr<ISubPic> pStatic;
                     hr = m_pAllocator->GetStatic(&pStatic);
                     if (SUCCEEDED(hr)) {
-                        hr = RenderTo(pStatic, rtStart, rtStop, fps, true);
+                        hr = RenderTo(pStatic.Get(), rtStart, rtStop, fps, true);
                     }
                     if (SUCCEEDED(hr)) {
-                        hr = pStatic->CopyTo(pSubPic);
+                        hr = pStatic->CopyTo(pSubPic.Get());
                     }
                     if (SUCCEEDED(hr)) {
                         ppSubPic = pSubPic;
                         m_llSubId = id;
                     }
                 } else {
-                    if (SUCCEEDED(RenderTo(pSubPic, rtStart, rtStop, fps, true))) {
+                    if (SUCCEEDED(RenderTo(pSubPic.Get(), rtStart, rtStop, fps, true))) {
                         ppSubPic = pSubPic;
                         m_llSubId = id;
                     }

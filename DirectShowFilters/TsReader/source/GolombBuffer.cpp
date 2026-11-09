@@ -64,8 +64,10 @@ UINT64 CGolombBuffer::BitRead(int nBits, bool fPeek)
 
 UINT64 CGolombBuffer::UExpGolombRead()
 {
+	// BitRead() returns 0 forever at the end of the buffer and valid codes never
+	// have more than 31 leading zero bits: cap the prefix to avoid an endless loop.
 	int n = -1;
-	for(BYTE b = 0; !b; n++) b = (BYTE)BitRead(1);
+	for(BYTE b = 0; !b && n < 32; n++) b = (BYTE)BitRead(1);
 	return (1ui64 << n) - 1 + BitRead(n);
 }
 

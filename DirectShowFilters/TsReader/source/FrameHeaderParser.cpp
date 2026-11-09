@@ -774,7 +774,7 @@ bool CFrameHeaderParser::Read(eac3hdr& h, int len, CMediaType* pmt)
 	h.bsid = BitRead(5);
 	h.bsmod = BitRead(3);
 
-	if(h.bsid >= 17)
+	if(h.bsid >= 17 || (h.fscod == 3 && h.fscod2 == 3)) // fscod2 3 is reserved
 		return(false);
 
 	static int channels[] = {2, 1, 2, 3, 3, 4, 4, 5};
@@ -1321,6 +1321,7 @@ bool CFrameHeaderParser::Read(avchdr& h, int len, CMediaType* pmt, bool reset)
 	if ((len <= 5) || (len > 65534)) return(false); //Sanity check
   
 	int nal_len = (int)BitRead(32);
+	if (nal_len < 1 || nal_len > len - 4) return(false); // the NAL unit has to lie inside the data
 	INT64 next_nal = GetPos()+nal_len;
 	BYTE id=(BYTE)BitRead(8);
 	BYTE nal_type=id & 0x9f;

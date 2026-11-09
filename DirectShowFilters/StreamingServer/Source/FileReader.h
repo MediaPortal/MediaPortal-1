@@ -28,6 +28,7 @@
 #define FILEREADER
 
 #include <Streams.h>
+#include <string>
 
 
 // Modified version of Microsoft CCritSec and CAutoLock methods from wxutil.h
@@ -134,8 +135,8 @@ protected:
 	// HRESULT GetFileSize(__int64 *pStartPosition, __int64 *pLength);
 	HRESULT Read(PBYTE pbData, ULONG lDataLength, ULONG *dwReadBytes, __int64 llDistanceToMove, DWORD dwMoveMethod);
   
-  CString randomStrGen(int length); 
-  CString HresultToCString(HRESULT errToConvert);
+  std::wstring randomStrGen(int length); 
+  std::wstring HresultToCString(HRESULT errToConvert);
   BOOL    IsVistaOrLater();
 	void    CancelPendingIO();
 	

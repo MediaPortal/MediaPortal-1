@@ -22,8 +22,6 @@
 #pragma once
 
 #include "StdAfx.h"
-#include <atlbase.h>
-#include <atlcoll.h>
 #include <vector>
 #include <map>
 #include <bluray.h>
@@ -60,8 +58,8 @@ public:
 
   void       FillAudio(CTsHeader& header, byte* tsPacket);
   void       FillVideo(CTsHeader& header, byte* tsPacket);
-  void       FillVideoH264PESPacket(CTsHeader* header, CAutoPtr<Packet> p, bool pFlushBuffers = false);
-  void       FillVideoVC1PESPacket(CTsHeader* header, CAutoPtr<Packet> p, bool pFlushBuffers = false);
+  void       FillVideoH264PESPacket(CTsHeader* header, std::unique_ptr<Packet> p, bool pFlushBuffers = false);
+  void       FillVideoVC1PESPacket(CTsHeader* header, std::unique_ptr<Packet> p, bool pFlushBuffers = false);
   void       FillVideoH264(CTsHeader* header, byte* tsPacket);
   void       FillVideoMPEG2(CTsHeader* header, byte* tsPacket, bool pFlushBuffers = false);
 
@@ -126,7 +124,7 @@ public:
     REFERENCE_TIME m_rtOffset;
 
 private:
-  void PacketDelivery(CAutoPtr<Packet> p);
+  void PacketDelivery(std::unique_ptr<Packet> p);
 
   bool AudioStreamsAvailable(BLURAY_CLIP_INFO* pClip);
   char* StreamFormatAsString(int pStreamType);
@@ -196,9 +194,9 @@ private:
   bool m_bReadFailed;
 
   // Used only for H.264 stream demuxing
-  CAutoPtr<Packet> m_p;
-  CAutoPtr<Packet> m_pBuild;
-  CAutoPtrList<Packet> m_pl;
+  std::unique_ptr<Packet> m_p;
+  std::unique_ptr<Packet> m_pBuild;
+  PacketList m_pl;
   bool m_fHasAccessUnitDelimiters;
   DWORD m_lastStart;
   CPcr m_VideoPts;

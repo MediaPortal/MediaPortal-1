@@ -25,6 +25,7 @@
 #include <windows.h>
 #include <stdio.h>
 #include <tchar.h>
+#include <process.h>
 
 //#include <afx.h>
 //#include <afxwin.h>         // MFC core and standard components

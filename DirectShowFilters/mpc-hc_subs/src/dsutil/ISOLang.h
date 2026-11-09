@@ -20,7 +20,6 @@
 
 #pragma once
 
-#include <afxstr.h>
 
 template<typename StringType>
 struct ISOLangT {
@@ -43,20 +42,20 @@ struct ISOLangT {
 struct ISOLang : public ISOLangT<LPCSTR> {
     using ISOLangT::ISOLangT;
 
-    static CString ISO6391ToLanguage(LPCSTR code);
-    static CString ISO6392ToLanguage(LPCSTR code);
+    static tstring ISO6391ToLanguage(LPCSTR code);
+    static tstring ISO6392ToLanguage(LPCSTR code);
     static bool IsISO639Language(LPCSTR code);
-    static CString ISO639XToLanguage(LPCSTR code, bool bCheckForFullLangName = false);
-    static CString LCIDToLanguage(LCID lcid);
+    static tstring ISO639XToLanguage(LPCSTR code, bool bCheckForFullLangName = false);
+    static tstring LCIDToLanguage(LCID lcid);
     static LCID ISO6391ToLcid(LPCSTR code);
     static LCID ISO6392ToLcid(LPCSTR code);
     static BOOL IsISO6391(LPCSTR code);
     static BOOL IsISO6392(LPCSTR code);
-    static CStringA ISO6391To6392(LPCSTR code);
-    static CString ISO6392To6391(LPCSTR code);
-    static CString LanguageToISO6392(LPCTSTR lang);
+    static std::string ISO6391To6392(LPCSTR code);
+    static tstring ISO6392To6391(LPCSTR code);
+    static tstring LanguageToISO6392(LPCTSTR lang);
     static ISOLang ISO6391ToISOLang(LPCSTR code);
     static ISOLang ISO6392ToISOLang(LPCSTR code);
     static ISOLang ISO639XToISOLang(LPCSTR code);
-    static CStringW GetLocaleStringCompat(LCID lcid);
+    static std::wstring GetLocaleStringCompat(LCID lcid);
 };

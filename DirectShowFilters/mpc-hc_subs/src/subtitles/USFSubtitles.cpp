@@ -25,61 +25,62 @@
 #include <algorithm>
 
 #define DeclareNameAndValue(pNode, name, val) \
-    CComBSTR name;                            \
-    pNode->get_nodeName(&name);               \
-    name.ToLower();                           \
-    CComVariant val;                          \
+    _bstr_t name##Raw;                        \
+    pNode->get_nodeName(name##Raw.GetAddress());          \
+    std::wstring name(StringWiden((const wchar_t*)name##Raw)); \
+    StringLower(name);                        \
+    _variant_t val;                           \
     pNode->get_nodeValue(&val);
 
 #define BeginEnumAttribs(pNode, pChild)                                                               \
     {                                                                                                 \
-        CComPtr<IXMLDOMNamedNodeMap> pAttribs;                                                        \
+        ComPtr<IXMLDOMNamedNodeMap> pAttribs;                                                        \
         if (SUCCEEDED(pNode->get_attributes(&pAttribs)) && pAttribs != nullptr) {                     \
-            CComPtr<IXMLDOMNode> pChild;                                                              \
+            ComPtr<IXMLDOMNode> pChild;                                                              \
             for (pAttribs->nextNode(&pChild); pChild; pChild = nullptr, pAttribs->nextNode(&pChild)) {
 
 #define EndEnumAttribs }}}
 
 #define BeginEnumChildren(pNode, pChild)                                                                                \
     {                                                                                                                   \
-        CComPtr<IXMLDOMNode> pChild, pChild##Next;                                                                      \
+        ComPtr<IXMLDOMNode> pChild, pChild##Next;                                                                      \
         for (pNode->get_firstChild(&pChild); pChild; pChild##Next = nullptr, pChild->get_nextSibling(&pChild##Next), pChild = pChild##Next) {
 
 #define EndEnumChildren }}
 
-static CStringW GetText(CComPtr<IXMLDOMNode> pNode)
+static std::wstring GetText(ComPtr<IXMLDOMNode> pNode)
 {
-    CComBSTR bstr;
-    pNode->get_text(&bstr);
+    _bstr_t bstr;
+    pNode->get_text(bstr.GetAddress());
 
-    return CStringW(bstr);
+    return StringWiden((const wchar_t*)bstr);
 }
 
-static CStringW GetXML(CComPtr<IXMLDOMNode> pNode)
+static std::wstring GetXML(ComPtr<IXMLDOMNode> pNode)
 {
-    CComBSTR bstr;
-    pNode->get_xml(&bstr);
-    CStringW str(bstr);
-    str.Remove('\r');
-    str.Replace('\n', ' ');
+    _bstr_t bstr;
+    pNode->get_xml(bstr.GetAddress());
+    std::wstring str(StringWiden((const wchar_t*)bstr));
+    StringRemove(str, '\r');
+    StringReplace(str, '\n', ' ');
 
-    for (int i = 0; (i = str.Find(L" ", i)) >= 0;) {
-        for (++i; i < str.GetLength() && (str[i] == ' ');) {
-            str.Delete(i);
+    for (int i = 0; (i = StringFind(str, L" ", i)) >= 0;) {
+        for (++i; i < int(str.size()) && (str[i] == ' ');) {
+            StringDelete(str, i);
         }
     }
     return str;
 }
 
-static CStringW GetAttrib(CStringW attrib, CComPtr<IXMLDOMNode> pNode)
+static std::wstring GetAttrib(std::wstring attrib, ComPtr<IXMLDOMNode> pNode)
 {
-    CStringW ret;
+    std::wstring ret;
 
     BeginEnumAttribs(pNode, pChild) {
         DeclareNameAndValue(pChild, name, val);
 
-        if (CStringW(name) == attrib && val.vt == VT_BSTR) { // TODO: prepare for other types
-            ret = val.bstrVal;
+        if (std::wstring(name) == attrib && val.vt == VT_BSTR) { // TODO: prepare for other types
+            ret = StringWiden(val.bstrVal);
             break;
         }
     }
@@ -88,24 +89,24 @@ static CStringW GetAttrib(CStringW attrib, CComPtr<IXMLDOMNode> pNode)
     return ret;
 }
 
-static int TimeToInt(CStringW str)
+static int TimeToInt(std::wstring str)
 {
-    CAtlList<CStringW> sl;
+    std::list<std::wstring> sl;
     int i = 0;
-    for (CStringW token = str.Tokenize(L":.,", i); !token.IsEmpty(); token = str.Tokenize(L":.,", i)) {
-        sl.AddHead(token);
+    for (std::wstring token = StringTokenize(str, L":.,", i); !token.empty(); token = StringTokenize(str, L":.,", i)) {
+        sl.push_front(token);
     }
 
-    if (sl.GetCount() > 4) {
+    if (sl.size() > 4) {
         return -1;
     }
 
     int time = 0;
     int mul[4] = {1, 1000, 60 * 1000, 60 * 60 * 1000};
-    POSITION pos = sl.GetHeadPosition();
+    auto slIt = sl.begin();
 
-    for (i = 0; pos; i++) {
-        const WCHAR* s = sl.GetNext(pos);
+    for (i = 0; slIt != sl.end(); i++, ++slIt) {
+        const WCHAR* s = slIt->c_str();
         WCHAR* tmp = nullptr;
         int t = wcstol(s, &tmp, 10);
         if (s >= tmp) {
@@ -117,30 +118,30 @@ static int TimeToInt(CStringW str)
     return time;
 }
 
-static DWORD StringToDWORD(CStringW str)
+static DWORD StringToDWORD(std::wstring str)
 {
-    if (str.IsEmpty()) {
+    if (str.empty()) {
         return 0;
     }
     if (str[0] == '#') {
-        return (DWORD)wcstol(str, nullptr, 16);
+        return (DWORD)wcstol(str.c_str(), nullptr, 16);
     } else {
-        return (DWORD)wcstol(str, nullptr, 10);
+        return (DWORD)wcstol(str.c_str(), nullptr, 10);
     }
 }
 
-static DWORD ColorToDWORD(CStringW str)
+static DWORD ColorToDWORD(std::wstring str)
 {
-    if (str.IsEmpty()) {
+    if (str.empty()) {
         return 0;
     }
 
     DWORD ret = 0;
 
     if (str[0] == '#') {
-        ret = (DWORD)wcstol(str.TrimLeft('#'), nullptr, 16);
+        ret = (DWORD)wcstol(StringTrimLeft(str, '#').c_str(), nullptr, 16);
     } else {
-        g_colors.Lookup(CString(str), ret);
+        Lookup(g_colors, tstring(str), ret);
     }
 
     ret = ((ret & 0xff) << 16) | (ret & 0xff00ff00) | ((ret >> 16) & 0xff);
@@ -148,28 +149,28 @@ static DWORD ColorToDWORD(CStringW str)
     return ret;
 }
 
-static int TranslateAlignment(CStringW alignment)
+static int TranslateAlignment(std::wstring alignment)
 {
     return
-        !alignment.CompareNoCase(L"BottomLeft") ? 1 :
-        !alignment.CompareNoCase(L"BottomCenter") ? 2 :
-        !alignment.CompareNoCase(L"BottomRight") ? 3 :
-        !alignment.CompareNoCase(L"MiddleLeft") ? 4 :
-        !alignment.CompareNoCase(L"MiddleCenter") ? 5 :
-        !alignment.CompareNoCase(L"MiddleRight") ? 6 :
-        !alignment.CompareNoCase(L"TopLeft") ? 7 :
-        !alignment.CompareNoCase(L"TopCenter") ? 8 :
-        !alignment.CompareNoCase(L"TopRight") ? 9 :
+        !StringICompare(alignment, L"BottomLeft") ? 1 :
+        !StringICompare(alignment, L"BottomCenter") ? 2 :
+        !StringICompare(alignment, L"BottomRight") ? 3 :
+        !StringICompare(alignment, L"MiddleLeft") ? 4 :
+        !StringICompare(alignment, L"MiddleCenter") ? 5 :
+        !StringICompare(alignment, L"MiddleRight") ? 6 :
+        !StringICompare(alignment, L"TopLeft") ? 7 :
+        !StringICompare(alignment, L"TopCenter") ? 8 :
+        !StringICompare(alignment, L"TopRight") ? 9 :
         2;
 }
 
-static int TranslateMargin(CStringW margin, int wndsize)
+static int TranslateMargin(std::wstring margin, int wndsize)
 {
     int ret = 0;
 
-    if (!margin.IsEmpty()) {
-        ret = wcstol(margin, nullptr, 10);
-        if (margin.Find('%') >= 0) {
+    if (!margin.empty()) {
+        ret = wcstol(margin.c_str(), nullptr, 10);
+        if (StringFind(margin, '%') >= 0) {
             ret = wndsize * ret / 100;
         }
     }
@@ -190,95 +191,91 @@ CUSFSubtitles::~CUSFSubtitles()
 bool CUSFSubtitles::Read(LPCTSTR fn)
 {
     VARIANT_BOOL vb;
-    CComPtr<IXMLDOMDocument> pDoc;
-    if (FAILED(pDoc.CoCreateInstance(CLSID_DOMDocument))
+    ComPtr<IXMLDOMDocument> pDoc;
+    if (FAILED(CoCreateInstance(CLSID_DOMDocument, nullptr, CLSCTX_ALL, IID_PPV_ARGS(&pDoc)))
             || FAILED(pDoc->put_async(VARIANT_FALSE))
-            || FAILED(pDoc->load(CComVariant(fn), &vb)) || vb != VARIANT_TRUE) {
+            || FAILED(pDoc->load(_variant_t(fn), &vb)) || vb != VARIANT_TRUE) {
         return false;
     }
 
-    styles.RemoveAll();
-    effects.RemoveAll();
-    texts.RemoveAll();
+    styles.clear();
+    effects.clear();
+    texts.clear();
 
-    if (!ParseUSFSubtitles(CComQIPtr<IXMLDOMNode>(pDoc))) {
+    if (!ParseUSFSubtitles(ComQuery<IXMLDOMNode>(pDoc))) {
         return false;
     }
 
-    POSITION pos = styles.GetHeadPosition();
-    while (pos) {
-        style_t* def = styles.GetNext(pos);
+    for (const auto& def : styles) {
 
-        if (def->name.CompareNoCase(L"Default")) {
+        if (StringICompare(def->name, L"Default")) {
             continue;
         }
 
-        POSITION pos2 = styles.GetHeadPosition();
-        while (pos2) {
-            style_t* s = styles.GetNext(pos2);
+        for (const auto& s : styles) {
 
-            if (!s->name.CompareNoCase(L"Default")) {
+            if (!StringICompare(s->name, L"Default")) {
                 continue;
             }
 
-            if (s->fontstyle.face.IsEmpty()) {
+            if (s->fontstyle.face.empty()) {
                 s->fontstyle.face = def->fontstyle.face;
             }
-            if (s->fontstyle.size.IsEmpty()) {
+            if (s->fontstyle.size.empty()) {
                 s->fontstyle.size = def->fontstyle.size;
             }
-            if (s->fontstyle.color[0].IsEmpty()) {
+            if (s->fontstyle.color[0].empty()) {
                 s->fontstyle.color[0] = def->fontstyle.color[0];
             }
-            if (s->fontstyle.color[1].IsEmpty()) {
+            if (s->fontstyle.color[1].empty()) {
                 s->fontstyle.color[1] = def->fontstyle.color[1];
             }
-            if (s->fontstyle.color[2].IsEmpty()) {
+            if (s->fontstyle.color[2].empty()) {
                 s->fontstyle.color[2] = def->fontstyle.color[2];
             }
-            if (s->fontstyle.color[3].IsEmpty()) {
+            if (s->fontstyle.color[3].empty()) {
                 s->fontstyle.color[3] = def->fontstyle.color[3];
             }
-            if (s->fontstyle.italic.IsEmpty()) {
+            if (s->fontstyle.italic.empty()) {
                 s->fontstyle.italic = def->fontstyle.italic;
             }
-            if (s->fontstyle.weight.IsEmpty()) {
+            if (s->fontstyle.weight.empty()) {
                 s->fontstyle.weight = def->fontstyle.weight;
             }
-            if (s->fontstyle.underline.IsEmpty()) {
+            if (s->fontstyle.underline.empty()) {
                 s->fontstyle.underline = def->fontstyle.underline;
             }
-            if (s->fontstyle.alpha.IsEmpty()) {
+            if (s->fontstyle.alpha.empty()) {
                 s->fontstyle.alpha = def->fontstyle.alpha;
             }
-            if (s->fontstyle.outline.IsEmpty()) {
+            if (s->fontstyle.outline.empty()) {
                 s->fontstyle.outline = def->fontstyle.outline;
             }
-            if (s->fontstyle.shadow.IsEmpty()) {
+            if (s->fontstyle.shadow.empty()) {
                 s->fontstyle.shadow = def->fontstyle.shadow;
             }
-            if (s->fontstyle.wrap.IsEmpty()) {
+            if (s->fontstyle.wrap.empty()) {
                 s->fontstyle.wrap = def->fontstyle.wrap;
             }
-            if (s->pal.alignment.IsEmpty()) {
+            if (s->pal.alignment.empty()) {
                 s->pal.alignment = def->pal.alignment;
             }
-            if (s->pal.relativeto.IsEmpty()) {
+            if (s->pal.relativeto.empty()) {
                 s->pal.relativeto = def->pal.relativeto;
             }
-            if (s->pal.horizontal_margin.IsEmpty()) {
+            if (s->pal.horizontal_margin.empty()) {
                 s->pal.horizontal_margin = def->pal.horizontal_margin;
             }
-            if (s->pal.vertical_margin.IsEmpty()) {
+            if (s->pal.vertical_margin.empty()) {
                 s->pal.vertical_margin = def->pal.vertical_margin;
             }
-            if (s->pal.rotate[0].IsEmpty()) {
+            if (s->pal.rotate[0].empty()) {
                 s->pal.rotate[0] = def->pal.rotate[0];
             }
-            if (s->pal.rotate[1].IsEmpty()) {
+            if (s->pal.rotate[1].empty()) {
                 s->pal.rotate[1] = def->pal.rotate[1];
             }
-            if (s->pal.rotate[2].IsEmpty()) {
+            if (s->pal.rotate[2].empty()) {
                 s->pal.rotate[2] = def->pal.rotate[2];
             }
         }
@@ -286,10 +283,8 @@ bool CUSFSubtitles::Read(LPCTSTR fn)
         break;
     }
 
-    pos = texts.GetHeadPosition();
-    while (pos) {
-        text_t* t = texts.GetNext(pos);
-        if (t->style.IsEmpty()) {
+    for (const auto& t : texts) {
+        if (t->style.empty()) {
             t->style = L"Default";
         }
     }
@@ -301,54 +296,52 @@ bool CUSFSubtitles::ConvertToSTS(CSimpleTextSubtitle& sts)
 {
     sts.m_name = metadata.language.text;
     sts.m_encoding = CTextFile::UTF8;
-    sts.m_playRes = CSize(640, 480);
+    sts.m_playRes = MakeSize(640, 480);
     sts.m_fScaledBAS = false;
     sts.m_defaultWrapStyle = 1;
 
     // TODO: map metadata.language.code to charset num (windows doesn't have such a function...)
     int charSet = DEFAULT_CHARSET;
 
-    POSITION pos = styles.GetHeadPosition();
-    while (pos) {
-        style_t* s = styles.GetNext(pos);
+    for (const auto& s : styles) {
 
-        if (!s->name.CompareNoCase(L"Default") && !s->fontstyle.wrap.IsEmpty()) {
+        if (!StringICompare(s->name, L"Default") && !s->fontstyle.wrap.empty()) {
             sts.m_defaultWrapStyle =
-                !s->fontstyle.wrap.CompareNoCase(L"no") ? 2 :
+                !StringICompare(s->fontstyle.wrap, L"no") ? 2 :
                 /*!s->fontstyle.wrap.CompareNoCase(L"auto") ? 1 :*/
                 1;
         }
 
-        STSStyle* stss = DEBUG_NEW STSStyle;
+        STSStyle* stss = new STSStyle;
         if (!stss) {
             continue;
         }
 
-        if (!s->pal.horizontal_margin.IsEmpty()) {
+        if (!s->pal.horizontal_margin.empty()) {
             stss->marginRect.left = stss->marginRect.right = TranslateMargin(s->pal.horizontal_margin, sts.m_playRes.cx);
         }
-        if (!s->pal.vertical_margin.IsEmpty()) {
+        if (!s->pal.vertical_margin.empty()) {
             stss->marginRect.top = stss->marginRect.bottom = TranslateMargin(s->pal.vertical_margin, sts.m_playRes.cy);
         }
 
         stss->scrAlignment = TranslateAlignment(s->pal.alignment);
 
-        if (!s->pal.relativeto.IsEmpty()) stss->relativeTo =
-                !s->pal.relativeto.CompareNoCase(L"window") ? STSStyle::WINDOW :
-                !s->pal.relativeto.CompareNoCase(L"video") ? STSStyle::VIDEO :
+        if (!s->pal.relativeto.empty()) stss->relativeTo =
+                !StringICompare(s->pal.relativeto, L"window") ? STSStyle::WINDOW :
+                !StringICompare(s->pal.relativeto, L"video") ? STSStyle::VIDEO :
                 STSStyle::WINDOW;
 
         stss->borderStyle = 0;
-        if (!s->fontstyle.outline.IsEmpty()) {
-            stss->outlineWidthX = stss->outlineWidthY = wcstol(s->fontstyle.outline, nullptr, 10);
+        if (!s->fontstyle.outline.empty()) {
+            stss->outlineWidthX = stss->outlineWidthY = wcstol(s->fontstyle.outline.c_str(), nullptr, 10);
         }
-        if (!s->fontstyle.shadow.IsEmpty()) {
-            stss->shadowDepthX = stss->shadowDepthY = wcstol(s->fontstyle.shadow, nullptr, 10);
+        if (!s->fontstyle.shadow.empty()) {
+            stss->shadowDepthX = stss->shadowDepthY = wcstol(s->fontstyle.shadow.c_str(), nullptr, 10);
         }
 
         for (size_t i = 0; i < 4; i++) {
             DWORD color = ColorToDWORD(s->fontstyle.color[i]);
-            auto alpha = (BYTE)wcstol(s->fontstyle.alpha, nullptr, 10);
+            auto alpha = (BYTE)wcstol(s->fontstyle.alpha.c_str(), nullptr, 10);
 
             stss->colors[i] = color & 0xffffff;
             stss->alpha[i] = (BYTE)(color >> 24);
@@ -356,35 +349,35 @@ bool CUSFSubtitles::ConvertToSTS(CSimpleTextSubtitle& sts)
             stss->alpha[i] = BYTE(stss->alpha[i] + (255 - stss->alpha[i]) * std::min(std::max(alpha, 0ui8), 100ui8) / 100);
         }
 
-        if (!s->fontstyle.face.IsEmpty()) {
+        if (!s->fontstyle.face.empty()) {
             stss->fontName = s->fontstyle.face;
         }
-        if (!s->fontstyle.size.IsEmpty()) {
-            stss->fontSize = wcstol(s->fontstyle.size, nullptr, 10);
+        if (!s->fontstyle.size.empty()) {
+            stss->fontSize = wcstol(s->fontstyle.size.c_str(), nullptr, 10);
         }
-        if (!s->fontstyle.weight.IsEmpty()) stss->fontWeight =
-                !s->fontstyle.weight.CompareNoCase(L"normal") ? FW_NORMAL :
-                !s->fontstyle.weight.CompareNoCase(L"bold") ? FW_BOLD :
-                !s->fontstyle.weight.CompareNoCase(L"lighter") ? FW_LIGHT :
-                !s->fontstyle.weight.CompareNoCase(L"bolder") ? FW_SEMIBOLD :
-                wcstol(s->fontstyle.weight, nullptr, 10);
+        if (!s->fontstyle.weight.empty()) stss->fontWeight =
+                !StringICompare(s->fontstyle.weight, L"normal") ? FW_NORMAL :
+                !StringICompare(s->fontstyle.weight, L"bold") ? FW_BOLD :
+                !StringICompare(s->fontstyle.weight, L"lighter") ? FW_LIGHT :
+                !StringICompare(s->fontstyle.weight, L"bolder") ? FW_SEMIBOLD :
+                wcstol(s->fontstyle.weight.c_str(), nullptr, 10);
         if (stss->fontWeight == 0) {
             stss->fontWeight = FW_NORMAL;
         }
-        if (!s->fontstyle.italic.IsEmpty()) {
-            stss->fItalic = s->fontstyle.italic.CompareNoCase(L"yes") == 0;
+        if (!s->fontstyle.italic.empty()) {
+            stss->fItalic = StringICompare(s->fontstyle.italic, L"yes") == 0;
         }
-        if (!s->fontstyle.underline.IsEmpty()) {
-            stss->fUnderline = s->fontstyle.underline.CompareNoCase(L"yes") == 0;
+        if (!s->fontstyle.underline.empty()) {
+            stss->fUnderline = StringICompare(s->fontstyle.underline, L"yes") == 0;
         }
-        if (!s->pal.rotate[0].IsEmpty()) {
-            stss->fontAngleZ = wcstol(s->pal.rotate[0], nullptr, 10);
+        if (!s->pal.rotate[0].empty()) {
+            stss->fontAngleZ = wcstol(s->pal.rotate[0].c_str(), nullptr, 10);
         }
-        if (!s->pal.rotate[1].IsEmpty()) {
-            stss->fontAngleX = wcstol(s->pal.rotate[1], nullptr, 10);
+        if (!s->pal.rotate[1].empty()) {
+            stss->fontAngleX = wcstol(s->pal.rotate[1].c_str(), nullptr, 10);
         }
-        if (!s->pal.rotate[2].IsEmpty()) {
-            stss->fontAngleY = wcstol(s->pal.rotate[2], nullptr, 10);
+        if (!s->pal.rotate[2].empty()) {
+            stss->fontAngleY = wcstol(s->pal.rotate[2].c_str(), nullptr, 10);
         }
 
         stss->charSet = charSet;
@@ -392,48 +385,44 @@ bool CUSFSubtitles::ConvertToSTS(CSimpleTextSubtitle& sts)
         sts.AddStyle(WToT(s->name), stss);
     }
 
-    pos = texts.GetHeadPosition();
-    while (pos) {
-        text_t* t = texts.GetNext(pos);
+    for (const auto& t : texts) {
 
-        if (!t->pal.alignment.IsEmpty()) {
-            CStringW s;
-            s.Format(L"{\\an%d}", TranslateAlignment(t->pal.alignment));
+        if (!t->pal.alignment.empty()) {
+            std::wstring s;
+            s = ::Format(L"{\\an%d}", TranslateAlignment(t->pal.alignment));
             t->str = s + t->str;
         }
 
-        CRect marginRect;
-        marginRect.SetRectEmpty();
+        RECT marginRect = {};
+        ::SetRectEmpty(&marginRect);
 
-        if (!t->pal.horizontal_margin.IsEmpty()) {
+        if (!t->pal.horizontal_margin.empty()) {
             marginRect.left = marginRect.right = TranslateMargin(t->pal.horizontal_margin, sts.m_storageRes.cx);
         }
-        if (!t->pal.vertical_margin.IsEmpty()) {
+        if (!t->pal.vertical_margin.empty()) {
             marginRect.top = marginRect.bottom = TranslateMargin(t->pal.vertical_margin, sts.m_storageRes.cy);
         }
 
         WCHAR rtags[3][8] = {L"{\\rz%d}", L"{\\rx%d}", L"{\\ry%d}"};
         for (size_t i = 0; i < 3; i++) {
-            if (int angle = wcstol(t->pal.rotate[i], nullptr, 10)) {
-                CStringW str;
-                str.Format(rtags[i], angle);
+            if (int angle = wcstol(t->pal.rotate[i].c_str(), nullptr, 10)) {
+                std::wstring str;
+                str = ::Format(rtags[i], angle);
                 t->str = str + t->str;
             }
         }
 
-        if (t->style.CompareNoCase(L"Default") != 0) {
-            POSITION pos2 = styles.GetHeadPosition();
-            while (pos2) {
-                style_t* s = styles.GetNext(pos2);
-                if (s->name == t->style && !s->fontstyle.wrap.IsEmpty()) {
+        if (StringICompare(t->style, L"Default") != 0) {
+            for (const auto& s : styles) {
+                if (s->name == t->style && !s->fontstyle.wrap.empty()) {
                     int WrapStyle =
-                        !s->fontstyle.wrap.CompareNoCase(L"no") ? 2 :
+                        !StringICompare(s->fontstyle.wrap, L"no") ? 2 :
                         /*!s->fontstyle.wrap.CompareNoCase(L"auto") ? 1 :*/
                         1;
 
                     if (WrapStyle != sts.m_defaultWrapStyle) {
-                        CStringW str;
-                        str.Format(L"{\\q%d}", WrapStyle);
+                        std::wstring str;
+                        str = ::Format(L"{\\q%d}", WrapStyle);
                         t->str = str + t->str;
                     }
 
@@ -450,7 +439,7 @@ bool CUSFSubtitles::ConvertToSTS(CSimpleTextSubtitle& sts)
     return true;
 }
 
-bool CUSFSubtitles::ParseUSFSubtitles(CComPtr<IXMLDOMNode> pNode)
+bool CUSFSubtitles::ParseUSFSubtitles(ComPtr<IXMLDOMNode> pNode)
 {
     DeclareNameAndValue(pNode, name, val);
 
@@ -476,10 +465,10 @@ bool CUSFSubtitles::ParseUSFSubtitles(CComPtr<IXMLDOMNode> pNode)
                     DeclareNameAndValue(pGrandChild, grandChildName, grandChildVal);
 
                     if (grandChildName == L"style") {
-                        CAutoPtr<style_t> s(DEBUG_NEW style_t);
+                        std::unique_ptr<style_t> s(new style_t);
                         if (s) {
-                            ParseStyle(pGrandChild, s);
-                            styles.AddTail(s);
+                            ParseStyle(pGrandChild, s.get());
+                            styles.push_back(std::move(s));
                         }
                     }
                 }
@@ -498,10 +487,10 @@ bool CUSFSubtitles::ParseUSFSubtitles(CComPtr<IXMLDOMNode> pNode)
                     DeclareNameAndValue(pGrandChild, grandChildName, grandChildVal);
 
                     if (grandChildName == L"effect") {
-                        CAutoPtr<effect_t> e(DEBUG_NEW effect_t);
+                        std::unique_ptr<effect_t> e(new effect_t);
                         if (e) {
-                            ParseEffect(pGrandChild, e);
-                            effects.AddTail(e);
+                            ParseEffect(pGrandChild, e.get());
+                            effects.push_back(std::move(e));
                         }
                     }
                 }
@@ -520,15 +509,15 @@ bool CUSFSubtitles::ParseUSFSubtitles(CComPtr<IXMLDOMNode> pNode)
                     DeclareNameAndValue(pGrandChild, grandChildName, grandChildVal);
 
                     if (grandChildName == L"subtitle") {
-                        CStringW sstart = GetAttrib(L"start", pGrandChild);
-                        CStringW sstop = GetAttrib(L"stop", pGrandChild);
-                        CStringW sduration = GetAttrib(L"duration", pGrandChild);
-                        if (sstart.IsEmpty() || (sstop.IsEmpty() && sduration.IsEmpty())) {
+                        std::wstring sstart = GetAttrib(L"start", pGrandChild);
+                        std::wstring sstop = GetAttrib(L"stop", pGrandChild);
+                        std::wstring sduration = GetAttrib(L"duration", pGrandChild);
+                        if (sstart.empty() || (sstop.empty() && sduration.empty())) {
                             continue;
                         }
 
                         int start = TimeToInt(sstart);
-                        int stop = !sstop.IsEmpty() ? TimeToInt(sstop) : (start + TimeToInt(sduration));
+                        int stop = !sstop.empty() ? TimeToInt(sstop) : (start + TimeToInt(sduration));
 
                         ParseSubtitle(pGrandChild, start, stop);
                     }
@@ -551,7 +540,7 @@ bool CUSFSubtitles::ParseUSFSubtitles(CComPtr<IXMLDOMNode> pNode)
     return false;
 }
 
-void CUSFSubtitles::ParseMetadata(CComPtr<IXMLDOMNode> pNode, metadata_t& m)
+void CUSFSubtitles::ParseMetadata(ComPtr<IXMLDOMNode> pNode, metadata_t& m)
 {
     DeclareNameAndValue(pNode, name, val);
 
@@ -590,7 +579,7 @@ void CUSFSubtitles::ParseMetadata(CComPtr<IXMLDOMNode> pNode, metadata_t& m)
     EndEnumChildren;
 }
 
-void CUSFSubtitles::ParseStyle(CComPtr<IXMLDOMNode> pNode, style_t* s)
+void CUSFSubtitles::ParseStyle(ComPtr<IXMLDOMNode> pNode, style_t* s)
 {
     DeclareNameAndValue(pNode, name, val);
 
@@ -610,7 +599,7 @@ void CUSFSubtitles::ParseStyle(CComPtr<IXMLDOMNode> pNode, style_t* s)
     EndEnumChildren;
 }
 
-void CUSFSubtitles::ParseFontstyle(CComPtr<IXMLDOMNode> pNode, fontstyle_t& fs)
+void CUSFSubtitles::ParseFontstyle(ComPtr<IXMLDOMNode> pNode, fontstyle_t& fs)
 {
     fs.face = GetAttrib(L"face", pNode);
     fs.size = GetAttrib(L"size", pNode);
@@ -627,7 +616,7 @@ void CUSFSubtitles::ParseFontstyle(CComPtr<IXMLDOMNode> pNode, fontstyle_t& fs)
     fs.wrap = GetAttrib(L"wrap", pNode);
 }
 
-void CUSFSubtitles::ParsePal(CComPtr<IXMLDOMNode> pNode, posattriblist_t& pal)
+void CUSFSubtitles::ParsePal(ComPtr<IXMLDOMNode> pNode, posattriblist_t& pal)
 {
     pal.alignment = GetAttrib(L"alignment", pNode);
     pal.relativeto = GetAttrib(L"relative-to", pNode);
@@ -638,7 +627,7 @@ void CUSFSubtitles::ParsePal(CComPtr<IXMLDOMNode> pNode, posattriblist_t& pal)
     pal.rotate[2] = GetAttrib(L"rotate-y", pNode);
 }
 
-void CUSFSubtitles::ParseEffect(CComPtr<IXMLDOMNode> pNode, effect_t* e)
+void CUSFSubtitles::ParseEffect(ComPtr<IXMLDOMNode> pNode, effect_t* e)
 {
     DeclareNameAndValue(pNode, name, val);
 
@@ -649,10 +638,10 @@ void CUSFSubtitles::ParseEffect(CComPtr<IXMLDOMNode> pNode, effect_t* e)
             DeclareNameAndValue(pChild, childName, childVal);
 
             if (childName == L"keyframe") {
-                CAutoPtr<keyframe_t> k(DEBUG_NEW keyframe_t);
+                std::unique_ptr<keyframe_t> k(new keyframe_t);
                 if (k) {
-                    ParseKeyframe(pChild, k);
-                    e->keyframes.AddTail(k);
+                    ParseKeyframe(pChild, k.get());
+                    e->keyframes.push_back(std::move(k));
                 }
             }
         }
@@ -667,7 +656,7 @@ void CUSFSubtitles::ParseEffect(CComPtr<IXMLDOMNode> pNode, effect_t* e)
     EndEnumChildren;
 }
 
-void CUSFSubtitles::ParseKeyframe(CComPtr<IXMLDOMNode> pNode, keyframe_t* k)
+void CUSFSubtitles::ParseKeyframe(ComPtr<IXMLDOMNode> pNode, keyframe_t* k)
 {
     DeclareNameAndValue(pNode, name, val);
 
@@ -682,12 +671,12 @@ void CUSFSubtitles::ParseKeyframe(CComPtr<IXMLDOMNode> pNode, keyframe_t* k)
     }
 }
 
-void CUSFSubtitles::ParseSubtitle(CComPtr<IXMLDOMNode> pNode, int start, int stop)
+void CUSFSubtitles::ParseSubtitle(ComPtr<IXMLDOMNode> pNode, int start, int stop)
 {
     DeclareNameAndValue(pNode, name, val);
 
     if (name == L"text" || name == L"karaoke") {
-        CAutoPtr<text_t> t(DEBUG_NEW text_t);
+        std::unique_ptr<text_t> t(new text_t);
         if (t) {
             t->start = start;
             t->stop = stop;
@@ -695,7 +684,7 @@ void CUSFSubtitles::ParseSubtitle(CComPtr<IXMLDOMNode> pNode, int start, int sto
             t->effect = GetAttrib(L"effect", pNode);
             ParsePal(pNode, t->pal);
             ParseText(pNode, t->str);
-            texts.AddTail(t);
+            texts.push_back(std::move(t));
         }
 
         return;
@@ -708,11 +697,11 @@ void CUSFSubtitles::ParseSubtitle(CComPtr<IXMLDOMNode> pNode, int start, int sto
     EndEnumChildren;
 }
 
-void CUSFSubtitles::ParseText(CComPtr<IXMLDOMNode> pNode, CStringW& str)
+void CUSFSubtitles::ParseText(ComPtr<IXMLDOMNode> pNode, std::wstring& str)
 {
     DeclareNameAndValue(pNode, name, val);
 
-    CStringW prefix, postfix;
+    std::wstring prefix, postfix;
 
     if (name == L"b") {
         prefix = L"{\\b1}";
@@ -727,36 +716,36 @@ void CUSFSubtitles::ParseText(CComPtr<IXMLDOMNode> pNode, CStringW& str)
         fontstyle_t fs;
         ParseFontstyle(pNode, fs);
 
-        if (!fs.face.IsEmpty()) {
+        if (!fs.face.empty()) {
             prefix += L"{\\fn" + fs.face + L"}";
             postfix += L"{\\fn}";
         }
-        if (!fs.size.IsEmpty()) {
+        if (!fs.size.empty()) {
             prefix += L"{\\fs" + fs.size + L"}";
             postfix += L"{\\fs}";
         }
-        if (!fs.outline.IsEmpty()) {
+        if (!fs.outline.empty()) {
             prefix += L"{\\bord" + fs.outline + L"}";
             postfix += L"{\\bord}";
         }
-        if (!fs.shadow.IsEmpty()) {
+        if (!fs.shadow.empty()) {
             prefix += L"{\\shad" + fs.shadow + L"}";
             postfix += L"{\\shad}";
         }
 
         for (size_t i = 0; i < 4; i++) {
-            if (!fs.color[i].IsEmpty()) {
-                CStringW s;
-                s.Format(L"{\\%uc&H%06x&}", i + 1, ColorToDWORD(fs.color[i]));
+            if (!fs.color[i].empty()) {
+                std::wstring s;
+                s = ::Format(L"{\\%uc&H%06x&}", i + 1, ColorToDWORD(fs.color[i]));
                 prefix += s;
-                s.Format(L"{\\%uc}", i + 1);
+                s = ::Format(L"{\\%uc}", i + 1);
                 postfix += s;
             }
         }
     } else if (name == L"k") {
-        int t = wcstol(GetAttrib(L"t", pNode), nullptr, 10);
-        CStringW s;
-        s.Format(L"{\\kf%d}", t / 10);
+        int t = wcstol(GetAttrib(L"t", pNode).c_str(), nullptr, 10);
+        std::wstring s;
+        s = ::Format(L"{\\kf%d}", t / 10);
         str += s;
         return;
     } else if (name == L"br") {
@@ -768,7 +757,7 @@ void CUSFSubtitles::ParseText(CComPtr<IXMLDOMNode> pNode, CStringW& str)
     }
 
     BeginEnumChildren(pNode, pChild) {
-        CStringW s;
+        std::wstring s;
         ParseText(pChild, s);
         str += s;
     }
@@ -777,7 +766,7 @@ void CUSFSubtitles::ParseText(CComPtr<IXMLDOMNode> pNode, CStringW& str)
     str = prefix + str + postfix;
 }
 
-void CUSFSubtitles::ParseShape(CComPtr<IXMLDOMNode> pNode)
+void CUSFSubtitles::ParseShape(ComPtr<IXMLDOMNode> pNode)
 {
     // no specs on this yet
 }

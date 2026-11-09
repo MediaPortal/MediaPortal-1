@@ -21,8 +21,6 @@
 
 #pragma once
 
-#include <afx.h>
-#include <atlcoll.h>
 #include <regex>
 
 #define MS2RT(t)        (10000i64 * (t))
@@ -56,19 +54,19 @@ namespace Subtitle
     };
 
     LPCTSTR GetSubtitleFileExt(SubType type);
-    bool IsTextSubtitleFileName(CString filename);
+    bool IsTextSubtitleFileName(tstring filename);
 
     struct SubFile {
-        CString fn; /*SubType type;*/
+        tstring fn; /*SubType type;*/
 
         bool operator <(const SubFile& rhs) const {
-            return fn.CompareNoCase(rhs.fn) < 0;
+            return StringICompare(fn, rhs.fn) < 0;
         }
     };
 
-    void GetSubFileNames(CString fn, const CAtlArray<CString>& paths, CAtlArray<SubFile>& ret);
+    void GetSubFileNames(tstring fn, const std::vector<tstring>& paths, std::vector<SubFile>& ret);
 
-    void GetLCIDAndLangName(CStringW subName, LCID& lcid, CString& langname, HearingImpairedType& hi, std::wregex re);
+    void GetLCIDAndLangName(std::wstring subName, LCID& lcid, tstring& langname, HearingImpairedType& hi, std::wregex re);
 
-    CString GuessSubtitleName(const CString& fn, CString videoName, LCID& lcid, CString& langname, HearingImpairedType& hi);
+    tstring GuessSubtitleName(const tstring& fn, tstring videoName, LCID& lcid, tstring& langname, HearingImpairedType& hi);
 };
